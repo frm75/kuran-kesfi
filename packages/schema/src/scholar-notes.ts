@@ -33,6 +33,14 @@ import {
  * Platform kendi editoryal yorumunu uretmez. Hoca aciklamasi bir kaynaga bagli
  * yorumdur; kaynagiyla gosterilir, tek dogru gibi sunulmaz, farkli gorusler yan
  * yana verilir.
+ *
+ * ## ÇIKARIM UYARISI
+ *
+ * GOREV 01 tablo adlarini, enum'lari ve K1-K6 kararlarini veriyor ama HER
+ * KOLONU vermiyor; plan §23.2'nin kendisi dokumanda yoktu (yalnizca SD-01
+ * icerigi islendi). Asagida `ÇIKARIM` etiketli alanlar makul varsayimla
+ * yazilmistir ve §23 tam olarak yazildiginda KARSILASTIRILMALIDIR.
+ * Liste ayrica `docs/BACKLOG.md` icinde tutulur.
  */
 
 /** Alinti ust siniri — telif geregi (plan §3 Diyanet tefsiri modeli). */
@@ -94,9 +102,11 @@ export const scholar = z.object({
   /** Is anahtari — UNIQUE (GOREV 02 / N4) */
   slug: scholarSlug,
   name: nonEmptyText,
-  /** Kanal / kurum adi */
+  /** ÇIKARIM — kanal / kurum adi */
   channelName: z.string().nullable(),
+  /** ÇIKARIM */
   channelUrl: z.url().nullable(),
+  /** ÇIKARIM — serbest not */
   note: z.string().nullable(),
 });
 export type Scholar = z.infer<typeof scholar>;
@@ -114,9 +124,13 @@ export const videoSource = z
     scholarId: dbId,
     platform,
     videoId: nonEmptyText,
+    /** ÇIKARIM */
     title: nonEmptyText,
+    /** ÇIKARIM */
     url: z.url(),
+    /** ÇIKARIM */
     publishedAt: isoTimestamp.nullable(),
+    /** ÇIKARIM */
     durationSec: z.number().int().nonnegative().nullable(),
   })
   .superRefine((value, ctx) => {
@@ -138,8 +152,11 @@ export type VideoSource = z.infer<typeof videoSource>;
 export const transcript = z.object({
   id: dbId,
   videoSourceId: dbId,
+  /** ÇIKARIM */
   source: transcriptSource,
+  /** ÇIKARIM — ISO 639-1 */
   language: z.string().length(2),
+  /** ÇIKARIM */
   createdAt: isoTimestamp,
 });
 export type Transcript = z.infer<typeof transcript>;
@@ -149,8 +166,11 @@ export const transcriptSegment = z
   .object({
     id: dbId,
     transcriptId: dbId,
+    /** ÇIKARIM */
     startSec: z.number().int().nonnegative(),
+    /** ÇIKARIM */
     endSec: z.number().int().nonnegative(),
+    /** ÇIKARIM */
     text: nonEmptyText,
   })
   .refine((s) => s.endSec >= s.startSec, {
@@ -204,7 +224,9 @@ export const scholarNote = z
      * gelirse `reviewer` tablosu acilip FK'ye donusur.
      */
     reviewerId: z.string().nullable(),
+    /** ÇIKARIM */
     createdAt: isoTimestamp,
+    /** ÇIKARIM */
     updatedAt: isoTimestamp,
   })
   .refine((n) => n.segmentEndSec >= n.segmentStartSec, {
@@ -273,6 +295,7 @@ export const scholarNoteRelationRow = z
     sourceNoteId: dbId,
     targetNoteId: dbId,
     relation: noteRelation,
+    /** ÇIKARIM — serbest aciklama */
     note: z.string().nullable(),
   })
   .refine((r) => r.sourceNoteId !== r.targetNoteId, {

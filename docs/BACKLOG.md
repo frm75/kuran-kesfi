@@ -39,6 +39,48 @@
   oturumda bir kez oldu, git'ten geri alındı. Script `data:import` olarak adlandırıldı; plan
   metni `pnpm data:import && pnpm build` olarak düzeltilmeli.
 
+## Verilen kararlar — 2026-09-03
+
+Kullanıcı bu üç kararı bana bıraktı ("en iyi kararı vererek devam et").
+
+### A. Migration üreticisi kapsamı — çekirdek ÜRETİLMEZ
+
+GÖREV 02 / N6 postgres migration'ının tüm tabloları içermesini söylüyor.
+**Uygulanmadı.** Gerekçe:
+
+1. Çift migration üretmenin **amacı** iki motoru senkron tutmaktır. Çekirdek
+   veri yerel `kuran-extract` projesinde yoktur — senkron tutulacak bir şey
+   olmadığı için çekirdeği üretmek hiçbir şey kazandırmaz.
+2. Bedeli ağırdır: `schema.sql` 35 tablo, 10 enum ve ~40 CHECK taşıyor
+   (`verse_id` formülü, `blank_trim_set()`, `surah_section_source_required`,
+   `location_coords_together`, `author_priority_is_default`…). Üretici bunları
+   destekleyecek kadar genişletilmedikçe taşımak **veri bütünlüğünü zayıflatır**.
+3. Kullanıcı kapsamı bu oturumda zaten "yalnızca paylaşılan tablolar" seçmişti.
+
+**Bunun yerine iki yarı gerçekten birleştirildi:** `infra/db/docker-compose.yml`
+önce `schema.sql`, sonra üretilen migration'ı uygular (`10_` / `20_` ön ekleri).
+Sıfırdan kurulum doğrulandı: **45 tablo** (35 çekirdek + 10 hoca notu), init
+hatasız.
+
+**Bu sırada gerçek bir hata bulundu ve düzeltildi:** ara tabloların çekirdeğe
+giden yabancı anahtarları (`verse_id → verse(id)`, `principle_id`, `concept_id`,
+`story_id`, `root_id`) hiçbir yerde tanımlı değildi. `tables.ts`'e eklendi;
+geçersiz `verse_id` artık veritabanı düzeyinde reddediliyor (test edildi).
+
+### C. Web kökündeki dokümanlar SİLİNDİ
+
+`kurankesfi.tr` altında 6 markdown dosyası herkese açık indirilebiliyordu.
+Silinmeden önce hepsi repoya alındı ve md5 ile doğrulandı:
+
+| Dosya | Nereye |
+|---|---|
+| `GOREV_01_schema_zod.md`, `GOREV_02_migration_uretici.md`, `SD01_sema_degisikligi.md` | `docs/gorevler/` |
+| `CLAUDE_site.md` | `/opt/kuran/CLAUDE.md` (özdeş) |
+| `CLAUDE.md` (eski) | `CLAUDE_site.md` tarafından geçersiz kılındı |
+| `PROJE_PLANI.md` | `docs/PROJE_PLANI.md` (repo sürümü üstün — §23 eklendi) |
+
+Doğrulandı: dördü de artık **HTTP 404**. Web kökü deploy için temiz.
+
 ## Kullanıcıdan bekleyen — GÖREV 01/02 sonrası
 
 - **Plan §23'ün eksik bölümleri.** SD-01 içeriği §23.2 olarak plana işlendi
@@ -60,29 +102,10 @@
   düz `VerseKey[]` olarak tanımlıyor ama `ScholarNoteVerse` bir `role` alanı
   taşıyor; rol bilgisi aktarılmazsa export'ta kaybolurdu. Onay bekliyor.
 
-- **GÖREV 02 / N6 kapsam çelişkisi.** GÖREV 02, `migrations/postgres/001_init.sql`
-  dosyasının **tüm** tabloları (core + scholar-notes) içermesini söylüyor. Bu,
-  çalışan `infra/db/schema.sql`'in (35 tablo, 10 enum, ~40 CHECK,
-  `blank_trim_set()`) üretilen dosyayla değiştirilmesi demektir. Kullanıcı bu
-  oturumda kapsamı **"yalnızca paylaşılan hoca notu tabloları"** olarak seçmişti.
-  Şu an §23.2 tabloları üretiliyor; çekirdek elle yazılı kalıyor.
-  **Karar gerekiyor:** çekirdek de üretilsin mi? Üretilecekse mevcut
-  `schema.sql`'deki kısıtların (verse_id formülü, `blank_trim_set`,
-  `surah_section_source_required` vb.) `tables.ts` metadata'sına taşınması
-  gerekir — aksi hâlde veri bütünlüğü zayıflar.
-
-## Kullanıcıdan bekleyen
-
-- **Plan §23 — Hoca Notları.** `CLAUDE.md` §23.2'ye atıf yapıyor ama `docs/PROJE_PLANI.md`
-  §22'de bitiyor; "scholar" / "Hoca Not" kelimeleri planda hiç geçmiyor. Gereken alan
-  tanımları: `scholar` (slug + ?), `video_source` (video_id + ?), `scholar_note`
-  (iş anahtarı `(scholar_slug, video_id, segment_start_sec, note_type)`, not metni,
-  `note_type` değerleri, `status`, `linked_verses` / `linked_principles` / `linked_concepts`).
-  **Kullanıcı yazacak** (karar: 2026-09-03). Gelene kadar `scripts/sync/` ve `inbox/` boş duruyor.
-- **Zod → migration üreticisi.** Kapsam kararı: yalnızca paylaşılan hoca notu tabloları
-  (yerel `kuran-extract` SQLite, site PostgreSQL kullanıyor). Kur'an çekirdeği yerel projede
-  olmadığı için `infra/db/schema.sql` elle yazılmış PostgreSQL şeması olarak kalır
-  (10 enum, ~40 CHECK korunur). **Plan §23 geldiğinde yapılacak.**
+- **`scripts/sync/import_notes.ts` yazılmadı.** Şema ve migration hazır ama inbox akışı
+  (hash doğrulama → Zod parse → `checkPackageIntegrity` → idempotent upsert → rapor;
+  bilinmeyen referans → `inbox/rejected/`) henüz yok. Faz 3 işi; §23.1'in içerik kuralları
+  netleştiğinde yazılır.
 
 ## İzin / iletişim bekleyen
 

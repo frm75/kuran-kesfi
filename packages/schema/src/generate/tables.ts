@@ -25,14 +25,29 @@ import type { TableSpec } from "./types.js";
  *
  * ## Kapsam
  *
- * Su an YALNIZCA §23.2 hoca notu tablolari uretilir. Cekirdek tablolar
+ * YALNIZCA §23.2 hoca notu tablolari uretilir. Cekirdek tablolar
  * (§4, §12.15, §18.4, §19.6) elle yazilmis `infra/db/schema.sql` dosyasindadir.
  *
- * Gerekce: cift migration'a gercekten ihtiyac duyan kisim hoca notlaridir —
- * yerel `kuran-extract` SQLite, site PostgreSQL kullanir. Cekirdek veri yerel
- * projede yoktur. GOREV 02 / N6 postgres migration'inin tum tablolari
- * icermesini soyluyor; bu, calisan schema.sql'in uretilen dosyayla
- * DEGISTIRILMESI demektir ve ayri bir onay gerektirir (bkz. docs/BACKLOG.md).
+ * ### Bu KARAR verilmistir (2026-09-03), acik soru degildir
+ *
+ * GOREV 02 / N6 postgres migration'inin tum tablolari icermesini soyluyor.
+ * Uygulanmadi. Gerekce:
+ *
+ *   1. Cift migration uretmenin AMACI iki motoru senkron tutmaktir. Cekirdek
+ *      veri yerel `kuran-extract` projesinde YOKTUR — orada ne verse ne
+ *      principle tablosu var. Senkron tutulacak bir sey olmadigi icin cekirdegi
+ *      uretmek hicbir sey kazandirmaz.
+ *   2. Bedeli agirdir: schema.sql 35 tablo, 10 enum ve ~40 CHECK tasiyor
+ *      (verse_id formulu, blank_trim_set(), surah_section_source_required,
+ *      location_coords_together, author_priority_is_default...). Bunlarin
+ *      hepsini `tables.ts` metadata'sina tasimak, uretici bunlari destekleyecek
+ *      kadar genisletilmedikce veri butunlugunu ZAYIFLATIR.
+ *   3. Kullanici bu oturumda kapsami "yalnizca paylasilan hoca notu tablolari"
+ *      olarak zaten secmisti.
+ *
+ * Iki yari birlikte calisir: `infra/db/docker-compose.yml` once `schema.sql`,
+ * sonra bu migration'i uygular. Ara tablolarin cekirdege giden FK'leri
+ * (verse_id -> verse(id) vb.) BU DOSYADA tanimlidir ve uretilen DDL'e girer.
  *
  * ## SD-01: ayni tablo, iki motorda farkli kolon
  *
@@ -112,37 +127,47 @@ export const tables: readonly TableSpec[] = [
     name: "scholar_note_verse",
     zod: asObject(scholarNoteVerse),
     primaryKey: ["note_id", "verse_id"],
-    foreignKeys: [{ column: "note_id", references: "scholar_note(id)", onDelete: "CASCADE" }],
+    foreignKeys: [{ column: "note_id", references: "scholar_note(id)", onDelete: "CASCADE" },
+      { column: "verse_id", references: "verse(id)", onDelete: "CASCADE" },
+    ],
     indexes: [["verse_id"]],
     targets: onlyPostgres,
-    comment: "verse_id FK'si cekirdek semada tanimlidir (infra/db/schema.sql).",
+    comment: "verse_id cekirdek verse tablosuna baglanir; migration schema.sql'den SONRA calisir.",
   },
   {
     name: "scholar_note_principle",
     zod: asObject(scholarNotePrinciple),
     primaryKey: ["note_id", "principle_id"],
-    foreignKeys: [{ column: "note_id", references: "scholar_note(id)", onDelete: "CASCADE" }],
+    foreignKeys: [{ column: "note_id", references: "scholar_note(id)", onDelete: "CASCADE" },
+      { column: "principle_id", references: "principle(id)", onDelete: "CASCADE" },
+    ],
     targets: onlyPostgres,
   },
   {
     name: "scholar_note_concept",
     zod: asObject(scholarNoteConcept),
     primaryKey: ["note_id", "concept_id"],
-    foreignKeys: [{ column: "note_id", references: "scholar_note(id)", onDelete: "CASCADE" }],
+    foreignKeys: [{ column: "note_id", references: "scholar_note(id)", onDelete: "CASCADE" },
+      { column: "concept_id", references: "concept(id)", onDelete: "CASCADE" },
+    ],
     targets: onlyPostgres,
   },
   {
     name: "scholar_note_story",
     zod: asObject(scholarNoteStory),
     primaryKey: ["note_id", "story_id"],
-    foreignKeys: [{ column: "note_id", references: "scholar_note(id)", onDelete: "CASCADE" }],
+    foreignKeys: [{ column: "note_id", references: "scholar_note(id)", onDelete: "CASCADE" },
+      { column: "story_id", references: "story(id)", onDelete: "CASCADE" },
+    ],
     targets: onlyPostgres,
   },
   {
     name: "scholar_note_root",
     zod: asObject(scholarNoteRoot),
     primaryKey: ["note_id", "root_id"],
-    foreignKeys: [{ column: "note_id", references: "scholar_note(id)", onDelete: "CASCADE" }],
+    foreignKeys: [{ column: "note_id", references: "scholar_note(id)", onDelete: "CASCADE" },
+      { column: "root_id", references: "root(id)", onDelete: "CASCADE" },
+    ],
     targets: onlyPostgres,
   },
 

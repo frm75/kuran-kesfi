@@ -62,13 +62,14 @@ CREATE INDEX "scholar_note_video_source_id_idx" ON "scholar_note" ("video_source
 CREATE INDEX "scholar_note_status_idx" ON "scholar_note" ("status");
 CREATE INDEX "scholar_note_note_type_idx" ON "scholar_note" ("note_type");
 
--- verse_id FK'si cekirdek semada tanimlidir (infra/db/schema.sql).
+-- verse_id cekirdek verse tablosuna baglanir; migration schema.sql'den SONRA calisir.
 CREATE TABLE "scholar_note_verse" (
   "note_id" INTEGER NOT NULL,
   "verse_id" INTEGER NOT NULL,
   "role" TEXT NOT NULL CHECK ("role" IN ('primary', 'secondary')),
   PRIMARY KEY ("note_id", "verse_id"),
-  FOREIGN KEY ("note_id") REFERENCES scholar_note(id) ON DELETE CASCADE
+  FOREIGN KEY ("note_id") REFERENCES scholar_note(id) ON DELETE CASCADE,
+  FOREIGN KEY ("verse_id") REFERENCES verse(id) ON DELETE CASCADE
 );
 CREATE INDEX "scholar_note_verse_verse_id_idx" ON "scholar_note_verse" ("verse_id");
 
@@ -76,28 +77,32 @@ CREATE TABLE "scholar_note_principle" (
   "note_id" INTEGER NOT NULL,
   "principle_id" INTEGER NOT NULL,
   PRIMARY KEY ("note_id", "principle_id"),
-  FOREIGN KEY ("note_id") REFERENCES scholar_note(id) ON DELETE CASCADE
+  FOREIGN KEY ("note_id") REFERENCES scholar_note(id) ON DELETE CASCADE,
+  FOREIGN KEY ("principle_id") REFERENCES principle(id) ON DELETE CASCADE
 );
 
 CREATE TABLE "scholar_note_concept" (
   "note_id" INTEGER NOT NULL,
   "concept_id" INTEGER NOT NULL,
   PRIMARY KEY ("note_id", "concept_id"),
-  FOREIGN KEY ("note_id") REFERENCES scholar_note(id) ON DELETE CASCADE
+  FOREIGN KEY ("note_id") REFERENCES scholar_note(id) ON DELETE CASCADE,
+  FOREIGN KEY ("concept_id") REFERENCES concept(id) ON DELETE CASCADE
 );
 
 CREATE TABLE "scholar_note_story" (
   "note_id" INTEGER NOT NULL,
   "story_id" INTEGER NOT NULL,
   PRIMARY KEY ("note_id", "story_id"),
-  FOREIGN KEY ("note_id") REFERENCES scholar_note(id) ON DELETE CASCADE
+  FOREIGN KEY ("note_id") REFERENCES scholar_note(id) ON DELETE CASCADE,
+  FOREIGN KEY ("story_id") REFERENCES story(id) ON DELETE CASCADE
 );
 
 CREATE TABLE "scholar_note_root" (
   "note_id" INTEGER NOT NULL,
   "root_id" INTEGER NOT NULL,
   PRIMARY KEY ("note_id", "root_id"),
-  FOREIGN KEY ("note_id") REFERENCES scholar_note(id) ON DELETE CASCADE
+  FOREIGN KEY ("note_id") REFERENCES scholar_note(id) ON DELETE CASCADE,
+  FOREIGN KEY ("root_id") REFERENCES root(id) ON DELETE CASCADE
 );
 
 -- Her iki ortamda AYNI (SD-01).

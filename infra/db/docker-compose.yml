@@ -30,8 +30,13 @@ services:
       - "127.0.0.1:${DB_PORT:-4322}:5432"
     volumes:
       - kuran_pg_data:/var/lib/postgresql/data
-      # Şema dosyaları salt okunur bağlanır; ilk başlatmada otomatik uygulanır.
+      # Şema dosyaları salt okunur bağlanır; ilk başlatmada alfabetik sırayla
+      # otomatik uygulanır. SIRA ÖNEMLİ: hoca notu ara tabloları çekirdek
+      # tablolara (verse, principle, concept, story, root) yabancı anahtarla
+      # bağlanır, bu yüzden schema.sql önce çalışmalıdır.
       - ./schema.sql:/docker-entrypoint-initdb.d/10_schema.sql:ro
+      # ÜRETİLEN dosya — pnpm schema:generate ile üretilir, elle düzenlenmez.
+      - ../../packages/schema/migrations/postgres/001_init.sql:/docker-entrypoint-initdb.d/20_scholar_notes.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-kuran} -d ${DB_NAME:-kuran}"]
       interval: 10s
