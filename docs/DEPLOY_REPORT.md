@@ -437,3 +437,105 @@ kural 3).
 **Ayrıca deploy sırasında bakılacak:** `gzip on` zaten açık ve
 `application/json` listede (§3.5). `font/woff2` ve `text/html` de
 listede mi — woff2 zaten sıkıştırılmış olduğu için gzip'lenmemeli.
+
+### 3.9 2026-09-04 — İlk yayın (site canlıda)
+
+**https://kurankesfi.tr yayında.** Sunucu yapılandırması değişti; hepsi aşağıda.
+
+#### Yedek
+
+| Dosya | Yedek |
+|---|---|
+| `/www/server/panel/vhost/nginx/kurankesfi.tr.conf` | `kurankesfi.tr.conf.bak.20260904` |
+
+Yedek alınırken md5 karşılaştırıldı: `d5713fce671fe5c9ae1144f91526f944` (aynı).
+
+#### Yayın düzeni — atomik
+
+```
+/www/wwwroot/kurankesfi.tr/
+  .well-known/            SSL doğrulama — aaPanel kullanır, ELLENMEZ
+  releases/<UTC zaman>/   her yayın ayrı dizin (342 MB)
+  current -> releases/…   sembolik bağ; nginx root'u burası
+```
+
+Yeni sürüm önce `releases/<zaman>.part` dizinine yazılır, izinler verilir,
+sonra `mv -T` ile adı düzeltilir; en son `current` bağı `ln -sfn` + `mv -Tf`
+ile **tek işlemde** değiştirilir. Ziyaretçi hiçbir an yarım yayınlanmış site
+görmez. Geri alma tek komut.
+
+`scripts/deploy/deploy.sh` — `pnpm deploy` / `deploy:list` / `deploy:smoke` /
+`deploy:rollback`. Script build yapmaz; önce `pnpm build`.
+
+**`.well-known` neden bağ:** vhost'taki SSL doğrulama bloğu bir Lua betiği ve
+`$document_root` altına bakıyor — yani artık `current/` içine. Sertifika
+yenilemesi kırılmasın diye her yayında `current/.well-known` sabit dizine
+sembolik bağ olarak kuruluyor. Canlıda doğrulandı: `.well-known` altına
+konan dosya HTTP üzerinden okunabiliyor.
+
+#### Vhost değişiklikleri
+
+| Ne | Neden |
+|---|---|
+| `root` → `…/current` | atomik yayın |
+| `index index.php … ` → `index index.html;` | site tamamen statik |
+| `include enable-php-00.conf;` yoruma alındı | PHP kapalı (dosya zaten boştu) |
+| `location / { try_files $uri $uri.html $uri/index.html =404; }` | uzantısız URL'ler; bu satır olmadan ana sayfa dışında her şey 404 |
+| `location ^~ /_astro/` → `expires 1y` | dosya adı içerik özetiyle (`_surah_.D4e65yLh.css`) |
+| `location ^~ /fonts/` → `expires 30d` | ad sabit, içerik değişebilir; `immutable` kullanılmadı |
+| `location ^~ /data/` → `expires 1h` | her build'de değişebilir |
+| CSP + `X-Content-Type-Options` + `Referrer-Policy` + `Permissions-Policy` + `COOP` | aşağıda |
+
+**Content-Security-Policy:**
+
+```
+default-src 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline';
+font-src 'self'; connect-src 'self'; manifest-src 'self';
+base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+```
+
+`script-src` yazılmadı, `default-src 'none'`a düşüyor: sitede **0 bayt
+JavaScript** var. Bu, "takip yok" sözünü iddia olmaktan çıkarıp tarayıcının
+uyguladığı bir kurala çeviriyor. **Faz 1'de Astro island'ı (harita, graf,
+arama) eklenirse buraya `script-src 'self'` EKLENMELİDİR**, yoksa sessizce
+çalışmaz. Vhost'ta bu not yazılı.
+
+`add_header` tuzağı: nginx'te bir `location` içindeki `add_header`, sunucu
+düzeyindeki **tüm** `add_header`'ları iptal eder. Bu yüzden önbellek
+location'larında yalnızca `expires` kullanıldı — `_astro/` için
+`Cache-Control: immutable` bilerek yazılmadı, HSTS ve CSP'yi düşürürdü.
+Canlıda doğrulandı: CSS yanıtında CSP ve HSTS var.
+
+#### Doğrulama (canlı)
+
+Duman testi, `deploy.sh` içinde ve her yayında otomatik çalışıyor — 11 kontrol:
+
+```
+/  /sureler  /fatiha-suresi  /bakara-suresi/153  /nas-suresi/6
+/404.html  /fonts/inter-latin.woff2  /data/surahs_index.json   → 200
+/olmayan-bir-adres  /.user.ini  /manifest.json                 → 404
+```
+
+Ayrıca elle:
+
+| Kontrol | Sonuç |
+|---|---|
+| Gerçek DNS üzerinden erişim | `31.57.33.232` → 200 |
+| `/bakara-suresi` gzip | 381 KB → **68 KB** |
+| `/data/surahs_index.json` gzip | → 4,5 KB |
+| Font `Content-Type` | `font/woff2`, `max-age=2592000` |
+| Sayfada `<script`  | **yok** |
+| Kaynak rozeti, zorunlu atıf, dipnot çapası, 50 meal | hepsi var |
+| `.well-known` okunabilirliği | ✓ |
+| Atomik geçiş + geri alma + ileri alma | üçü de çalıştı |
+| Tek sürüm varken `--rollback` | reddetti (çıkış 1) |
+
+#### Bilinen davranış
+
+- **aaPanel bu vhost'u yeniden yazabilir.** Panelden siteyle ilgili bir ayar
+  değiştirilirse `root` ve `try_files` kaybolabilir; site o an tamamen 404'e
+  düşer. Panelde bir işlem yapıldıysa `pnpm deploy:smoke` çalıştırılmalı.
+- Bir yayın 342 MB. `KEEP=2` ile diskte en fazla 3 sürüm ≈ 1 GB durur.
+- İlk yayın sonrası `nginx -s reload` ardından gelen ilk istek bir kez
+  HTTP/2 çerçeve hatası verdi (kapanmakta olan eski worker). Duman testine
+  `--retry 3` eklendi; tekrar görülmedi.
