@@ -17,7 +17,7 @@
     "build": "pnpm build:data && pnpm lint:refs && pnpm build:web",
     "typecheck": "pnpm -r typecheck",
     "//import": "DIKKAT: 'import' adi kullanilamaz — pnpm'in yerlesik 'pnpm import' komutuyla catisir ve pnpm-lock.yaml'i siler.",
-    "data:import": "pnpm build:packages && pnpm --filter @kuran/import tanzil",
+    "data:import": "pnpm build:packages && pnpm --filter @kuran/import tanzil && pnpm --filter @kuran/import tanzil-translations",
     "db:up": "docker compose --env-file .env -f infra/db/docker-compose.yml up -d",
     "db:down": "docker compose --env-file .env -f infra/db/docker-compose.yml down",
     "db:reset": "docker compose --env-file .env -f infra/db/docker-compose.yml down -v && docker compose --env-file .env -f infra/db/docker-compose.yml up -d",

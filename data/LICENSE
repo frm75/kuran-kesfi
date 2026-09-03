@@ -15,15 +15,56 @@ Proje, Açık Kuran veri setini (CC BY-NC-SA 4.0) kullanmaktadır. ShareAlike
 
 ## Kapsam
 
-- **Bu lisans:** `data/` altındaki tüm dosyalar ve bunlardan üretilen statik
-  JSON çıktıları (`apps/web/public/data/`).
+- **Bu lisans:** `data/` altındaki, **bizim derlediğimiz** veri — kıssa, konum,
+  kavram, ilke, zaman çizelgesi kayıtları ve bunlardan üretilen statik JSON.
 - **Bu lisans DEĞİL:** Depodaki kod MIT lisanslıdır; bkz. kökteki `LICENSE`.
+- **Bu lisans DEĞİL:** Üçüncü taraf metinler — Kur'an'ın Arapça metni, Türkçe
+  mealler, çeviriyazı, tefsir alıntıları ve ses kayıtları. Bunlar aşağıdaki
+  şartlara tabidir ve **bizim alt-lisanslayabileceğimiz veri değildir.**
 
-## Üçüncü taraf kaynaklar
+## Üçüncü taraf kaynaklar ve şartları
 
-`data/` altındaki her kaynaklı kayıt bir `source_id` taşır ve ilgili kaynağın
-kendi lisansına tabidir. Kaynak listesi ve lisansları için bkz.
-`docs/PROJE_PLANI.md` §3.
+`data/` ve üretilen JSON içindeki her kaynaklı kayıt bir `source_id` taşır.
+Kaynak listesi `sources.json` içinde yayınlanır ve arayüzde `<SourceBadge>`
+ile gösterilir.
+
+### Arapça Kur'an metni — Tanzil Projesi
+
+> "Permission is granted to copy and distribute verbatim copies of the Quran
+> text provided here, but changing the text is not allowed. The text can be
+> used in any website or application, provided that its source (Tanzil Project)
+> is clearly indicated, and a link is made to tanzil.net to enable users to
+> keep track of changes."
+> — <https://tanzil.net/download/>
+
+**Yükümlülüklerimiz:** metni değiştirmemek · kaynağı "Tanzil Project" olarak
+açıkça belirtmek · `tanzil.net` bağlantısı vermek.
+
+### Türkçe mealler ve çeviriyazı — Tanzil çeviri seti
+
+> "The translations provided at this page are for non-commercial purposes only.
+> If used otherwise, you need to obtain necessary permission from the translator
+> or the publisher. If you are using more than three of the following
+> translations in a website or application, we require you to put a link back
+> to this page…"
+> — <https://tanzil.net/trans/>
+
+**Önemli:** Tanzil mealleri lisanslamaz; yalnızca ticari olmayan kullanıma izin
+verir. Her mealin telif hakkı çevirmenine veya yayıncısına aittir. Bu proje
+ticari değildir (plan §1.1), dolayısıyla bu izin kapsamındadır — ancak
+**mealler CC BY-NC-SA 4.0 ile yeniden lisanslanamaz.**
+
+**Yükümlülüklerimiz:** projeyi ticari kullanıma açmamak · dokuz meal
+kullandığımız için arayüzde `https://tanzil.net/trans/` geri bağlantısı
+göstermek.
+
+### Türkçe sure adları — Quran.com API
+
+`https://api.quran.com/api/v4/chapters?language=tr`. Quran.com kullanım
+şartlarına tabidir.
+
+## Ekleme kuralı
 
 Lisansı belirsiz meal, tefsir, ses veya görsel bu klasöre eklenmez
-(`docs/PROJE_PLANI.md` §3.1 Telif Kuralı).
+(`docs/PROJE_PLANI.md` §3.1 Telif Kuralı). Yeni bir kaynak eklenmeden önce
+şartları bu dosyaya yazılır.

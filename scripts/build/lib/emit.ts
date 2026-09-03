@@ -25,6 +25,7 @@ export class Emitter {
   private fileCount = 0;
   private byteCount = 0;
   private readonly written = new Set<string>();
+  private readonly contentHashes = new Map<string, string>();
 
   /** public/data dizinini bosaltir — silinen kayitlar artik kalmaz. */
   reset(): void {
@@ -49,6 +50,7 @@ export class Emitter {
     const body = JSON.stringify(value);
     writeFileSync(path, body, "utf8");
 
+    this.contentHashes.set(relativePath, createHash("sha256").update(body).digest("hex"));
     this.fileCount += 1;
     this.byteCount += Buffer.byteLength(body, "utf8");
   }
@@ -57,11 +59,17 @@ export class Emitter {
     return { files: this.fileCount, bytes: this.byteCount };
   }
 
-  /** Tum cikti dosyalarinin birlesik karmasi — tekrarlanabilirlik denetimi icin. */
+  /**
+   * Tum cikti dosyalarinin birlesik karmasi — tekrarlanabilirlik denetimi icin.
+   *
+   * Yol VE icerik karmasi alinir; yalnizca yol karmasi icerik degisse bile
+   * ayni kalir ve yanlis guven verir.
+   */
   fingerprint(): string {
     const hash = createHash("sha256");
-    for (const path of [...this.written].sort()) {
+    for (const [path, digest] of [...this.contentHashes].sort(([a], [b]) => (a < b ? -1 : 1))) {
       hash.update(path);
+      hash.update(digest);
     }
     return hash.digest("hex").slice(0, 16);
   }
