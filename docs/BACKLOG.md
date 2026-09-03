@@ -19,14 +19,41 @@
   (`packages/schema/src/common.ts`). Plan metni düzeltilmeli.
 - **§6 dizin yapısı.** Plan `/apps/web  Next.js site` diyor; CLAUDE.md ve gerçek uygulama Astro.
   Plan metni düzeltilmeli.
-- **§3 veri kaynağı tablosu.** `api.acikkuran.com` erişilemiyor (NXDOMAIN, 2026-09-03).
-  Kaynak araştırması sonuçlandığında tablo güncellenmeli. Bkz. `docs/DEPLOY_REPORT.md` §2.3.
+- **§3 veri kaynağı tablosu.** Açık Kuran API'si kapanmıştır (doğrulandı, 2026-09-03). Tablodaki
+  "Açık Kuran API" satırları Tanzil çeviri seti ve Quranic Arabic Corpus ile değiştirilmeli.
+  Bkz. `docs/DEPLOY_REPORT.md` §3.4.
+- **§3.1 öncelikli meal listesi.** Mehmet Okuyan, Mustafa İslamoğlu ve Muhammed Esed açık
+  lisanslı hiçbir sette yok. Yeni sıra: Diyanet İşleri, Elmalılı, Ali Bulaç, Süleyman Ateş.
+  Plan metni güncellenmeli.
+- **Statik JSON dosya adı çelişkisi.** Plan §5.5 `verse/{s}-{v}.json` (tire) diyor; §20.2
+  "Statik JSON dosyaları: alt çizgi — `verse_2_153.json`" diyor. §20.2 esas alındı (daha
+  spesifik kural). Plan §5.5 düzeltilmeli.
+
+## İzin / iletişim bekleyen
+
+- **Mehmet Okuyan, Mustafa İslamoğlu, Muhammed Esed mealleri** — hak sahibinden yazılı izin
+  gerekiyor. İzin gelmedikçe eklenmez (plan §3.1).
+- **Açık Kuran** — API'nin geri dönüp dönmeyeceği ve veri dump'ı paylaşılıp paylaşılmayacağı.
+  Kullanıcı kendisi iletişim kuracak (karar: 2026-09-03). Yanıt gelirse plan §3 güncellenir.
+- **Diyanet Kur'an Yolu tefsiri** — kullanım şartları, yazılı izin gerekip gerekmediği.
 
 ## Teknik borç
 
 - **Astro 5 → 7 yükseltmesi.** Astro 6+ Node ≥22.12 istiyor; sunucudaki Node 20.20.2'ye pm2'deki
   üretim uygulamaları bağlı. Proje-yerel Node 22 (fnm) ile ayrıştırılabilir.
   Bkz. `docs/DEPLOY_REPORT.md` §2.2.
+- **Türkçe kök anlamları (`root.meaning_tr`) için kaynak.** Açık Kuran kapandığı için bu veri
+  kaynaksız kaldı. Quranic Arabic Corpus morfolojiyi verir ama Türkçe anlam vermez.
+  **Faz 3 (Kök Kelime Keşfi) için ön koşul.**
+
+## Faz 4 — depolama
+
+- **Arapça kıraat sesi için harici nesne depolaması (Cloudflare R2 veya CDN).** Tek kârînin tam
+  kaydı 500 MB – 2 GB; 3-4 kârî ile 2-8 GB. Sunucuda 41 GB boş alan var ama ses dosyalarını
+  statik `dist/` içinde tutmak hem yedekleme hem dağıtım açısından yanlış. Plan §6'daki
+  "alternatif/yedek: Cloudflare Pages + R2" notu bu ihtiyacı karşılıyor.
+  Metin verisi için gerekmiyor: `cache/` 3,9 MB, tam veri setiyle en kötü ~100 MB
+  (ölçüm: `docs/DEPLOY_REPORT.md` §3.4).
 
 ## Özellik önerileri
 

@@ -195,3 +195,56 @@ Her iki kaynak `source` tablosuna kaydedildi.
 `verse.transcription_tr`, `verse.transcription_en`.
 
 **`cache/` boyutu:** ~3,9 MB (4 Tanzil XML + 1 Quran.com JSON). Git'e girmez.
+
+### 3.4 2026-09-03 — Faz 0, Adım 5 (kaynak araştırması, salt okuma)
+
+Dosya değişikliği yok; yalnızca araştırma ve karar kaydı.
+
+**Açık Kuran API'si kapanmıştır.** Kanıt:
+
+- `api.acikkuran.com` ve `test-db.acikkuran.com` → NXDOMAIN (1.1.1.1 dahil)
+- GitHub issue [acik-kuran/acikkuran-api#20](https://github.com/acik-kuran/acikkuran-api/issues/20),
+  2026-08-08'den beri açık; kullanıcılar aynı DNS hatasını bildiriyor, bakımcıdan yanıt yok
+- API deposuna son commit 2024-12-25
+- Issue #16 (2026-01-23) bakımcı yanıtı: prod veritabanı dışarı açılamaz, test DB'de eski veri var
+- Depo README'si: "do not use this data in your own application"
+
+Kullanıcılar `acikkuran.com/_next/data/<buildId>/…` iç uçlarını kazıyor. **Kullanılmayacaktır:**
+yayınlanmamış iç uç, her deploy'da değişen build ID'ye bağlı, gönüllü servise izinsiz yük —
+plan §20.1 "kaynak nezaketi" ile çelişir.
+
+**Yerine seçilen kaynak: Tanzil çeviri seti (10 Türkçe meal).** Onunun da indirilebilirliği
+doğrulandı (`https://tanzil.net/trans/tr.*`, hepsi HTTP 200):
+
+Diyanet İşleri · Diyanet Vakfı · Elmalılı Hamdi Yazır · Ali Bulaç · Süleyman Ateş ·
+Abdulbaki Gölpınarlı · Yaşar Nuri Öztürk · Suat Yıldırım · Edip Yüksel · Muhammet Abay (çeviriyazı)
+
+Şart: atıf + ticari olmayan kullanım. Proje ticari değildir ve `data/` lisansı CC BY-NC-SA 4.0'dır.
+
+**Ek kazanım:** `tr.transliteration` (Muhammet Abay Çeviriyazı) `verse.transcription_tr` alanını
+doldurur; plan §2.5'in "Arapça bilmeyenler için transkripsiyon her zaman görünür" şartı karşılanır.
+
+**KARAR — plan §3.1 öncelikli meal listesi güncellendi.** Mehmet Okuyan ve Mustafa İslamoğlu
+hiçbir açık lisanslı sette yok (yalnızca Açık Kuran'da vardı); Muhammed Esed yalnızca lisansı
+doğrulanamayan topluluk derlemesinde var. Yeni öncelik sırası:
+
+| priority | Meal | Kaynak |
+|---|---|---|
+| 1 | Diyanet İşleri | Tanzil `tr.diyanet` |
+| 2 | Elmalılı Hamdi Yazır | Tanzil `tr.yazir` |
+| 3 | Ali Bulaç | Tanzil `tr.bulac` |
+| 4 | Süleyman Ateş | Tanzil `tr.ates` |
+
+Okuyan / İslamoğlu / Esed yalnızca hak sahibinden yazılı izinle eklenir (plan §3.1 telif kuralı).
+
+**Reddedilen kaynak:** `fawazahmed0/quran-api` — 31 Türkçe meal (Esed dahil) sunuyor ancak meal
+başına lisans doğrulanamıyor. Plan §3.1 "lisansı belirsiz meal import edilmez" gereği kullanılmaz.
+
+**Faz 3 riski:** Açık Kuran'ın `/root` ve `/verseparts` uçları Kök Kelime Keşfi'nin (plan §2.5)
+kaynağıydı. Quranic Arabic Corpus (GPL, atıf) morfolojiyi verir ama **Türkçe kök anlamı vermez**;
+`root.meaning_tr` için ayrı kaynak gerekecek. BACKLOG'a işlendi.
+
+**Depolama ölçümü (kullanıcı sorusu üzerine):** `cache/` 3,9 MB · `node_modules` 234 MB ·
+build DB 17 MB · boş disk 41 GB. Veri değil bağımlılıklar yer kaplıyor. `cache/` atılabilir ve
+yeniden üretilebilir (`rm -rf cache/ && pnpm import`), bu yüzden harici nesne depolaması (R2)
+şu aşamada eklenmemektedir — build'i harici servise bağımlı kılmak plan §1.7 ve §6 ile çelişir.
