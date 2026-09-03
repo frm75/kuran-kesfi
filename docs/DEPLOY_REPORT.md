@@ -1,0 +1,135 @@
+# DEPLOY_REPORT — Sunucu Envanteri ve Kurulum Kayıtları
+
+> Plan §21.1 gereği tutulan kayıt. Her kurulum/servis işleminden sonra bu dosya güncellenir.
+
+## 1. Envanter — 2026-09-03
+
+**Makine:** `31-57-33-232` · Ubuntu 22.04.5 LTS · VMware VM · 4 vCPU · 15 GiB RAM · disk 128 G (%67 dolu, 42 G boş)
+**Panel:** aaPanel (`btpanel.service`) — nginx 1.30.2, conf kökü `/www/server/nginx/conf`, vhost'lar `/www/server/panel/vhost/nginx/`
+**Toolchain:** Node v20.20.2 · npm 10.8.2 · git 2.34.1 · Python 3.10.12 · psql 16.14 (istemci) · Docker Compose v5.1.4
+
+### 1.1 Kullanımdaki TCP portları (`ss -tlnp`)
+
+| Port | Süreç | Not |
+|---|---|---|
+| 22 | sshd | |
+| 25, 587 | sendmail-mta | localhost |
+| 80, 443 | nginx | ana proxy, HTTP/2 + HTTP/3 (QUIC) |
+| 888 | nginx | aaPanel dahili |
+| 2379, 2380 | etcd | Patroni DCS |
+| 3500 | node (esenteg-api) | pm2 |
+| 3600, 3800 | next-server | pm2 — esenteg-web, esenteg-storefront |
+| 5010 | haproxy | postgres-primary |
+| 5011 | haproxy | postgres-replicas |
+| 5433 | postgres (Patroni) | **bu makine Sync Standby — salt okunur** |
+| 6390 | redis-server | esenteg |
+| 6391 | haproxy | redis-master |
+| 7001 | haproxy | stats |
+| 8009 | patroni | REST API |
+| 9100 / 9121 / 9187 | node / redis / postgres exporter | Prometheus |
+| 12911, 21941, 33420, 37735 | VS Code server, agent | geçici |
+| 15432, 16379, 18080 | docker-proxy | esanalist yığını |
+| 26390 | redis-sentinel | esenteg |
+| 33832 | webserver | aaPanel |
+| 42000 / 42010 / 42020 / 42030 / 42040 / 42051 / 42052 | docker-proxy | fundos yığını (web/api/quant/ai/ingest/redis/qdrant) |
+
+**Bu proje için seçilen portlar:**
+
+| Değişken | Port | Durum | Not |
+|---|---|---|---|
+| `DB_PORT` | 4322 | ayrıldı | build DB'si, yalnızca `127.0.0.1` |
+| `SITE_PORT` | 4321 | ayrıldı | yalnızca `astro dev`; üretimde port kullanılmaz |
+| `BOT_PORT` | 4330 | ayrıldı | Faz 3, henüz kullanılmıyor |
+
+Üretimde site statiktir; nginx `dist/`'i doğrudan servis eder, Node süreci ve port gerekmez.
+
+### 1.2 Servisler
+
+- **systemd:** nginx, haproxy, etcd, patroni, redis-esenteg + sentinel, docker, containerd, pm2-root, node_exporter, redis_exporter, postgres_exporter, btpanel, sendmail, certbot.timer
+- **pm2 (root):** `esenteg-api`, `esenteg-web`, `esenteg-storefront`, modül `pm2-logrotate`
+- **docker:** esanalist (api, worker, scheduler, pg, redis) · fundos (web, api, quant, ai, ingest, redis, qdrant, tefas_session)
+- **cron:** `disk-guard.sh`, `node2-watchdog.sh`, `esanalist-docker-cleanup.sh`, aaPanel job; `/etc/cron.d`'de pgbackrest, patroni-failback, etcd-leader-guard, esenteg-dns-failover, web-failover, pg-archive-retention, pg-index-usage, pg-sync-jobs-retention
+
+`kuran-` önekli hiçbir servis, timer veya cron yok — ad çakışması yok.
+
+### 1.3 Mevcut kurankesfi.tr yapılandırması
+
+- Vhost: `/www/server/panel/vhost/nginx/kurankesfi.tr.conf` (aaPanel tarafından yönetiliyor)
+- Web kökü: `/www/wwwroot/kurankesfi.tr`
+- SSL: `/www/server/panel/vhost/cert/kurankesfi.tr/{fullchain,privkey}.pem` — geçerli, `certbot.timer` aktif
+- DNS: `kurankesfi.tr` ve `www.kurankesfi.tr` → `31.57.33.232` ✓
+- Loglar: `/www/wwwlogs/kurankesfi.tr.log`, `kurankesfi.tr.error.log`
+
+### 1.4 Dış erişim (import kaynakları)
+
+| Kaynak | Durum |
+|---|---|
+| `tanzil.net` | 200 ✓ |
+| `api.quran.com` | çözümleniyor ✓ |
+| `corpus.quran.com` | çözümleniyor ✓ |
+| `registry.npmjs.org` | 200 ✓ |
+| `api.acikkuran.com` | **NXDOMAIN** ✗ — bkz. §2.3 |
+
+---
+
+## 2. Kritik bulgular
+
+### 2.1 Bu makinedeki PostgreSQL üretim HA cluster'ının standby'ı
+
+Patroni cluster `esenteg-cluster`:
+
+| Üye | Host | Rol | Durum |
+|---|---|---|---|
+| node1 | 31.57.33.232:5433 (bu makine) | Sync Standby | streaming, **salt okunur** |
+| node2 | 89.35.52.143:5433 | Leader | running |
+
+HAProxy `:5010` primary'ye, `:5011` replica'lara yönlendiriyor. Bu cluster esenteg üretimidir; pgbackrest ve failover cron'ları ona bağlıdır.
+
+**Karar:** Build veritabanı bu cluster'a açılmaz. Yerine izole bir Docker PostgreSQL kullanılır (`kuran-pg`, `127.0.0.1:4322`), yalnızca build makinesinde çalışır. Plan §6 ile uyumludur: "PostgreSQL yalnızca build aşamasında; üretimde veritabanı yok."
+
+### 2.2 Node sürümü Astro'yu 5.x'te sınırlıyor
+
+Sistem Node v20.20.2'dir ve pm2'deki üç üretim uygulaması ona bağlıdır; yükseltilmedi.
+
+| Paket | Seçilen | Neden |
+|---|---|---|
+| pnpm | 10.34.5 | `engines.node >=18.12` — Node 20 uyumlu. Corepack'in çektiği pnpm 11 Node ≥22.13 istiyordu ve `ERR_UNKNOWN_BUILTIN_MODULE: node:sqlite` ile çöküyordu. |
+| Astro | 5.18.2 | Astro 6 ve 7 `engines.node >=22.12.0` istiyor. 5.18.2, `18.20.8 \|\| ^20.3.0 \|\| >=22.0.0` destekliyor. |
+
+Astro 7'ye geçmek istenirse proje-yerel Node 22 (fnm/nvm) kurulması gerekir; sistem Node'una dokunmadan yapılabilir. Astro 5 bu proje için (statik çıktı, island mimarisi, content collections) yeterlidir.
+
+### 2.3 `api.acikkuran.com` erişilemiyor
+
+Sunucudan ve 1.1.1.1'den **NXDOMAIN**. `acikkuran.com` ayakta (200) ancak `/api/surahs` 404 döndürüyor.
+
+Bu adres planın §3'teki ana meal, kök ve `verse_part` kaynağıdır. **Karar:** Faz 0 Tanzil verisiyle sürdürülür (Arapça metin, sure/ayet metadata, nüzul sıraları); Açık Kuran'ın yeni endpoint'i veya indirilebilir dump'ı ayrıca araştırılıp raporlanacaktır. Sonuç olumsuzsa Quran.com API + Quranic Arabic Corpus'a geçilir ve plan §3 tablosu güncellenir.
+
+### 2.4 Deploy kökü
+
+Plan §21.2 `/opt/kuran/dist` diyor; aaPanel vhost'u `/www/wwwroot/kurankesfi.tr` gösteriyor ve panelden vhost yeniden yazıldığında elle yapılan root değişikliği kaybolur.
+
+**Karar:** Kaynak kod `/opt/kuran`'da kalır; build çıktısı `/www/wwwroot/kurankesfi.tr`'ye atomik olarak taşınır (`dist_new` → `mv`). Vhost dosyasına dokunulmaz.
+
+### 2.5 Proje kapsamı dışı güvenlik notu
+
+`/etc/haproxy/haproxy.cfg` içinde Redis AUTH parolası düz metin olarak duruyor (`tcp-check send AUTH ...`). Bu projenin kapsamı dışındadır; dosya izinlerinin gözden geçirilmesi önerilir.
+
+---
+
+## 3. Yapılan değişiklikler
+
+### 3.1 2026-09-03 — Faz 0, Adım 0-1-2
+
+**Sunucuya eklenen:** yalnızca `/opt/kuran/` altındaki yeni dosyalar.
+**Değiştirilen mevcut yapılandırma:** yok. Nginx, systemd, cron, mevcut veritabanları ve pm2 uygulamalarına dokunulmadı.
+
+| İşlem | Ayrıntı |
+|---|---|
+| pnpm kurulumu | `corepack prepare pnpm@10.34.5 --activate` → `~/.cache/node/corepack` |
+| Repo | `/opt/kuran` — pnpm workspaces, git deposu |
+| Astro telemetri | Kapatıldı (`astro telemetry disable`) + `ASTRO_TELEMETRY_DISABLED=1` build scriptlerine gömüldü — plan §1.3 "takip yok" |
+| Kopyalanan | `CLAUDE.md`, `PROJE_PLANI.md` → `/opt/kuran/` ve `/opt/kuran/docs/` |
+
+**Yedek alınan dosya:** yok (mevcut hiçbir dosya değiştirilmedi).
+
+**Açık iş:** `/www/wwwroot/kurankesfi.tr/` içindeki `CLAUDE.md` ve `PROJE_PLANI.md` hâlâ web kökündedir ve dışarıdan indirilebilir durumdadır. Deploy adımında (Faz 0, adım 8) web kökü temizlenirken kaldırılacaktır.

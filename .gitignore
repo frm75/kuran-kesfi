@@ -1,0 +1,35 @@
+# bagimliliklar
+node_modules/
+.pnpm-store/
+
+# build ciktilari
+dist/
+dist_new/
+.astro/
+apps/web/public/data/
+*.tsbuildinfo
+
+# indirilen ham kaynak veri (repoya girmez, plan 20.1)
+cache/
+
+# sirlar ve ortam
+.env
+.env.*
+!.env.example
+
+# import raporlari
+reports/
+
+# gecici gorsel uretim alani
+data/images/tmp/
+
+# editor / isletim sistemi
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# loglar
+*.log
+npm-debug.log*
+pnpm-debug.log*

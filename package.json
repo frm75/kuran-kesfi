@@ -1,0 +1,19 @@
+{
+  "name": "kuran-kesfi",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Kur'an-i Kerim Kesif Platformu",
+  "license": "MIT",
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": ">=20.11.0"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @kuran/web dev",
+    "build": "pnpm --filter @kuran/schema build && pnpm --filter @kuran/web build",
+    "typecheck": "pnpm -r typecheck",
+    "import": "echo \"import scriptleri henuz eklenmedi (Faz 0 adim 4)\" && exit 1",
+    "db:up": "docker compose -f infra/db/docker-compose.yml up -d",
+    "db:down": "docker compose -f infra/db/docker-compose.yml down"
+  }
+}

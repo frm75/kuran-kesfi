@@ -1,0 +1,25 @@
+{
+  "name": "@kuran/web",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Kur'an-i Kerim Kesif Platformu — Astro statik site",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev --port ${SITE_PORT:-4321}",
+    "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
+    "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview --port ${SITE_PORT:-4321}",
+    "typecheck": "ASTRO_TELEMETRY_DISABLED=1 astro check"
+  },
+  "dependencies": {
+    "@kuran/schema": "workspace:*",
+    "astro": "^5.18.2"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^20.19.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3"
+  }
+}

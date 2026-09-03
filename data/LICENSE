@@ -1,0 +1,29 @@
+# data/ klasörü lisansı — CC BY-NC-SA 4.0
+
+Bu klasördeki tüm veri (kıssa, konum, kavram, ilke, zaman çizelgesi ve elle
+derlenen diğer kayıtlar) **Creative Commons Attribution-NonCommercial-ShareAlike
+4.0 International (CC BY-NC-SA 4.0)** lisansı ile yayınlanmaktadır.
+
+Lisans metni: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr
+Özet: https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr
+
+## Neden bu lisans
+
+Proje, Açık Kuran veri setini (CC BY-NC-SA 4.0) kullanmaktadır. ShareAlike
+şartı gereği türetilen veri de aynı lisansla dağıtılır. Karar gerekçesi:
+`docs/PROJE_PLANI.md` §11.
+
+## Kapsam
+
+- **Bu lisans:** `data/` altındaki tüm dosyalar ve bunlardan üretilen statik
+  JSON çıktıları (`apps/web/public/data/`).
+- **Bu lisans DEĞİL:** Depodaki kod MIT lisanslıdır; bkz. kökteki `LICENSE`.
+
+## Üçüncü taraf kaynaklar
+
+`data/` altındaki her kaynaklı kayıt bir `source_id` taşır ve ilgili kaynağın
+kendi lisansına tabidir. Kaynak listesi ve lisansları için bkz.
+`docs/PROJE_PLANI.md` §3.
+
+Lisansı belirsiz meal, tefsir, ses veya görsel bu klasöre eklenmez
+(`docs/PROJE_PLANI.md` §3.1 Telif Kuralı).

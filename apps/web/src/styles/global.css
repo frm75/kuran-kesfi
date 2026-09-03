@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+/* Tasarim dili (renk token'lari, tip olcegi, bosluk olcegi) docs/DESIGN.md'de
+   tanimlanip onaylandiktan sonra buraya @theme blogu olarak eklenecek (plan 22).
+   Bu dosya su an yalnizca Tailwind'i devreye alir. */
