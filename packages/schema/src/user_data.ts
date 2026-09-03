@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { discoveryNodeType, isoTimestamp, nonEmptyText, slug, verseKey } from "./common.js";
+import { discoveryNodeType, isoTimestamp, nonEmptyText, slug } from "./common.js";
+import { verseKeyRef } from "./references.js";
 
 /**
  * Kullanici verisi — plan 4.6 ve 12.15.
@@ -11,7 +12,7 @@ import { discoveryNodeType, isoTimestamp, nonEmptyText, slug, verseKey } from ".
 
 export const note = z.object({
   id: z.string(),
-  verseKey,
+  verseKey: verseKeyRef,
   text: nonEmptyText,
   createdAt: isoTimestamp,
   updatedAt: isoTimestamp,
@@ -19,7 +20,7 @@ export const note = z.object({
 export type Note = z.infer<typeof note>;
 
 export const bookmark = z.object({
-  verseKey,
+  verseKey: verseKeyRef,
   createdAt: isoTimestamp,
   label: z.string().nullable(),
 });
@@ -39,7 +40,7 @@ export const memorizationReview = z.object({
 });
 
 export const memorization = z.object({
-  verseKey,
+  verseKey: verseKeyRef,
   ease: z.number(),
   intervalDays: z.number().nonnegative(),
   nextReviewAt: isoTimestamp,
@@ -89,7 +90,7 @@ export type DiscoveryPath = z.infer<typeof discoveryPath>;
 
 /** Ayet karsilastirma sepeti — en fazla 8 ayet (plan 12.8b). */
 export const comparisonBasket = z.object({
-  verseKeys: z.array(verseKey).max(8, "sepete en fazla 8 ayet eklenebilir (plan 12.8b)"),
+  verseKeys: z.array(verseKeyRef).max(8, "sepete en fazla 8 ayet eklenebilir (plan 12.8b)"),
   updatedAt: isoTimestamp,
 });
 export type ComparisonBasket = z.infer<typeof comparisonBasket>;

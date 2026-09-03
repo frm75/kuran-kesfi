@@ -11,6 +11,22 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./references": {
+      "types": "./dist/references.d.ts",
+      "import": "./dist/references.js"
+    },
+    "./scholar-notes": {
+      "types": "./dist/scholar-notes.d.ts",
+      "import": "./dist/scholar-notes.js"
+    },
+    "./export": {
+      "types": "./dist/export.d.ts",
+      "import": "./dist/export.js"
+    },
+    "./core": {
+      "types": "./dist/core.d.ts",
+      "import": "./dist/core.js"
     }
   },
   "files": [
@@ -18,12 +34,15 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json",
+    "test:smoke": "tsx src/__tests__/schema.smoke.ts"
   },
   "dependencies": {
     "zod": "^4.5.4"
   },
   "devDependencies": {
+    "@types/node": "^20.19.0",
+    "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   }
 }

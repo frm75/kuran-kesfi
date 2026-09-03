@@ -71,11 +71,13 @@ export function parseVerseRef(ref: VerseRef): ParsedVerseRef {
   return { surahNumber, verseStart, verseEnd };
 }
 
-/** Ayet anahtari — tarayici tarafinda (IndexedDB) ve URL'de kullanilir: "2:153". */
-export const verseKey = z
-  .string()
-  .regex(/^\d{1,3}:\d{1,3}$/, "ayet anahtari '2:153' biciminde olmali");
-export type VerseKey = z.infer<typeof verseKey>;
+/**
+ * Ayet anahtari ("2:153") burada TANIMLANMAZ.
+ *
+ * Tek tanim `references.ts` icindeki `verseKeyRef`'tir: brand'li ve sure ust
+ * sinirini (114) dogru uygulayan surum. Burada bir zamanlar `^\d{1,3}:\d{1,3}$`
+ * vardi; o regex `115:1` ve `999:1` gibi gecersiz anahtarlari kabul ediyordu.
+ */
 
 /** ISO 8601 zaman damgasi. */
 export const isoTimestamp = z.iso.datetime({ offset: true });

@@ -1,25 +1,31 @@
 /**
  * @kuran/schema — Zod semalari ve paylasilan tipler.
  *
- * Kapsam: plan 4 (cekirdek), 12.15 (kesif katmani), 18.4 (ilkeler),
- * 19.6 (abonelik), 4.6 (tarayici verisi).
+ * ## Alt yollar (iki proje icin)
  *
- * Bu semalar iki yerde kullanilir:
- *   1. scripts/import — elle hazirlanan data/** JSON dosyalarini import
- *      oncesi dogrular (plan 5.4, 10).
- *   2. scripts/build — referans linter, uretilen statik JSON'lari dogrular
- *      (plan 20.1). Linter gecmeden build tamamlanmaz.
+ * Yerel `kuran-extract` projesi bu paketi git submodule ile baglar ve YALNIZCA
+ * su ucunu import eder — cekirdege hic dokunmaz (GOREV 01):
+ *
+ *   @kuran/schema/references      is anahtarlari (brand + regex)
+ *   @kuran/schema/scholar-notes   §23.2 hoca notlari
+ *   @kuran/schema/export          projeler arasi JSON zarf sozlesmesi
+ *
+ * Ana site ayrica sunlari kullanir:
+ *
+ *   @kuran/schema/core            §4, §12.15, §18.4, §19.6 cekirdek
+ *   @kuran/schema                 hepsi (bu dosya)
+ *
+ * ## Kullanim yerleri
+ *
+ *   scripts/import   elle hazirlanan data/** dosyalarini import oncesi dogrular
+ *   scripts/build    referans linter; uretilen statik JSON'lari dogrular
+ *   scripts/sync     inbox/ hoca notu paketlerini dogrular
+ *   apps/web         statik JSON tuketimi
  */
 
-export * from "./common.js";
-export * from "./source.js";
-export * from "./quran.js";
-export * from "./word.js";
-export * from "./story.js";
-export * from "./concept.js";
-export * from "./timeline.js";
-export * from "./principle.js";
-export * from "./discovery.js";
-export * from "./subscription.js";
+export * from "./core.js";
+export * from "./references.js";
+export * from "./scholar-notes.js";
+export * from "./export.js";
 export * from "./user_data.js";
 export * from "./static_data.js";
