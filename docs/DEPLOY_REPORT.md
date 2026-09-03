@@ -349,3 +349,42 @@ açıkça tanıtır.
 
 **Önbelleğe gzip desteği** `packages/pipeline/src/cache.ts` içine eklendi (`gzip: true`);
 binlerce küçük JSON için diskte ~%75 tasarruf.
+
+### 3.7 2026-09-03 — GÖREV 01 + GÖREV 02 (otopilot)
+
+Kullanıcı `GOREV_01_schema_zod.md`, `GOREV_02_migration_uretici.md` ve
+`SD01_sema_degisikligi.md` dosyalarını okumamı ve otopilotta devam etmemi istedi.
+
+**Sunucuya eklenen:** yok. Yalnızca repo dosyaları. Geçici `kuran_migtest`
+veritabanı oluşturulup doğrulama sonrası silindi.
+
+**GÖREV 01** — `packages/schema/src/`: `references.ts`, `scholar-notes.ts`,
+`export.ts`, `core.ts`. 29 duman testi, hepsi geçti; GÖREV 01 §Doğrulama'daki
+7 maddenin tamamı kapsandı.
+
+Çakışma çözümü: `VerseKey` hem `common.ts` hem `references.ts`'te tanımlıydı.
+`common.ts`'teki kaldırıldı — regexi `^\d{1,3}:\d{1,3}$` idi ve `115:1`,
+`999:1` gibi geçersiz anahtarları kabul ediyordu. Bu, kullanıcı verisi
+doğrulamasında gerçek bir hataydı.
+
+**SD-01** `docs/PROJE_PLANI.md` §23.2'ye işlendi (SD-01 uygulama sırası adım 1;
+GÖREV 02'nin ön koşuluydu). §23 bölümü dokümanda hiç yoktu.
+
+**GÖREV 02** — `packages/schema/src/generate/` (7 dosya) + üretilen
+`migrations/{postgres,sqlite}/001_init.sql`.
+
+Doğrulama, GÖREV 02 §Doğrulama'daki 6 maddenin tamamı:
+
+| # | Kontrol | Sonuç |
+|---|---|---|
+| 1 | `pnpm schema:generate` iki dosya üretir | 126 + 153 satır |
+| 2 | PostgreSQL'de boş test DB'de çalışır | 10 tablo ✓ |
+| 3 | SQLite'ta çalışır | 12 tablo ✓ |
+| 4 | `PRAGMA foreign_key_check` | temiz ✓ |
+| 5 | `--check` elle düzenlemeyi yakalar | ✓ |
+| 6 | Tablo sırası FK'den çözülür, döngü hata verir | ✓ |
+
+**Açık karar:** GÖREV 02 / N6 postgres migration'ının tüm tabloları içermesini
+söylüyor; bu `infra/db/schema.sql`'in değiştirilmesi demek. Kullanıcının bu
+oturumdaki kapsam kararı ("yalnızca paylaşılan hoca notu tabloları") esas
+alındı, tek taraflı değiştirilmedi. Ayrıntı `docs/BACKLOG.md`.

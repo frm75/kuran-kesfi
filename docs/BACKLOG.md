@@ -39,6 +39,38 @@
   oturumda bir kez oldu, git'ten geri alındı. Script `data:import` olarak adlandırıldı; plan
   metni `pnpm data:import && pnpm build` olarak düzeltilmeli.
 
+## Kullanıcıdan bekleyen — GÖREV 01/02 sonrası
+
+- **Plan §23'ün eksik bölümleri.** SD-01 içeriği §23.2 olarak plana işlendi
+  (2026-09-03). §23.1 (amaç, kapsam, içerik kuralları) ve §23.3+ hâlâ yok.
+- **`scholar-notes.ts`'te ÇIKARIMLA doldurulan alanlar.** GÖREV 01 tablo
+  adlarını ve enum'ları veriyordu ama her kolonu değil; §23.2 elde olmadığı için
+  aşağıdakiler makul varsayımla yazıldı ve §23 geldiğinde karşılaştırılmalıdır:
+
+  | Tablo | Çıkarımla eklenen alanlar |
+  |---|---|
+  | `scholar` | `channelName`, `channelUrl`, `note` |
+  | `videoSource` | `title`, `url`, `publishedAt`, `durationSec` |
+  | `transcript` | `source`, `language`, `createdAt` |
+  | `transcriptSegment` | `startSec`, `endSec`, `text` |
+  | `scholarNote` | `createdAt`, `updatedAt` |
+  | `scholarNoteRelationRow` | `note` (serbest açıklama) |
+
+  `export.ts`'e ayrıca `linked_verse_roles` eklendi: GÖREV 01 `linked_verses`'i
+  düz `VerseKey[]` olarak tanımlıyor ama `ScholarNoteVerse` bir `role` alanı
+  taşıyor; rol bilgisi aktarılmazsa export'ta kaybolurdu. Onay bekliyor.
+
+- **GÖREV 02 / N6 kapsam çelişkisi.** GÖREV 02, `migrations/postgres/001_init.sql`
+  dosyasının **tüm** tabloları (core + scholar-notes) içermesini söylüyor. Bu,
+  çalışan `infra/db/schema.sql`'in (35 tablo, 10 enum, ~40 CHECK,
+  `blank_trim_set()`) üretilen dosyayla değiştirilmesi demektir. Kullanıcı bu
+  oturumda kapsamı **"yalnızca paylaşılan hoca notu tabloları"** olarak seçmişti.
+  Şu an §23.2 tabloları üretiliyor; çekirdek elle yazılı kalıyor.
+  **Karar gerekiyor:** çekirdek de üretilsin mi? Üretilecekse mevcut
+  `schema.sql`'deki kısıtların (verse_id formülü, `blank_trim_set`,
+  `surah_section_source_required` vb.) `tables.ts` metadata'sına taşınması
+  gerekir — aksi hâlde veri bütünlüğü zayıflar.
+
 ## Kullanıcıdan bekleyen
 
 - **Plan §23 — Hoca Notları.** `CLAUDE.md` §23.2'ye atıf yapıyor ama `docs/PROJE_PLANI.md`
