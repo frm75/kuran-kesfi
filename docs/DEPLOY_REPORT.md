@@ -171,3 +171,27 @@ veriyi reddetti. Test verisi `pnpm db:reset` ile temizlendi.
   `related_verse_ids` dizileri de bağlantı tablolarına açıldı.
 - `subscription` tablosu bu veritabanında **değildir**; ayrı bot veritabanı şeması
   `infra/db/bot_schema.sql` içindedir (plan §19.6, Faz 3).
+
+### 3.3 2026-09-03 — Faz 0, Adım 4 (Tanzil import)
+
+**Sunucuya eklenen:** yok. Yalnızca repo dosyaları, `cache/` içeriği ve build veritabanı satırları.
+
+`scripts/import` paketi (`@kuran/import`) eklendi: `lib/env.ts`, `lib/cache.ts`, `lib/db.ts`,
+`lib/slug.ts`, `lib/log.ts`, `tanzil.ts`.
+
+**Sonuç:** 114 sure, 6236 ayet, 604 sayfa, 30 cüz, 15 secde ayeti — rapor `reports/tanzil.md`,
+0 sorun. İkinci çalıştırma tamamen `cache/`'ten okudu ve veri karması (md5) değişmedi:
+**idempotentlik doğrulandı.**
+
+**Doğrulanan örnekler:** `2:142` → cüz 2 · `2:255` → sayfa 42 · `78:1` → cüz 30 ·
+`32:15` → secde · `114:6` → sayfa 604 · `12` → slug `yusuf-suresi` (plan §20.2 örneğiyle birebir).
+`20:1` (طه) üç metin biçiminde de aynıdır — mukattaa harfleri, beklenen davranış.
+
+**Türkçe sure adları kaynağı:** Tanzil metadata'sında Türkçe ad yok. Quran.com API
+(`/api/v4/chapters?language=tr`) kullanıldı; iki kaynağın nüzul sırası birebir uyuşuyor.
+Her iki kaynak `source` tablosuna kaydedildi.
+
+**Boş bırakılan alanlar (ayrı kaynak gerekiyor):** `surah.revelation_order_noldeke`,
+`verse.transcription_tr`, `verse.transcription_en`.
+
+**`cache/` boyutu:** ~3,9 MB (4 Tanzil XML + 1 Quran.com JSON). Git'e girmez.

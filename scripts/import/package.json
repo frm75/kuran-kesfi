@@ -1,0 +1,25 @@
+{
+  "name": "@kuran/import",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Kaynak import scriptleri — yalnizca build makinesinde calisir",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "tanzil": "tsx tanzil.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@kuran/schema": "workspace:*",
+    "dotenv": "^17.2.4",
+    "fast-xml-parser": "^5.4.0",
+    "p-limit": "^7.1.1",
+    "pg": "^8.16.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.0",
+    "@types/pg": "^8.15.6",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}

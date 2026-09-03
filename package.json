@@ -12,7 +12,7 @@
     "dev": "pnpm --filter @kuran/web dev",
     "build": "pnpm --filter @kuran/schema build && pnpm --filter @kuran/web build",
     "typecheck": "pnpm -r typecheck",
-    "import": "echo \"import scriptleri henuz eklenmedi (Faz 0 adim 4)\" && exit 1",
+    "import": "pnpm --filter @kuran/import tanzil",
     "db:up": "docker compose --env-file .env -f infra/db/docker-compose.yml up -d",
     "db:down": "docker compose --env-file .env -f infra/db/docker-compose.yml down",
     "db:reset": "docker compose --env-file .env -f infra/db/docker-compose.yml down -v && docker compose --env-file .env -f infra/db/docker-compose.yml up -d",

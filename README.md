@@ -45,7 +45,7 @@ chmod 600 .env
 | `pnpm db:up` / `pnpm db:down` | Build veritabanı container'ını başlat / durdur |
 | `pnpm db:reset` | Veritabanını sil ve şemayı sıfırdan kur |
 | `pnpm db:psql` | Veritabanına psql ile bağlan |
-| `pnpm import` | Kaynak import scriptleri *(adım 4'te eklenecek)* |
+| `pnpm import` | Tanzil import — `surah` + `verse` (bkz. `scripts/import/README.md`) |
 
 ### Build veritabanı
 
