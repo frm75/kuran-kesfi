@@ -140,6 +140,14 @@ function requireSource(slug: string): StaticSource {
 export const getArabicSource = once(() => requireSource("tanzil"));
 
 /**
+ * Ceviriyazinin kaynagi.
+ *
+ * Arapca metinden AYRI bir kayit: ceviriyazi Tanzil'in kendi metni degil,
+ * hazirlayanina (Muhammet Abay) ait. Ayni rozeti kullanmak yanlis atif olurdu.
+ */
+export const getTranscriptionSource = once(() => requireSource("tanzil-transliteration"));
+
+/**
  * Bir mealin kaynagi.
  *
  * authors_index.json'daki `source` alani kaynagin SLUG'idir ("acikkuran").

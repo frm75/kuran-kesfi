@@ -294,6 +294,17 @@
   display: none;
 }
 
+/* --- Çeviriyazı (okunuş) ------------------------------------------------- */
+
+/* Ayet ile meal arasında durur. Gövde metninden ayrışsın diye biraz sönük ve
+   biraz eğik; ama okunacak kadar kontrastlı (--text-muted, AA'yı geçer). */
+.transcription {
+  margin: 0.5rem 0 0;
+  color: var(--color-text-muted);
+  font-style: italic;
+  line-height: var(--text-base--line-height);
+}
+
 /* --- <Translation> ------------------------------------------------------- */
 
 .translation > header {

@@ -23,18 +23,25 @@ import hbPromise, { type Harfbuzz, type ShapedGlyph } from "harfbuzzjs";
  * Glif ID'leri karsilastirilmaz: alt kumeleme glifleri yeniden numaralandirir,
  * esitlik beklenemez. Sayi ve kume dizisi degismezdir.
  *
+ * Ayni yontem Latin tarafina da uygulanir: ceviriyazi ve meal metinleri
+ * Inter alt kumesiyle dizilir ve tam fontla karsilastirilir. Ceviriyazi
+ * ḍ ḥ ḫ ḳ ṣ ṭ ẕ gibi Latin Genisletilmis Ek karakterler kullaniyor; bunlarin
+ * biri dusse ayet okunusu bozuk gorunur ve hicbir sayfa testi bunu yakalamaz.
+ *
  * Kullanim: pnpm --filter @kuran/fonts fonts:verify
  */
 
 const FONTS_DIR = resolve(repoRoot, "apps/web/public/fonts");
 const CACHE_DIR = resolve(repoRoot, "cache/fonts");
-const SURAH_DIR = resolve(repoRoot, "apps/web/public/data/surah");
+const DATA_DIR = resolve(repoRoot, "apps/web/public/data");
+const SURAH_DIR = resolve(DATA_DIR, "surah");
 
 interface Target {
   id: string;
   family: string;
   subsetFile: string;
   upstreamCache: string;
+  script: "arab" | "latn";
 }
 
 const TARGETS: readonly Target[] = [
@@ -43,12 +50,21 @@ const TARGETS: readonly Target[] = [
     family: "Amiri Quran",
     subsetFile: "amiri-quran-arabic.woff2",
     upstreamCache: "amiri-quran.ttf",
+    script: "arab",
   },
   {
     id: "scheherazade-new",
     family: "Scheherazade New",
     subsetFile: "scheherazade-new-arabic.woff2",
     upstreamCache: "scheherazade-new.ttf",
+    script: "arab",
+  },
+  {
+    id: "inter",
+    family: "Inter",
+    subsetFile: "inter-latin.woff2",
+    upstreamCache: "inter.ttf",
+    script: "latn",
   },
 ];
 
@@ -57,24 +73,61 @@ interface Verse {
   text: string;
 }
 
-function loadVerses(): Verse[] {
+interface Corpus {
+  arabic: Verse[];
+  /** Ceviriyazi + ontanimli meal — Latin fontun gercekte dizecegi metin. */
+  latin: Verse[];
+}
+
+function loadCorpus(): Corpus {
   if (!existsSync(SURAH_DIR)) {
     fail(`Uretilmis veri yok: ${SURAH_DIR}\nOnce 'pnpm build:data' calistirin.`);
   }
-  const verses: Verse[] = [];
+  const arabic: Verse[] = [];
+  const latin: Verse[] = [];
+
   for (const name of readdirSync(SURAH_DIR).filter((f) => f.endsWith(".json"))) {
     const surah = JSON.parse(readFileSync(resolve(SURAH_DIR, name), "utf8")) as {
       id: number;
-      verses: { verseNumber: number; textUthmani: string }[];
+      slug: string;
+      nameTr: string;
+      verses: { verseNumber: number; textUthmani: string; transcriptionTr: string | null }[];
     };
     for (const verse of surah.verses) {
-      verses.push({ key: `${surah.id}:${verse.verseNumber}`, text: verse.textUthmani });
+      const key = `${surah.id}:${verse.verseNumber}`;
+      arabic.push({ key, text: verse.textUthmani });
+      if (verse.transcriptionTr !== null) {
+        latin.push({ key: `${key} okunus`, text: verse.transcriptionTr });
+      }
+    }
+    latin.push({ key: `${surah.id} sure adi`, text: `${surah.nameTr} ${surah.slug}` });
+  }
+
+  // Ontanimli mealin tamami: arayuzde en cok gorunen Latin metin bu.
+  const translationDir = resolve(DATA_DIR, "translation");
+  if (existsSync(translationDir)) {
+    const authors = readdirSync(translationDir);
+    const author = authors.includes("diyanet-isleri") ? "diyanet-isleri" : authors[0];
+    if (author !== undefined) {
+      for (const name of readdirSync(resolve(translationDir, author))) {
+        const file = JSON.parse(
+          readFileSync(resolve(translationDir, author, name), "utf8"),
+        ) as { surahId: number; verses: { verseNumber: number; text: string }[] };
+        for (const verse of file.verses) {
+          latin.push({ key: `${file.surahId}:${verse.verseNumber} meal`, text: verse.text });
+        }
+      }
     }
   }
-  return verses;
+
+  return { arabic, latin };
 }
 
-function makeShaper(hb: Harfbuzz, sfnt: Uint8Array): (text: string) => ShapedGlyph[] {
+function makeShaper(
+  hb: Harfbuzz,
+  sfnt: Uint8Array,
+  script: "arab" | "latn",
+): (text: string) => ShapedGlyph[] {
   const blob = hb.createBlob(sfnt);
   const face = hb.createFace(blob, 0);
   const font = hb.createFont(face);
@@ -84,9 +137,9 @@ function makeShaper(hb: Harfbuzz, sfnt: Uint8Array): (text: string) => ShapedGly
     buffer.addText(text);
     // Acikca ayarlaniyor: tahmine birakilirsa metnin ilk karakterine gore
     // degisir ve iki font farkli yollardan gecebilir.
-    buffer.setDirection("rtl");
-    buffer.setScript("Arab");
-    buffer.setLanguage("ar");
+    buffer.setDirection(script === "arab" ? "rtl" : "ltr");
+    buffer.setScript(script === "arab" ? "Arab" : "Latn");
+    buffer.setLanguage(script === "arab" ? "ar" : "tr");
     hb.shape(font, buffer);
     const result = buffer.json();
     buffer.destroy();
@@ -95,8 +148,8 @@ function makeShaper(hb: Harfbuzz, sfnt: Uint8Array): (text: string) => ShapedGly
 }
 
 async function main(): Promise<void> {
-  const verses = loadVerses();
-  info(`${verses.length} ayet dizilecek`);
+  const corpus = loadCorpus();
+  info(`dizilecek metin: ${corpus.arabic.length} Arapca ayet, ${corpus.latin.length} Latin satir`);
 
   const hb: Harfbuzz = await hbPromise;
   info(`HarfBuzz ${hb.version_string()}`);
@@ -113,14 +166,16 @@ async function main(): Promise<void> {
     // HarfBuzz woff2 okumaz; yayinlanan dosyanin TA KENDISI sfnt'ye cevrilir.
     // Boylece testte kullanilan baytlar ile servis edilen baytlar ayni olur.
     const subsetSfnt = await convert(readFileSync(subsetPath), "truetype");
-    const shapeSubset = makeShaper(hb, subsetSfnt);
-    const shapeFull = makeShaper(hb, readFileSync(upstreamPath));
+    const shapeSubset = makeShaper(hb, subsetSfnt, target.script);
+    const shapeFull = makeShaper(hb, readFileSync(upstreamPath), target.script);
+
+    const corpusForTarget = target.script === "arab" ? corpus.arabic : corpus.latin;
 
     let notdef = 0;
     let mismatch = 0;
     const examples: string[] = [];
 
-    for (const verse of verses) {
+    for (const verse of corpusForTarget) {
       const subset = shapeSubset(verse.text);
       const full = shapeFull(verse.text);
 
@@ -148,18 +203,21 @@ async function main(): Promise<void> {
     }
 
     if (notdef === 0 && mismatch === 0) {
-      info(`${target.family.padEnd(18)} ${verses.length} ayet TEMIZ — eksik glif yok, dizgi ayni`);
+      info(
+        `${target.family.padEnd(18)} ${corpusForTarget.length} satir TEMIZ — ` +
+          "eksik glif yok, dizgi ayni",
+      );
     } else {
       failed += 1;
       warn(
-        `${target.family}: ${notdef} ayette eksik glif, ${mismatch} ayette dizgi farki\n` +
+        `${target.family}: ${notdef} satirda eksik glif, ${mismatch} satirda dizgi farki\n` +
           examples.map((line) => `    ${line}`).join("\n"),
       );
     }
   }
 
   if (failed > 0) fail(`${failed} fontta dogrulama basarisiz.`);
-  info("Tum Arapca fontlar dogrulandi.");
+  info("Tum fontlar dogrulandi.");
 }
 
 await main();

@@ -10,6 +10,7 @@ import {
   getAuthorsIndex,
   getSourceForAuthor,
   getSurahsIndex,
+  getTranscriptionSource,
   getVerseDetail,
   sortAuthorsForDisplay,
   verseLabel,
@@ -136,12 +137,18 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
     </header>
 
     {
-      /* Çeviriyazı verisi henüz yok (0/6236). Boş bir satır göstermek yerine
-         hiç gösterilmiyor; eksiklik docs/BACKLOG.md'de kayıtlı. */
+      /* Kaynakta eksikse başlık hiç çizilmez — boş bölüm gösterilmez. */
       verse.transcriptionTr !== null && (
         <section class="mb-8">
           <h2 class="text-lg mb-2">Okunuşu</h2>
-          <p lang="tr" class="m-0">{verse.transcriptionTr}</p>
+          <p lang="tr" class="transcription m-0">{verse.transcriptionTr}</p>
+          <div class="mt-2">
+            <SourceBadge
+              contentClass="kaynakli"
+              sources={[getTranscriptionSource()]}
+              label="Okunuş (çeviriyazı)"
+            />
+          </div>
         </section>
       )
     }

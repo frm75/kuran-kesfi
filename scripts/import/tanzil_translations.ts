@@ -31,8 +31,13 @@ import {
   upsertMany,
   withTransaction,
 } from "@kuran/pipeline";
-
-const EXPECTED_VERSE_COUNT = 6236;
+import {
+  EXPECTED_VERSE_COUNT,
+  parseTanzilText,
+  tanzilCacheName,
+  tanzilTextUrl,
+  type ParsedTanzilText,
+} from "./lib/tanzil_text.js";
 
 const TRANSLATIONS_TERMS_URL = "https://tanzil.net/trans/";
 
@@ -78,77 +83,6 @@ const TRANSLITERATION = {
   displayName: "Çeviriyazı — Muhammet Abay",
 } as const;
 
-const transUrl = (tanzilId: string): string => `https://tanzil.net/trans/${tanzilId}`;
-const cacheName = (tanzilId: string): string => `tanzil_${tanzilId.replace(".", "_")}.txt`;
-
-// -----------------------------------------------------------------------------
-// Ayrisitirma
-// -----------------------------------------------------------------------------
-
-interface ParsedTranslation {
-  /** "surah:verse" -> metin */
-  texts: Map<string, string>;
-  /** Dosya sonundaki yorum blogundan okunan ust bilgi */
-  meta: Record<string, string>;
-}
-
-/**
- * Tanzil ceviri dosyasi bicimi:
- *   1|1|Rahman ve Rahim olan Allah'in adiyla:
- *   ...
- *   # --------------------------------------------------
- *   #  Name: Diyanet İşleri
- *   #  ID: tr.diyanet
- */
-function parseTranslationFile(body: string, tanzilId: string): ParsedTranslation {
-  const texts = new Map<string, string>();
-  const meta: Record<string, string> = {};
-
-  for (const rawLine of body.split("\n")) {
-    const line = rawLine.trim();
-    if (line === "") continue;
-
-    if (line.startsWith("#")) {
-      const match = /^#\s*([A-Za-z ]+):\s*(.+)$/.exec(line);
-      if (match?.[1] !== undefined && match[2] !== undefined) {
-        meta[match[1].trim()] = match[2].trim();
-      }
-      continue;
-    }
-
-    // Metin '|' icerebilecegi icin yalnizca ilk iki ayirici bolunur
-    const first = line.indexOf("|");
-    const second = line.indexOf("|", first + 1);
-    if (first === -1 || second === -1) {
-      fail(`${tanzilId}: ayrisitirilamayan satir -> ${line.slice(0, 60)}`);
-    }
-
-    const surahNumber = Number(line.slice(0, first));
-    const verseNumber = Number(line.slice(first + 1, second));
-    const text = line.slice(second + 1).trim();
-
-    if (!Number.isInteger(surahNumber) || !Number.isInteger(verseNumber)) {
-      fail(`${tanzilId}: gecersiz ayet anahtari -> ${line.slice(0, 60)}`);
-    }
-    if (text === "") {
-      fail(`${tanzilId}: ${surahNumber}:${verseNumber} bos metin`);
-    }
-
-    texts.set(`${surahNumber}:${verseNumber}`, text);
-  }
-
-  if (texts.size !== EXPECTED_VERSE_COUNT) {
-    fail(`${tanzilId}: ${EXPECTED_VERSE_COUNT} ayet bekleniyordu, ${texts.size} bulundu`);
-  }
-
-  // Yanlis dosyayi yanlis yazara yazmaya karsi koruma
-  const declaredId = meta["ID"];
-  if (declaredId !== undefined && declaredId !== tanzilId) {
-    fail(`${tanzilId}: dosya kendini '${declaredId}' olarak tanitiyor — kaynak karismis`);
-  }
-
-  return { texts, meta };
-}
 
 // -----------------------------------------------------------------------------
 
@@ -159,14 +93,14 @@ async function main(): Promise<void> {
   info(`${all.length} dosya hazirlaniyor (${TRANSLATIONS.length} meal + 1 ceviriyazi)`);
 
   const bodies = await fetchAllCached(
-    all.map((entry) => ({ url: transUrl(entry.tanzilId), cacheName: cacheName(entry.tanzilId) })),
+    all.map((entry) => ({ url: tanzilTextUrl(entry.tanzilId), cacheName: tanzilCacheName(entry.tanzilId) })),
   );
 
-  const parsed = new Map<string, ParsedTranslation>();
+  const parsed = new Map<string, ParsedTanzilText>();
   all.forEach((entry, index) => {
     const body = bodies[index];
     if (body === undefined) fail(`${entry.tanzilId}: indirilen govde bulunamadi`);
-    const result = parseTranslationFile(body, entry.tanzilId);
+    const result = parseTanzilText(body, entry.tanzilId);
     parsed.set(entry.tanzilId, result);
     report.note(
       `${entry.tanzilId}: ${result.texts.size} ayet · Tanzil adi "${result.meta["Name"] ?? "?"}" ` +
@@ -207,7 +141,7 @@ async function main(): Promise<void> {
       TANZIL_TRANSLATION_LICENSE,
       `Tanzil kaydi — Name: "${rawName}" · Translator: "${rawTranslator}" · ` +
         `Last Update: ${lastUpdate} · ID: ${entry.tanzilId}`,
-      transUrl(entry.tanzilId),
+      tanzilTextUrl(entry.tanzilId),
       entry.priority !== null,
       entry.priority,
     ];

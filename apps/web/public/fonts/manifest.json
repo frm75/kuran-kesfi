@@ -10,8 +10,8 @@
       "id": "inter",
       "family": "Inter",
       "file": "inter-latin.woff2",
-      "bytes": 62892,
-      "sha256": "30f77d3b52ac06ca8a65d5429cd053d64d734be2fee2158f7efc4387d8259cbc",
+      "bytes": 62856,
+      "sha256": "0bb7771d182af3c3e6ac2ffa5155bf9a388b488e8287e110d9ce42753d8d1f38",
       "upstream": "google/fonts:ofl/inter/Inter[opsz,wght].ttf",
       "upstreamSha256": "86a46aec43601ec6f2210cd85e9c4b8b2ba38862d098085a114c5e629ed2b364",
       "upstreamBytes": 876576,
@@ -20,9 +20,9 @@
       "licenseFile": "OFL-Inter.txt",
       "coverage": "latin",
       "weightRange": "300 700",
-      "codepoints": 253,
+      "codepoints": 255,
       "glyphsBefore": 2933,
-      "glyphsAfter": 835,
+      "glyphsAfter": 837,
       "note": "Arayuz ve meal metni."
     },
     {

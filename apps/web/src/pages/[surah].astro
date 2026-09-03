@@ -7,6 +7,7 @@ import VerseArabic from "~/components/VerseArabic.astro";
 import {
   getArabicSource,
   getDefaultAuthor,
+  getTranscriptionSource,
   getSourceForAuthor,
   getSurah,
   getSurahTranslation,
@@ -45,6 +46,16 @@ const translationByVerse = new Map(
 
 const arabicSource = getArabicSource();
 const authorSource = getSourceForAuthor(author);
+const transcriptionSource = getTranscriptionSource();
+
+/**
+ * Çeviriyazı sayfada gösteriliyor mu.
+ *
+ * Klasik Türkçe mushaf düzeni: Arapça, okunuşu, meali (plan §2.5 — Arapça
+ * bilmeyen okuyucu için her zaman erişilebilir olmalı). Kaynakta eksikse
+ * satır hiç çizilmez, boş başlık gösterilmez.
+ */
+const hasTranscription = surah.verses.some((verse) => verse.transcriptionTr !== null);
 
 /**
  * Besmele.
@@ -92,6 +103,15 @@ const title = `${surah.nameTr} Suresi — Kur'an-ı Kerim`;
           sources={[arabicSource]}
           label="Arapça metin ve sure bilgileri"
         />
+        {
+          hasTranscription && (
+            <SourceBadge
+              contentClass="kaynakli"
+              sources={[transcriptionSource]}
+              label="Okunuş (çeviriyazı)"
+            />
+          )
+        }
         <SourceBadge
           contentClass="kaynakli"
           sources={[authorSource]}
@@ -131,6 +151,10 @@ const title = `${surah.nameTr} Suresi — Kur'an-ı Kerim`;
                 label={label}
                 sajda={verse.sajda}
               />
+
+              {verse.transcriptionTr !== null && (
+                <p lang="tr" class="transcription">{verse.transcriptionTr}</p>
+              )}
 
               <div class="mt-3">
                 {meal === undefined ? (

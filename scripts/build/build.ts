@@ -363,6 +363,24 @@ async function main(): Promise<void> {
     attributionLinks.push({ label: "Sure adları: Quran.com", url: "https://quran.com" });
   }
 
+  // Ceviriyazi bir meal degil; author tablosunda kaydi yok, bu yuzden
+  // usedSources'ta gorunmez. Atif yukumlulugu yine de var: hazirlayanin adi
+  // source tablosundan OKUNUR, sabit yazilmaz.
+  const transcriptionCount = verses.filter((v) => v.transcription_tr !== null).length;
+  if (transcriptionCount > 0) {
+    const transcriptionSource = sources.find((s) => s.slug === "tanzil-transliteration");
+    if (transcriptionSource === undefined) {
+      fail(
+        `${transcriptionCount} ayette ceviriyazi var ama 'tanzil-transliteration' kaynak kaydi yok. ` +
+          "Kaynaksiz icerik yayinlanmaz (plan 12.10).",
+      );
+    }
+    attributionLinks.push({
+      label: `Çeviriyazı: ${transcriptionSource.author ?? transcriptionSource.name} (Tanzil)`,
+      url: transcriptionSource.url ?? "https://tanzil.net/trans/",
+    });
+  }
+
   info(
     `${authors.length} meal, kaynaklar: ${[...usedSources].join(", ")} — ` +
       `${attributionLinks.length} zorunlu atif baglantisi`,
