@@ -22,3 +22,4 @@ export * from "./principle.js";
 export * from "./discovery.js";
 export * from "./subscription.js";
 export * from "./user_data.js";
+export * from "./static_data.js";

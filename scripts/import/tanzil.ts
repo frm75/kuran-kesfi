@@ -17,10 +17,16 @@
 
 import { XMLParser } from "fast-xml-parser";
 import { computeVerseId } from "@kuran/schema";
-import { fetchCached } from "./lib/cache.js";
-import { closePool, upsertMany, withTransaction } from "./lib/db.js";
-import { Report, fail, info } from "./lib/log.js";
-import { surahSlug } from "./lib/slug.js";
+import {
+  Report,
+  closePool,
+  fail,
+  fetchCached,
+  info,
+  surahSlug,
+  upsertMany,
+  withTransaction,
+} from "@kuran/pipeline";
 
 // -----------------------------------------------------------------------------
 // Kaynak adresleri

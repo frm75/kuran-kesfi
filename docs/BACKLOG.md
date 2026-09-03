@@ -28,6 +28,11 @@
 - **Statik JSON dosya adı çelişkisi.** Plan §5.5 `verse/{s}-{v}.json` (tire) diyor; §20.2
   "Statik JSON dosyaları: alt çizgi — `verse_2_153.json`" diyor. §20.2 esas alındı (daha
   spesifik kural). Plan §5.5 düzeltilmeli.
+- **`pnpm import` komut adı kullanılamaz.** Plan §20.1 "`pnpm import && pnpm build` sıfırdan
+  aynı çıktıyı üretir" diyor; ancak `pnpm import` pnpm'in **yerleşik** komutudur (başka bir
+  lockfile'dan `pnpm-lock.yaml` üretir) ve çalıştırıldığında mevcut lockfile'ı siler. Bu
+  oturumda bir kez oldu, git'ten geri alındı. Script `data:import` olarak adlandırıldı; plan
+  metni `pnpm data:import && pnpm build` olarak düzeltilmeli.
 
 ## İzin / iletişim bekleyen
 

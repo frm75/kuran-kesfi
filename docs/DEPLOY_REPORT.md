@@ -246,5 +246,40 @@ kaynağıydı. Quranic Arabic Corpus (GPL, atıf) morfolojiyi verir ama **Türk�
 
 **Depolama ölçümü (kullanıcı sorusu üzerine):** `cache/` 3,9 MB · `node_modules` 234 MB ·
 build DB 17 MB · boş disk 41 GB. Veri değil bağımlılıklar yer kaplıyor. `cache/` atılabilir ve
-yeniden üretilebilir (`rm -rf cache/ && pnpm import`), bu yüzden harici nesne depolaması (R2)
+yeniden üretilebilir (`rm -rf cache/ && pnpm data:import`), bu yüzden harici nesne depolaması (R2)
 şu aşamada eklenmemektedir — build'i harici servise bağımlı kılmak plan §1.7 ve §6 ile çelişir.
+
+### 3.5 2026-09-03 — Faz 0, Adım 6 (statik JSON üretimi + referans linter)
+
+**Sunucuya eklenen:** yok. Repo dosyaları ve `apps/web/public/data/` çıktısı (git'e girmez).
+
+**Yeni paketler:**
+
+| Paket | Rol |
+|---|---|
+| `packages/pipeline` (`@kuran/pipeline`) | Build makinesi yardımcıları: `env`, `db`, `cache`, `log`, `slug`. `scripts/import`'tan taşındı, `scripts/build` ile paylaşılıyor. Node'a bağımlı, tarayıcıya gitmez. |
+| `scripts/build` (`@kuran/build`) | `build.ts` (JSON üretimi) + `linter.ts` (referans linter) |
+
+`packages/schema` içine `static_data.ts` eklendi: statik JSON çıktı şemaları. Üretici, tüketici
+(web) ve linter aynı tanımı kullanır.
+
+**Üretilen çıktı:** 116 dosya, 4,15 MB — `surahs_index.json`, `surah/surah_{id}.json` (114),
+`sources.json`. **Tekrarlanabilirlik doğrulandı:** iki ardışık `build:data` bayt bayt aynı
+çıktıyı üretti (plan §20.1).
+
+**Referans linter:** 259 denetim, temiz. Gerçekten yakaladığı dört bozma testiyle doğrulandı
+(silinmiş sure dosyası, bozuk JSON, `data/` içinde `2:999` ve `115:1`, veritabanından silinmiş
+ayet) — ayrıntı `scripts/build/README.md`.
+
+**Build zinciri:** `pnpm build` = `build:data` → `lint:refs` → `build:web`. Linter'dan
+geçmezse zincir durur.
+
+**Olay: `pnpm import` lockfile'ı sildi.** `import`, pnpm'in yerleşik komutudur (başka bir
+lockfile'dan `pnpm-lock.yaml` üretir) ve kök script adımı gölgeleyip mevcut lockfile'ı sildi.
+`git checkout -- pnpm-lock.yaml` ile geri alındı, script `data:import` olarak yeniden adlandırıldı.
+Plan §20.1'deki `pnpm import && pnpm build` ifadesi düzeltilmeli — BACKLOG'a işlendi.
+
+**Ertelenen çıktılar** (veri geldikçe): `story/*.json`, `locations.json`, `concept_graph.json`,
+`roots_index.json`, `search_index.json`, `schedule.json`. Ayet başına dosya
+(`verse/verse_2_153.json`) mealler eklendikten sonra üretilecek; şu an 6236 neredeyse boş dosya
+olurdu.

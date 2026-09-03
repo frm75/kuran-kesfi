@@ -1,18 +1,18 @@
 {
-  "name": "@kuran/import",
+  "name": "@kuran/build",
   "version": "0.0.0",
   "private": true,
-  "description": "Kaynak import scriptleri — yalnizca build makinesinde calisir",
+  "description": "PostgreSQL -> statik JSON uretimi ve referans linter",
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "tanzil": "tsx tanzil.ts",
+    "data": "tsx build.ts",
+    "lint:refs": "tsx linter.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "@kuran/pipeline": "workspace:*",
-    "@kuran/schema": "workspace:*",
-    "fast-xml-parser": "^5.4.0"
+    "@kuran/schema": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.19.0",

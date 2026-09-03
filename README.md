@@ -40,12 +40,17 @@ chmod 600 .env
 | Komut | Açıklama |
 |---|---|
 | `pnpm dev` | Astro geliştirme sunucusu (`SITE_PORT`, varsayılan 4321) |
-| `pnpm build` | Şema + statik site derlemesi |
+| `pnpm data:import` | Tanzil import — `surah` + `verse` |
+| `pnpm build:data` | PostgreSQL → `apps/web/public/data/*.json` |
+| `pnpm lint:refs` | Referans linter (plan §20.1) |
+| `pnpm build` | Tam zincir: `build:data` → `lint:refs` → `build:web` |
+| `pnpm build:web` | Yalnızca Astro derlemesi (veritabanı gerekmez) |
 | `pnpm typecheck` | Tüm paketlerde tip denetimi |
+
+> `import` adı kullanılamaz: `pnpm import` pnpm'in yerleşik komutudur ve `pnpm-lock.yaml`'ı siler.
 | `pnpm db:up` / `pnpm db:down` | Build veritabanı container'ını başlat / durdur |
 | `pnpm db:reset` | Veritabanını sil ve şemayı sıfırdan kur |
 | `pnpm db:psql` | Veritabanına psql ile bağlan |
-| `pnpm import` | Tanzil import — `surah` + `verse` (bkz. `scripts/import/README.md`) |
 
 ### Build veritabanı
 
@@ -60,8 +65,9 @@ Bot aboneliği ayrı bir veritabanı kullanır (`infra/db/bot_schema.sql`, Faz 3
 
 ```
 apps/web/            Astro site (statik export)
-packages/schema/     Zod şemaları ve paylaşılan tipler
-scripts/import/      Kaynak import (tanzil, acikkuran, quran_com, corpus)
+packages/schema/     Zod şemaları ve paylaşılan tipler (tarayıcı güvenli)
+packages/pipeline/   Build makinesi yardımcıları: ortam, veritabanı, önbellek, günlük
+scripts/import/      Kaynak import (tanzil, quran_com, corpus)
 scripts/build/       PostgreSQL → public/data/*.json + referans linter
 infra/db/            Build veritabanı şeması ve compose dosyası
 data/                Elle hazırlanan kaynaklı veri (kıssa, konum, kavram, ilke, siyer)

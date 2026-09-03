@@ -10,8 +10,24 @@ import { config as loadDotenv } from "dotenv";
  * .env yoksa script calismaz — sessizce varsayilana dusmez.
  */
 
-/** Repo koku: scripts/import/lib -> ../../.. */
-export const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
+/**
+ * Repo koku.
+ *
+ * Goreli ".." sayisi paketin nereye derlendigine bagli oldugu icin sabit
+ * yazilmaz; pnpm-workspace.yaml bulunana kadar yukari cikilir.
+ */
+function findRepoRoot(): string {
+  let current = dirname(fileURLToPath(import.meta.url));
+  for (let depth = 0; depth < 10; depth += 1) {
+    if (existsSync(resolve(current, "pnpm-workspace.yaml"))) return current;
+    const parent = dirname(current);
+    if (parent === current) break;
+    current = parent;
+  }
+  throw new Error("Repo koku bulunamadi: pnpm-workspace.yaml hicbir ust dizinde yok");
+}
+
+export const repoRoot = findRepoRoot();
 
 const envPath = resolve(repoRoot, ".env");
 if (!existsSync(envPath)) {
