@@ -810,3 +810,92 @@ Arayüz "güzel" olmalı: sakin, okumaya odaklı, dinî içeriğe yakışır bir
 - **Mobil:** Alttan kayan panel, tek elle ulaşılabilir birincil aksiyonlar, haritada büyük dokunma hedefleri.
 - **Süsleme:** Yalnızca geometrik/soyut desen, ince hat detayı; figür yok (bkz. 20.3).
 - Kod yazmadan önce tasarım dili (renk token'ları, tip ölçeği, boşluk ölçeği) `docs/DESIGN.md`'de tanımlanır ve onay alınır.
+
+---
+
+# 23. Hoca Notları
+
+> **Bu bölüm eksiktir.** `CLAUDE.md` ve `GOREV_01_schema_zod.md` §23.2'ye atıf yapıyor
+> ("şema orada kesindir") ancak bölümün kendisi bu dokümana hiç yazılmamıştı.
+> Aşağıdaki §23.2 içeriği, **onaylanmış SD-01 notundan** birebir işlenmiştir
+> (SD-01 uygulama sırası, adım 1). §23.1 (amaç, kapsam, içerik kuralları) ve
+> §23.3+ hâlâ yazılmayı bekliyor.
+>
+> Şema tanımının uygulanmış hâli: `packages/schema/src/scholar-notes.ts`.
+> Orada §23.2'de belirtilmemiş alanlar **çıkarım**la dolduruldu ve dosyada
+> işaretlendi; §23 yazıldığında karşılaştırılmalıdır.
+
+## 23.2 Veri Şeması — SD-01 ile güncellenmiş
+
+Hoca notu çıkarımı ayrı bir yerel projede (`kuran-extract`, SQLite) yapılır ve
+JSON paketiyle bu projeye (PostgreSQL) aktarılır. `packages/schema` iki proje
+tarafından paylaşılır.
+
+### 23.2.1 Transkript sunucuya taşınmaz
+
+Export paketi `transcript` ve `transcript_segment` **taşımaz** — transkript
+arayüzde gösterilmez, yalnızca ekstraksiyon kaynağıdır ve yerel makinede kalır.
+
+Sonuç: sunucuda `transcript_segment` satırı hiç oluşmaz, dolayısıyla
+`scholar_note.segment_id` sunucuda **hiçbir zaman dolmaz**.
+
+### 23.2.2 `scholar_note` — segment saniyeleri
+
+Sync iş anahtarı `(scholar_slug, video_id, segment_start_sec, note_type)`
+olarak tanımlıdır. Bu anahtarın veritabanı seviyesinde UNIQUE kurulabilmesi
+için saniye değerinin satırda bulunması gerekir. `deep_link` zaman damgasını
+içerir ama URL içine gömülü olduğundan sorgulanabilir/indekslenebilir bir
+anahtar değildir.
+
+```
+segment_start_sec  INTEGER NOT NULL
+segment_end_sec    INTEGER NOT NULL
+CHECK (segment_end_sec >= segment_start_sec)
+```
+
+`segment_id` kolonu kalır; anlamı ortama göre değişir:
+
+| Ortam | `segment_id` | `segment_start_sec` / `segment_end_sec` |
+|---|---|---|
+| Yerel (SQLite, extract) | `transcript_segment(id)`'ye FK, dolu | dolu |
+| Sunucu (PostgreSQL) | her zaman NULL | dolu |
+
+Export sırasında `segment_id` saniyeye çözülür; `segment_id` pakete girmez.
+
+**İş anahtarı UNIQUE (her iki motorda aynı):**
+```sql
+UNIQUE (scholar_id, video_source_id, segment_start_sec, note_type)
+```
+
+Bu, GÖREV 02 / N4'ün cevabıdır: **(a) denormalize kolon** seçildi.
+
+### 23.2.3 Ara tablolar iki ortamda farklı kolon tutar
+
+Extract projesinde `verse`, `principle`, `concept`, `story`, `root` tabloları
+yoktur ve olmayacaktır (çevrimdışı araç; çekirdek veri sunucudadır). Elde
+`verse_id` değil `"2:153"` bulunur.
+
+| Tablo | PostgreSQL (sunucu) | SQLite (yerel) |
+|---|---|---|
+| `scholar_note_verse` | `verse_id INTEGER` FK + `role` | `verse_key TEXT` + `role` |
+| `scholar_note_principle` | `principle_id` FK | `principle_slug TEXT` |
+| `scholar_note_concept` | `concept_id` FK | `concept_slug TEXT` |
+| `scholar_note_story` | `story_id` FK | `story_slug TEXT` |
+| `scholar_note_root` | `root_id` FK | `root_key TEXT` |
+| `scholar_note_tag` | `tag TEXT` | `tag TEXT` (aynı) |
+
+Yerelde bu kolonlarda FK yoktur; doğrulama `packages/schema/src/references.ts`
+brand tipleriyle (regex) yapılır. Çözümleme **import anında sunucuda** olur;
+bilinmeyen anahtar → paket reddedilir, `inbox/rejected/` altına taşınır, hata
+raporu yazılır.
+
+Zod tarafında her ara tablo için iki varyant tanımlıdır (`ScholarNoteVerse` /
+`ScholarNoteVerseLocal` gibi). Bu, GÖREV 02 / N6'nın cevabıdır.
+
+### 23.2.4 Değişmeyenler
+
+- `note_type`, `confidence` (`kesin | muhtemel | tartismali`), `status` enum'ları
+- `quote` ≤ 200 karakter kuralı (telif)
+- `reviewer_id`: string, nullable
+- Export zarfı `schema_version: 1`
+- `transcript` / `transcript_segment` export'a girmez

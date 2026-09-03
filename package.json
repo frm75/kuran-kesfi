@@ -14,6 +14,7 @@
     "build:data": "pnpm build:packages && pnpm --filter @kuran/build data",
     "build:web": "pnpm --filter @kuran/web build",
     "lint:refs": "pnpm --filter @kuran/build lint:refs",
+    "schema:generate": "pnpm --filter @kuran/schema schema:generate",
     "build": "pnpm build:data && pnpm lint:refs && pnpm build:web",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm --filter @kuran/schema test:smoke",
