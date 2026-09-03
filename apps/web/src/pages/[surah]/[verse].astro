@@ -1,0 +1,233 @@
+---
+import type { GetStaticPaths } from "astro";
+import type { SourceRef } from "~/components/types";
+import Base from "~/layouts/Base.astro";
+import SourceBadge from "~/components/SourceBadge.astro";
+import Translation from "~/components/Translation.astro";
+import VerseArabic from "~/components/VerseArabic.astro";
+import {
+  getArabicSource,
+  getAuthorsIndex,
+  getSourceForAuthor,
+  getSurahsIndex,
+  getVerseDetail,
+  sortAuthorsForDisplay,
+  verseLabel,
+} from "~/lib/data";
+
+/**
+ * Tek ayet sayfası — plan §12.4 (ayet paneli) ve §2.3 (meal karşılaştırma).
+ *
+ * Sure sayfası tek meal gösterir; burada ayetin BÜTÜN mealleri yan yana durur.
+ * Plan §1.4 ve CLAUDE.md kural 4: farklı görüşler tek doğru gibi sunulmaz,
+ * yan yana verilir. Sıra Türkçe mealler önce, sonra İngilizce.
+ *
+ * 6236 sayfa üretilir. JavaScript yok.
+ */
+
+export const getStaticPaths = (() => {
+  return getSurahsIndex().surahs.flatMap((surah) =>
+    Array.from({ length: surah.verseCount }, (_unused, offset) => ({
+      params: { surah: surah.slug, verse: String(offset + 1) },
+      props: { surahId: surah.id, verseNumber: offset + 1 },
+    })),
+  );
+}) satisfies GetStaticPaths;
+
+const { surahId, verseNumber } = Astro.props;
+
+const verse = getVerseDetail(surahId, verseNumber);
+const surahMeta = getSurahsIndex().surahs.find((item) => item.id === surahId);
+if (surahMeta === undefined) throw new Error(`surahs_index.json icinde ${surahId} yok`);
+
+const label = verseLabel(verse.surahNameTr, verse.verseNumber);
+const arabicSource = getArabicSource();
+
+const authorBySlug = new Map(getAuthorsIndex().authors.map((author) => [author.slug, author]));
+const orderedSlugs = sortAuthorsForDisplay(
+  verse.translations.map((item) => item.authorSlug),
+);
+const translationBySlug = new Map(
+  verse.translations.map((item) => [item.authorSlug, item]),
+);
+
+interface Row {
+  slug: string;
+  name: string;
+  language: string;
+  text: string;
+  footnotes: { number: number; text: string }[];
+  source: SourceRef;
+}
+
+const rows: Row[] = orderedSlugs.flatMap((slug) => {
+  const item = translationBySlug.get(slug);
+  const author = authorBySlug.get(slug);
+  // İkisinden biri yoksa veri tutarsızdır; linter bunu yakalar. Burada sessizce
+  // atlamak yerine atlanan sayılır ve aşağıda kontrol edilir.
+  if (item === undefined || author === undefined) return [];
+  return [
+    {
+      slug,
+      name: item.authorName,
+      language: author.language,
+      text: item.text,
+      footnotes: [...item.footnotes],
+      source: getSourceForAuthor(author),
+    },
+  ];
+});
+
+if (rows.length !== verse.translations.length) {
+  throw new Error(
+    `${label}: ${verse.translations.length} meal var ama ${rows.length} tanesinin ` +
+      "yazar kaydi authors_index.json icinde bulundu. Veri tutarsiz.",
+  );
+}
+
+/** Bölüm başındaki tam rozet için: aynı kaynak tekrar tekrar listelenmesin. */
+const translationSources = [...new Map(rows.map((row) => [row.source.slug, row.source])).values()];
+
+const turkish = rows.filter((row) => row.language === "tr");
+const other = rows.filter((row) => row.language !== "tr");
+
+const previous = verse.verseNumber > 1 ? verse.verseNumber - 1 : null;
+const next = verse.verseNumber < surahMeta.verseCount ? verse.verseNumber + 1 : null;
+
+const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} meal`;
+---
+
+<Base
+  title={title}
+  description={`${label}. Arapça metin ve ${rows.length} farklı meal yan yana.`}
+  arabic
+>
+  <main id="icerik" class="mx-auto max-w-(--container-measure) px-4 py-8">
+    <nav aria-label="Konum" class="text-text-muted mb-6 text-sm">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <a href={`/${verse.surahSlug}`}>{verse.surahNameTr} suresi</a>
+      <span aria-hidden="true">›</span>
+      <span aria-current="page">{verse.verseNumber}. ayet</span>
+    </nav>
+
+    <header class="border-line mb-8 border-b pb-6">
+      <h1 class="m-0 text-2xl">{label}</h1>
+      <p class="text-text-muted mt-1 mb-4 text-sm">
+        {/* "secde ayeti" burada tekrar yazılmıyor: ayet metninin sonundaki
+            rozet zaten söylüyor ve oraya bakan gözle aynı yerde duruyor. */}
+        Sayfa {verse.page} <span aria-hidden="true">·</span> Cüz {verse.juz}
+      </p>
+
+      <VerseArabic
+        text={verse.textUthmani}
+        verseNumber={verse.verseNumber}
+        label={label}
+        sajda={verse.sajda}
+        large
+      />
+
+      <div class="mt-4">
+        <SourceBadge
+          contentClass="kaynakli"
+          sources={[arabicSource]}
+          label="Arapça metin"
+        />
+      </div>
+    </header>
+
+    {
+      /* Çeviriyazı verisi henüz yok (0/6236). Boş bir satır göstermek yerine
+         hiç gösterilmiyor; eksiklik docs/BACKLOG.md'de kayıtlı. */
+      verse.transcriptionTr !== null && (
+        <section class="mb-8">
+          <h2 class="text-lg mb-2">Okunuşu</h2>
+          <p lang="tr" class="m-0">{verse.transcriptionTr}</p>
+        </section>
+      )
+    }
+
+    <section>
+      <h2 class="text-xl mb-1">Türkçe mealler</h2>
+      <p class="text-text-muted mt-0 mb-3 text-sm">
+        {turkish.length} meal, kaynağıyla birlikte. Aralarındaki fark yorum
+        farkıdır; hiçbiri tek doğru olarak sunulmaz.
+      </p>
+      <div class="mb-6">
+        <SourceBadge
+          contentClass="kaynakli"
+          sources={translationSources}
+          label="Bu sayfadaki mealler"
+        />
+      </div>
+
+      <div class="space-y-8">
+        {
+          turkish.map((row) => (
+            <Translation
+              authorName={row.name}
+              authorSlug={row.slug}
+              text={row.text}
+              footnotes={row.footnotes}
+              sourceDeclaredBy="bölüm başındaki kaynak rozeti"
+              anchorPrefix={`${surahId}-${verseNumber}-${row.slug}`}
+              lang="tr"
+            />
+          ))
+        }
+      </div>
+    </section>
+
+    {
+      other.length > 0 && (
+        <section class="mt-10">
+          <details>
+            <summary class="cursor-pointer">
+              <h2 class="text-xl m-0 inline">İngilizce çeviriler</h2>
+              <span class="text-text-muted ms-2 text-sm">({other.length})</span>
+            </summary>
+            <div class="mt-6 space-y-8">
+              {other.map((row) => (
+                <Translation
+                  authorName={row.name}
+                  authorSlug={row.slug}
+                  text={row.text}
+                  footnotes={row.footnotes}
+                  sourceDeclaredBy="bölüm başındaki kaynak rozeti"
+                  anchorPrefix={`${surahId}-${verseNumber}-${row.slug}`}
+                  lang="en"
+                />
+              ))}
+            </div>
+          </details>
+        </section>
+      )
+    }
+
+    <nav
+      aria-label="Ayetler arası gezinme"
+      class="border-line mt-12 flex items-center justify-between gap-4 border-t pt-6 text-sm"
+    >
+      {
+        previous === null ? (
+          <span />
+        ) : (
+          <a href={`/${verse.surahSlug}/${previous}`}>
+            <span aria-hidden="true">←</span> {previous}. ayet
+          </a>
+        )
+      }
+      <a href={`/${verse.surahSlug}#ayet-${verse.verseNumber}`}>
+        {verse.surahNameTr} suresinin tamamı
+      </a>
+      {
+        next === null ? (
+          <span />
+        ) : (
+          <a href={`/${verse.surahSlug}/${next}`}>
+            {next}. ayet <span aria-hidden="true">→</span>
+          </a>
+        )
+      }
+    </nav>
+  </main>
+</Base>

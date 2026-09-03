@@ -115,6 +115,20 @@ Doğrulandı: dördü de artık **HTTP 404**. Web kökü deploy için temiz.
   Kullanıcı kendisi iletişim kuracak (karar: 2026-09-03). Yanıt gelirse plan §3 güncellenir.
 - **Diyanet Kur'an Yolu tefsiri** — kullanım şartları, yazılı izin gerekip gerekmediği.
 
+## Eksik veri — okuma ekranı yazılırken bulundu (2026-09-03)
+
+- **Çeviriyazı (transkripsiyon) yok: 0/6236.** `staticVerse.transcriptionTr`
+  alanı şemada var, veritabanında var, ama **hiçbir ayette dolu değil**.
+  Açık Kuran import'u çeviriyazı getirmiyor. Plan §2.5 çeviriyazının "Arapça
+  bilmeyen okuyucu için her zaman erişilebilir" olmasını istiyor; DESIGN.md
+  §2 de sayıyor. Ayet sayfasında boş bir "Okunuşu" başlığı göstermek yerine
+  bölüm hiç render edilmiyor.
+  **Kaynak var:** `scripts/import/tanzil_translations.ts` çeviriyazı da
+  getiriyor (yedek zincirde duruyor, varsayılan zincirde değil). O script'ten
+  yalnızca çeviriyazıyı alan bir import yazılabilir — yazar slug'ları
+  çakışmadan, çünkü çeviriyazı `verse` tablosuna yazılır, `translation`'a
+  değil. Faz 1 işi.
+
 ## Veri kalitesi — font alt kümelemesi sırasında bulundu (2026-09-03)
 
 Font kapsama listesi üretilen verinin tamamı taranarak çıkarıldığı için

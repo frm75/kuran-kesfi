@@ -1,0 +1,188 @@
+---
+import type { GetStaticPaths } from "astro";
+import Base from "~/layouts/Base.astro";
+import SourceBadge from "~/components/SourceBadge.astro";
+import Translation from "~/components/Translation.astro";
+import VerseArabic from "~/components/VerseArabic.astro";
+import {
+  getArabicSource,
+  getDefaultAuthor,
+  getSourceForAuthor,
+  getSurah,
+  getSurahTranslation,
+  getSurahsIndex,
+  verseLabel,
+} from "~/lib/data";
+
+/**
+ * Klasik okuma ekranı — sure sayfası (plan §7, DESIGN.md §9 adım 4).
+ *
+ * Tek sütun, tek meal. Dört meali birden koymak Bakara'yı 300 KB'a çıkarırdı
+ * (ölçüm: scripts/build/README.md); meal karşılaştırması ayet sayfasının işi.
+ *
+ * JavaScript yok. Ayet numarasına tıklamak ayet sayfasına gider.
+ */
+
+export const getStaticPaths = (() => {
+  return getSurahsIndex().surahs.map((surah) => ({
+    params: { surah: surah.slug },
+    props: { surahId: surah.id },
+  }));
+}) satisfies GetStaticPaths;
+
+const { surahId } = Astro.props;
+
+const surah = getSurah(surahId);
+const index = getSurahsIndex().surahs;
+const previous = index.find((item) => item.id === surahId - 1);
+const next = index.find((item) => item.id === surahId + 1);
+
+const author = getDefaultAuthor();
+const translation = getSurahTranslation(author.slug, surahId);
+const translationByVerse = new Map(
+  (translation?.verses ?? []).map((verse) => [verse.verseNumber, verse]),
+);
+
+const arabicSource = getArabicSource();
+const authorSource = getSourceForAuthor(author);
+
+/**
+ * Besmele.
+ *
+ * Fatiha'da 1. ayettir, Tevbe'de (9) hiç yoktur; diğer 112 surede mushafta
+ * sure başında yer alır ama ayet sayılmaz. Metin uydurulmuyor — Fatiha'nın
+ * 1. ayetinden alınıyor.
+ */
+const showBasmala = surahId !== 1 && surahId !== 9;
+const basmala = showBasmala ? getSurah(1).verses[0]?.textUthmani : undefined;
+
+const revelation = surah.revelationType === "mekki" ? "Mekke'de indi" : "Medine'de indi";
+const title = `${surah.nameTr} Suresi — Kur'an-ı Kerim`;
+---
+
+<Base
+  title={title}
+  description={`${surah.nameTr} suresi: ${surah.verseCount} ayet, Arapça metin ve ${author.name} meali.`}
+  arabic
+>
+  <main id="icerik" class="mx-auto max-w-(--container-measure) px-4 py-8">
+    <nav aria-label="Konum" class="text-text-muted mb-6 text-sm">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">{surah.nameTr} suresi</span>
+    </nav>
+
+    <header class="border-line mb-8 border-b pb-6">
+      <p class="text-text-faint m-0 text-sm">{surah.id}. sure</p>
+      <h1 class="m-0 text-3xl">{surah.nameTr} Suresi</h1>
+      <p lang="ar" dir="rtl" class="mt-2 mb-3">{surah.nameAr}</p>
+
+      <dl class="text-text-muted m-0 flex flex-wrap gap-x-6 gap-y-1 text-sm">
+        <div><dt class="inline">Ayet sayısı:</dt> <dd class="m-0 inline">{surah.verseCount}</dd></div>
+        <div><dt class="inline">İniş yeri:</dt> <dd class="m-0 inline">{revelation}</dd></div>
+        <div>
+          <dt class="inline">İniş sırası:</dt>
+          <dd class="m-0 inline">{surah.revelationOrderStandard}</dd>
+        </div>
+        <div><dt class="inline">Başlangıç sayfası:</dt> <dd class="m-0 inline">{surah.pageStart}</dd></div>
+      </dl>
+
+      <div class="mt-4 flex flex-wrap gap-2">
+        <SourceBadge
+          contentClass="kaynakli"
+          sources={[arabicSource]}
+          label="Arapça metin ve sure bilgileri"
+        />
+        <SourceBadge
+          contentClass="kaynakli"
+          sources={[authorSource]}
+          label={`${author.name} meali`}
+        />
+      </div>
+    </header>
+
+    {
+      basmala !== undefined && (
+        <p lang="ar" dir="rtl" class="border-line mb-8 border-b pb-6 text-center">
+          {basmala}
+        </p>
+      )
+    }
+
+    {
+      translation === null && (
+        /* Belirsizlik saklanmaz (plan §1.5): mealin bu suresi kaynakta yok. */
+        <p class="border-line text-text-muted mb-8 rounded border border-dashed p-3 text-sm">
+          {author.name} mealinde bu sure kaynakta bulunmuyor. Arapça metin aşağıda;
+          diğer meallere ayet sayfalarından ulaşabilirsiniz.
+        </p>
+      )
+    }
+
+    <ol class="m-0 list-none space-y-10 p-0">
+      {
+        surah.verses.map((verse) => {
+          const meal = translationByVerse.get(verse.verseNumber);
+          const label = verseLabel(surah.nameTr, verse.verseNumber);
+          return (
+            <li id={`ayet-${verse.verseNumber}`} class="verse scroll-mt-4">
+              <VerseArabic
+                text={verse.textUthmani}
+                verseNumber={verse.verseNumber}
+                label={label}
+                sajda={verse.sajda}
+              />
+
+              <div class="mt-3">
+                {meal === undefined ? (
+                  <p class="text-text-muted m-0 text-sm">
+                    Bu ayetin {author.name} mealinde karşılığı kaynakta yok.
+                  </p>
+                ) : (
+                  <Translation
+                    authorName={author.name}
+                    authorSlug={author.slug}
+                    text={meal.text}
+                    footnotes={meal.footnotes}
+                    sourceDeclaredBy="sayfa başındaki kaynak rozeti"
+                    anchorPrefix={`${surah.id}-${verse.verseNumber}-${author.slug}`}
+                  />
+                )}
+              </div>
+
+              <p class="text-text-faint mt-2 text-xs">
+                <a href={`/${surah.slug}/${verse.verseNumber}`}>
+                  {verse.verseNumber}. ayeti tek başına aç
+                </a>
+                <span aria-hidden="true"> · </span>
+                <span>Sayfa {verse.page}</span>
+                <span aria-hidden="true"> · </span>
+                <span>Cüz {verse.juz}</span>
+              </p>
+            </li>
+          );
+        })
+      }
+    </ol>
+
+    <nav aria-label="Sureler arası gezinme" class="border-line mt-12 flex justify-between border-t pt-6 text-sm">
+      {
+        previous === undefined ? (
+          <span />
+        ) : (
+          <a href={`/${previous.slug}`}>
+            <span aria-hidden="true">←</span> {previous.id}. {previous.nameTr}
+          </a>
+        )
+      }
+      {
+        next === undefined ? (
+          <span />
+        ) : (
+          <a href={`/${next.slug}`}>
+            {next.id}. {next.nameTr} <span aria-hidden="true">→</span>
+          </a>
+        )
+      }
+    </nav>
+  </main>
+</Base>

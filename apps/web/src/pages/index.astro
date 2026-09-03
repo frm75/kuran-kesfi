@@ -1,10 +1,57 @@
 ---
 import Base from "~/layouts/Base.astro";
+import { getAuthorsIndex, getDefaultAuthor, getSurahsIndex } from "~/lib/data";
+
+/**
+ * Geçici ana sayfa.
+ *
+ * Plan §14 ana sayfayı beş keşif kapısı + Keşfet + Bugünün Keşfi olarak
+ * tarif ediyor; onlar Faz 1 işi. Şu an yalnızca klasik okuma ekranına giriş
+ * ve neyin hazır olduğunun dürüst özeti var.
+ */
+
+const { totals } = getSurahsIndex();
+const authors = getAuthorsIndex().authors;
+const turkishCount = authors.filter((author) => author.language === "tr").length;
+const defaultAuthor = getDefaultAuthor();
 ---
 
-<Base title="Kur'an-ı Kerim Keşif Platformu">
-  <main>
-    <h1>Kur'an-ı Kerim Keşif Platformu</h1>
-    <p>Faz 0 — altyapı kurulumu. Arayüz, <code>docs/DESIGN.md</code> onaylandıktan sonra kodlanacaktır.</p>
+<Base
+  title="Kur'an-ı Kerim Keşif Platformu"
+  description="Ücretsiz, reklamsız, üyeliksiz, takipsiz. Kur'an-ı Kerim metni ve mealleri, kaynağıyla birlikte."
+>
+  <main id="icerik" class="mx-auto max-w-(--container-measure) px-4 py-8">
+    <h1 class="m-0 text-3xl">Kur'an-ı Kerim Keşif Platformu</h1>
+    <p class="text-text-muted mt-2">
+      Ücretsiz, reklamsız, üyeliksiz, takipsiz. Her bilgi kaynağıyla birlikte
+      gösterilir; farklı görüşler yan yana durur.
+    </p>
+
+    <nav aria-label="Bölümler" class="mt-8">
+      <ul class="m-0 list-none space-y-3 p-0">
+        <li>
+          <a href="/sureler" class="text-lg">Sureler</a>
+          <p class="text-text-muted m-0 text-sm">
+            {totals.surahs} sure, {totals.verses} ayet. Arapça metin ve
+            {" "}{defaultAuthor.name} meali.
+          </p>
+        </li>
+        <li>
+          <a href="/fatiha-suresi/1" class="text-lg">Örnek ayet sayfası</a>
+          <p class="text-text-muted m-0 text-sm">
+            Bir ayetin {turkishCount} Türkçe meali yan yana.
+          </p>
+        </li>
+      </ul>
+    </nav>
+
+    <section class="border-line mt-10 border-t pt-6">
+      <h2 class="text-lg">Bu sayfa geçici</h2>
+      <p class="text-text-muted m-0 text-sm">
+        Ana sayfanın asıl hâli beş keşif kapısıyla açılacak: kıssalar, kavramlar,
+        kelime kökleri, zaman çizelgesi ve harita. Şu an yalnızca klasik okuma
+        ekranı hazır.
+      </p>
+    </section>
   </main>
 </Base>

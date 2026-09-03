@@ -277,7 +277,7 @@ Plan §20.4:
 1. ✅ Token'lar `apps/web/src/styles/global.css` → `@theme` bloğu
 2. ✅ Yazı tipleri `apps/web/public/fonts/` (alt kümelenmiş WOFF2)
 3. ✅ `<SourceBadge>` ve `<ConfidenceBadge>` — en küçük iki bileşen, dili sabitler
-4. ⬜ Klasik okuma ekranı: `/[sure-slug]` ve `/[sure-slug]/[ayet]`
+4. ✅ Klasik okuma ekranı: `/[sure-slug]` ve `/[sure-slug]/[ayet]`
 
 ### Bileşen örnek sayfası
 
@@ -290,9 +290,28 @@ yine de tip denetiminden geçirir. Görsel bakmak gerekirse `_` kaldırılıp
 
 | | |
 |---|---|
-| CSS | 10,0 KB ham / **3,1 KB gzip** |
+| CSS (tek dosya, tüm sayfalar) | 16 KB ham / **4,2 KB gzip** |
 | Sayfa JS | **0 bayt** — rozetler `<details>` + CSS, işaret satır içi SVG |
 | Yazı tipleri | 100,7 KB (Arapçalı sayfa) / 61,4 KB (Latin-only sayfa) |
+| En büyük sayfa (Bakara, 286 ayet) | 381 KB ham / **66 KB gzip** |
+| Ayet sayfası (50 meal) | 25 KB ham / **6,6 KB gzip** |
+| Üretilen sayfa sayısı | 6352 · build 50 sn |
+
+### Tekrar eden kaynak rozeti — ölçülen ve düzeltilen
+
+İlk sürümde her meal bloğu kendi açılır kaynak panelini taşıyordu. Bakara'da
+286, bir ayet sayfasında 50 kez tekrarlanıyordu:
+
+| | HTML toplam | Bakara | Ayet sayfası |
+|---|---|---|---|
+| Blok başına tam rozet | 614 MB | 842 KB | 102 KB |
+| Kısa rozet + global CSS | 288 MB | 521 KB | 48 KB |
+| Sayfa başına tek bildirim | **153 MB** | **381 KB** | **25 KB** |
+
+Karar bayt için değil tasarım için verildi: aynı kaynak satırını 286 kez
+yazmak şeffaflık değil gürültü. Kural yine kodla korunuyor — `<Translation>`
+ya `source` ister ya da kaynağın sayfada nerede bildirildiğini söyleyen
+`sourceDeclaredBy` metnini; ikisi de yoksa **build durur** (test edildi).
 
 ## Karara açık noktalar
 

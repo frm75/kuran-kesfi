@@ -209,6 +209,199 @@
   }
 }
 
+/* =============================================================================
+   Bileşenler
+
+   Bu stiller neden burada, bileşenin içindeki `<style>` bloğunda değil:
+   Astro'nun kapsamlı (scoped) stilleri her öğeye `data-astro-cid-*` özniteliği
+   ekler. 6236 ayet sayfası × sayfa başına ~200 öğe = ölçülebilir bayt.
+   Sınıf adları benzersiz olduğu için kapsam kaybı yok.
+   ========================================================================== */
+
+/* --- <SourceBadge> ------------------------------------------------------- */
+
+.source-badge {
+  display: inline-block;
+  max-width: 100%;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-raised);
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+}
+
+/* Üç içerik sınıfı kenarlık biçimiyle ayrışır — DESIGN.md §1:
+   renk tek başına anlam taşımaz. Gri baskıda da ayrışır. */
+.source-badge.is-kaynakli {
+  border-style: solid;
+}
+.source-badge.is-alternatif {
+  border-style: dashed;
+}
+.source-badge.is-platform {
+  border-style: dotted;
+}
+
+.source-badge .badge-line {
+  display: block;
+  padding: 0.25rem 0.5rem;
+}
+
+.source-badge .toggle {
+  margin-inline-start: 0.25rem;
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.source-badge .source-list {
+  margin: 0;
+  padding: 0.25rem 0.5rem;
+  list-style: none;
+  border-top: 1px solid var(--color-line);
+}
+.source-badge .source-list > li {
+  padding-block: 0.25rem;
+}
+.source-badge .name {
+  color: var(--color-text);
+}
+.source-badge .meta {
+  display: block;
+}
+.source-badge .source-list .license {
+  display: block;
+  color: var(--color-text-faint);
+}
+.source-badge.is-compact .license {
+  color: var(--color-text-faint);
+}
+
+/* Varsayılan açılır ok gizlenir; metin etiketi zaten durumu söylüyor. */
+.source-badge summary {
+  list-style: none;
+  cursor: pointer;
+}
+.source-badge summary::-webkit-details-marker {
+  display: none;
+}
+
+/* "Kaynakları göster" / "Gizle" — JavaScript yok, durum CSS ile.
+   display:none erişilebilirlik ağacından da çıkarır; ekran okuyucu
+   yalnızca görünen etiketi okur. */
+.source-badge details:not([open]) [data-hide],
+.source-badge details[open] [data-show] {
+  display: none;
+}
+
+/* --- <Translation> ------------------------------------------------------- */
+
+.translation > header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+.translation > header h3 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+.translation .translation-text {
+  margin: 0;
+}
+
+.translation .footnotes {
+  margin-top: 0.5rem;
+  padding-inline-start: 0.75rem;
+  border-inline-start: 2px solid var(--color-line);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+}
+.translation .footnotes ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.translation .footnotes li + li {
+  margin-top: 0.5rem;
+}
+
+/* Dipnot numarası okumayı bölmesin: küçük, sönük, ama tıklanabilir. */
+.translation .footnote-marker {
+  font-size: 0.7em;
+  line-height: 0;
+  margin-inline-start: 0.1em;
+}
+.translation .footnote-marker a {
+  text-decoration: none;
+  padding: 0 0.15em;
+}
+.translation .footnote-back {
+  text-decoration: none;
+}
+
+/* Bağlantıyla gelinen dipnot vurgulanır — nereye düşüldüğü belli olsun. */
+.translation li:target {
+  background-color: var(--color-accent-weak);
+  border-radius: var(--radius-sm);
+}
+
+/* --- <VerseArabic> ------------------------------------------------------- */
+
+.verse-arabic.is-large {
+  font-size: var(--text-arabic-lg);
+  line-height: var(--text-arabic-lg--line-height);
+}
+
+/* Numara ayetin parçası değil: küçük, sönük, daire içinde. */
+.verse-arabic .verse-number {
+  display: inline-block;
+  min-width: 1.9em;
+  margin-inline-start: 0.4em;
+  padding: 0.1em 0.35em;
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  line-height: 1.4;
+  text-align: center;
+  vertical-align: middle;
+  color: var(--color-text-faint);
+}
+
+.verse-arabic .sajda {
+  display: inline-block;
+  margin-inline-start: 0.4em;
+  padding: 0.1em 0.5em;
+  border: 1px dashed var(--color-line);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  line-height: 1.4;
+  vertical-align: middle;
+  color: var(--color-text-muted);
+}
+
+/* --- Atlama bağlantısı --------------------------------------------------- */
+
+/* Klavye kullanıcısı için: sekme ile odaklanınca görünür olur. */
+.skip-link {
+  position: absolute;
+  inset-inline-start: -9999px;
+  top: 0;
+  z-index: 10;
+  padding: 0.5rem 1rem;
+  background-color: var(--color-bg-raised);
+  border: 1px solid var(--color-line);
+}
+.skip-link:focus {
+  inset-inline-start: 0;
+}
+
 /* Hareket: kısa ve amaçlı; kullanıcı azaltma isterse tamamen durur. */
 @media (prefers-reduced-motion: reduce) {
   *,

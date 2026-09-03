@@ -1,0 +1,48 @@
+---
+/**
+ * Arapça ayet metni — DESIGN.md §2, plan §6.
+ *
+ * `lang="ar"` + `dir="rtl"`: ekran okuyucu doğru sesle okur, meal ile
+ * karışmaz. Satır aralığı global.css'te 2.1'den aşağı inmez — hareke ve
+ * şedde üst üste biner.
+ *
+ * Ayet numarası mushaf'taki gibi metnin sonundadır ama Latin rakamlarla ve
+ * `dir="ltr"` ile: U+06DD (ayet sonu işareti) alt kümede yok ve tarayıcıların
+ * içine rakam yerleştirme desteği tutarsız. Görsel taklit yerine okunabilirlik
+ * seçildi.
+ */
+
+interface Props {
+  text: string;
+  verseNumber: number;
+  /** Ekran okuyucu için: "Bakara suresi, 153. ayet" */
+  label: string;
+  /** Ayet sayfasındaki büyük gösterim */
+  large?: boolean;
+  sajda?: boolean;
+}
+
+const { text, verseNumber, label, large = false, sajda = false } = Astro.props;
+---
+
+<p
+  lang="ar"
+  dir="rtl"
+  class:list={["verse-arabic m-0 max-w-(--container-measure-arabic)", large && "is-large"]}
+>
+  <span class="sr-only" lang="tr">{label}.</span>
+  {text}
+  <span class="verse-number" dir="ltr" lang="tr" aria-hidden="true">{verseNumber}</span>
+  {
+    /* Mushaf'taki ۩ (U+06E9) kullanılmadı: o kod noktası ayet metninde
+       geçmediği için font alt kümesinde yok, .notdef olarak çizilirdi.
+       Kelimeyle yazmak hem doğru görünür hem ekran okuyucuda anlaşılır. */
+    sajda && (
+      <span class="sajda" dir="ltr" lang="tr">
+        secde ayeti
+      </span>
+    )
+  }
+</p>
+
+{/* Stiller global.css'te (§ Bileşenler). */}

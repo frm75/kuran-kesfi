@@ -14,6 +14,11 @@ import type { SourceRef } from "~/components/types";
  * körlüğünde bilgi kaybolmaz.
  *
  * Sıfır JavaScript: kaynak listesi <details>/<summary> ile açılır.
+ *
+ * `compact`: aynı kaynağın onlarca kez tekrarlandığı yerler için (bir ayetin
+ * 50 meali gibi) açılır panel yerine tek satır. Ölçüldü: tam rozet ~1,2 KB,
+ * 50 kez tekrarlanınca ayet sayfasının %60'ını kaplıyordu. Kaynak bilgisi
+ * kaybolmuyor — bölüm başında bir tam rozet duruyor, satırlarda kısası.
  */
 
 interface Props {
@@ -23,10 +28,18 @@ interface Props {
   sources?: readonly SourceRef[];
   /** Neyin kaynağı — ekran okuyucu için: "Bakara 153 meali" */
   label?: string;
+  /** Açılır panel yok, tek satır. Aynı kaynağın tekrarlandığı listeler için. */
+  compact?: boolean;
   class?: string;
 }
 
-const { contentClass, sources = [], label, class: className } = Astro.props;
+const {
+  contentClass,
+  sources = [],
+  label,
+  compact = false,
+  class: className,
+} = Astro.props;
 
 // --- Kural uygulaması (build zamanı) --------------------------------------
 // Astro statik export ettiği için bu hatalar üretime çıkamaz; build patlar.
@@ -63,10 +76,17 @@ const classNameForScreenReader: Record<ContentClass, string> = {
   platform: "Platform verisi",
 };
 
-const borderStyle: Record<ContentClass, string> = {
-  kaynakli: "border-solid",
-  alternatif: "border-dashed",
-  platform: "border-dotted",
+/**
+ * Kenarlık biçimi sınıfları.
+ *
+ * Tailwind yardımcı sınıf yığını yerine tek sınıf: bu rozet bir sure
+ * sayfasında 286, bir ayet sayfasında 50 kez tekrarlanıyor. Uzun `class`
+ * dizisi Bakara'da ~57 KB'a mal oluyordu. Stiller global.css § Bileşenler.
+ */
+const variantClass: Record<ContentClass, string> = {
+  kaynakli: "is-kaynakli",
+  alternatif: "is-alternatif",
+  platform: "is-platform",
 };
 
 /** Kaynak satırının alt bilgisi: eser · yazar · referans */
@@ -78,12 +98,7 @@ function metaLine(source: SourceRef): string {
 ---
 
 <div
-  class:list={[
-    "source-badge inline-block max-w-full rounded-sm border text-xs",
-    "border-line bg-bg-raised text-text-muted",
-    borderStyle[contentClass],
-    className,
-  ]}
+  class:list={["source-badge", variantClass[contentClass], compact && "is-compact", className]}
   data-content-class={contentClass}
 >
   <span class="sr-only">
@@ -91,28 +106,29 @@ function metaLine(source: SourceRef): string {
   </span>
 
   {
-    sources.length === 0 ? (
-      <span class="block px-2 py-1">{summaryText}</span>
+    sources.length === 0 || compact ? (
+      <span class="badge-line">
+        {summaryText}
+        {compact && sources.length > 0 && <span class="license"> · {first?.license}</span>}
+      </span>
     ) : (
       <details>
-        <summary class="cursor-pointer px-2 py-1">
+        <summary class="badge-line">
           <span>{summaryText}</span>
-          <span class="toggle text-accent ms-1 underline" data-show>
+          <span class="toggle" data-show>
             Kaynakları göster
           </span>
-          <span class="toggle text-accent ms-1 underline" data-hide>
+          <span class="toggle" data-hide>
             Gizle
           </span>
         </summary>
 
-        <ul class="border-line m-0 list-none border-t px-2 py-1">
+        <ul class="source-list">
           {sources.map((source) => (
-            <li class="py-1">
-              <span class="text-text">{source.name}</span>
-              {metaLine(source) && (
-                <span class="block">{metaLine(source)}</span>
-              )}
-              <span class="text-text-faint block">Lisans: {source.license}</span>
+            <li>
+              <span class="name">{source.name}</span>
+              {metaLine(source) && <span class="meta">{metaLine(source)}</span>}
+              <span class="license">Lisans: {source.license}</span>
               {source.url && (
                 <a href={source.url} rel="noopener noreferrer" target="_blank">
                   Kaynağa git
@@ -127,20 +143,6 @@ function metaLine(source: SourceRef): string {
   }
 </div>
 
-<style>
-  /* Varsayılan açılır ok gizlenir; metin etiketi zaten durumu söylüyor. */
-  summary {
-    list-style: none;
-  }
-  summary::-webkit-details-marker {
-    display: none;
-  }
-
-  /* "Kaynakları göster" / "Gizle" — JavaScript yok, durum CSS ile.
-     display:none erişilebilirlik ağacından da çıkarır; ekran okuyucu
-     yalnızca görünen etiketi okur. */
-  details:not([open]) [data-hide],
-  details[open] [data-show] {
-    display: none;
-  }
-</style>
+{/* Stiller global.css'te (§ Bileşenler). Astro'nun scoped <style>'ı her
+    öğeye data-astro-cid-* özniteliği ekliyor; 6236 ayet sayfası × onlarca
+    öğede bu ciddi bayt. Sınıf adları benzersiz olduğu için kapsam kaybı yok. */}

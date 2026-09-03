@@ -1,0 +1,59 @@
+---
+import Base from "~/layouts/Base.astro";
+import SourceBadge from "~/components/SourceBadge.astro";
+import { getArabicSource, getSurahsIndex } from "~/lib/data";
+
+/**
+ * Sure listesi.
+ *
+ * Ana sayfa DEĞİLDİR: plan §14 ana sayfanın beş keşif kapısıyla başlamasını,
+ * sure listesiyle başlamamasını istiyor. Klasik okuyucunun ihtiyacı olan liste
+ * de bir yerde durmalı; burası orası.
+ */
+
+const { surahs, totals } = getSurahsIndex();
+const arabicSource = getArabicSource();
+---
+
+<Base title="Sureler — Kur'an-ı Kerim" description="114 surenin listesi.">
+  <main id="icerik" class="mx-auto max-w-(--container-measure) px-4 py-8">
+    <nav aria-label="Konum" class="text-text-muted mb-6 text-sm">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">Sureler</span>
+    </nav>
+
+    <h1 class="m-0 text-3xl">Sureler</h1>
+    <p class="text-text-muted mt-1 mb-4">
+      {totals.surahs} sure, {totals.verses} ayet, {totals.pages} sayfa, {totals.juzs} cüz.
+    </p>
+    <SourceBadge
+      contentClass="kaynakli"
+      sources={[arabicSource]}
+      label="Sure listesi ve sayfa/cüz bilgileri"
+    />
+
+    <ol class="mt-8 grid list-none grid-cols-1 gap-px p-0 sm:grid-cols-2">
+      {
+        surahs.map((surah) => (
+          <li class="bg-bg-raised border-line border">
+            <a href={`/${surah.slug}`} class="flex items-baseline gap-3 px-3 py-2 no-underline">
+              <span class="text-text-faint w-8 shrink-0 text-end text-sm tabular-nums">
+                {surah.id}
+              </span>
+              <span class="flex-1">
+                <span class="text-text block">{surah.nameTr}</span>
+                <span class="text-text-muted block text-xs">
+                  {surah.verseCount} ayet ·{" "}
+                  {surah.revelationType === "mekki" ? "Mekkî" : "Medenî"}
+                </span>
+              </span>
+              <span lang="ar" dir="rtl" class="text-base">
+                {surah.nameAr}
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </main>
+</Base>

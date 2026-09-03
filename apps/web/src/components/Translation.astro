@@ -1,0 +1,140 @@
+---
+import SourceBadge from "~/components/SourceBadge.astro";
+import type { SourceRef } from "~/components/types";
+import { splitFootnoteMarkers } from "~/lib/data";
+
+/**
+ * Tek bir meal bloğu — DESIGN.md §5: aynı bileşen her sayfada aynı görünür.
+ *
+ * Sure sayfası ve ayet sayfası aynı bloğu kullanır; tek fark hangi mealleri
+ * verdikleridir.
+ *
+ * ## Kaynak zorunluluğu (plan §12.10)
+ *
+ * Kaynaksız meal gösterilmez. Ama kaynağı HER blokta tekrarlamak da doğru
+ * değil: Bakara sayfasında 286 ayetin meali aynı kaynaktan geliyor, aynı
+ * satırı 286 kez yazmak şeffaflık değil gürültü (ve ölçüldü: ~60 KB).
+ *
+ * Bu yüzden iki yol var ve BİRİ ZORUNLU:
+ *   `source`            — bu blok kendi rozetini gösterir
+ *   `sourceDeclaredBy`  — kaynak sayfada bir kez bildirildi; değer nerede
+ *                         bildirildiğini söyler, boş geçilemez
+ *
+ * İkisi de verilmezse ya da ikisi birden verilirse build durur.
+ */
+
+interface Footnote {
+  number: number;
+  text: string;
+}
+
+interface Props {
+  authorName: string;
+  authorSlug: string;
+  text: string;
+  footnotes: readonly Footnote[];
+  /** Bu bloğun kendi kaynak rozeti. `sourceDeclaredBy` ile birlikte verilemez. */
+  source?: SourceRef;
+  /**
+   * Kaynak sayfanın başında bildirildiyse, nerede bildirildiğini söyleyen kısa
+   * metin: "sayfa başındaki kaynak rozeti". Belge amaçlı — okuyan biri iddiayı
+   * görüp doğrulayabilsin diye.
+   */
+  sourceDeclaredBy?: string;
+  /** Dipnot çapaları sayfada benzersiz olmalı: "2-153-diyanet-isleri" */
+  anchorPrefix: string;
+  /** Dilin doğru sesle okunması için: "tr" veya "en" */
+  lang?: string;
+  /** Kendi rozetini gösterirken açılır panel yerine tek satır kullan. */
+  compactSource?: boolean;
+}
+
+const {
+  authorName,
+  authorSlug,
+  text,
+  footnotes,
+  source,
+  sourceDeclaredBy,
+  anchorPrefix,
+  lang = "tr",
+  compactSource = false,
+} = Astro.props;
+
+if (source === undefined && sourceDeclaredBy === undefined) {
+  throw new Error(
+    `<Translation> kaynaksiz render edilemez: authorSlug="${authorSlug}", ` +
+      `anchorPrefix="${anchorPrefix}". Ya 'source' verin ya da kaynagin sayfada ` +
+      "nerede bildirildigini 'sourceDeclaredBy' ile yazin (plan 12.10).",
+  );
+}
+if (source !== undefined && sourceDeclaredBy !== undefined) {
+  throw new Error(
+    `<Translation> hem 'source' hem 'sourceDeclaredBy' aldi (${authorSlug}). ` +
+      "Kaynak ya blokta ya sayfada bildirilir, ikisi birden degil.",
+  );
+}
+
+const segments = splitFootnoteMarkers(
+  text,
+  footnotes.map((footnote) => footnote.number),
+);
+
+const footnoteId = (number: number): string => `dn-${anchorPrefix}-${number}`;
+const markerId = (number: number): string => `dnr-${anchorPrefix}-${number}`;
+---
+
+<article class="translation" data-author={authorSlug}>
+  <header>
+    <h3>{authorName}</h3>
+    {
+      source !== undefined && (
+        <SourceBadge
+          contentClass="kaynakli"
+          sources={[source]}
+          label={`${authorName} meali`}
+          compact={compactSource}
+        />
+      )
+    }
+  </header>
+
+  <p lang={lang} class="translation-text">
+    {
+      segments.map((segment) =>
+        segment.kind === "text" ? (
+          segment.value
+        ) : (
+          <sup class="footnote-marker">
+            <a id={markerId(segment.number)} href={`#${footnoteId(segment.number)}`}>
+              <span class="sr-only">dipnot </span>
+              {segment.number}
+            </a>
+          </sup>
+        ),
+      )
+    }
+  </p>
+
+  {
+    footnotes.length > 0 && (
+      <div class="footnotes">
+        <h4 class="sr-only">{authorName} — dipnotlar</h4>
+        <ol>
+          {footnotes.map((footnote) => (
+            <li id={footnoteId(footnote.number)}>
+              <a href={`#${markerId(footnote.number)}`} class="footnote-back">
+                <span aria-hidden="true">↑</span>
+                <span class="sr-only">metne dön, dipnot</span> {footnote.number}
+              </a>{" "}
+              <span lang={lang}>{footnote.text}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    )
+  }
+</article>
+
+{/* Stiller global.css'te (§ Bileşenler) — scoped <style> her öğeye
+    data-astro-cid-* ekliyor, 6236 sayfada gereksiz bayt. */}

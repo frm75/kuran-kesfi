@@ -388,3 +388,52 @@ Doğrulama, GÖREV 02 §Doğrulama'daki 6 maddenin tamamı:
 söylüyor; bu `infra/db/schema.sql`'in değiştirilmesi demek. Kullanıcının bu
 oturumdaki kapsam kararı ("yalnızca paylaşılan hoca notu tabloları") esas
 alındı, tek taraflı değiştirilmedi. Ayrıntı `docs/BACKLOG.md`.
+
+### 3.8 2026-09-03 — Klasik okuma ekranı (arayüz)
+
+Sunucu yapılandırması **değişmedi**; bu bölüm yalnızca deploy sırasında
+gereken vhost ayarını kayda geçirir.
+
+**Üretilen sayfalar:** 6352
+(114 sure + 6236 ayet + ana sayfa + `/sureler`).
+
+| Sayfa | Ham | gzip |
+|---|---|---|
+| `index.html` | 2,4 KB | 1,2 KB |
+| `sureler.html` | 52 KB | 4,6 KB |
+| `fatiha-suresi.html` | 10 KB | 2,4 KB |
+| `bakara-suresi.html` (286 ayet, en büyük) | 381 KB | 66 KB |
+| `bakara-suresi/153.html` (50 meal) | 25 KB | 6,6 KB |
+| `bakara-suresi/282.html` (en büyük ayet) | 108 KB | 25 KB |
+| CSS (tek dosya, tüm sayfalar) | 16 KB | 4,2 KB |
+| JS | **0** | **0** |
+
+`dist/` toplam: **153 MB HTML + 177 MB JSON veri + 1 MB font ≈ 331 MB.**
+Atomik deploy (`dist_new` → `mv`) sırasında geçici olarak iki kopya durur,
+yani ~700 MB gerekir. Sunucuda 41 GB boş alan var (§1.2).
+
+**Nginx'te gereken ayar — henüz yapılmadı.**
+
+Astro `build.format: "file"` ile üretiyor:
+
+```
+/sureler            -> sureler.html
+/bakara-suresi      -> bakara-suresi.html
+/bakara-suresi/153  -> bakara-suresi/153.html
+```
+
+Uzantısız URL'lerin çalışması için vhost'ta şu gerekir:
+
+```nginx
+location / {
+    try_files $uri $uri.html $uri/index.html =404;
+}
+```
+
+Bu satır olmadan ana sayfa dışındaki her adres 404 verir. Deploy adımında
+vhost `*.bak.<tarih>` olarak yedeklenip eklenecek (plan §21.1, CLAUDE.md
+kural 3).
+
+**Ayrıca deploy sırasında bakılacak:** `gzip on` zaten açık ve
+`application/json` listede (§3.5). `font/woff2` ve `text/html` de
+listede mi — woff2 zaten sıkıştırılmış olduğu için gzip'lenmemeli.

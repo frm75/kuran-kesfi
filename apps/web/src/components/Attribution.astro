@@ -1,0 +1,43 @@
+---
+import { getAuthorsIndex } from "~/lib/data";
+
+/**
+ * Zorunlu atıf alanı — DESIGN.md §5, plan §12.10, data/LICENSE.
+ *
+ * Bağlantılar KODA YAZILMAZ: `authors_index.json` içindeki
+ * `requiredAttributionLinks` dizisinden gelir. Hangi kaynaktan veri alındıysa
+ * build onu üretir; referans linter eksikse build'i durdurur. Böylece yeni bir
+ * kaynak eklenip atfı unutulamaz.
+ *
+ * Base.astro içinde çağrılır, yani her sayfada var.
+ */
+
+const { requiredAttributionLinks } = getAuthorsIndex();
+
+if (requiredAttributionLinks.length === 0) {
+  throw new Error(
+    "authors_index.json icinde requiredAttributionLinks bos. Kaynak atfi olmadan " +
+      "sayfa yayinlanmaz (data/LICENSE).",
+  );
+}
+---
+
+<footer class="border-line text-text-muted mt-12 border-t px-4 py-6 text-sm">
+  <h2 class="text-text mb-2 text-sm font-semibold">Kaynaklar ve atıf</h2>
+  <ul class="m-0 list-none space-y-1 p-0">
+    {
+      requiredAttributionLinks.map((link) => (
+        <li>
+          <a href={link.url} rel="noopener noreferrer" target="_blank">
+            {link.label}
+            <span class="sr-only"> (yeni sekmede açılır)</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  <p class="mt-3">
+    Bu platform ücretsizdir, reklam ve takip içermez. Metinlerin telif ve lisans
+    şartları kaynaklarına aittir.
+  </p>
+</footer>
