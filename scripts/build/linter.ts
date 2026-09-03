@@ -278,6 +278,7 @@ function checkStaticOutput(): void {
   let verseFiles = 0;
   let authorSlugs = new Set<string>();
   const translationCounts = new Map<string, number>();
+  const expectedFilesByAuthor = new Map<string, number>();
   const seenIds = new Set<number>();
   const seenSlugs = new Set<string>();
 
@@ -313,15 +314,47 @@ function checkStaticOutput(): void {
         errors.push(`${relativePath}: ${result.error.message}`);
       } else {
         authorSlugs = new Set(result.data.authors.map((a) => a.slug));
-        // Tanzil sarti: ucten fazla meal kullanildiginda geri baglanti zorunlu
+        for (const a of result.data.authors) {
+          expectedFilesByAuthor.set(a.slug, 114 - a.missingSurahs.length);
+          if (a.missingSurahs.length > 0 || a.missingVerseCount > 0) {
+            warn(
+              "kaynak boslugu",
+              `${a.slug}: ${a.missingVerseCount} ayet eksik` +
+                (a.missingSurahs.length > 0
+                  ? `, tamamen eksik sure(ler): ${a.missingSurahs.join(", ")}`
+                  : ""),
+            );
+          }
+        }
+
+        // Atif yukumlulugu: her kullanilan kaynagin baglantisi bulunmali
+        // (bkz. data/LICENSE). Kaynak bazli, sabit yazilmaz.
+        const requiredLinkBySource: Readonly<Record<string, string>> = {
+          acikkuran: "acikkuran.com",
+          tanzil: "tanzil.net/trans",
+          "quran.com": "quran.com",
+        };
+        const links = result.data.requiredAttributionLinks.map((l) => l.url).join(" ");
+        for (const source of new Set(result.data.authors.map((a) => a.source))) {
+          checksRun += 1;
+          const needle = requiredLinkBySource[source];
+          if (needle === undefined) {
+            warn("atif", `'${source}' kaynagi icin tanimli atif baglantisi kurali yok`);
+            continue;
+          }
+          if (!links.includes(needle)) {
+            errors.push(
+              `${relativePath}: '${source}' kaynagindan meal var ama ${needle} ` +
+                "atif baglantisi yok (bkz. data/LICENSE)",
+            );
+          }
+        }
+
+        // Arapca metin her zaman Tanzil'den gelir — atfi kosulsuz zorunlu
         checksRun += 1;
-        const hasTransLink = result.data.requiredAttributionLinks.some((l) =>
-          l.url.startsWith("https://tanzil.net/trans"),
-        );
-        if (result.data.authors.length > 3 && !hasTransLink) {
+        if (!links.includes("tanzil.net")) {
           errors.push(
-            `${relativePath}: ${result.data.authors.length} meal kullaniliyor ancak ` +
-              "tanzil.net/trans/ geri baglantisi yok (bkz. data/LICENSE)",
+            `${relativePath}: Arapça metin Tanzil'den geliyor, tanzil.net atfi zorunlu`,
           );
         }
       }
@@ -403,20 +436,28 @@ function checkStaticOutput(): void {
     errors.push(`statik cikti: 6236 ayet dosyasi bekleniyordu, ${verseFiles} bulundu`);
   }
 
-  // Her yazarin 114 surenin hepsi icin dosyasi olmali
+  // Her yazarin dosya sayisi, authors_index.json'da ilan ettigi kaynak
+  // bosluklariyla tutarli olmali. Bosluk ilan edilmemisse 114 beklenir.
   checksRun += 1;
-  const expectedTranslationFiles = authorSlugs.size * 114;
+  const expectedTranslationFiles = [...authorSlugs].reduce(
+    (sum, s) => sum + (expectedFilesByAuthor.get(s) ?? 114),
+    0,
+  );
   if (translationFiles !== expectedTranslationFiles) {
     errors.push(
-      `statik cikti: ${expectedTranslationFiles} meal dosyasi bekleniyordu ` +
-        `(${authorSlugs.size} yazar x 114 sure), ${translationFiles} bulundu`,
+      `statik cikti: ${expectedTranslationFiles} meal dosyasi bekleniyordu, ` +
+        `${translationFiles} bulundu`,
     );
   }
   for (const slugName of authorSlugs) {
     checksRun += 1;
+    const expected = expectedFilesByAuthor.get(slugName) ?? 114;
     const count = translationCounts.get(slugName) ?? 0;
-    if (count !== 114) {
-      errors.push(`meal dosyalari: ${slugName} icin 114 sure bekleniyordu, ${count} bulundu`);
+    if (count !== expected) {
+      errors.push(
+        `meal dosyalari: ${slugName} icin ${expected} sure bekleniyordu (ilan edilen ` +
+          `bosluklara gore), ${count} bulundu`,
+      );
     }
   }
   for (const slugName of translationCounts.keys()) {

@@ -41,6 +41,9 @@ numaralandırması, Arapça metin, sayfa, cüz, secde ve nüzul sırası buradan
 | Tanzil simple-clean | `…quranType=simple-clean` | `text_no_vowel` (arama indeksi için) |
 | Quran.com API | `api.quran.com/api/v4/chapters?language=tr` | Türkçe sure adları |
 
+**Atıf zorunluluğu:** Tanzil metni değiştirilmeden dağıtılmalı, kaynağı "Tanzil Project" olarak
+açıkça belirtilmeli ve `tanzil.net` bağlantısı verilmelidir (bkz. `data/LICENSE`).
+
 **Neden Quran.com:** Tanzil metadata'sında Türkçe sure adı yoktur (Arapça, İngilizce ve
 transliterasyon vardır). Türkçe adlar Quran.com API'sinden alınır ve `source` tablosuna
 kaydedilir. Her iki kaynağın nüzul sırası birebir uyuşmaktadır (doğrulandı).
@@ -58,10 +61,49 @@ import durur.
 Tanzil metni atıf gerektirir ve değiştirilmeden dağıtılmalıdır. Kaynak kayıtları `source`
 tablosuna yazılır ve "Kaynak Şeffaflığı" sayfasında gösterilir (plan §9 Faz 5, §12.10).
 
+## acikkuran.ts
+
+`author`, `translation`, `footnote`, `root`, `verse_part` ve `verse.transcription_en` alanlarını
+doldurur. **Meal, dipnot, kelime ve kök verisinin birincil kaynağıdır.**
+
+**Lisans:** Açık Kuran deposundaki `LICENCE` dosyası tam **CC BY-NC-SA 4.0** metnidir. Proje
+ticari değildir ve `data/` aynı lisansla yayınlanır — ShareAlike şartı karşılanır. **Atıf
+zorunludur.**
+
+**Uç:** Yayınlanan REST API'si (`api.acikkuran.com`) 2026 Ağustos'undan beri kapalıdır ve veri
+hiçbir depoda yoktur. Site ayakta olduğu için veri kendi sayfa verisi ucundan alınır:
+
+```
+/_next/data/<buildId>/<sure>/<ayet>.json
+```
+
+Tek istek şunların hepsini döndürür: **50 meal** (23 tr + 27 en) dipnotlarıyla, kelime bazlı
+`verse_part`'lar, kök bilgisi (**Türkçe anlamıyla**) ve tam morfoloji.
+
+`buildId` her dağıtımda değişir; her çalıştırmada ana sayfadan yeniden okunur. **Önbellek
+anahtarı `buildId` içermez** — aksi hâlde kaynağın her dağıtımı tüm önbelleği geçersiz kılardı.
+
+6236 istek tek seferliktir, `p-limit` ile sınırlanır ve **gzip'li** önbelleğe alınır (~72 MB);
+ikinci çalıştırma ağdan veri çekmez.
+
+**Öncelikli mealler** (plan §3.1, orijinal liste — dördü de mevcut):
+Diyanet İşleri (1) · Mehmet Okuyan (2) · Mustafa İslamoğlu (3) · Muhammed Esed (4)
+
+**Doldurulmayan:** `root_diff` (kök türevleri) bu uçta yok; ayrı kaynak gerekiyor.
+
+## tanzil_translations.ts — yedek
+
+Tanzil çeviri setinden 9 Türkçe meal + çeviriyazı. **Varsayılan zincirde çalışmaz.** Açık
+Kuran'ın erişimi bir kez kesildiği için yedek olarak korunmaktadır. Tanzil meal şartları
+`data/LICENSE` içinde kayıtlıdır (ticari olmayan kullanım; üçten fazla meal kullanılırsa
+`tanzil.net/trans/` geri bağlantısı zorunlu).
+
+```bash
+pnpm --filter @kuran/import tanzil-translations
+```
+
 ## Sonraki scriptler
 
 | Script | Durum |
 |---|---|
-| `acikkuran.ts` | **Beklemede** — `api.acikkuran.com` erişilemiyor (NXDOMAIN). Bkz. `docs/DEPLOY_REPORT.md` §2.3 |
-| `quran_com.ts` | Meal kaynağı kararına bağlı |
-| `corpus.ts` | Kök ve morfoloji (Quranic Arabic Corpus) |
+| `corpus.ts` | `root_diff` ve ek morfoloji (Quranic Arabic Corpus) — Faz 3 |

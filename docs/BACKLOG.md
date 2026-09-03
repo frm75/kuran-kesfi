@@ -19,12 +19,17 @@
   (`packages/schema/src/common.ts`). Plan metni düzeltilmeli.
 - **§6 dizin yapısı.** Plan `/apps/web  Next.js site` diyor; CLAUDE.md ve gerçek uygulama Astro.
   Plan metni düzeltilmeli.
-- **§3 veri kaynağı tablosu.** Açık Kuran API'si kapanmıştır (doğrulandı, 2026-09-03). Tablodaki
-  "Açık Kuran API" satırları Tanzil çeviri seti ve Quranic Arabic Corpus ile değiştirilmeli.
-  Bkz. `docs/DEPLOY_REPORT.md` §3.4.
-- **§3.1 öncelikli meal listesi.** Mehmet Okuyan, Mustafa İslamoğlu ve Muhammed Esed açık
-  lisanslı hiçbir sette yok. Yeni sıra: Diyanet İşleri, Elmalılı, Ali Bulaç, Süleyman Ateş.
-  Plan metni güncellenmeli.
+- **§3 veri kaynağı tablosu.** Açık Kuran'ın yayınlanan REST API'si (`api.acikkuran.com`)
+  kapanmıştır; veri sitenin kendi sayfa verisi ucundan alınmaktadır. Tablodaki uç adresi
+  güncellenmeli. Lisans (CC BY-NC-SA 4.0) ve kaynak adı değişmiyor.
+  Bkz. `docs/DEPLOY_REPORT.md` §3.6.
+- **§3.1 öncelikli meal listesi — DEĞİŞİKLİK GEREKMİYOR.** Planın orijinal listesi
+  (Diyanet İşleri, Mehmet Okuyan, Mustafa İslamoğlu, Muhammed Esed) uygulanabiliyor;
+  dördü de Açık Kuran'da mevcut. (2026-09-03'te bir ara "uygulanamıyor" sonucuna varılmıştı;
+  o sonuç yanlıştı, bkz. `docs/DEPLOY_REPORT.md` §3.6.)
+- **§3 İngilizce mealler.** 27 İngilizce meal de import ediliyor; ileride İngilizce dil
+  seçeneği planlanıyor (kullanıcı kararı, 2026-09-03). Plan §3.1 İngilizce bölümü
+  genişletilmeli.
 - **Statik JSON dosya adı çelişkisi.** Plan §5.5 `verse/{s}-{v}.json` (tire) diyor; §20.2
   "Statik JSON dosyaları: alt çizgi — `verse_2_153.json`" diyor. §20.2 esas alındı (daha
   spesifik kural). Plan §5.5 düzeltilmeli.
@@ -60,9 +65,14 @@
 - **Astro 5 → 7 yükseltmesi.** Astro 6+ Node ≥22.12 istiyor; sunucudaki Node 20.20.2'ye pm2'deki
   üretim uygulamaları bağlı. Proje-yerel Node 22 (fnm) ile ayrıştırılabilir.
   Bkz. `docs/DEPLOY_REPORT.md` §2.2.
-- **Türkçe kök anlamları (`root.meaning_tr`) için kaynak.** Açık Kuran kapandığı için bu veri
-  kaynaksız kaldı. Quranic Arabic Corpus morfolojiyi verir ama Türkçe anlam vermez.
-  **Faz 3 (Kök Kelime Keşfi) için ön koşul.**
+- **`root_diff` (kök türevleri ve geçiş sayıları) için kaynak.** Açık Kuran'ın ayet ucu kök
+  bilgisini veriyor (`latin`, `arabic`, Türkçe anlam) ama kökün türevlerini listelemiyor.
+  Eski `/root/{id}` ucu kapalı. Türev listesi Faz 3 kök ağacı görünümü için gerekiyor;
+  ya `verse_part` verisinden türetilir ya da Quranic Arabic Corpus'tan alınır.
+- **Açık Kuran uç kırılganlığı.** Veri, sitenin yayınlanmamış sayfa verisi ucundan alınıyor;
+  `buildId` her dağıtımda değişiyor ve uç şekli haber verilmeden değişebilir. Önbellek
+  alındığı için mevcut veri risk altında değil, ama yeniden çekim gerekirse script
+  güncellenmesi gerekebilir. `scripts/import/tanzil_translations.ts` yedek olarak duruyor.
 
 ## Faz 4 — depolama
 

@@ -40,7 +40,26 @@ ile gösterilir.
 **Yükümlülüklerimiz:** metni değiştirmemek · kaynağı "Tanzil Project" olarak
 açıkça belirtmek · `tanzil.net` bağlantısı vermek.
 
-### Türkçe mealler ve çeviriyazı — Tanzil çeviri seti
+### Mealler, dipnotlar, kelime ve kök verisi — Açık Kuran (BİRİNCİL)
+
+Açık Kuran (<https://acikkuran.com>) açık kaynak, gönüllü bir projedir. Deposundaki
+`LICENCE` dosyası tam **CC BY-NC-SA 4.0** metnidir:
+<https://github.com/acik-kuran/acikkuran-api>
+
+Bu, `data/` klasörümüzle **aynı lisanstır**; ShareAlike şartı karşılanır ve projemiz
+ticari değildir.
+
+**Yükümlülüklerimiz:** atıf (Açık Kuran, CC BY-NC-SA 4.0) · aynı lisansla paylaşım ·
+ticari kullanmama.
+
+Kapsam: 23 Türkçe + 27 İngilizce meal, dipnotlar, kelime bazlı `verse_part` verisi,
+kök bilgisi (Türkçe anlamıyla) ve morfoloji.
+
+### Türkçe mealler ve çeviriyazı — Tanzil çeviri seti (YEDEK)
+
+Aşağıdaki şartlar yalnızca `scripts/import/tanzil_translations.ts` çalıştırıldığında
+geçerlidir. Bu script varsayılan zincirde çalışmaz; Açık Kuran erişimi kesilirse
+kullanılmak üzere korunmaktadır.
 
 > "The translations provided at this page are for non-commercial purposes only.
 > If used otherwise, you need to obtain necessary permission from the translator

@@ -17,6 +17,27 @@
 BEGIN;
 
 -- -----------------------------------------------------------------------------
+-- Yardımcılar
+-- -----------------------------------------------------------------------------
+
+-- Boş metin denetimi için kırpma kümesi.
+--
+-- `btrim(text)` yalnızca ASCII boşluğu siler; kaynak veride yalnızca kırılmaz
+-- boşluk (U+00A0) içeren meal ve dipnot kayıtları bulundu. Bu küme JavaScript
+-- `String.prototype.trim()` ile aynı karakterleri kapsar, böylece veritabanı
+-- kısıtı ile import katmanındaki `.trim()` aynı sonucu verir.
+--
+-- Karakterler `chr()` ile kurulur; dosya saf ASCII kalır ve kabuk/heredoc
+-- taşımasında bozulmaz.
+CREATE FUNCTION blank_trim_set() RETURNS text
+  LANGUAGE sql IMMUTABLE PARALLEL SAFE AS
+$$ SELECT ' ' || chr(9) || chr(10) || chr(11) || chr(12) || chr(13)
+              || chr(160)    -- U+00A0 kırılmaz boşluk
+              || chr(8203)   -- U+200B sıfır genişlikli boşluk
+              || chr(65279)  -- U+FEFF BOM
+$$;
+
+-- -----------------------------------------------------------------------------
 -- Numaralandırılmış türler
 -- -----------------------------------------------------------------------------
 
@@ -163,7 +184,10 @@ CREATE TABLE translation (
   id        integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   verse_id  integer NOT NULL REFERENCES verse (id) ON DELETE CASCADE,
   author_id integer NOT NULL REFERENCES author (id) ON DELETE CASCADE,
-  text      text NOT NULL,
+  -- Bos meal anlamsizdir. Kaynakta metni bos veya yalnizca kirilmaz bosluk
+  -- (U+00A0) iceren kayitlar bulundugu icin NOT NULL yeterli degil.
+  -- blank_trim_set() JS String.prototype.trim() ile ayni karakterleri siler.
+  text      text NOT NULL CHECK (btrim(text, blank_trim_set()) <> ''),
   UNIQUE (verse_id, author_id)
 );
 
@@ -173,7 +197,9 @@ CREATE TABLE footnote (
   id             integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   translation_id integer NOT NULL REFERENCES translation (id) ON DELETE CASCADE,
   number         smallint NOT NULL CHECK (number > 0),
-  text           text NOT NULL,
+  -- Kaynakta (Acik Kuran issue #4) metni bos veya yalnizca U+00A0 iceren
+  -- dipnotlar var; NOT NULL yeterli degil.
+  text           text NOT NULL CHECK (btrim(text, blank_trim_set()) <> ''),
   UNIQUE (translation_id, number)
 );
 

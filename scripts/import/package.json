@@ -8,6 +8,7 @@
   "scripts": {
     "tanzil": "tsx tanzil.ts",
     "tanzil-translations": "tsx tanzil_translations.ts",
+    "acikkuran": "tsx acikkuran.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {

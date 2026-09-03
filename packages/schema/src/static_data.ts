@@ -128,12 +128,23 @@ export const staticAuthor = z.object({
   name: nonEmptyText,
   workTitle: z.string().nullable(),
   language: z.string().length(2),
+  /** Verinin geldigi kaynak — atif yukumlulugunu belirler */
+  source: nonEmptyText,
   license: nonEmptyText,
   licenseNote: z.string().nullable(),
   url: z.string().nullable(),
   isDefault: z.boolean(),
   /** 1-4 oncelikli mealler; digerleri null (plan 3.1) */
   priority: z.number().int().min(1).max(4).nullable(),
+  /**
+   * Bu yazarin hic ayeti bulunmayan sure numaralari — kaynak taraflı boşluk.
+   * Ornek: Suleymaniye Vakfi'nin Tahrim (66) suresinin 12 ayeti de kaynakta yok.
+   * Arayuz bu sureler icin meal dosyasi istemez; linter dosya sayisini buna
+   * gore dogrular. Belirsizlik saklanmaz (plan 1.5).
+   */
+  missingSurahs: z.array(z.number().int().min(1).max(114)),
+  /** Suresi var ama bazi ayetleri eksik olan toplam ayet sayisi */
+  missingVerseCount: z.number().int().nonnegative(),
 });
 export type StaticAuthor = z.infer<typeof staticAuthor>;
 

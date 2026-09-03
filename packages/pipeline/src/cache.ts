@@ -1,9 +1,9 @@
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
+import { gunzipSync, gzipSync } from "node:zlib";
 import pLimit from "p-limit";
 import { env } from "./env.js";
-import { info } from "./log.js";
 
 /**
  * Kaynak indirme ve onbellek.
@@ -24,6 +24,13 @@ export interface FetchOptions {
   cacheName?: string;
   /** true ise onbellek yok sayilir ve kaynak yeniden cekilir. */
   force?: boolean;
+  /**
+   * true ise onbellek dosyasi gzip'lenir (.gz eklenir).
+   * Binlerce kucuk JSON yaniti icin diskte ~%75 tasarruf saglar.
+   */
+  gzip?: boolean;
+  /** Ek istek basliklari (ornek: yazar secimi icin cerez). */
+  headers?: Record<string, string>;
 }
 
 function cachePathFor(url: string, cacheName?: string): string {
@@ -39,20 +46,21 @@ function cachePathFor(url: string, cacheName?: string): string {
  * Es zamanli cagrilar p-limit ile sinirlanir.
  */
 export async function fetchCached(url: string, options: FetchOptions = {}): Promise<string> {
-  const path = cachePathFor(url, options.cacheName);
+  const useGzip = options.gzip === true;
+  const path = cachePathFor(url, options.cacheName) + (useGzip ? ".gz" : "");
 
   if (!options.force && existsSync(path)) {
-    info(`onbellek: ${options.cacheName ?? url}`);
-    return readFileSync(path, "utf8");
+    const raw = readFileSync(path);
+    return useGzip ? gunzipSync(raw).toString("utf8") : raw.toString("utf8");
   }
 
   return limit(async () => {
-    info(`indiriliyor: ${url}`);
     const response = await fetch(url, {
       headers: {
         // Kaynak sahibinin kimin cektigini gorebilmesi icin acik kimlik
         "user-agent": "kurankesfi.tr import (https://kurankesfi.tr)",
         "accept-encoding": "gzip, deflate",
+        ...(options.headers ?? {}),
       },
       signal: AbortSignal.timeout(120_000),
     });
@@ -66,9 +74,8 @@ export async function fetchCached(url: string, options: FetchOptions = {}): Prom
       throw new Error(`${url} -> bos yanit`);
     }
 
-    mkdirSync(env.cacheDir, { recursive: true });
-    writeFileSync(path, body, "utf8");
-    info(`onbellege alindi: ${path} (${body.length.toLocaleString("tr-TR")} bayt)`);
+    mkdirSync(dirname(path), { recursive: true });
+    writeFileSync(path, useGzip ? gzipSync(body, { level: 6 }) : Buffer.from(body, "utf8"));
     return body;
   });
 }

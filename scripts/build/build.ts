@@ -67,6 +67,7 @@ interface AuthorRow {
   name: string;
   work_title: string | null;
   language: string;
+  source: string;
   license: string;
   license_note: string | null;
   url: string | null;
@@ -140,10 +141,10 @@ async function main(): Promise<void> {
 
   const authors = (
     await pool.query<AuthorRow>(
-      `SELECT slug, name, work_title, language, license, license_note, url,
+      `SELECT slug, name, work_title, language, source, license, license_note, url,
               is_default, priority
          FROM author
-        ORDER BY priority NULLS LAST, slug`,
+        ORDER BY priority NULLS LAST, language, slug`,
     )
   ).rows;
 
@@ -206,6 +207,8 @@ async function main(): Promise<void> {
   emitter.reset();
 
   const metas: StaticSurahMeta[] = [];
+  /** yazar slug -> kaynakta eksik olan sureler ve ayet sayisi */
+  const authorGaps = new Map<string, { surahs: number[]; verses: number }>();
 
   for (const row of surahs) {
     const meta = toMeta(row);
@@ -254,14 +257,20 @@ async function main(): Promise<void> {
         })
         .filter((entry): entry is NonNullable<typeof entry> => entry !== null);
 
-      // Meali eksik olan yazar icin dosya uretilmez; rapora yazilir
-      if (authorVerses.length === 0) continue;
-      if (authorVerses.length !== surahVerses.length) {
+      // Kaynak taraflı boşluklar sessizce atlanmaz: eksik sureler
+      // authors_index.json'a yazilir, eksik ayetler rapora gecer (plan 1.5, 20.1)
+      const missing = surahVerses.length - authorVerses.length;
+      if (missing > 0) {
+        const gap = authorGaps.get(author.slug) ?? { surahs: [], verses: 0 };
+        gap.verses += missing;
+        if (authorVerses.length === 0) gap.surahs.push(row.id);
+        authorGaps.set(author.slug, gap);
         report.note(
           `${author.slug} / sure ${row.id}: ${surahVerses.length} ayetin ` +
             `${authorVerses.length} tanesinde meal var`,
         );
       }
+      if (authorVerses.length === 0) continue;
 
       const translationPayload: StaticSurahTranslation = {
         surahId: row.id,
@@ -327,17 +336,37 @@ async function main(): Promise<void> {
 
   // --- meal listesi + zorunlu atif baglantilari ---
   //
-  // Tanzil ceviri seti sarti: ucten fazla meal kullanildiginda arayuzde
-  // tanzil.net/trans/ geri baglantisi gosterilmesi ZORUNLUDUR
-  // (bkz. data/LICENSE). Yukumluluk veriyle birlikte tasinir ki arayuz
-  // tarafinda unutulmasin.
+  // Her kaynagin atif yukumlulugu veriyle birlikte tasinir ki arayuz tarafinda
+  // unutulmasin (bkz. data/LICENSE). Hangi baglantinin zorunlu oldugu, gercekte
+  // hangi kaynaktan meal alindigina gore belirlenir — sabit yazilmaz.
+  const usedSources = new Set(authors.map((a) => a.source));
+
+  // Arapca metin her zaman Tanzil'den gelir (plan 20.1 tek gercek kaynak)
   const attributionLinks = [
     { label: "Arapça metin: Tanzil Project", url: "https://tanzil.net" },
-    { label: "Türkçe mealler: Tanzil çeviri seti", url: "https://tanzil.net/trans/" },
   ];
-  if (authors.length > 3) {
-    info(`${authors.length} meal kullaniliyor — tanzil.net/trans/ geri baglantisi zorunlu`);
+
+  if (usedSources.has("acikkuran")) {
+    attributionLinks.push({
+      label: "Mealler, dipnotlar, kelime ve kök verisi: Açık Kuran (CC BY-NC-SA 4.0)",
+      url: "https://acikkuran.com",
+    });
   }
+  if (usedSources.has("tanzil")) {
+    // Tanzil sarti: ucten fazla ceviri kullanilirsa geri baglanti zorunlu
+    attributionLinks.push({
+      label: "Türkçe mealler: Tanzil çeviri seti",
+      url: "https://tanzil.net/trans/",
+    });
+  }
+  if (usedSources.has("quran.com")) {
+    attributionLinks.push({ label: "Sure adları: Quran.com", url: "https://quran.com" });
+  }
+
+  info(
+    `${authors.length} meal, kaynaklar: ${[...usedSources].join(", ")} — ` +
+      `${attributionLinks.length} zorunlu atif baglantisi`,
+  );
 
   const authorsPayload = {
     authors: authors.map((a) => ({
@@ -345,11 +374,14 @@ async function main(): Promise<void> {
       name: a.name,
       workTitle: a.work_title,
       language: a.language,
+      source: a.source,
       license: a.license,
       licenseNote: a.license_note,
       url: a.url,
       isDefault: a.is_default,
       priority: a.priority,
+      missingSurahs: (authorGaps.get(a.slug)?.surahs ?? []).slice().sort((x, y) => x - y),
+      missingVerseCount: authorGaps.get(a.slug)?.verses ?? 0,
     })),
     requiredAttributionLinks: attributionLinks,
   };

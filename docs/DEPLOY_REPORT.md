@@ -196,6 +196,11 @@ Her iki kaynak `source` tablosuna kaydedildi.
 
 **`cache/` boyutu:** ~3,9 MB (4 Tanzil XML + 1 Quran.com JSON). Git'e girmez.
 
+> **⚠ §3.4 KISMEN GEÇERSİZ — bkz. §3.6 (aynı gün, sonraki düzeltme).**
+> Aşağıdaki bölüm Açık Kuran'ı kullanılamaz sayıyordu. Bu yanlıştı: veri
+> CC BY-NC-SA 4.0 ile açıkça lisanslıdır ve sitenin sayfa verisi ucundan
+> erişilebilir durumdadır. §3.6 düzeltmeyi ve yeni kaynak kararını içerir.
+
 ### 3.4 2026-09-03 — Faz 0, Adım 5 (kaynak araştırması, salt okuma)
 
 Dosya değişikliği yok; yalnızca araştırma ve karar kaydı.
@@ -283,3 +288,64 @@ Plan §20.1'deki `pnpm import && pnpm build` ifadesi düzeltilmeli — BACKLOG'a
 `roots_index.json`, `search_index.json`, `schedule.json`. Ayet başına dosya
 (`verse/verse_2_153.json`) mealler eklendikten sonra üretilecek; şu an 6236 neredeyse boş dosya
 olurdu.
+
+### 3.6 2026-09-03 — Adım 5 DÜZELTMESİ: Açık Kuran kullanılabilir
+
+Kullanıcı §3.4'teki sonucu sorguladı: *"buradaki bilgileri paylaşıma açmış zaten, neyin izni?"*
+Haklıydı. §3.4 iki hata içeriyordu.
+
+**Hata 1 — lisans/izin sorunu diye sunulması.** Öyle bir sorun yok.
+`acik-kuran/acikkuran-api` deposundaki `LICENCE` dosyası tam **CC BY-NC-SA 4.0** metnidir.
+Bu açık bir lisanstır; proje ticari değildir ve `data/` aynı lisansla yayınlanır, yani
+ShareAlike şartı da karşılanır. Atıf dışında izin gerekmiyor.
+
+**Hata 2 — yanlış alıntı.** *"do not use this data in your own application"* ifadesi depo
+README'sine atfedilmişti. Aslında `.env.example` içindedir ve yalnızca **test veritabanı**
+için söylenmiştir ("there may be inconsistencies and errors in the data"). Genel veri
+politikası değildir; kaynak olduğundan kısıtlayıcı gösterilmiştir.
+
+**Doğru olan tek engel erişilebilirlikti** ve o da aşıldı. Organizasyonda üç depo var
+(`api`, `frontend`, `chrome-extension`), üçü de yalnızca uygulama kodu; veri hiçbirinde yok.
+Ancak site ayaktadır ve kendi sayfa verisi ucundan tam veriyi vermektedir:
+
+```
+/_next/data/<buildId>/<sure>/<ayet>.json      Cookie: settings={"a":<yazarId>}
+```
+
+Tek istek şunların **hepsini** döndürür:
+
+| Alan | İçerik |
+|---|---|
+| `translations` | **50 meal** (23 Türkçe + 27 İngilizce), her biri `footnotes` ile |
+| `words` | Kelime bazlı `verse_part`: Arapça, transkripsiyon tr/en, çeviri tr/en, sıra |
+| `words[].root` | `{latin, arabic, mean}` — **Türkçe kök anlamı dahil** |
+| `words[].details` | Tam morfoloji, Türkçe + İngilizce gramer etiketleriyle |
+| `verse` | Arapça metin, transkripsiyon tr/en, sayfa, cüz |
+
+**Plan §3.1'in ORİJİNAL öncelikli meal listesi uygulanabiliyor** — üçü de mevcut:
+
+| priority | Meal | §3.4'teki hatalı sonuç |
+|---|---|---|
+| 1 | Diyanet İşleri | bulunmuştu |
+| 2 | **Mehmet Okuyan** — Kur'an Meal-Tefsir (dipnotlu) | "hiçbir sette yok" ✗ |
+| 3 | **Mustafa İslamoğlu** — Hayat Kitabı Kur'an | "hiçbir sette yok" ✗ |
+| 4 | **Muhammed Esed** — Kur'an Mesajı | "lisansı doğrulanamıyor" ✗ |
+
+**Faz 3 riski de kalktı.** §3.4 `root.meaning_tr` için kaynak kalmadığını söylüyordu;
+`words[].root.mean` bu veriyi Türkçe olarak veriyor.
+
+**Karar:** Açık Kuran birincil meal/kök kaynağı olur. Tanzil rolünü korur: Arapça metin,
+sure/ayet numaralandırması, sayfa/cüz/secde, nüzul sırası (plan §20.1 "tek gerçek kaynak").
+Kullanıcı kararı: **İngilizce mealler de alınır** — ileride İngilizce dil seçeneği olacak.
+
+`scripts/import/tanzil_translations.ts` silinmedi; **yedek** olarak duruyor. Gerekçe: Açık
+Kuran'ın API'si bir kez zaten kapandı. Varsayılan zincirde çalışmaz.
+
+**Yöntem notu:** `buildId` her dağıtımda değişir, bu yüzden her çalıştırmada ana sayfadan
+yeniden okunur. Önbellek anahtarı `buildId` **içermez**; aksi hâlde kaynağın her dağıtımı tüm
+önbelleği geçersiz kılardı. 6236 istek tek seferliktir, `p-limit` ile sınırlanır, gzip'li
+önbelleğe alınır (~75 MB) ve ikinci çalıştırma ağdan veri çekmez. İstek başlığı projeyi
+açıkça tanıtır.
+
+**Önbelleğe gzip desteği** `packages/pipeline/src/cache.ts` içine eklendi (`gzip: true`);
+binlerce küçük JSON için diskte ~%75 tasarruf.
