@@ -1,0 +1,67 @@
+{
+  "//": [
+    "URETILEN DOSYA — elle duzenlenmez.",
+    "Uretim: pnpm --filter @kuran/fonts fonts",
+    "Tum fontlar SIL Open Font License 1.1; lisans metinleri bu dizindedir.",
+    "Fontlar kendi sunucumuzdan servis edilir; Google Fonts CDN kullanilmaz."
+  ],
+  "fonts": [
+    {
+      "id": "inter",
+      "family": "Inter",
+      "file": "inter-latin.woff2",
+      "bytes": 62892,
+      "sha256": "30f77d3b52ac06ca8a65d5429cd053d64d734be2fee2158f7efc4387d8259cbc",
+      "upstream": "google/fonts:ofl/inter/Inter[opsz,wght].ttf",
+      "upstreamSha256": "86a46aec43601ec6f2210cd85e9c4b8b2ba38862d098085a114c5e629ed2b364",
+      "upstreamBytes": 876576,
+      "fontVersion": "Version 4.001;git-66647c0bb",
+      "license": "SIL Open Font License 1.1",
+      "licenseFile": "OFL-Inter.txt",
+      "coverage": "latin",
+      "weightRange": "300 700",
+      "codepoints": 253,
+      "glyphsBefore": 2933,
+      "glyphsAfter": 835,
+      "note": "Arayuz ve meal metni."
+    },
+    {
+      "id": "amiri-quran",
+      "family": "Amiri Quran",
+      "file": "amiri-quran-arabic.woff2",
+      "bytes": 40272,
+      "sha256": "76900ff27f1acc5c92b4c0f20146dc3cd8d3a037099e5d13b224f16669f63cc6",
+      "upstream": "google/fonts:ofl/amiriquran/AmiriQuran-Regular.ttf",
+      "upstreamSha256": "3b8505d3556d884e7d1fa9157946f47fa5c6d816d194eead27b5d4d0402f82dd",
+      "upstreamBytes": 136920,
+      "fontVersion": "Version 1.003",
+      "license": "SIL Open Font License 1.1",
+      "licenseFile": "OFL-AmiriQuran.txt",
+      "coverage": "arabic",
+      "weightRange": "400",
+      "codepoints": 68,
+      "glyphsBefore": 1446,
+      "glyphsAfter": 1048,
+      "note": "Arapca ayet metni — ONTANIMLI. Mushaf hattina en yakin OFL font."
+    },
+    {
+      "id": "scheherazade-new",
+      "family": "Scheherazade New",
+      "file": "scheherazade-new-arabic.woff2",
+      "bytes": 21456,
+      "sha256": "928c7cba82f0ab1234be41b101b9f0d396a01431875ca2ef82375285b9cdcb03",
+      "upstream": "google/fonts:ofl/scheherazadenew/ScheherazadeNew-Regular.ttf",
+      "upstreamSha256": "9ee3bfedb7f193685055cfae73b87a267d0813288399c7d797bf72046067636a",
+      "upstreamBytes": 331504,
+      "fontVersion": "Version 4.500",
+      "license": "SIL Open Font License 1.1",
+      "licenseFile": "OFL-ScheherazadeNew.txt",
+      "coverage": "arabic",
+      "weightRange": "400",
+      "codepoints": 69,
+      "glyphsBefore": 1822,
+      "glyphsAfter": 259,
+      "note": "Arapca ikinci secenek: genis satir, dusuk kontrast, kucuk ekranda okunakli."
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "@kuran/fonts",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Yazi tipi alt kumeleme — yalnizca build makinesinde calisir",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "fonts": "tsx build_fonts.ts",
+    "fonts:check": "tsx build_fonts.ts --check",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "fonts:verify": "tsx verify_shaping.ts"
+  },
+  "dependencies": {
+    "@kuran/pipeline": "workspace:*",
+    "subset-font": "^2.7.0",
+    "harfbuzzjs": "^0.10.3",
+    "fontverter": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}

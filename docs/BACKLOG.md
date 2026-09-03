@@ -115,7 +115,40 @@ Doğrulandı: dördü de artık **HTTP 404**. Web kökü deploy için temiz.
   Kullanıcı kendisi iletişim kuracak (karar: 2026-09-03). Yanıt gelirse plan §3 güncellenir.
 - **Diyanet Kur'an Yolu tefsiri** — kullanım şartları, yazılı izin gerekip gerekmediği.
 
+## Veri kalitesi — font alt kümelemesi sırasında bulundu (2026-09-03)
+
+Font kapsama listesi üretilen verinin tamamı taranarak çıkarıldığı için
+(`scripts/fonts/build_fonts.ts`), metinlerdeki tuhaf karakterler ortaya çıktı.
+Hiçbiri ayet metninde değil; hepsi **meal ve dipnotlarda**.
+
+- **C1 kontrol karakterleri: U+0091 (44 kez), U+0096 (4), U+0085 (4).** Bunlar
+  geçerli metin değil. Neredeyse kesin olarak cp1252 kodlu metnin UTF-8
+  sanılmasından geliyor: U+0091 → `'` (sol tek tırnak), U+0096 → `–` (kısa
+  çizgi), U+0085 → `…`. Kaynakta mı böyle, import'ta mı bozuluyor —
+  bakılmalı. Şu an ekranda görünmez karakter olarak duruyorlar.
+- **U+200B sıfır genişlikli boşluk (2), U+200E soldan-sağa işareti (10).**
+  Zararsız ama gereksiz; temizlenebilir.
+- **İbranice harfler (22 kod noktası, birer kez).** Bir İngilizce meal
+  dipnotunda İbranice alıntı var. Inter İbranice taşımıyor, o satır sistem
+  fontuna düşecek. Kasıtlıysa sorun değil; sayfa yine okunur.
+- **U+06AF (گ, Farsça gaf).** Amiri Quran'da yok, Scheherazade New'de var.
+  Meal içinde geçiyor, ayet metninde değil. Gövde yığını sayesinde
+  Scheherazade'ye düşer.
+- **U+23AF (⎯, 2 kez), U+2C6B (Ⱬ, 5 kez), U+263C (☼, 2), U+0202 (Ȃ, 14).**
+  Muhtemelen kaynak metindeki dizgi artıkları.
+
+Yapılacak: import katmanına bir "şüpheli karakter" raporu eklemek (plan §20.1
+"hiçbir kayıt sessizce yok sayılmaz" ilkesiyle aynı çizgide). Faz 1 işi.
+
 ## Teknik borç
+
+- **`size-adjust` ile yedek font metrik hizalaması yok.** DESIGN.md §8 CLS
+  hedefi < 0.1. Doğru `ascent-override` / `descent-override` / `size-adjust`
+  değerleri yedek fontun (Arial / system-ui) gerçek metriklerinden hesaplanır.
+  Build makinesinde fontconfig yok (`fc-list` bulunamadı) ve Arial ile
+  metrik uyumlu bir font (Liberation Sans) kurulu değil; ölçemeden sayı
+  yazılmadı. Fontlar `preload` + `swap` ile geliyor, Inter 61,4 KB — geçiş
+  sıçraması küçük ama sıfır değil.
 
 - **Astro 5 → 7 yükseltmesi.** Astro 6+ Node ≥22.12 istiyor; sunucudaki Node 20.20.2'ye pm2'deki
   üretim uygulamaları bağlı. Proje-yerel Node 22 (fnm) ile ayrıştırılabilir.

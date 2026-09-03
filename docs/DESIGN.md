@@ -72,13 +72,30 @@ ilişki"** etiketiyle ayrı gösterilir (plan §12.5, §13).
 Hepsi **kendi sunucumuzdan** servis edilir. Google Fonts CDN kullanılmaz —
 plan §1.3 (takip yok) ve §1.7 (üretimde harici bağımlılık yok).
 
-| Rol | Yazı tipi | Yedek | Not |
-|---|---|---|---|
-| Kur'an metni (Arapça) | **Amiri Quran** | Scheherazade New, serif | Kur'an dizgisi için tasarlanmış; hareke yerleşimi doğru |
-| Gövde ve arayüz | **Inter** | system-ui, sans-serif | Türkçe kapsamı tam (ı, İ, ş, ğ, ç, ö, ü) |
-| İlke / kavram başlığı | **Source Serif 4** | Georgia, serif | Plan §22'nin izin verdiği "karakterli serif" |
+| Rol | Yazı tipi | Yedek | Boyut | Not |
+|---|---|---|---|---|
+| Kur'an metni (Arapça) | **Amiri Quran** | Scheherazade New, serif | 39,3 KB | Kur'an dizgisi için tasarlanmış; hareke yerleşimi doğru. **Öntanımlı.** |
+| Kur'an metni — 2. seçenek | **Scheherazade New** | serif | 21,0 KB | Kullanıcı seçerse indirilir; öntanımlı olarak indirilmez |
+| Gövde ve arayüz | **Inter** | Amiri Quran, system-ui | 61,4 KB | Değişken, 300–700. Türkçe kapsamı tam (ı, İ, ş, ğ, ç, ö, ü) |
+| İlke / kavram başlığı | Georgia, "Times New Roman", serif | — | 0 | Source Serif 4 **henüz indirilmedi** — serif kararı açık (aşağıdaki 2. madde) |
 
-- `font-display: swap`, WOFF2, alt küme (Latin + Türkçe; Arapça ayrı alt küme).
+Toplam **121,7 KB**; bir sayfada aynı anda en fazla **100,7 KB** (Inter + Amiri).
+Latin-only sayfalar Arapça fontu hiç indirmez: `@font-face` `unicode-range`
+Arap harf bloklarıyla sınırlı.
+
+Inter'in gövde yığınında Amiri Quran ikinci sırada: meal ve dipnotların içinde
+geçen Arap harfli alıntılar (7 kod noktası) Inter'de yok, tarayıcı karakter
+bazında bir sonrakine düşer.
+
+- `font-display: swap`, WOFF2, alt küme.
+- **Alt küme uydurulmaz**, üretilen veriden türetilir: Uthmani metinde fiilen
+  geçen 62 kod noktası + meallerde geçen Latin/noktalama + küçük bir arayüz
+  tabanı. Liste `scripts/fonts/codepoints.json` olarak üretilir.
+- **Doğrulanır**: `pnpm fonts:verify` 6236 ayetin tamamını HarfBuzz ile —
+  tarayıcının kullandığı dizgi motoruyla — hem tam fontla hem alt kümeyle dizer;
+  eksik glif (`.notdef`) ve dizgi farkı arar. cmap kapsaması tek başına yetmez:
+  Arapça'da harflerin başta/ortada/sonda biçimleri GSUB üzerinden gelir, cmap'te
+  görünmez.
 - Arapça blok `dir="rtl"`, meal `dir="ltr"` — **karışmaz** (plan §6).
 - Transkripsiyon Latin harflidir, `ltr`; Arapça bilmeyen okuyucu için her zaman
   erişilebilir olmalıdır (plan §2.5).
@@ -245,8 +262,12 @@ Plan §20.4:
 - Astro island'ları: harita, graf ve arama yalnızca kendi sayfalarında yüklenir.
 - Sure JSON'ları lazy; ölçülen boyutlar (`scripts/build/README.md`):
   Bakara çekirdek + 1 meal = **68 KB gzip**, ayet paneli **~7 KB gzip**.
-- Fontlar `preload` + `swap`; CLS'i önlemek için `size-adjust` ile yedek
-  yazı tipi metriklerine hizalanır.
+- Fontlar `preload` + `swap`. Inter her sayfada, Amiri Quran yalnızca Arapça
+  metni olan sayfalarda (`<Base arabic>`) önceden yüklenir.
+- `size-adjust` ile yedek yazı tipi metriklerine hizalama **henüz yok.** Doğru
+  değerler yedek fontun (Arial / system-ui) gerçek metriklerinden hesaplanır;
+  build makinesinde fontconfig ve Arial-metrik bir font yok, ölçemeden sayı
+  yazılmadı. `docs/BACKLOG.md` → teknik borç.
 - Görseller WebP/AVIF, `loading="lazy"`, boyut belirtilmiş.
 
 ---
@@ -254,7 +275,7 @@ Plan §20.4:
 ## 9. Onay sonrası ilk adım
 
 1. ✅ Token'lar `apps/web/src/styles/global.css` → `@theme` bloğu
-2. ⬜ Yazı tipleri `apps/web/public/fonts/` (alt kümelenmiş WOFF2)
+2. ✅ Yazı tipleri `apps/web/public/fonts/` (alt kümelenmiş WOFF2)
 3. ✅ `<SourceBadge>` ve `<ConfidenceBadge>` — en küçük iki bileşen, dili sabitler
 4. ⬜ Klasik okuma ekranı: `/[sure-slug]` ve `/[sure-slug]/[ayet]`
 
@@ -269,14 +290,23 @@ yine de tip denetiminden geçirir. Görsel bakmak gerekirse `_` kaldırılıp
 
 | | |
 |---|---|
-| CSS | 8,5 KB ham / **2,8 KB gzip** |
+| CSS | 10,0 KB ham / **3,1 KB gzip** |
 | Sayfa JS | **0 bayt** — rozetler `<details>` + CSS, işaret satır içi SVG |
+| Yazı tipleri | 100,7 KB (Arapçalı sayfa) / 61,4 KB (Latin-only sayfa) |
 
-## Karara açık üç nokta
+## Karara açık noktalar
 
 1. **Vurgu rengi** — indigo önerildi. Farklı bir hue isterseniz yalnızca
    `--accent*` token'ları değişir, geri kalan palet aynı kalır.
-2. **Serif kullanımı** — şu an yalnızca ilke/kavram başlıklarında. Hiç
-   istenmiyorsa tek yazı tipiyle (Inter) de yürür; bir font isteği azalır.
-3. **Arapça varsayılan yazı tipi** — Amiri Quran mı Scheherazade New mi
-   varsayılan olsun? İkisi de sunulacak, hangisi öntanımlı olsun.
+2. **Serif kullanımı** — şu an yalnızca ilke/kavram başlıklarında ve Georgia
+   ile. Source Serif 4 indirilmedi: karar "hiç kullanmayalım" çıkarsa boşuna
+   40–60 KB olurdu. "Kullanalım" derseniz `scripts/fonts/build_fonts.ts`
+   içindeki listeye bir satır eklenip `pnpm fonts` çalıştırılır.
+
+### Karara bağlandı — 2026-09-03
+
+3. **Arapça öntanımlı yazı tipi: Amiri Quran.** Gerekçe: Kur'an dizgisi için
+   yapılmış, hareke ve Kur'an işaretlerinin yerleşimi mushaf hattına yakın;
+   alt kümede 1048 glif taşıyor (Scheherazade New 259). Scheherazade New
+   ikinci seçenek olarak sunuluyor — daha geniş satır, daha düşük kontrast,
+   küçük ekranda daha okunaklı. İkisi de HarfBuzz ile 6236 ayette doğrulandı.
