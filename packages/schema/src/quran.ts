@@ -3,6 +3,15 @@ import { dbId, nonEmptyText, slug } from "./common.js";
 
 /** Kur'an cekirdegi — plan 4.1. Tek gercek kaynak: Tanzil (plan 20.1). */
 
+/**
+ * verse.id deterministik olarak hesaplanir: surahId * 1000 + verseNumber.
+ * En uzun sure 286 ayettir, cakisma olmaz. Tekrarlanabilir build icin
+ * (plan 20.1) yeniden import verse_id'leri kaydirmaz.
+ */
+export function computeVerseId(surahId: number, verseNumber: number): number {
+  return surahId * 1000 + verseNumber;
+}
+
 export const revelationType = z.enum(["mekki", "medeni"]);
 export type RevelationType = z.infer<typeof revelationType>;
 
@@ -55,6 +64,12 @@ export type AuthorSource = z.infer<typeof authorSource>;
  */
 export const author = z.object({
   id: dbId,
+  /**
+   * Kararli anahtar. Tarayicida saklanan meal secimi (settings.selectedAuthors)
+   * bu slug'i tutar; sayisal id yeniden build'de kayabileceginden kullanici
+   * verisinde id kullanilmaz.
+   */
+  slug,
   name: nonEmptyText,
   workTitle: nonEmptyText.nullable(),
   /** ISO 639-1: "tr", "en" */

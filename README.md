@@ -42,8 +42,19 @@ chmod 600 .env
 | `pnpm dev` | Astro geliştirme sunucusu (`SITE_PORT`, varsayılan 4321) |
 | `pnpm build` | Şema + statik site derlemesi |
 | `pnpm typecheck` | Tüm paketlerde tip denetimi |
-| `pnpm db:up` / `pnpm db:down` | Build veritabanı container'ı *(adım 3'te eklenecek)* |
+| `pnpm db:up` / `pnpm db:down` | Build veritabanı container'ını başlat / durdur |
+| `pnpm db:reset` | Veritabanını sil ve şemayı sıfırdan kur |
+| `pnpm db:psql` | Veritabanına psql ile bağlan |
 | `pnpm import` | Kaynak import scriptleri *(adım 4'te eklenecek)* |
+
+### Build veritabanı
+
+`kuran-pg` container'ı PostgreSQL 16, yalnızca `127.0.0.1:${DB_PORT}` üzerinde
+dinler ve **yalnızca build makinesinde** çalışır. Üretim sunucusunda veritabanı
+yoktur. Şema `infra/db/schema.sql` içindedir ve container ilk başlatıldığında
+otomatik uygulanır.
+
+Bot aboneliği ayrı bir veritabanı kullanır (`infra/db/bot_schema.sql`, Faz 3).
 
 ## Dizin yapısı
 

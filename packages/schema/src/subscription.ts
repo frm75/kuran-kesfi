@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { dbId, isoTimestamp } from "./common.js";
+import { dbId, isoTimestamp, slug } from "./common.js";
 
 /**
  * Mesaj aboneligi — plan 19.6.
@@ -24,8 +24,12 @@ export const subscription = z.object({
   /** Telegram chat_id veya telefon numarasi — kanala gore */
   channelId: z.string().min(1),
   frequency: subscriptionFrequency,
-  /** Tercih edilen meal */
-  authorId: dbId,
+  /**
+   * Tercih edilen mealin author.slug degeri. Bot veritabani site build
+   * veritabanindan ayridir (plan 19.6), bu yuzden yabanci anahtar yerine
+   * kararli slug tutulur.
+   */
+  authorSlug: slug,
   /** IANA saat dilimi: "Europe/Istanbul" */
   timezone: z.string().min(1),
   sendHour: z.number().int().min(0).max(23),

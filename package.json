@@ -13,7 +13,9 @@
     "build": "pnpm --filter @kuran/schema build && pnpm --filter @kuran/web build",
     "typecheck": "pnpm -r typecheck",
     "import": "echo \"import scriptleri henuz eklenmedi (Faz 0 adim 4)\" && exit 1",
-    "db:up": "docker compose -f infra/db/docker-compose.yml up -d",
-    "db:down": "docker compose -f infra/db/docker-compose.yml down"
+    "db:up": "docker compose --env-file .env -f infra/db/docker-compose.yml up -d",
+    "db:down": "docker compose --env-file .env -f infra/db/docker-compose.yml down",
+    "db:reset": "docker compose --env-file .env -f infra/db/docker-compose.yml down -v && docker compose --env-file .env -f infra/db/docker-compose.yml up -d",
+    "db:psql": "docker exec -it kuran-pg psql -U \"${DB_USER:-kuran}\" -d \"${DB_NAME:-kuran}\""
   }
 }

@@ -1,0 +1,54 @@
+# Build aşaması veritabanı — YALNIZCA build makinesinde çalışır.
+# Üretim sunucusunda veritabanı yoktur; site tamamen statiktir (plan §6).
+#
+# Bu sunucudaki :5433 PostgreSQL, başka bir projenin (esenteg) Patroni HA
+# cluster'ının Sync Standby üyesidir ve salt okunurdur. Ona dokunulmaz;
+# build için bu izole container kullanılır. Bkz. docs/DEPLOY_REPORT.md §2.1.
+#
+# Kullanım:
+#   pnpm db:up      # başlat
+#   pnpm db:down    # durdur (veri korunur)
+#   pnpm db:reset   # sil ve şemayı sıfırdan kur
+
+name: kuran
+
+services:
+  db:
+    # Sunucudaki psql istemcisi 16.14; sürüm uyumu için 16 sabitlendi.
+    image: postgres:16-alpine
+    # Servis adı plan §21.1 gereği "kuran-" önekli
+    container_name: kuran-pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-kuran}
+      POSTGRES_USER: ${DB_USER:-kuran}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD .env dosyasinda tanimlanmali}
+      # Türkçe sıralama build çıktısını etkilemesin diye deterministik collation
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    ports:
+      # YALNIZCA localhost. Dışarı açılmaz (plan §21.3).
+      - "127.0.0.1:${DB_PORT:-4322}:5432"
+    volumes:
+      - kuran_pg_data:/var/lib/postgresql/data
+      # Şema dosyaları salt okunur bağlanır; ilk başlatmada otomatik uygulanır.
+      - ./schema.sql:/docker-entrypoint-initdb.d/10_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-kuran} -d ${DB_NAME:-kuran}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    # Build makinesinde diğer servislerle kaynak yarışmasın
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  kuran_pg_data:
+    name: kuran_pg_data

@@ -132,4 +132,42 @@ Plan §21.2 `/opt/kuran/dist` diyor; aaPanel vhost'u `/www/wwwroot/kurankesfi.tr
 
 **Yedek alınan dosya:** yok (mevcut hiçbir dosya değiştirilmedi).
 
-**Açık iş:** `/www/wwwroot/kurankesfi.tr/` içindeki `CLAUDE.md` ve `PROJE_PLANI.md` hâlâ web kökündedir ve dışarıdan indirilebilir durumdadır. Deploy adımında (Faz 0, adım 8) web kökü temizlenirken kaldırılacaktır.
+**Açık iş:** `/www/wwwroot/kurankesfi.tr/` içindeki `CLAUDE.md` ve `PROJE_PLANI.md` hâlâ web kökündedir ve dışarıdan indirilebilir durumdadır (`https://kurankesfi.tr/PROJE_PLANI.md` → 200). Deploy adımında (Faz 0, adım 8) web kökü temizlenirken kaldırılacaktır.
+
+### 3.2 2026-09-03 — Faz 0, Adım 3 (build veritabanı)
+
+**Sunucuya eklenen:** bir Docker container ve bir volume. Mevcut hiçbir yapılandırma değiştirilmedi.
+
+| Kaynak | Değer |
+|---|---|
+| Container | `kuran-pg` — `postgres:16-alpine` |
+| Port | `127.0.0.1:4322` → 5432 (dışarı açık değil) |
+| Volume | `kuran_pg_data` |
+| Network | `kuran_default` |
+| Veritabanı / kullanıcı | `kuran` / `kuran` |
+| Bellek sınırı | 1 GiB |
+| Compose dosyası | `infra/db/docker-compose.yml` |
+
+Şema `infra/db/schema.sql` container ilk başlatmasında otomatik uygulandı: **35 tablo**, 10 enum tipi.
+Doğrulanan kısıtlar: `verse_id_formula`, `surah_section_source_required`, `verse_relation_not_self`,
+`author_priority_is_default`, `author_license_check`, `location_coords_together` — altısı da hatalı
+veriyi reddetti. Test verisi `pnpm db:reset` ile temizlendi.
+
+`.env` oluşturuldu (izin 600, plan §21.3), `DB_PASSWORD` rastgele üretildi. `.env` repoya girmez.
+
+**Şema tasarım notları:**
+
+- `verse.id` = `surah_id * 1000 + verse_number` (identity değil). Tekrarlanabilir build için
+  (plan §20.1) yeniden import `verse_id`'leri kaydırmaz.
+- `author.slug` ve `source.slug` eklendi. Tarayıcıda saklanan meal seçimi
+  (`settings.selectedAuthors`) sayısal id yerine slug tutar; aksi hâlde yeniden build sonrası
+  kullanıcıların meal tercihi bozulurdu.
+- **Plan sapması:** Plan kaynak bağlantısını `source_id[]` dizisi olarak tarif ediyor. PostgreSQL
+  dizilerine yabancı anahtar konulamadığı için tablo başına bağlantı tabloları kullanıldı
+  (`story_lesson_source`, `location_source`, `timeline_event_source`, `principle_source`).
+  Hatalı kaynak referansı böylece veritabanı düzeyinde engellenir. Statik JSON çıktısında alan
+  yine plandaki gibi `sourceIds` dizisi olarak üretilecektir.
+- Aynı gerekçeyle `story.related_stories`, `timeline_event.related_surah_ids` ve
+  `related_verse_ids` dizileri de bağlantı tablolarına açıldı.
+- `subscription` tablosu bu veritabanında **değildir**; ayrı bot veritabanı şeması
+  `infra/db/bot_schema.sql` içindedir (plan §19.6, Faz 3).

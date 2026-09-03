@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { dbId, nonEmptyText } from "./common.js";
+import { dbId, nonEmptyText, slug } from "./common.js";
 
 /**
  * Kaynak seffafligi (plan 12.10).
@@ -10,6 +10,8 @@ import { dbId, nonEmptyText } from "./common.js";
  */
 export const source = z.object({
   id: dbId,
+  /** Kararli anahtar; ayni kaynagin tekrar eklenmesini engeller */
+  slug,
   /** Kaynagin adi: "Diyanet Kur'an Yolu" */
   name: nonEmptyText,
   /** Eser adi: "Kur'an Yolu Turkce Meal ve Tefsir" */

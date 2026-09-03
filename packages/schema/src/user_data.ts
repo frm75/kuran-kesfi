@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { discoveryNodeType, isoTimestamp, nonEmptyText, verseKey } from "./common.js";
+import { discoveryNodeType, isoTimestamp, nonEmptyText, slug, verseKey } from "./common.js";
 
 /**
  * Kullanici verisi — plan 4.6 ve 12.15.
@@ -51,8 +51,12 @@ export const theme = z.enum(["light", "dark", "system"]);
 export type Theme = z.infer<typeof theme>;
 
 export const settings = z.object({
-  /** Secili meal yazar id'leri; ilk acilista 4 oncelikli meal (plan 3.1) */
-  selectedAuthors: z.array(z.number().int().positive()),
+  /**
+   * Secili meallerin author.slug degerleri; ilk acilista 4 oncelikli meal
+   * (plan 3.1). Sayisal id degil slug saklanir: statik site yeniden build
+   * edildiginde author id'leri kayabilir ve tarayicidaki secim bozulurdu.
+   */
+  selectedAuthors: z.array(slug),
   fontSize: z.number().int().min(12).max(48),
   showArabic: z.boolean(),
   showTranscription: z.boolean(),
