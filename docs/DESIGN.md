@@ -253,10 +253,24 @@ Plan §20.4:
 
 ## 9. Onay sonrası ilk adım
 
-1. Token'lar `apps/web/src/styles/global.css` → `@theme` bloğu
-2. Yazı tipleri `apps/web/public/fonts/` (alt kümelenmiş WOFF2)
-3. `<SourceBadge>` ve `<ConfidenceBadge>` — en küçük iki bileşen, dili sabitler
-4. Klasik okuma ekranı: `/[sure-slug]` ve `/[sure-slug]/[ayet]`
+1. ✅ Token'lar `apps/web/src/styles/global.css` → `@theme` bloğu
+2. ⬜ Yazı tipleri `apps/web/public/fonts/` (alt kümelenmiş WOFF2)
+3. ✅ `<SourceBadge>` ve `<ConfidenceBadge>` — en küçük iki bileşen, dili sabitler
+4. ⬜ Klasik okuma ekranı: `/[sure-slug]` ve `/[sure-slug]/[ayet]`
+
+### Bileşen örnek sayfası
+
+`apps/web/src/pages/_tasarim.astro` her iki rozetin bütün durumlarını gösterir.
+Dosya adı `_` ile başladığı için **route üretmez, yayına çıkmaz**; `astro check`
+yine de tip denetiminden geçirir. Görsel bakmak gerekirse `_` kaldırılıp
+`pnpm --filter @kuran/web build` çalıştırılır, sonra geri konur.
+
+### Ölçüm (bileşenler eklendikten sonra)
+
+| | |
+|---|---|
+| CSS | 8,5 KB ham / **2,8 KB gzip** |
+| Sayfa JS | **0 bayt** — rozetler `<details>` + CSS, işaret satır içi SVG |
 
 ## Karara açık üç nokta
 

@@ -1,0 +1,146 @@
+---
+import type { ContentClass } from "@kuran/schema";
+import type { SourceRef } from "~/components/types";
+
+/**
+ * Kaynak rozeti — plan §12.10, CLAUDE.md kural 4, DESIGN.md §5.
+ *
+ * Bu bileşen projenin omurgasıdır: kaynaklı hiçbir içerik bu rozet olmadan
+ * render edilmez. Kural yorum değil, kod: kaynaksız bir "kaynaklı" ya da
+ * "alternatif" rozeti build'i durdurur (aşağıdaki throw).
+ *
+ * Üç içerik sınıfı yalnızca renkle değil, KENARLIK BİÇİMİ + METİN ile ayrışır
+ * (DESIGN.md §1: "renk tek başına anlam taşımaz"). Gri baskıda ve renk
+ * körlüğünde bilgi kaybolmaz.
+ *
+ * Sıfır JavaScript: kaynak listesi <details>/<summary> ile açılır.
+ */
+
+interface Props {
+  /** "kaynakli" | "alternatif" | "platform" — packages/schema/src/source.ts */
+  contentClass: ContentClass;
+  /** contentClass "platform" değilse en az bir kaynak ZORUNLUDUR. */
+  sources?: readonly SourceRef[];
+  /** Neyin kaynağı — ekran okuyucu için: "Bakara 153 meali" */
+  label?: string;
+  class?: string;
+}
+
+const { contentClass, sources = [], label, class: className } = Astro.props;
+
+// --- Kural uygulaması (build zamanı) --------------------------------------
+// Astro statik export ettiği için bu hatalar üretime çıkamaz; build patlar.
+if (contentClass !== "platform" && sources.length === 0) {
+  throw new Error(
+    `<SourceBadge> kaynaksiz render edilemez: contentClass="${contentClass}"` +
+      (label ? `, label="${label}"` : "") +
+      ". Kaynakli icerik kaynagi gosterilmeden yayinlanmaz (plan 12.10).",
+  );
+}
+if (contentClass === "platform" && sources.length > 0) {
+  throw new Error(
+    "<SourceBadge> contentClass=\"platform\" ise kaynak listesi bos olmalidir; " +
+      "platform verisi kendi derlememizdir, disaridan bir kaynaga dayanmaz (plan 12.15). " +
+      `Verilen: ${sources.map((s) => s.slug).join(", ")}`,
+  );
+}
+
+const first = sources[0];
+const extraCount = Math.max(0, sources.length - 1);
+
+/** Rozetin üstünde görünen metin. */
+const summaryText =
+  contentClass === "platform"
+    ? "Kendi derlememiz"
+    : (contentClass === "alternatif" ? "Alternatif görüş — " : "") +
+      (first?.name ?? "") +
+      (extraCount > 0 ? ` +${extraCount} kaynak` : "");
+
+/** Ekran okuyucuya sınıfı açıkça söyle; görsel kenarlığı duyamaz. */
+const classNameForScreenReader: Record<ContentClass, string> = {
+  kaynakli: "Kaynaklı bilgi",
+  alternatif: "Alternatif görüş",
+  platform: "Platform verisi",
+};
+
+const borderStyle: Record<ContentClass, string> = {
+  kaynakli: "border-solid",
+  alternatif: "border-dashed",
+  platform: "border-dotted",
+};
+
+/** Kaynak satırının alt bilgisi: eser · yazar · referans */
+function metaLine(source: SourceRef): string {
+  return [source.workTitle, source.author, source.reference]
+    .filter((part): part is string => Boolean(part))
+    .join(" · ");
+}
+---
+
+<div
+  class:list={[
+    "source-badge inline-block max-w-full rounded-sm border text-xs",
+    "border-line bg-bg-raised text-text-muted",
+    borderStyle[contentClass],
+    className,
+  ]}
+  data-content-class={contentClass}
+>
+  <span class="sr-only">
+    {classNameForScreenReader[contentClass]}{label ? ` — ${label}` : ""}.
+  </span>
+
+  {
+    sources.length === 0 ? (
+      <span class="block px-2 py-1">{summaryText}</span>
+    ) : (
+      <details>
+        <summary class="cursor-pointer px-2 py-1">
+          <span>{summaryText}</span>
+          <span class="toggle text-accent ms-1 underline" data-show>
+            Kaynakları göster
+          </span>
+          <span class="toggle text-accent ms-1 underline" data-hide>
+            Gizle
+          </span>
+        </summary>
+
+        <ul class="border-line m-0 list-none border-t px-2 py-1">
+          {sources.map((source) => (
+            <li class="py-1">
+              <span class="text-text">{source.name}</span>
+              {metaLine(source) && (
+                <span class="block">{metaLine(source)}</span>
+              )}
+              <span class="text-text-faint block">Lisans: {source.license}</span>
+              {source.url && (
+                <a href={source.url} rel="noopener noreferrer" target="_blank">
+                  Kaynağa git
+                  <span class="sr-only"> (yeni sekmede açılır)</span>
+                </a>
+              )}
+            </li>
+          ))}
+        </ul>
+      </details>
+    )
+  }
+</div>
+
+<style>
+  /* Varsayılan açılır ok gizlenir; metin etiketi zaten durumu söylüyor. */
+  summary {
+    list-style: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* "Kaynakları göster" / "Gizle" — JavaScript yok, durum CSS ile.
+     display:none erişilebilirlik ağacından da çıkarır; ekran okuyucu
+     yalnızca görünen etiketi okur. */
+  details:not([open]) [data-hide],
+  details[open] [data-show] {
+    display: none;
+  }
+</style>

@@ -1,0 +1,63 @@
+---
+import Base from "~/layouts/Base.astro";
+import SourceBadge from "~/components/SourceBadge.astro";
+import ConfidenceBadge from "~/components/ConfidenceBadge.astro";
+import type { SourceRef } from "~/components/types";
+
+/**
+ * Tasarım dili örnekleri — DESIGN.md §1 ve §5'in canlı karşılığı.
+ *
+ * Bu sayfa YAYINLANMAZ: dosya adı `_` ile başladığında Astro onu route
+ * üretmez. Doğrulama gerektiğinde `_` kaldırılıp `pnpm --filter @kuran/web
+ * build` çalıştırılır. Örnek veriler temsilîdir; data/ içinden gelmez.
+ */
+
+const acikKuran: SourceRef = {
+  slug: "acik-kuran",
+  name: "Açık Kuran",
+  workTitle: "Açık Kuran Meal Derlemesi",
+  author: null,
+  reference: "Bakara suresi, 153. ayet",
+  url: "https://acikkuran.com",
+  license: "CC BY-NC-SA 4.0",
+};
+
+const tanzil: SourceRef = {
+  slug: "tanzil",
+  name: "Tanzil Project",
+  workTitle: "Tanzil Kur'an Metni",
+  author: null,
+  reference: "Uthmani hat, sürüm 1.1",
+  url: "https://tanzil.net",
+  license: "CC BY-ND 3.0",
+};
+---
+
+<Base title="Tasarım dili — örnekler">
+  <main class="mx-auto max-w-(--container-measure) px-4 py-8">
+    <h1 class="text-2xl mb-6">Tasarım dili — örnekler</h1>
+
+    <h2 class="text-xl mt-8 mb-3">SourceBadge</h2>
+    <div class="flex flex-col items-start gap-3">
+      <SourceBadge contentClass="kaynakli" sources={[tanzil]} label="Arapça metin" />
+      <SourceBadge
+        contentClass="kaynakli"
+        sources={[acikKuran, tanzil]}
+        label="Bakara 153 meali"
+      />
+      <SourceBadge
+        contentClass="alternatif"
+        sources={[acikKuran]}
+        label="Bakara 153 alternatif okuma"
+      />
+      <SourceBadge contentClass="platform" label="Kavram eşleştirmesi" />
+    </div>
+
+    <h2 class="text-xl mt-8 mb-3">ConfidenceBadge</h2>
+    <div class="flex flex-wrap items-center gap-3">
+      <ConfidenceBadge confidence="kesin" label="Nüzul sırası" />
+      <ConfidenceBadge confidence="muhtemel" label="Konum" />
+      <ConfidenceBadge confidence="rivayet" label="Kıssa kronolojisi" />
+    </div>
+  </main>
+</Base>
