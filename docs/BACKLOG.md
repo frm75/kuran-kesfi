@@ -34,6 +34,19 @@
   oturumda bir kez oldu, git'ten geri alındı. Script `data:import` olarak adlandırıldı; plan
   metni `pnpm data:import && pnpm build` olarak düzeltilmeli.
 
+## Kullanıcıdan bekleyen
+
+- **Plan §23 — Hoca Notları.** `CLAUDE.md` §23.2'ye atıf yapıyor ama `docs/PROJE_PLANI.md`
+  §22'de bitiyor; "scholar" / "Hoca Not" kelimeleri planda hiç geçmiyor. Gereken alan
+  tanımları: `scholar` (slug + ?), `video_source` (video_id + ?), `scholar_note`
+  (iş anahtarı `(scholar_slug, video_id, segment_start_sec, note_type)`, not metni,
+  `note_type` değerleri, `status`, `linked_verses` / `linked_principles` / `linked_concepts`).
+  **Kullanıcı yazacak** (karar: 2026-09-03). Gelene kadar `scripts/sync/` ve `inbox/` boş duruyor.
+- **Zod → migration üreticisi.** Kapsam kararı: yalnızca paylaşılan hoca notu tabloları
+  (yerel `kuran-extract` SQLite, site PostgreSQL kullanıyor). Kur'an çekirdeği yerel projede
+  olmadığı için `infra/db/schema.sql` elle yazılmış PostgreSQL şeması olarak kalır
+  (10 enum, ~40 CHECK korunur). **Plan §23 geldiğinde yapılacak.**
+
 ## İzin / iletişim bekleyen
 
 - **Mehmet Okuyan, Mustafa İslamoğlu, Muhammed Esed mealleri** — hak sahibinden yazılı izin
