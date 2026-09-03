@@ -10,6 +10,12 @@ bilgisayarda çalışır (`kuran-extract`) ve buraya JSON dosyalarıyla veri akt
 Ücretsiz, reklamsız, üyeliksiz, takipsiz, açık kaynak bir Kur'an keşif sitesi. Harita / Zaman / Kavram / Kelime /
 İlkeler eksenlerinde keşif; merkezde AYET. Allah rızası için hazırlanmaktadır; kâr amacı yoktur.
 
+## Domain ve Marka
+- **Alan adı:** `kurankesfi.tr` (alındı) — plan §11 açık sorusu kapandı, §6 barındırma satırı güncellendi
+- **Proje adı:** Kur'an-ı Kerim Keşfi
+- **Tagline:** Keşfet • Oku • Anla
+- Marka renkleri ve tipografi `docs/DESIGN.md`'de; kod içinde marka rengi sabitlenmez, token üzerinden gelir
+
 ## Çalışma Kuralları (kesin)
 1. **Önce plan, sonra kod.** Her görevde önce yapılacaklar listesi ve etkilenecek dosyalar sunulur; kullanıcı
    onaylamadan kod yazılmaz veya dosya değiştirilmez.
@@ -89,9 +95,14 @@ Sunucuda başka uygulamalar çalışıyor. Herhangi bir kurulum/servis işlemind
 Dağıtım kökü: `/opt/kuran/`, build çıktısı `/opt/kuran/dist/`, güncelleme atomik (`dist_new` → `mv`).
 
 ## Arayüz
-- Tasarım dili önce `docs/DESIGN.md`'de tanımlanır (renk token'ları, tip ölçeği, boşluk ölçeği), onaylanır, sonra kodlanır
-- Sakin, tipografi odaklı, nötr palet + tek vurgu rengi, karanlık mod birinci sınıf
+- **`docs/DESIGN.md` tasarım sisteminin tek kaynağıdır.** Renk token'ları, tip ölçeği, boşluk/yuvarlaklık/gölge
+  ölçekleri, hareket süreleri, ortak bileşen anahtarları ve landing bölüm şablonu orada tanımlıdır. Bileşen
+  yazmadan önce okunur; hex/px değeri koda gömülmez, token'dan gelir. DESIGN.md değişecekse önce onay alınır
+- Palet: koyu lacivert `#0B1B3B` + altın `#C9A756` tek vurgu; açık modda kağıt tonu `#F5EFE0` (DESIGN.md §1)
+- Tipografi: başlık Playfair Display, gövde Inter (yedek DM Sans), Arapça Amiri Quran / Scheherazade New (DESIGN.md §2)
+- Sakin, tipografi odaklı, tek vurgu rengi, karanlık mod birinci sınıf
 - Klişe "İslami site" estetiği (yeşil-altın, stok cami görseli, aşırı süs) kullanılmaz
+- Fontlar kendi sunucumuzdan servis edilir; Google Fonts CDN kullanılmaz (takip yok, üretimde harici bağımlılık yok)
 - Arapça: Amiri Quran / Scheherazade New, `dir="rtl"`; meal `ltr`
 - Ortak bileşenler: AyetPaneli, SourceBadge, ConfidenceBadge, DiscoveryPath (breadcrumb), ComparisonBasket
 - Harita/graf için zorunlu liste alternatifi; `prefers-reduced-motion` desteklenir

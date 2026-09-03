@@ -282,7 +282,7 @@ Tüm import scriptleri tekrar çalıştırılabilir (upsert), kaynak bazlı ayr�
 - Birincil: kullanıcının kendi sunucusu (Linux VPS) — Nginx/Caddy ile statik dosya servisi; bkz. Bölüm 21
 - Alternatif/yedek: Cloudflare Pages + R2
 - Maliyet hedefi: sıfıra yakın
-- Alan adı: belirlenecek
+- Alan adı: **kurankesfi.tr** (alındı) — bkz. §11 kapalı soru
 
 **Dizin yapısı (öneri)**
 ```
@@ -368,7 +368,8 @@ Tüm import scriptleri tekrar çalıştırılabilir (upsert), kaynak bazlı ayr�
 
 ## 11. Açık Sorular (Karar Bekleyen)
 
-- Alan adı ve proje adı
+- ~~Alan adı ve proje adı~~ → KARAR: alan adı **kurankesfi.tr** alındı; proje adı **"Kur'an-ı Kerim Keşfi"**,
+  tagline **"Keşfet • Oku • Anla"**. Marka ayrıntısı `CLAUDE.md` → "Domain ve Marka"; görsel karşılığı `docs/DESIGN.md`
 - Diyanet Kur'an Yolu tefsirinin kullanım şartları — yazılı izin gerekip gerekmediği
 - Nüzul sırasında ana referans: Mısır/Ezher mi, Nöldeke mi (öneri: Ezher ana, Nöldeke alternatif)
 - Kavram setinin ilk kaynağı: Diyanet konu fihristi mi, özgün derleme mi
@@ -562,6 +563,24 @@ Ana sayfa klasik sure listesiyle başlamaz.
                    KLASİK OKUMA
 ```
 
+## 14.1 Landing Page Bölüm Sırası
+
+Yukarıdaki şema uygulamanın ana sayfasıdır. `kurankesfi.tr` kök adresinde karşılayan **tanıtım sayfası**nın
+bölüm sırası aşağıdaki gibidir. Görsel karşılığı (bölüm şablonu, boşluk, tipografi) `docs/DESIGN.md` §7.
+
+1. **Hero** — proje adı, tagline "Keşfet • Oku • Anla", birincil CTA
+2. **Neden Farklı** — ücretsiz, reklamsız, üyeliksiz, takipsiz, açık kaynak (§1)
+3. **5 Keşif Kapısı** — Harita · Zaman · Kavram · Kelime · İlkeler (§2)
+4. **Nasıl Çalışır** — ayet merkezli keşif akışının kısa anlatımı (§15)
+5. **Modüller** — modül kartları (§2)
+6. **Kaynaklar** — Tanzil, Açık Kuran, mealler, tefsir (§3)
+7. **Kaynak Şeffaflığı** — her bilginin kaynağıyla gösterilmesi ilkesi (§12.10)
+8. **Bülten** — günlük/haftalık ayet ve ilke aboneliği (§19)
+9. **Kur'an'da Bugün** — günün keşfi önizlemesi
+10. **Açık Kaynak** — repo, lisans (kod MIT, `data/` CC BY-NC-SA 4.0), katkı çağrısı
+11. **Sadaka-i Cariye** — projenin Allah rızası için hazırlandığı, kâr amacı gütmediği notu
+12. **Footer** — zorunlu atıf bağlantıları, iletişim, yasal
+
 ---
 
 # 15. Temel Bilgi Mimarisi
@@ -753,6 +772,9 @@ Telegram botu Faz 3; WhatsApp Faz 5 (yayın sonrası). İlkeler modülü (Bölü
 
 ## 20.4 Performans Bütçesi
 - İlk yükleme: < 100 KB JS, < 200 KB toplam (fontlar hariç)
+- **Font bütçesi:** < 140 KB (Arapça metinli sayfa: Inter + Amiri Quran + Playfair Display), < 95 KB (Latin-only
+  sayfa: Inter + Playfair Display). §22'de Playfair Display eklendiği için önceki 100,7 KB / 61,4 KB hedefi
+  yükseltildi; kesin rakam Playfair alt kümelendikten sonra ölçülüp bu satır güncellenecek
 - LCP < 2 sn (3G), CLS < 0.1
 - Sure JSON'ları ve ses dosyaları lazy; harita/graf kütüphaneleri yalnızca ilgili sayfada
 - Görseller WebP/AVIF, `loading="lazy"`, boyut belirtilmiş
@@ -800,10 +822,16 @@ Site kullanıcının kendi Linux sunucusuna kurulacaktır. Sunucuda başka uygul
 Arayüz "güzel" olmalı: sakin, okumaya odaklı, dinî içeriğe yakışır bir ağırbaşlılık; klişe "İslami site" kalıplarından
 (yeşil-altın, aşırı süsleme, stok cami görselleri) uzak.
 
-- **Karakter:** Modern, minimal, tipografi odaklı. Ana renk paleti nötr (kağıt tonu / koyu lacivert-gri) + tek vurgu
-  rengi. Karanlık mod birinci sınıf vatandaş.
-- **Tipografi hiyerarşisi:** Arapça metin büyük ve rahat satır aralığıyla (Amiri Quran / Scheherazade New); meal ve
-  açıklamalar okunabilir sans-serif; ilke/kavram başlıkları için karakterli bir serif kabul edilebilir.
+- **Karakter:** Modern, minimal, tipografi odaklı. Karanlık mod birinci sınıf vatandaş.
+- **Renk paleti:** Koyu lacivert `#0B1B3B` zemin + altın `#C9A756` tek vurgu; açık modda kağıt tonu `#F5EFE0`
+  zemin, lacivert metin, kontrast için biraz koyulaştırılmış altın `#A88B3F`. Kaçınılan klişe **yeşil-altın**
+  paletidir; lacivert-altın ondan ayrıdır ve altın tek vurgu rengi olarak kalır, ikinci bir marka rengi yoktur.
+  Tam token listesi (elevated/overlay zeminler, kenarlık, güven rozeti renkleri, açık/koyu eşleşmeleri)
+  `docs/DESIGN.md` §1'dedir.
+- **Tipografi hiyerarşisi:** Başlıklar **Playfair Display** (yedek: Cormorant Garamond, Georgia, serif); gövde,
+  meal ve arayüz metni **Inter** (yedek: DM Sans, system-ui, sans-serif); Arapça metin büyük ve rahat satır
+  aralığıyla **Amiri Quran** (yedek: Scheherazade New, serif). Tip ölçeği ve satır yükseklikleri `docs/DESIGN.md` §2.
+  Fontlar kendi sunucumuzdan servis edilir, CDN kullanılmaz (§1.3, §1.7).
 - **Boşluk:** Cömert padding, tek sütun okuma genişliği (~65-75 karakter), gereksiz kutu/çerçeve yok.
 - **Hareket:** Harita uçuşları ve panel geçişleri yumuşak ama kısa (200-300 ms); `prefers-reduced-motion` saygı görür.
 - **Bileşen tutarlılığı:** Ayet paneli, kaynak rozeti, güven rozeti, keşif yolu çubuğu tüm sayfalarda aynı bileşen.
