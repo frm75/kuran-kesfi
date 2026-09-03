@@ -65,10 +65,12 @@ Bot aboneliği ayrı bir veritabanı kullanır (`infra/db/bot_schema.sql`, Faz 3
 
 ```
 apps/web/            Astro site (statik export)
-packages/schema/     Zod şemaları ve paylaşılan tipler (tarayıcı güvenli)
+packages/schema/     Zod şemaları + migration üreticileri (yerel proje ile ortak)
 packages/pipeline/   Build makinesi yardımcıları: ortam, veritabanı, önbellek, günlük
 scripts/import/      Kaynak import (tanzil, quran_com, corpus)
 scripts/build/       PostgreSQL → public/data/*.json + referans linter
+scripts/sync/        inbox/ → DB: yerel projeden gelen hoca notu paketleri
+inbox/               kuran-extract paketleri — repoya girmez
 infra/db/            Build veritabanı şeması ve compose dosyası
 data/                Elle hazırlanan kaynaklı veri (kıssa, konum, kavram, ilke, siyer)
 cache/               İndirilen ham kaynak veri — repoya girmez

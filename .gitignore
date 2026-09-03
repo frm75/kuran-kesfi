@@ -12,6 +12,12 @@ apps/web/public/data/
 # indirilen ham kaynak veri (repoya girmez, plan 20.1)
 cache/
 
+# yerel kuran-extract projesinden gelen hoca notu paketleri (repoya girmez).
+# Dizinin kendisi degil icerigi yoksayilir; aksi halde .gitkeep istisnasi
+# calismaz (git: hariç tutulan bir dizinin altindaki dosya geri alinamaz).
+inbox/*
+!inbox/.gitkeep
+
 # sirlar ve ortam
 .env
 .env.*

@@ -1,7 +1,10 @@
-# CLAUDE.md — Kur'an-ı Kerim Keşif Platformu
+# CLAUDE.md — Kur'an-ı Kerim Keşif Platformu (Ana Site)
 
-Bu dosya Claude Code için proje talimatıdır. Tam plan `docs/PROJE_PLANI.md` dosyasındadır; her oturumun
-başında o dosyayı oku. Plan ile bu dosya çelişirse plan geçerlidir.
+Bu dosya Claude Code için ana site projesinin talimatıdır. Tam plan `docs/PROJE_PLANI.md` dosyasındadır;
+her oturumun başında o dosyayı oku. Plan ile bu dosya çelişirse plan geçerlidir.
+
+Bu proje sunucuda çalışacak asıl web uygulamasıdır. Hoca notu çıkarımı ayrı bir proje olarak yerel
+bilgisayarda çalışır (`kuran-extract`) ve buraya JSON dosyalarıyla veri aktarır.
 
 ## Proje Özeti
 Ücretsiz, reklamsız, üyeliksiz, takipsiz, açık kaynak bir Kur'an keşif sitesi. Harita / Zaman / Kavram / Kelime /
@@ -12,8 +15,9 @@ başında o dosyayı oku. Plan ile bu dosya çelişirse plan geçerlidir.
    onaylamadan kod yazılmaz veya dosya değiştirilmez.
 2. **Kısa özet.** İş bitince açıklama 3-5 satırı geçmez: ne yapıldı, ne değişti, sıradaki adım.
 3. **Küçük adımlar.** Tek seferde tek modül/tek script; büyük yeniden yazım yapılmaz.
-4. **Dinî içerik üretilmez.** Tefsir, hüküm, yorum, ders, ilke metni yazılmaz; yalnızca kaynaklı veri düzenlenir.
-   Kaynağı olmayan içerik `data/` altına girmez.
+4. **Platform kendi editoryal yorumu üretmez.** Tefsir, meal, hoca açıklaması — hepsi bir kaynağa bağlı yorumdur;
+   platform bunları kaynağıyla gösterir, tek doğru gibi sunmaz, farklı görüşleri yan yana verir. Kaynağı olmayan
+   içerik `data/` altına girmez.
 5. **Harici API'ye üretimde bağımlılık yok.** Site build'i internet gerektirmez; import scriptleri ayrıdır.
 6. **Lisans:** Kod MIT, `data/` CC BY-NC-SA 4.0. Lisansı belirsiz meal, ses, görsel veya tefsir eklenmez.
 7. **Kapsam dondurulmuştur.** Planda olmayan özellik önerilmez; öneri varsa "ilk yayın sonrası" notuyla
@@ -30,15 +34,17 @@ başında o dosyayı oku. Plan ile bu dosya çelişirse plan geçerlidir.
 ## Dizin Yapısı
 ```
 apps/web/            Astro site
-packages/schema/     Zod şemaları ve paylaşılan tipler
+packages/schema/     Zod şemaları + PostgreSQL/SQLite migration üreticileri (yerel proje ile ORTAK)
 scripts/import/      Kaynak import (tanzil, acikkuran, quran_com, corpus)
 scripts/build/       PostgreSQL → public/data/*.json + referans linter
+scripts/sync/        Yerel projeden gelen JSON paketlerini içeri alır (inbox/ → DB)
 data/stories/        Kıssa JSON (elle, kaynaklı)
-data/locations/      Konum JSON (elle, kaynaklı)
+data/locations/      Konum JSON
 data/concepts/       Kavram JSON
 data/principles/     İlke JSON
 data/timeline/       Siyer zaman çizelgesi
 cache/               İndirilen ham kaynak veri (git'e girmez)
+inbox/               Yerel projeden gelen scholar_notes_*.json paketleri (git'e girmez)
 bot/                 Telegram bot servisi
 docs/                PROJE_PLANI.md, DESIGN.md, DEPLOY_REPORT.md, BACKLOG.md
 ```
@@ -57,6 +63,20 @@ docs/                PROJE_PLANI.md, DESIGN.md, DEPLOY_REPORT.md, BACKLOG.md
 - Her kaynaklı kayıt `source_id` taşır; `<SourceBadge>` bileşeni olmadan kaynaklı içerik render edilmez
 - Güven dereceleri: `kesin | muhtemel | rivayet` (konum, kronoloji, ilişki); ihtilaf saklanmaz
 
+## Yerel Proje (kuran-extract) ile Uyum
+Hoca notları ayrı bir yerel projede çıkarılır ve JSON paketiyle bu projeye aktarılır.
+
+- **Ortak şema:** `packages/schema/` her iki proje tarafından kullanılır. Zod tipleri değişince iki taraf da güncellenir.
+- **İki migration:** Aynı Zod tiplerinden hem `migrations/postgres/*.sql` hem `migrations/sqlite/*.sql` üretilir.
+  PostgreSQL: `SERIAL`, `JSONB`, `TIMESTAMPTZ`. SQLite: `INTEGER PK`, `TEXT` (JSON/ISO datetime).
+- **İş anahtarları:** Sync için otomatik artan ID değil, iş anahtarları kullanılır:
+  `scholar.slug`, `video_source.video_id`, `scholar_note` için `(scholar_slug, video_id, segment_start_sec, note_type)`
+- **Inbox akışı:** Yerel projeden gelen `inbox/scholar_notes_YYYY-MM-DD.json` + `.sha256` → `scripts/sync/import_notes.ts`
+  hash doğrular → Zod ile parse eder → idempotent upsert → rapor (yeni/güncel/hatalı sayısı).
+- **Bilinmeyen referans:** JSON'daki `linked_verses`/`linked_principles`/`linked_concepts` slug'ları DB'de yoksa
+  import başarısız olur, dosya `inbox/rejected/` altına taşınır, hata raporu yazılır.
+- **Silinen videolar:** Paket içinde `status=archived` gelen notlar yayından çıkar; kayıt silinmez, işaretlenir.
+
 ## Sunucu Kurulumu — Port Çakışması (kesin)
 Sunucuda başka uygulamalar çalışıyor. Herhangi bir kurulum/servis işleminden önce:
 1. `ss -tlnp` çıktısını al, kullanılan portları listele ve kullanıcıya göster
@@ -65,6 +85,7 @@ Sunucuda başka uygulamalar çalışıyor. Herhangi bir kurulum/servis işlemind
 4. Değiştirilecek her yapılandırma dosyasını önce `*.bak.<tarih>` olarak yedekle
 5. Servis ve cron adları `kuran-` ön ekiyle
 6. Kurulum sonunda `docs/DEPLOY_REPORT.md`'ye port, servis, yol ve yedek listesini yaz
+
 Dağıtım kökü: `/opt/kuran/`, build çıktısı `/opt/kuran/dist/`, güncelleme atomik (`dist_new` → `mv`).
 
 ## Arayüz
@@ -78,13 +99,17 @@ Dağıtım kökü: `/opt/kuran/`, build çıktısı `/opt/kuran/dist/`, güncell
 
 ## Faz Sırası
 Faz 0 Altyapı → Faz 1 Kıssa Haritası + İlkeler → Faz 2 Zaman + Meal Farkları → Faz 3 Kök + Kavram + Telegram bot
-→ Faz 4 Günlük + PWA + Ses → Faz 5 Yayın (WhatsApp bu fazda). Detay: `docs/PROJE_PLANI.md` §9, §16.
++ Hoca Notları import akışı → Faz 4 Günlük + PWA + Ses → Faz 5 Yayın (WhatsApp bu fazda).
+Detay: `docs/PROJE_PLANI.md` §9, §16, §23.
 
 ## İlk Görev (Faz 0)
-1. Sunucu port/servis envanteri raporu
-2. Monorepo iskeleti (pnpm workspaces) ve `packages/schema` Zod tipleri
-3. PostgreSQL şema SQL'i (plan §4, §12.15, §18.4, §19.6)
-4. `scripts/import/tanzil.ts` ve `scripts/import/acikkuran.ts` (öncelikli 4 meal önce)
-5. `scripts/build/` → `public/data/` + referans linter
-6. `docs/DESIGN.md` taslağı → onay → klasik okuma ekranı
+1. Sunucu port/servis envanteri raporu (`ss -tlnp`)
+2. Monorepo iskeleti (pnpm workspaces)
+3. `packages/schema` — Zod tipleri (§4, §12.15, §18.4, §19.6, §23.2) + PostgreSQL/SQLite migration üreticileri
+4. PostgreSQL şema uygulaması + referans linter iskeleti
+5. `scripts/import/tanzil.ts` ve `scripts/import/acikkuran.ts` (öncelikli 4 meal önce)
+6. `scripts/build/` → `public/data/`
+7. `scripts/sync/import_notes.ts` — inbox JSON paket importu (hoca notları için)
+8. `docs/DESIGN.md` taslağı → onay → klasik okuma ekranı
+
 Her adımda onay al.
