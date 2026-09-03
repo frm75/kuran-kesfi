@@ -18,9 +18,12 @@ import { readFileSync, readdirSync, statSync } from "node:fs";
 import { extname, join, relative } from "node:path";
 import {
   parseVerseRef,
+  staticAuthorsIndex,
   staticSources,
   staticSurah,
+  staticSurahTranslation,
   staticSurahsIndex,
+  staticVerseDetail,
   verseRef as verseRefSchema,
 } from "@kuran/schema";
 import { closePool, info, pool, repoRoot } from "@kuran/pipeline";
@@ -271,6 +274,10 @@ function checkStaticOutput(): void {
   }
 
   let surahFiles = 0;
+  let translationFiles = 0;
+  let verseFiles = 0;
+  let authorSlugs = new Set<string>();
+  const translationCounts = new Map<string, number>();
   const seenIds = new Set<number>();
   const seenSlugs = new Set<string>();
 
@@ -299,6 +306,57 @@ function checkStaticOutput(): void {
       const result = staticSources.safeParse(parsed);
       checksRun += 1;
       if (!result.success) errors.push(`${relativePath}: ${result.error.message}`);
+    } else if (relativePath === "authors_index.json") {
+      const result = staticAuthorsIndex.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) {
+        errors.push(`${relativePath}: ${result.error.message}`);
+      } else {
+        authorSlugs = new Set(result.data.authors.map((a) => a.slug));
+        // Tanzil sarti: ucten fazla meal kullanildiginda geri baglanti zorunlu
+        checksRun += 1;
+        const hasTransLink = result.data.requiredAttributionLinks.some((l) =>
+          l.url.startsWith("https://tanzil.net/trans"),
+        );
+        if (result.data.authors.length > 3 && !hasTransLink) {
+          errors.push(
+            `${relativePath}: ${result.data.authors.length} meal kullaniliyor ancak ` +
+              "tanzil.net/trans/ geri baglantisi yok (bkz. data/LICENSE)",
+          );
+        }
+      }
+    } else if (relativePath.startsWith("translation/")) {
+      const result = staticSurahTranslation.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) {
+        errors.push(`${relativePath}: ${result.error.message}`);
+        continue;
+      }
+      translationFiles += 1;
+      const payload = result.data;
+      const expectedPath = `translation/${payload.authorSlug}/surah_${payload.surahId}.json`;
+      if (relativePath !== expectedPath) {
+        errors.push(`${relativePath}: yol ${expectedPath} olmali`);
+      }
+      translationCounts.set(
+        payload.authorSlug,
+        (translationCounts.get(payload.authorSlug) ?? 0) + 1,
+      );
+    } else if (relativePath.startsWith("verse/")) {
+      const result = staticVerseDetail.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) {
+        errors.push(`${relativePath}: ${result.error.message}`);
+        continue;
+      }
+      verseFiles += 1;
+      const verse = result.data;
+      if (verse.id !== verse.surahId * 1000 + verse.verseNumber) {
+        errors.push(`${relativePath}: id formulune uymuyor`);
+      }
+      if (base !== `verse_${verse.surahId}_${verse.verseNumber}.json`) {
+        errors.push(`${relativePath}: dosya adi verse_${verse.surahId}_${verse.verseNumber}.json olmali`);
+      }
     } else if (relativePath.startsWith("surah/")) {
       const result = staticSurah.safeParse(parsed);
       checksRun += 1;
@@ -338,6 +396,48 @@ function checkStaticOutput(): void {
   checksRun += 1;
   if (surahFiles !== 114) {
     errors.push(`statik cikti: 114 sure dosyasi bekleniyordu, ${surahFiles} bulundu`);
+  }
+
+  checksRun += 1;
+  if (verseFiles !== 6236) {
+    errors.push(`statik cikti: 6236 ayet dosyasi bekleniyordu, ${verseFiles} bulundu`);
+  }
+
+  // Her yazarin 114 surenin hepsi icin dosyasi olmali
+  checksRun += 1;
+  const expectedTranslationFiles = authorSlugs.size * 114;
+  if (translationFiles !== expectedTranslationFiles) {
+    errors.push(
+      `statik cikti: ${expectedTranslationFiles} meal dosyasi bekleniyordu ` +
+        `(${authorSlugs.size} yazar x 114 sure), ${translationFiles} bulundu`,
+    );
+  }
+  for (const slugName of authorSlugs) {
+    checksRun += 1;
+    const count = translationCounts.get(slugName) ?? 0;
+    if (count !== 114) {
+      errors.push(`meal dosyalari: ${slugName} icin 114 sure bekleniyordu, ${count} bulundu`);
+    }
+  }
+  for (const slugName of translationCounts.keys()) {
+    checksRun += 1;
+    if (!authorSlugs.has(slugName)) {
+      errors.push(`meal dosyalari: '${slugName}' authors_index.json'da yok`);
+    }
+  }
+
+  // Performans butcesi (plan 20.4): tek dosya asiri buyumemeli
+  checksRun += 1;
+  const oversized = files
+    .map((path) => ({ path: relative(dataRoot, path), size: statSync(path).size }))
+    .filter((entry) => entry.size > 300 * 1024);
+  if (oversized.length > 0) {
+    for (const entry of oversized) {
+      warn(
+        "performans butcesi",
+        `${entry.path} ${Math.round(entry.size / 1024)} KB (esik 300 KB, plan 20.4)`,
+      );
+    }
   }
 }
 

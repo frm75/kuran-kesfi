@@ -6,17 +6,35 @@
  *
  * Calistirma:  pnpm --filter @kuran/build data
  *
- * Bu adimda uretilenler (yalnizca Tanzil verisi mevcut):
- *   surahs_index.json      114 sure ust bilgisi + toplamlar
- *   surah/surah_{id}.json  sure + ayetleri (Arapca metin, sayfa, cuz, secde)
- *   sources.json           Kaynak Seffafligi sayfasi icin kaynak listesi
+ * Uc katmanli duzen (bkz. @kuran/schema static_data.ts):
+ *   surahs_index.json                        114 sure ust bilgisi + toplamlar
+ *   authors_index.json                       meal listesi + zorunlu atif baglantilari
+ *   surah/surah_{id}.json                    CEKIRDEK: Arapca + ceviriyazi
+ *   translation/{yazar}/surah_{id}.json      TEK MEAL
+ *   verse/verse_{s}_{v}.json                 TEK AYET + tum mealler
+ *   sources.json                             Kaynak Seffafligi
  *
- * Meal, kok, kissa, kavram ve ilke ciktilari ilgili import'lar tamamlandikca
- * eklenecektir.
+ * Tek dosyada sure + tum mealler tutulunca Bakara 1179 KB oluyordu; plan 20.4
+ * ilk yukleme butcesi < 200 KB.
+ *
+ * Kok, kissa, kavram ve ilke ciktilari ilgili import'lar tamamlandikca eklenir.
  */
 
-import type { StaticSurah, StaticSurahMeta, StaticVerse } from "@kuran/schema";
-import { staticSources, staticSurah, staticSurahsIndex } from "@kuran/schema";
+import type {
+  StaticSurah,
+  StaticSurahMeta,
+  StaticSurahTranslation,
+  StaticVerse,
+  StaticVerseDetail,
+} from "@kuran/schema";
+import {
+  staticAuthorsIndex,
+  staticSources,
+  staticSurah,
+  staticSurahTranslation,
+  staticSurahsIndex,
+  staticVerseDetail,
+} from "@kuran/schema";
 import { Report, closePool, fail, info, pool } from "@kuran/pipeline";
 import { Emitter, dataRoot } from "./lib/emit.js";
 
@@ -38,12 +56,22 @@ interface VerseRow {
   surah_id: number;
   verse_number: number;
   text_uthmani: string;
-  text_simple: string;
-  text_no_vowel: string;
   transcription_tr: string | null;
   page: number;
   juz: number;
   sajda: boolean;
+}
+
+interface AuthorRow {
+  slug: string;
+  name: string;
+  work_title: string | null;
+  language: string;
+  license: string;
+  license_note: string | null;
+  url: string | null;
+  is_default: boolean;
+  priority: number | null;
 }
 
 interface TranslationRow {
@@ -99,12 +127,23 @@ async function main(): Promise<void> {
     fail("surah tablosu bos — once 'pnpm import' calistirin");
   }
 
+  // text_simple ve text_no_vowel bilerek okunmuyor: yalnizca arama indeksi
+  // girdisidir, okuma ekraninda kullanilmaz (bkz. static_data.ts).
   const verses = (
     await pool.query<VerseRow>(
-      `SELECT id, surah_id, verse_number, text_uthmani, text_simple, text_no_vowel,
+      `SELECT id, surah_id, verse_number, text_uthmani,
               transcription_tr, page, juz, sajda
          FROM verse
         ORDER BY id`,
+    )
+  ).rows;
+
+  const authors = (
+    await pool.query<AuthorRow>(
+      `SELECT slug, name, work_title, language, license, license_note, url,
+              is_default, priority
+         FROM author
+        ORDER BY priority NULLS LAST, slug`,
     )
   ).rows;
 
@@ -137,7 +176,7 @@ async function main(): Promise<void> {
   ).rows;
 
   info(
-    `okundu: ${surahs.length} sure, ${verses.length} ayet, ` +
+    `okundu: ${surahs.length} sure, ${verses.length} ayet, ${authors.length} yazar, ` +
       `${translations.length} meal satiri, ${sources.length} kaynak`,
   );
 
@@ -179,22 +218,15 @@ async function main(): Promise<void> {
       );
     }
 
+    // --- 1. katman: cekirdek (Arapca + ceviriyazi, meal yok) ---
     const staticVerses: StaticVerse[] = surahVerses.map((verse) => ({
       id: verse.id,
       verseNumber: verse.verse_number,
       textUthmani: verse.text_uthmani,
-      textSimple: verse.text_simple,
-      textNoVowel: verse.text_no_vowel,
       transcriptionTr: verse.transcription_tr,
       page: verse.page,
       juz: verse.juz,
       sajda: verse.sajda,
-      translations: (translationsByVerse.get(verse.id) ?? []).map((t) => ({
-        authorSlug: t.author_slug,
-        authorName: t.author_name,
-        text: t.text,
-        footnotes: t.footnotes ?? [],
-      })),
     }));
 
     const payload: StaticSurah = { ...meta, verses: staticVerses };
@@ -204,8 +236,78 @@ async function main(): Promise<void> {
     if (!parsed.success) {
       fail(`sure ${row.id} sema dogrulamasi basarisiz:\n${parsed.error.message}`);
     }
-
     emitter.write(`surah/surah_${row.id}.json`, payload);
+
+    // --- 2. katman: yazar basina meal dosyasi ---
+    for (const author of authors) {
+      const authorVerses = surahVerses
+        .map((verse) => {
+          const match = (translationsByVerse.get(verse.id) ?? []).find(
+            (t) => t.author_slug === author.slug,
+          );
+          if (match === undefined) return null;
+          return {
+            verseNumber: verse.verse_number,
+            text: match.text,
+            footnotes: match.footnotes ?? [],
+          };
+        })
+        .filter((entry): entry is NonNullable<typeof entry> => entry !== null);
+
+      // Meali eksik olan yazar icin dosya uretilmez; rapora yazilir
+      if (authorVerses.length === 0) continue;
+      if (authorVerses.length !== surahVerses.length) {
+        report.note(
+          `${author.slug} / sure ${row.id}: ${surahVerses.length} ayetin ` +
+            `${authorVerses.length} tanesinde meal var`,
+        );
+      }
+
+      const translationPayload: StaticSurahTranslation = {
+        surahId: row.id,
+        authorSlug: author.slug,
+        authorName: author.name,
+        verses: authorVerses,
+      };
+      const translationParsed = staticSurahTranslation.safeParse(translationPayload);
+      if (!translationParsed.success) {
+        fail(
+          `${author.slug} / sure ${row.id} sema dogrulamasi basarisiz:\n` +
+            translationParsed.error.message,
+        );
+      }
+      emitter.write(`translation/${author.slug}/surah_${row.id}.json`, translationPayload);
+    }
+
+    // --- 3. katman: ayet basina dosya (tum mealler) ---
+    for (const verse of surahVerses) {
+      const detail: StaticVerseDetail = {
+        id: verse.id,
+        verseNumber: verse.verse_number,
+        textUthmani: verse.text_uthmani,
+        transcriptionTr: verse.transcription_tr,
+        page: verse.page,
+        juz: verse.juz,
+        sajda: verse.sajda,
+        surahId: row.id,
+        surahSlug: meta.slug,
+        surahNameTr: meta.nameTr,
+        translations: (translationsByVerse.get(verse.id) ?? []).map((t) => ({
+          authorSlug: t.author_slug,
+          authorName: t.author_name,
+          text: t.text,
+          footnotes: t.footnotes ?? [],
+        })),
+      };
+      const detailParsed = staticVerseDetail.safeParse(detail);
+      if (!detailParsed.success) {
+        fail(
+          `ayet ${row.id}:${verse.verse_number} sema dogrulamasi basarisiz:\n` +
+            detailParsed.error.message,
+        );
+      }
+      emitter.write(`verse/verse_${row.id}_${verse.verse_number}.json`, detail);
+    }
   }
 
   const indexPayload = {
@@ -222,6 +324,40 @@ async function main(): Promise<void> {
     fail(`surahs_index.json sema dogrulamasi basarisiz:\n${indexParsed.error.message}`);
   }
   emitter.write("surahs_index.json", indexPayload);
+
+  // --- meal listesi + zorunlu atif baglantilari ---
+  //
+  // Tanzil ceviri seti sarti: ucten fazla meal kullanildiginda arayuzde
+  // tanzil.net/trans/ geri baglantisi gosterilmesi ZORUNLUDUR
+  // (bkz. data/LICENSE). Yukumluluk veriyle birlikte tasinir ki arayuz
+  // tarafinda unutulmasin.
+  const attributionLinks = [
+    { label: "Arapça metin: Tanzil Project", url: "https://tanzil.net" },
+    { label: "Türkçe mealler: Tanzil çeviri seti", url: "https://tanzil.net/trans/" },
+  ];
+  if (authors.length > 3) {
+    info(`${authors.length} meal kullaniliyor — tanzil.net/trans/ geri baglantisi zorunlu`);
+  }
+
+  const authorsPayload = {
+    authors: authors.map((a) => ({
+      slug: a.slug,
+      name: a.name,
+      workTitle: a.work_title,
+      language: a.language,
+      license: a.license,
+      licenseNote: a.license_note,
+      url: a.url,
+      isDefault: a.is_default,
+      priority: a.priority,
+    })),
+    requiredAttributionLinks: attributionLinks,
+  };
+  const authorsParsed = staticAuthorsIndex.safeParse(authorsPayload);
+  if (!authorsParsed.success) {
+    fail(`authors_index.json sema dogrulamasi basarisiz:\n${authorsParsed.error.message}`);
+  }
+  emitter.write("authors_index.json", authorsPayload);
 
   const sourcesPayload = {
     sources: sources.map((s) => ({

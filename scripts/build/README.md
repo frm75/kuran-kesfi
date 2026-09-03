@@ -17,27 +17,45 @@ pnpm build          # üçü sırayla: build:data -> lint:refs -> build:web
 > komutudur ve çalıştırıldığında `pnpm-lock.yaml`'ı siler. Plan §20.1'deki `pnpm import && pnpm build`
 > ifadesi bu yüzden `pnpm data:import && pnpm build` olarak uygulanmıştır.
 
-## build.ts — üretilen dosyalar
+## build.ts — üç katmanlı çıktı
 
-| Dosya | İçerik |
-|---|---|
-| `surahs_index.json` | 114 sure üst bilgisi + toplamlar (sure/ayet/sayfa/cüz) |
-| `surah/surah_{id}.json` | Sure + ayetleri: Osmani/sade/harekesiz metin, transkripsiyon, sayfa, cüz, secde, mealler |
-| `sources.json` | Kaynak Şeffaflığı sayfası için kaynak listesi (plan §12.10) |
+Tek dosyada sure + tüm mealler tutulduğunda Bakara **1179 KB** oluyordu; plan §20.4 ilk yükleme
+bütçesi < 200 KB. Veri, kullanım biçimine göre üç katmana bölündü.
 
-Dosya adları alt çizgilidir (plan §20.2). Çıktı şemaları `@kuran/schema`
-(`static_data.ts`) içinde tanımlıdır; hem üretici hem tüketici hem linter aynı tanımı kullanır.
+| Dosya | Sayı | İçerik |
+|---|---|---|
+| `surahs_index.json` | 1 | 114 sure üst bilgisi + toplamlar |
+| `authors_index.json` | 1 | Meal listesi + **zorunlu atıf bağlantıları** |
+| `surah/surah_{id}.json` | 114 | **Çekirdek:** Arapça (Osmani) + çeviriyazı + sayfa/cüz/secde |
+| `translation/{yazar}/surah_{id}.json` | 1026 | **Tek meal** — kullanıcı yalnızca seçtiğini indirir |
+| `verse/verse_{s}_{v}.json` | 6236 | **Tek ayet + tüm mealler** — ayet paneli, karşılaştırma sepeti |
+| `sources.json` | 1 | Kaynak Şeffaflığı (plan §12.10) |
 
-**Tekrarlanabilir:** Aynı veritabanı bayt bayt aynı çıktıyı üretir (doğrulandı). Bu yüzden
-çıktıya zaman damgası, sürüm numarası veya rastgele değer gömülmez.
+Toplam 7379 dosya, 28,7 MB içerik (diskte 43 MB — 6236 küçük dosyanın blok yükü).
 
-`public/data/` git'e girmez; her build'de yeniden üretilir.
+### Ölçülen kazanç
 
-**Henüz üretilmeyenler** (ilgili import'lar tamamlandıkça eklenecek): `story/*.json`,
-`stories_index.json`, `locations.json`, `concept/*.json`, `concept_graph.json`,
-`roots/*.json`, `roots_index.json`, `search_index.json`, `schedule.json`.
-Ayet başına dosya (`verse/verse_2_153.json`) mealler eklendikten sonra üretilecektir; şu an
-6236 neredeyse boş dosya anlamına gelirdi.
+| Senaryo | Ham | gzip |
+|---|---|---|
+| Bakara, 1 meal (çekirdek + Diyanet) | 256 KB | **68 KB** |
+| Bakara, 4 öncelikli meal | 474 KB | ~112 KB |
+| Ayet paneli `verse_2_153.json` (9 mealin hepsi) | 2,2 KB | **0,9 KB** |
+| `surahs_index.json` | 23,9 KB | 4,3 KB |
+
+Sunucudaki nginx'te `gzip on` ve `application/json` gzip listesinde — doğrulandı.
+
+**`textSimple` ve `textNoVowel` çekirdekte yoktur.** Yalnızca arama indeksi girdisidir ve okuma
+ekranında kullanılmaz; her sure dosyasında taşınmaları 158 KB'lık gereksiz yüktü.
+
+Dosya adları alt çizgilidir (plan §20.2); `translation/` altındaki dizin adı yazar slug'ıdır
+(tire — URL slug kuralı). Çıktı şemaları `@kuran/schema` (`static_data.ts`) içinde tanımlıdır;
+üretici, tüketici (web) ve linter aynı tanımı kullanır.
+
+**Tekrarlanabilir:** Aynı veritabanı bayt bayt aynı çıktıyı üretir. `public/data/` git'e girmez.
+
+**Henüz üretilmeyenler** (ilgili import'lar tamamlandıkça): `story/*.json`, `stories_index.json`,
+`locations.json`, `concept/*.json`, `concept_graph.json`, `roots/*.json`, `roots_index.json`,
+`search_index.json`, `schedule.json`.
 
 ## linter.ts — üç küme denetim
 
@@ -49,8 +67,11 @@ her ilkenin en az bir `primary` ayet dayanağı (plan §18.3) · ilke/konum/kıs
 çözümlemesi (çok hedefli olduğu için FK konulamıyor) · kavram ağacında döngü.
 Kök eşleşmeyen kelime oranı **uyarı** olarak raporlanır, hata değil (plan §20.1).
 
-**B. Üretilen statik JSON** — her dosya Zod şemasına karşı doğrulanır; dosya adı biçimi,
-mükerrer id/slug, ayet sırası ve id formülü kontrol edilir.
+**B. Üretilen statik JSON** — her dosya Zod şemasına karşı doğrulanır; dosya adı ve yol biçimi,
+mükerrer id/slug, ayet sırası ve id formülü kontrol edilir. Katman sayıları denetlenir
+(114 sure · yazar başına 114 meal dosyası · 6236 ayet). `authors_index.json` içinde üçten fazla
+meal varken `tanzil.net/trans/` geri bağlantısı yoksa **hata** verir (bkz. `data/LICENSE`).
+300 KB'ı aşan dosya **uyarı** olarak raporlanır (plan §20.4).
 
 **C. `data/**` elle veri** — dosyalardaki tüm ayet referansları (`2:153`, `12:4-6`)
 veritabanına karşı çözülür; çözülmeyen referans build'i durdurur.

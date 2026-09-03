@@ -8,9 +8,25 @@ import { revelationType } from "./quran.js";
  * scripts/build bu sekilleri uretir, apps/web bunlari tuketir, referans linter
  * bunlari dogrular. Tek tanim, uc kullanici.
  *
- * Dosya adlari alt cizgilidir (plan 20.2):
- *   data/surahs_index.json
- *   data/surah/surah_1.json
+ * ## Uc katmanli duzen
+ *
+ * Tek dosyada sure + tum mealler tutulunca Bakara 1179 KB oluyordu; plan 20.4
+ * ilk yukleme butcesi < 200 KB. Bu yuzden veri kullanim bicimine gore bolundu:
+ *
+ *   data/surahs_index.json              114 sure ust bilgisi
+ *   data/authors_index.json             meal listesi (secim arayuzu icin)
+ *   data/surah/surah_{id}.json          CEKIRDEK: Arapca + ceviriyazi (~164 KB)
+ *   data/translation/{yazar}/surah_{id}.json   TEK MEAL (~94 KB)
+ *   data/verse/verse_{s}_{v}.json       TEK AYET + tum mealler (~1,5 KB)
+ *   data/sources.json                   Kaynak Seffafligi
+ *
+ * Okuma ekrani: cekirdek + yalnizca secili meal(ler).
+ * Ayet paneli ve karsilastirma sepeti (plan 12.8b): tek kucuk ayet dosyasi.
+ *
+ * `textSimple` ve `textNoVowel` cekirdekte YOKTUR; yalnizca arama indeksi
+ * girdisidir ve okuma ekraninda kullanilmaz. Arama indeksi ayrica uretilecek.
+ *
+ * Dosya adlari alt cizgilidir (plan 20.2).
  */
 
 /** Bir ayetin bir mealdeki karsiligi. */
@@ -28,20 +44,21 @@ export const staticTranslation = z.object({
 });
 export type StaticTranslation = z.infer<typeof staticTranslation>;
 
+/**
+ * Cekirdek katmandaki ayet — meal ICERMEZ.
+ *
+ * Okuma ekraninin ihtiyaci: Arapca metin, ceviriyazi, sayfa/cuz/secde.
+ * Mealler ayri dosyadan gelir; boylece kullanici yalnizca sectigi meali indirir.
+ */
 export const staticVerse = z.object({
   /** surahId * 1000 + verseNumber */
   id: z.number().int().positive(),
   verseNumber: z.number().int().positive(),
   textUthmani: nonEmptyText,
-  textSimple: nonEmptyText,
-  /** Harekesiz — istemci tarafi aramada kullanilir */
-  textNoVowel: nonEmptyText,
   transcriptionTr: z.string().nullable(),
   page: z.number().int().positive(),
   juz: z.number().int().min(1).max(30),
   sajda: z.boolean(),
-  /** Mealler; henuz import edilmediyse bos dizi */
-  translations: z.array(staticTranslation),
 });
 export type StaticVerse = z.infer<typeof staticVerse>;
 
@@ -60,11 +77,78 @@ export const staticSurahMeta = z.object({
 });
 export type StaticSurahMeta = z.infer<typeof staticSurahMeta>;
 
-/** data/surah/surah_{id}.json */
+/** data/surah/surah_{id}.json — cekirdek katman */
 export const staticSurah = staticSurahMeta.extend({
   verses: z.array(staticVerse).min(1),
 });
 export type StaticSurah = z.infer<typeof staticSurah>;
+
+/**
+ * data/translation/{authorSlug}/surah_{id}.json — meal katmani.
+ *
+ * Tek yazarin tek suredeki metinleri. Kullanici secili meallerini bu
+ * dosyalardan yukler (plan 2.3: "kullanici favori 3-5 mealini secer").
+ */
+export const staticSurahTranslation = z.object({
+  surahId: z.number().int().min(1).max(114),
+  authorSlug: slug,
+  authorName: nonEmptyText,
+  verses: z
+    .array(
+      z.object({
+        verseNumber: z.number().int().positive(),
+        text: nonEmptyText,
+        footnotes: z.array(
+          z.object({ number: z.number().int().positive(), text: nonEmptyText }),
+        ),
+      }),
+    )
+    .min(1),
+});
+export type StaticSurahTranslation = z.infer<typeof staticSurahTranslation>;
+
+/**
+ * data/verse/verse_{s}_{v}.json — ayet katmani.
+ *
+ * Tek ayet, TUM mealleriyle. Ayet paneli (plan 12.4), karsilastirma sepeti
+ * (plan 12.8b) ve meal farklari (plan 2.3) bu dosyayi kullanir; boylece dokuz
+ * meali gormek icin dokuz sure dosyasi indirilmez.
+ */
+export const staticVerseDetail = staticVerse.extend({
+  surahId: z.number().int().min(1).max(114),
+  surahSlug: slug,
+  surahNameTr: nonEmptyText,
+  translations: z.array(staticTranslation),
+});
+export type StaticVerseDetail = z.infer<typeof staticVerseDetail>;
+
+/** data/authors_index.json — meal secim arayuzu icin */
+export const staticAuthor = z.object({
+  slug,
+  name: nonEmptyText,
+  workTitle: z.string().nullable(),
+  language: z.string().length(2),
+  license: nonEmptyText,
+  licenseNote: z.string().nullable(),
+  url: z.string().nullable(),
+  isDefault: z.boolean(),
+  /** 1-4 oncelikli mealler; digerleri null (plan 3.1) */
+  priority: z.number().int().min(1).max(4).nullable(),
+});
+export type StaticAuthor = z.infer<typeof staticAuthor>;
+
+export const staticAuthorsIndex = z.object({
+  authors: z.array(staticAuthor),
+  /**
+   * Tanzil ceviri seti sarti: ucten fazla meal kullanildiginda arayuzde
+   * tanzil.net/trans/ geri baglantisi gosterilmesi ZORUNLUDUR.
+   * Bu alan arayuze o yukumlulugu tasir; bos birakilamaz.
+   */
+  requiredAttributionLinks: z
+    .array(z.object({ label: nonEmptyText, url: nonEmptyText }))
+    .min(1),
+});
+export type StaticAuthorsIndex = z.infer<typeof staticAuthorsIndex>;
 
 /** data/surahs_index.json */
 export const staticSurahsIndex = z.object({
