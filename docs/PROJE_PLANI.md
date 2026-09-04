@@ -1068,8 +1068,14 @@ anlamları farklıdır (§23.2.4, `scholar-notes.ts`).
 
 - [ ] Kaldırma talebi için **e-posta adresi** (kullanıcı belirleyecek)
 - [ ] **Depo adresi** (henüz uzak depo yok)
-- [ ] `scripts/sync/import_notes.ts` — inbox akışı
+- [x] `scripts/sync/import_notes.ts` — inbox akışı *(2026-09-04)*
 - [ ] `/hoca/<ad>` ve tür sayfaları
 - [ ] Ayet ve sure sayfalarında not bölümü
 
 Bu maddeler tamamlanmadan hiçbir hoca notu yayınlanmaz.
+
+**Kapı artık kodda zorlanıyor.** İlk iki madde `.env` içindeki
+`TAKEDOWN_EMAIL` ve `REPO_URL` değişkenleridir; ikisi birden dolu değilse
+`import_notes.ts` hiçbir notu `published` yazmaz, `reviewed`'e düşürür ve
+sebebini rapora yazar. Böylece kapı bir insanın hatırlamasına değil
+yapılandırmaya bağlıdır. Ayrıntı: `scripts/sync/README.md`.

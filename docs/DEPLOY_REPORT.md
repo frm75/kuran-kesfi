@@ -735,3 +735,109 @@ dosyaları denetime girdi: 19 → 24 denetim.
 temiz (6 uyarı, hepsi bilinen) · parmak izi `63157dbd257a87fa` (değişmedi —
 veri boru hattına dokunulmadı) · JS 0 bayt · CSS 3,0 KB (tanıtım) / 6,1 KB
 (okuma) gzip.
+
+### 3.14 2026-09-04/05 — Hero videosu, hoca notu alımı, kaynak bağlantısı
+
+**Sunucu yapılandırması DEĞİŞTİ — ve bu değişiklik henüz CANLIYA UYGULANMADI.**
+Ayrıntı aşağıda "Bekleyen" başlığında.
+
+#### Hero videosu — figürler çıkarıldı
+
+Tanıtım sayfasının hero'suna sessiz, döngülü bir video eklendi. Yeni paket
+`scripts/media` (`@kuran/media`, ffmpeg + sharp): tek kaynak `hero-source.mp4`
+(1280×720, 20,04 sn) → `hero.mp4` 763 KB + poster (webp 12,1 KB / jpg 18,3 KB).
+`pnpm --filter @kuran/media media:check` üretilenle diskteki baytları
+karşılaştırır.
+
+Kaynak videoda **beş peygamber insan figürü olarak görünüyordu.** Plan §20.3
+"peygamber, sahabe, melek ve insan figürü tasvir edilmez" diyor — yasak yüze
+değil figüre. Kare kare tarandı, figürlü aralıklar çıkarıldı:
+
+| Süre | Sahne | Figür |
+|---|---|---|
+| 3,4–5,0 s | nehir vadisi | Hz. Âdem — ayakta, cübbeli |
+| 5,0–7,2 s | gemi ve tufan | Hz. Nuh — geminin önünde |
+| 9,0–10,4 s | kıyı, güneş | Hz. Musa — kıyıda |
+| 10,4–11,0 s | yarılan deniz (göz hizası) | Hz. Musa — merkezde, büyük |
+| 12,0–13,5 s | balina | Hz. Yunus — suya batarken |
+
+Kalan beş parça birleştirildi (11,30 sn). Anlatı korundu: her dönem kendi yeri
+ve doğasıyla temsil ediliyor. Uzak kervan (15–17 sn) **bırakıldı** — o ölçekte
+hayvan sürüsü okunuyor, insan tasviri değil. Kesim kararları
+`scripts/media/build_media.ts` içinde satır satır yazılı; karar koda gömülü
+değil, belgelenmiş.
+
+Kalite: crf 34 ile 36 yan yana konuldu, koyu perde altında ayrım
+görülemediği için 36 seçildi (932 → 768 KB).
+
+#### CSP'ye `media-src 'self'` eklendi
+
+`default-src 'none'` iken `<video>` **sessizce** engelleniyordu — hata yok,
+konsol uyarısı yok, sadece boş kutu. `media-src 'self'` eklendi; üçüncü taraf
+medya hâlâ yasak. **`script-src` AÇILMADI** — sayfa 0 bayt JS kalıyor.
+
+`/brand/` ve `/media/` için 30 günlük önbellek bloğu eklendi (`expires`,
+`add_header` değil — bir location'daki `add_header` sunucu düzeyindeki tüm
+başlıkları iptal eder).
+
+#### Hoca notu alımı — `scripts/sync/import_notes.ts`
+
+Plan §23.4'ün üçüncü maddesi tamamlandı. Yeni paket `@kuran/sync`. Akış:
+sha256 doğrula → Zod parse → `checkPackageIntegrity` → referansları
+veritabanına karşı çözümle → tek işlemde upsert → rapor.
+
+Üç tasarım kararı ve gerekçeleri:
+
+- **Paketin tamamı reddedilir, yarısı alınmaz.** Bir paket tek editoryal
+  partidir; yarısını almak, gözden geçiren kişinin onaylamadığı bir bileşimi
+  yayınlamak olur. Reddedilen paket silinmez, `inbox/rejected/` altına
+  zaman damgası ve `.hata.txt` ile taşınır.
+- **Ara tablolar sil-yaz, upsert değil.** Bir nottan ayet çıkarılırsa upsert o
+  satırı bırakırdı; not artık bağlı olmadığı ayette görünmeye devam ederdi.
+- **Yayın kapısı yapılandırmaya bağlandı.** `.env` içindeki `TAKEDOWN_EMAIL`
+  ve `REPO_URL` ikisi birden dolu değilse `published` notlar `reviewed`'e
+  düşürülür ve sebep rapora yazılır. Plan §23.4'ün ilk iki maddesi artık bir
+  insanın hatırlamasına değil koda bağlı.
+
+Altı yol da bilerek bozularak sınandı — geçerli paket, bozuk sha256, eksik yan
+dosya, bilinmeyen ayet/kavram/kök, notun yeni sürümü, kapının kapalı ve açık
+hâli. Sonuçlar `scripts/sync/README.md` sonundaki tabloda. Sınama verisi
+veritabanından temizlendi (`scholar` silindi, cascade ile hepsi gitti;
+sayımlar sıfır doğrulandı).
+
+#### `/kaynaklar` ana sayfadan ulaşılamaz olmuştu
+
+Tanıtım sayfasının menüsünden "Kaynaklar" kaldırılınca (kullanıcı kararı, aynı
+gün) o sayfaya ana sayfadan giden hiçbir bağlantı kalmadı: tanıtım sayfası
+kendi menüsünü çiziyor (`bareHeader`), zorunlu atıf alanı ise yalnızca **dış**
+kaynaklara bağlanıyor. Kaynak şeffaflığı iddia eden bir sitede kaynak
+listesinin gizli kalması olmaz. Bağlantı `<Attribution>` içine kondu — her
+sayfada, tanıtım sayfası dâhil.
+
+#### Duman testi sunucu başlığı okumaya başladı
+
+Az önceki CSP olayı bu denetimin sebebidir: nginx yapılandırması repoda
+güncellenip canlıya uygulanmazsa **hiçbir şey hata vermez** — dosyalar 200
+döner, sayfa açılır, yalnızca video sessizce engellenir. Artık CSP başlığının
+kendisi okunuyor:
+
+- `media-src 'self'` **var mı** — yoksa test düşer
+- `script-src` **yok mu** — varsa test düşer; "0 bayt JS" iddiasını sunucu
+  tarafında zorlayan şey bu
+- `/media/hero.mp4` ve posteri 200 mü
+
+Denetim sayısı 24 → 29.
+
+#### Bekleyen — canlıya uygulanmadı
+
+`infra/nginx/kurankesfi.tr.conf` güncel, **canlı vhost değil.** Yazma işlemi
+oturum güvenlik sınırlaması nedeniyle yapılamadı. Uygulanmadan yayın alınırsa
+duman testi `CSP media-src BULUNAMADI` diyerek düşer (bilerek). Gereken:
+
+```bash
+sudo cp /www/server/panel/vhost/nginx/kurankesfi.tr.conf \
+        /www/server/panel/vhost/nginx/kurankesfi.tr.conf.bak.20260905
+sudo cp /opt/kuran/infra/nginx/kurankesfi.tr.conf \
+        /www/server/panel/vhost/nginx/kurankesfi.tr.conf
+sudo /www/server/nginx/sbin/nginx -t && cd /opt/kuran && pnpm run deploy
+```

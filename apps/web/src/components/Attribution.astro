@@ -10,6 +10,12 @@ import { getAuthorsIndex } from "~/lib/data";
  * kaynak eklenip atfı unutulamaz.
  *
  * Base.astro içinde çağrılır, yani her sayfada var.
+ *
+ * `/kaynaklar` bağlantısı BURADA durur çünkü tanıtım sayfası kendi menüsünü
+ * çiziyor (`bareHeader`) ve o menüden "Kaynaklar" kaldırıldı (2026-09-04).
+ * Bu satır olmadan kaynak listesi ana sayfadan ulaşılamaz hâle geliyordu —
+ * kaynak şeffaflığı iddia eden bir sitede kaynak listesinin gizli kalması
+ * olmaz. Yukarıdaki bağlantılar dış kaynaklara gider; bu iç sayfaya.
  */
 
 const { requiredAttributionLinks } = getAuthorsIndex();
@@ -38,6 +44,6 @@ if (requiredAttributionLinks.length === 0) {
   </ul>
   <p class="mt-3">
     Bu platform ücretsizdir, reklam ve takip içermez. Metinlerin telif ve lisans
-    şartları kaynaklarına aittir.
+    şartları kaynaklarına aittir. <a href="/kaynaklar">Kaynakların tam listesi</a>.
   </p>
 </footer>

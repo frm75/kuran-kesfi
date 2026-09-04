@@ -51,3 +51,8 @@ docs/hero-video.mp4
 *.log
 npm-debug.log*
 pnpm-debug.log*
+
+# yapilandirma yedekleri (CLAUDE.md: her degisiklikten once *.bak.<tarih>).
+# Diskte kalir, git'e girmez — surum gecmisi zaten git'in isi; yedek dosyasini
+# da versiyonlamak ayni bilgiyi iki yerde tutmak olur.
+*.bak.[0-9]*

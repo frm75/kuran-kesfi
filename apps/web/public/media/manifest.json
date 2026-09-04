@@ -1,0 +1,56 @@
+{
+  "//": [
+    "URETILEN DOSYA — elle duzenlenmez.",
+    "Uretim: pnpm --filter @kuran/media media",
+    "Tek kaynak: scripts/media/hero-source.mp4",
+    "Figurlu araliklar plan 20.3 geregi cikarildi; ayrinti build_media.ts basinda."
+  ],
+  "sourceSha256": "f80a0d18372386aef4433944469846b72b532476c945bf44d014ddb9a8f8744a",
+  "sourceBytes": 9716013,
+  "durationSeconds": 11.3,
+  "segments": [
+    {
+      "start": 0,
+      "duration": 3.2,
+      "note": "dunya uzaydan, atmosfere inis"
+    },
+    {
+      "start": 7.2,
+      "duration": 1.8,
+      "note": "gemi yakin plan, yagmur duvari"
+    },
+    {
+      "start": 10.4,
+      "duration": 1.6,
+      "note": "yarilan deniz — ustten, figursuz"
+    },
+    {
+      "start": 13.5,
+      "duration": 1.5,
+      "note": "su altinda isik, col kumulu"
+    },
+    {
+      "start": 15.2,
+      "duration": 4.8,
+      "note": "sehir, vahiy isigi, dunya, baglanan dunya"
+    }
+  ],
+  "crf": 36,
+  "files": [
+    {
+      "file": "hero.mp4",
+      "bytes": 781538,
+      "sha256": "23431a1affe6ebe870e124bbfaa92e0b0bfb91ed759fe6c874806983419816c5"
+    },
+    {
+      "file": "hero-poster.webp",
+      "bytes": 12362,
+      "sha256": "4e2a56fb9171dcbaea321dabccf4d2335060734e0afa8b633c38d6b758f6c401"
+    },
+    {
+      "file": "hero-poster.jpg",
+      "bytes": 18748,
+      "sha256": "a0957c8d8d1bbbda4b79b4ba2270370238bf870a2680b4e91218c33c7bd9a54e"
+    }
+  ]
+}

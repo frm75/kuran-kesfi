@@ -1,15 +1,10 @@
 ---
 import Base from "~/layouts/Base.astro";
-import SourceBadge from "~/components/SourceBadge.astro";
 import Translation from "~/components/Translation.astro";
 import {
-  getArabicSource,
   getAuthorsIndex,
   getDefaultAuthor,
-  getSourceForAuthor,
-  getSources,
   getSurahsIndex,
-  getTranscriptionSource,
   getVerseDetail,
   verseLabel,
 } from "~/lib/data";
@@ -20,33 +15,34 @@ import {
  * Görsel dil 2026-09-04 tasarımından gelir (docs/landing.html): mürekkep
  * laciverdi zemin, pirinç vurgu, Cormorant başlık, Karla gövde.
  *
- * TASARIMDAN İKİ SAPMA — ikisi de zorunlu, ikisi de gerekçeli:
+ * HERO VİDEOSU (2026-09-04). Alt katmanda sessiz, döngülü bir video var.
+ * Sunucu CSP'sine bunun için `media-src 'self'` eklendi; öncesinde
+ * `default-src 'none'` videoyu sessizce engelliyordu. `script-src` AÇILMADI —
+ * sayfa hâlâ 0 bayt JS. Video kaynağında beş peygamber insan figürü olarak
+ * görünüyordu; plan §20.3 gereği o aralıklar çıkarıldı, kesim kararı
+ * `scripts/media/build_media.ts` içinde kayıtlı.
  *
- *  1. Hero'daki <video> ve canvas ağ animasyonu YOK. Sunucu CSP'si
- *     `default-src 'none'` diyor; `script-src` ve `media-src` tanımlı değil,
- *     yani betik de video da sessizce engellenir (infra/nginx/*.conf).
- *     Dekoratif bir animasyon için CSP gevşetilmedi — ağ metaforu statik SVG
- *     takımyıldızı ve §5'teki şema ile anlatılıyor. Sayfa 0 bayt JS.
- *  2. Menüdeki açılır listeler yalnızca CSS (:focus-within); mobil menü
- *     <details>. Aynı sebep: JS yok.
+ * Menüdeki açılır listeler yalnızca CSS (:focus-within); mobil menü
+ * <details>. Betik yok.
  *
  * DÜRÜSTLÜK KURALI: hazır olmayan bölüm "yakında" diye işaretlenir, çalışıyor
  * gibi gösterilmez. Bülten için form KONULMADI — arkasında sunucu yok ve CSP
  * `form-action 'none'` diyor; çalışmayan bir kutu koymak kullanıcıyı kandırmak
  * olurdu (plan §1.5, CLAUDE.md kural 5). Menüde de yalnızca var olan sayfalar
  * bağlantıdır; gerisi "yakında" etiketiyle, tıklanamaz durur.
+ *
+ * KAYNAK BÖLÜMLERİ KALDIRILDI (kullanıcı kararı 2026-09-04): "Kaynaklar" ve
+ * "Kaynak Şeffaflığı" bölümleri aynı şeyi sayfanın dört yerinde tekrar
+ * ediyordu. Kalan tek şey mealin KİME ait olduğu. Yasal atıf kaldırılmadı:
+ * `<Attribution>` her sayfanın altında, `/kaynaklar` sayfası yerinde —
+ * Açık Kuran verisi CC BY-NC-SA 4.0, atıf lisansın şartı.
  */
 
 const { surahs, totals } = getSurahsIndex();
 const authors = getAuthorsIndex().authors;
 const turkishAuthors = authors.filter((a) => a.language === "tr");
 const englishAuthors = authors.filter((a) => a.language === "en");
-const sources = getSources().sources;
 const defaultAuthor = getDefaultAuthor();
-
-const arabicSource = getArabicSource();
-const transcriptionSource = getTranscriptionSource();
-const defaultAuthorSource = getSourceForAuthor(defaultAuthor);
 
 /**
  * Hero ayeti: Âl-i İmrân 103. Sabit seçim — sayfanın "ağ" fikrini taşıyan
@@ -149,9 +145,9 @@ const modules = [
     note: "Her ayetin Latin harfli okunuşu. Arapça bilmeden de takip edilir.",
   },
   {
-    name: "Kaynak şeffaflığı",
+    name: "Meal sahipliği",
     state: "hazir",
-    note: "Ekrandaki her açıklamanın yanında kaynağı durur.",
+    note: "Her mealin ve tefsirin kime ait olduğu metnin yanında yazar.",
   },
   {
     name: "Kelime ve kök",
@@ -223,7 +219,6 @@ const menu = [
       { name: "Sade Okuma", note: "Dikkat dağıtmayan tek sütun", href: undefined },
     ],
   },
-  { label: "Kaynaklar", href: "/kaynaklar", items: [] },
 ] as const;
 ---
 
@@ -294,33 +289,36 @@ const menu = [
   <main id="icerik">
     {/* --- 1. Hero ------------------------------------------------------- */}
     <header class="lp-hero">
-      {/* Ambiyans: statik takımyıldızı. Canvas yerine SVG — 0 bayt JS. */}
-      <svg class="lp-hero-stars" viewBox="0 0 1200 700" aria-hidden="true" focusable="false">
-        <g class="lp-links" stroke="currentColor" stroke-width="0.6">
-          <path d="M120 140L310 90M310 90L470 180M470 180L250 260M250 260L120 140" />
-          <path d="M760 120L940 200M940 200L1080 110M760 120L850 280M850 280L940 200" />
-          <path d="M180 520L360 470M360 470L520 560M180 520L300 620" />
-          <path d="M700 560L880 500M880 500L1030 590M700 560L820 660" />
-        </g>
-        <g class="lp-dots" fill="currentColor">
-          <circle cx="120" cy="140" r="1.8"></circle>
-          <circle cx="310" cy="90" r="1.3"></circle>
-          <circle cx="470" cy="180" r="2.1"></circle>
-          <circle cx="250" cy="260" r="1.4"></circle>
-          <circle cx="760" cy="120" r="1.6"></circle>
-          <circle cx="940" cy="200" r="2"></circle>
-          <circle cx="1080" cy="110" r="1.3"></circle>
-          <circle cx="850" cy="280" r="1.5"></circle>
-          <circle cx="180" cy="520" r="1.7"></circle>
-          <circle cx="360" cy="470" r="1.3"></circle>
-          <circle cx="520" cy="560" r="1.9"></circle>
-          <circle cx="300" cy="620" r="1.4"></circle>
-          <circle cx="700" cy="560" r="1.6"></circle>
-          <circle cx="880" cy="500" r="2"></circle>
-          <circle cx="1030" cy="590" r="1.4"></circle>
-          <circle cx="820" cy="660" r="1.5"></circle>
-        </g>
-      </svg>
+      {/*
+        Alt katman: hero videosu.
+
+        Sessiz, döngülü, `playsinline` — arka plan videosunun tarayıcıda
+        kendiliğinden oynaması bunları gerektirir. `poster` video inmeden
+        önce görünen kare; LCP'yi o taşır (12 KB WebP).
+
+        Video DEKORATİFTİR: anlattığı her şey sayfada zaten yazıyor. Bu
+        yüzden `aria-hidden` ve ekran okuyucuya hiç verilmiyor.
+
+        Sunucu CSP'sine `media-src 'self'` eklendi (2026-09-04); öncesinde
+        `default-src 'none'` bunu sessizce engelliyordu.
+
+        Figürsüz kurgu: kaynakta beş peygamber insan figürü olarak
+        görünüyordu, plan §20.3 gereği o aralıklar çıkarıldı. Kesim kararı
+        `scripts/media/build_media.ts` içinde kayıtlı.
+      */}
+      <video
+        class="lp-hero-video"
+        poster="/media/hero-poster.webp"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        aria-hidden="true"
+        tabindex="-1"
+      >
+        <source src="/media/hero.mp4" type="video/mp4" />
+      </video>
       <div class="lp-hero-veil" aria-hidden="true"></div>
 
       <div class="lp-hero-in">
@@ -513,14 +511,22 @@ const menu = [
       </div>
     </section>
 
-    {/* --- 6. Kaynaklar --------------------------------------------------- */}
-    <section class="lp-sec" id="kaynaklar" aria-labelledby="kaynaklar-baslik">
+    {/* --- 6. Mealler -----------------------------------------------------
+        Eskiden burada iki ayrı bölüm vardı: "Kaynaklar" (lisans kartlarıyla)
+        ve "Kaynak Şeffaflığı" (rozet gösterimiyle). İkisi de kaldırıldı —
+        aynı şey sayfanın dört yerinde tekrarlanıyordu (kullanıcı kararı
+        2026-09-04). Kalan tek şey mealin KİME ait olduğu.
+
+        Yasal atıf KALDIRILMADI, yalnızca bu bölümden çıkarıldı: `<Attribution>`
+        her sayfanın altında duruyor ve `/kaynaklar` sayfası yerinde —
+        Açık Kuran verisi CC BY-NC-SA 4.0, atıf lisansın şartı. -------------- */}
+    <section class="lp-sec" id="mealler" aria-labelledby="mealler-baslik">
       <div class="lp-wrap">
         <p class="rule-ornament" aria-hidden="true"><span></span></p>
-        <h2 id="kaynaklar-baslik" class="lp-h2">{authors.length} meal, tek ekranda</h2>
+        <h2 id="mealler-baslik" class="lp-h2">{turkishAuthors.length} meal, yan yana</h2>
         <p class="lp-lead">
-          Açılışta öntanımlı meal gelir; dilediğinizi ekleyip çıkarabilirsiniz. Her mealin
-          altında kaynağı ve lisansı yazar.
+          Açılışta {defaultAuthor.name} meali gelir; dilediğinizi ekleyip çıkarabilirsiniz.
+          Her mealin altında kimin olduğu yazar.
         </p>
 
         <ul class="lp-chips">
@@ -532,51 +538,8 @@ const menu = [
         </ul>
 
         <p class="lp-note">
-          {turkishAuthors.length} Türkçe meal, {englishAuthors.length} İngilizce çeviri.
-          Tam liste ve lisans ayrıntıları: <a href="/kaynaklar">Kaynak Şeffaflığı</a>.
+          Ayrıca {englishAuthors.length} İngilizce çeviri.
         </p>
-
-        <ul class="lp-src-grid">
-          {
-            sources.map((source) => (
-              <li class="lp-src-card">
-                <h3>{source.name}</h3>
-                {source.author && <p>{source.author}</p>}
-                <p>{source.reference}</p>
-                <p class="lp-lic">Lisans: {source.license}</p>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-    </section>
-
-    {/* --- 7. Kaynak Şeffaflığı ------------------------------------------ */}
-    <section class="lp-tp" aria-labelledby="seffaflik-baslik">
-      <div class="lp-wrap lp-tp-grid">
-        <div>
-          <p class="rule-ornament" aria-hidden="true"><span></span></p>
-          <h2 id="seffaflik-baslik" class="lp-h2">Bu bilgi nereden geliyor?</h2>
-          <p class="lp-lead">
-            Ekrandaki her açıklamanın yanında kaynağı duruyor. Kur'an metni, meal, tefsir
-            ve bizim yaptığımız sınıflandırma birbirine karışmaz — üçü de ayrı işaretlenir.
-          </p>
-          <p class="lp-lead">
-            Tartışmalı bir konu varsa iki görüşü de görürsünüz. Bir bilgiyi biz
-            derlediysek bunu da açıkça yazarız. Renk körlüğünde ve gri baskıda ayrışsın
-            diye kenarlık biçimi ve metin de değişir.
-          </p>
-        </div>
-
-        <div class="lp-badge-demo">
-          <SourceBadge contentClass="kaynakli" sources={[arabicSource]} label="Arapça metin" />
-          <SourceBadge
-            contentClass="alternatif"
-            sources={[defaultAuthorSource]}
-            label="Alternatif görüş örneği"
-          />
-          <SourceBadge contentClass="platform" label="Kavram eşleştirmesi" />
-        </div>
       </div>
     </section>
 
@@ -600,7 +563,7 @@ const menu = [
                     authorSlug={featuredTranslation.authorSlug}
                     text={featuredTranslation.text}
                     footnotes={featuredTranslation.footnotes}
-                    sourceDeclaredBy="bu bölümdeki kaynak rozetleri"
+                    sourceDeclaredBy="sayfa altındaki kaynak ve atıf alanı"
                     anchorPrefix={`bugun-${featured.surahId}-${featured.verseNumber}`}
                   />
                 </div>
@@ -616,20 +579,9 @@ const menu = [
           </div>
 
           <div class="lp-today-side">
-            <h3>KAYNAKLAR</h3>
-            <div class="lp-today-badges">
-              <SourceBadge contentClass="kaynakli" sources={[arabicSource]} label="Arapça metin" />
-              <SourceBadge
-                contentClass="kaynakli"
-                sources={[transcriptionSource]}
-                label="Okunuş (çeviriyazı)"
-              />
-              <SourceBadge
-                contentClass="kaynakli"
-                sources={[defaultAuthorSource]}
-                label={`${defaultAuthor.name} meali`}
-              />
-            </div>
+            {/* Rozet yığını kaldırıldı; kalan tek şey mealin kime ait olduğu. */}
+            <h3>MEAL</h3>
+            <p class="lp-today-author">{defaultAuthor.name}</p>
             <p class="lp-today-links">
               <a href={`/${featured.surahSlug}/${featured.verseNumber}`}>
                 Bu ayetin bütün meallerini gör
@@ -692,7 +644,7 @@ const menu = [
 
         <p class="lp-hero-acts">
           <a href="/sureler" class="lp-btn lp-btn-p">Keşfetmeye başla</a>
-          <a href="/kaynaklar" class="lp-btn lp-btn-s">Kaynakları incele</a>
+          <a href="/kok" class="lp-btn lp-btn-s">Kök kelimeleri keşfet</a>
         </p>
       </div>
     </section>
@@ -914,43 +866,55 @@ const menu = [
     overflow: hidden;
     min-height: 88svh;
   }
-  /* Ambiyans takımyıldızı: canvas yerine statik SVG (CSP betiğe izin vermiyor).
-     Nefes alma animasyonu CSS; prefers-reduced-motion'da durur. */
-  .lp-hero-stars {
+  /* Alt katman: hero videosu. Kadrajı doldurur, taşan kısmı kırpılır. */
+  .lp-hero-video {
     position: absolute;
     inset: 0;
     z-index: 0;
     width: 100%;
     height: 100%;
-    color: var(--accent);
+    object-fit: cover;
+    /* Video kendi başına biraz fazla parlak; metnin altında kalması için
+       koyulaştırılıyor. Perde bunun üstüne biniyor. */
+    opacity: 0.55;
   }
-  .lp-hero-stars .lp-links {
-    opacity: 0.16;
-  }
-  .lp-hero-stars .lp-dots {
-    opacity: 0.5;
-    animation: lp-twinkle 6s var(--ease-in-out) infinite alternate;
-  }
-  @keyframes lp-twinkle {
-    from {
-      opacity: 0.28;
-    }
-    to {
-      opacity: 0.6;
-    }
-  }
+
+  /*
+   * Perde: videoyu metnin arkasına iter.
+   *
+   * İki katman — ortadan dışa doğru koyulaşan radyal, üstüne alttan gelen
+   * düz geçiş. Alt kenar tamamen --bg-primary'ye kavuşuyor ki video bir
+   * yerde "bitmiyor", sayfaya karışıyor.
+   */
   .lp-hero-veil {
     position: absolute;
     inset: 0;
     z-index: 1;
     background:
       radial-gradient(
-        120% 90% at 50% 40%,
-        transparent 0%,
-        color-mix(in srgb, var(--bg-primary) 82%, transparent) 62%,
+        120% 90% at 50% 42%,
+        color-mix(in srgb, var(--bg-primary) 30%, transparent) 0%,
+        color-mix(in srgb, var(--bg-primary) 78%, transparent) 58%,
         var(--bg-primary) 100%
       ),
-      linear-gradient(to bottom, transparent 60%, var(--bg-primary) 100%);
+      linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--bg-primary) 62%, transparent) 0%,
+        transparent 26%,
+        transparent 62%,
+        var(--bg-primary) 100%
+      );
+  }
+
+  /* Açık modda kağıt zemin üzerinde koyu video ters düşüyor; daha da
+     silikleştirilip perde beyaza çekiliyor. */
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .lp-hero-video {
+      opacity: 0.28;
+    }
+  }
+  :root[data-theme="light"] .lp-hero-video {
+    opacity: 0.28;
   }
   .lp-hero-in {
     position: relative;
@@ -1364,7 +1328,7 @@ const menu = [
     color: var(--text-muted);
   }
 
-  /* --- Kaynaklar --------------------------------------------------------- */
+  /* --- Mealler ----------------------------------------------------------- */
 
   .lp-chips {
     display: flex;
@@ -1384,75 +1348,6 @@ const menu = [
   .lp-chip.is-pri {
     border-color: var(--accent-text);
     color: var(--accent-text);
-  }
-
-  .lp-src-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-    margin: var(--space-8) 0 0;
-    padding: 0;
-    list-style: none;
-  }
-  @media (min-width: 40rem) {
-    .lp-src-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  .lp-src-card {
-    padding: var(--space-6);
-    border: 1px solid var(--border);
-    background-color: var(--bg-elevated);
-  }
-  .lp-src-card h3 {
-    margin: 0 0 var(--space-2);
-    color: var(--text-primary);
-    font-family: var(--font-heading);
-    font-size: var(--text-lg);
-    font-weight: var(--fw-medium);
-  }
-  .lp-src-card p {
-    margin: 0;
-    color: var(--text-secondary);
-    font-size: var(--text-sm);
-  }
-  .lp-src-card .lp-lic {
-    margin-top: var(--space-2);
-    color: var(--text-muted);
-    font-size: var(--text-xs);
-  }
-
-  /* --- Kaynak şeffaflığı ------------------------------------------------- */
-
-  .lp-tp {
-    padding-block: var(--space-16);
-    border-block: 1px solid var(--border);
-    background-color: var(--bg-elevated);
-  }
-  @media (min-width: 48rem) {
-    .lp-tp {
-      padding-block: var(--space-24);
-    }
-  }
-  .lp-tp-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-12);
-    align-items: center;
-  }
-  @media (min-width: 64rem) {
-    .lp-tp-grid {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-  .lp-badge-demo {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-    align-items: flex-start;
-    padding: var(--space-6);
-    border: 1px solid var(--border);
-    background-color: var(--bg-primary);
   }
 
   /* --- Kur'an'da bugün --------------------------------------------------- */
@@ -1497,11 +1392,12 @@ const menu = [
     font-weight: var(--fw-medium);
     letter-spacing: 0.22em;
   }
-  .lp-today-badges {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-    align-items: flex-start;
+  .lp-today-author {
+    margin: 0;
+    color: var(--accent-text);
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    font-weight: var(--fw-normal);
   }
   .lp-today-links {
     display: flex;
@@ -1624,11 +1520,22 @@ const menu = [
     }
   }
 
-  /* Hareket azaltma: parıltı durur, geçişler kaybolur (DESIGN.md §5). */
+  /*
+   * Hareket azaltma (DESIGN.md §5).
+   *
+   * Video gizlenir, yerine poster kalır — hareket tamamen durur.
+   * DÜRÜST NOT: betik olmadan videonun İNMESİNİ engelleyemiyoruz; yalnızca
+   * gösterilmesini engelliyoruz. İndirmeyi de durdurmak `script-src`
+   * açmayı gerektirirdi, o bedel bunun için ödenmedi.
+   */
   @media (prefers-reduced-motion: reduce) {
-    .lp-hero-stars .lp-dots {
-      animation: none;
-      opacity: 0.45;
+    .lp-hero-video {
+      display: none;
+    }
+    .lp-hero {
+      background-image: image-set("/media/hero-poster.webp" type("image/webp"));
+      background-position: center;
+      background-size: cover;
     }
   }
 </style>

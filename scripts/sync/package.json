@@ -1,0 +1,22 @@
+{
+  "name": "@kuran/sync",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Yerel kuran-extract projesinden gelen hoca notu paketlerini alir",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "notes": "tsx import_notes.ts",
+    "notes:check": "tsx import_notes.ts --dry-run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@kuran/pipeline": "workspace:*",
+    "@kuran/schema": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}

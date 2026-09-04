@@ -104,6 +104,9 @@ smoke_test() {
   # Marka varliklari — logo dusrse menu ve hero bos kutu gosterir.
   check "/brand/logo-96.webp"      200
   check "/brand/favicon-32.png"    200
+  # Hero videosu ve posteri — dusrse tanitim sayfasi bos kutu gosterir.
+  check "/media/hero.mp4"          200
+  check "/media/hero-poster.webp"  200
   check "/data/surahs_index.json"  200
   check "/olmayan-bir-adres"       404
   # Depo ve gizli dosyalar disari acilmamali.
@@ -130,6 +133,38 @@ smoke_test() {
     'property="og:image" content="https://kurankesfi.tr/brand/og-image.png"' "og:image mutlak"
   contains "/bakara-suresi/153" \
     'rel="canonical" href="https://kurankesfi.tr/bakara-suresi/153"' "kanonik adres"
+
+  # Sunucu basligi denetimi.
+  #
+  # nginx yapilandirmasi repoda guncellenip CANLIYA UYGULANMAZSA hicbir sey
+  # hata vermez: dosyalar 200 doner, sayfa acilir, yalnizca <video> sessizce
+  # engellenir. Bir kez oldu (2026-09-04). Bu yuzden CSP'nin kendisi okunuyor.
+  header_contains() {
+    local path="$1" needle="$2" label="$3"
+    local headers
+    headers="$(curl -sS -D - -o /dev/null --max-time 20 \
+      --retry 3 --retry-delay 1 --retry-all-errors \
+      --resolve "kurankesfi.tr:443:127.0.0.1" "https://kurankesfi.tr$path" 2>/dev/null)" || headers=""
+    if printf '%s' "$headers" | grep -qiF -- "$needle"; then
+      printf '    %-34s %s\n' "$path" "$label"
+    else
+      printf '    %-34s %s BULUNAMADI\n' "$path" "$label"
+      fail=1
+    fi
+  }
+  # media-src olmadan hero videosu CSP tarafindan sessizce engellenir.
+  header_contains "/" "media-src 'self'" "CSP media-src"
+  # script-src ASLA olmamali: 0 bayt JS iddiasini sunucu tarafinda zorlayan sey bu.
+  local csp
+  csp="$(curl -sS -D - -o /dev/null --max-time 20 --retry 3 --retry-delay 1 \
+    --retry-all-errors --resolve "kurankesfi.tr:443:127.0.0.1" \
+    "https://kurankesfi.tr/" 2>/dev/null | grep -i '^content-security-policy:')" || csp=""
+  if printf '%s' "$csp" | grep -qi 'script-src'; then
+    printf '    %-34s %s\n' "/" "CSP script-src ACIK — BEKLENMIYOR"
+    fail=1
+  else
+    printf '    %-34s %s\n' "/" "CSP script-src kapali"
+  fi
 
   [ "$fail" -eq 0 ] || die "duman testi basarisiz"
   log "duman testi temiz"

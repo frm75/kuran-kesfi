@@ -1,0 +1,20 @@
+{
+  "name": "@kuran/media",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "media": "tsx build_media.ts",
+    "media:check": "tsx build_media.ts --check",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@kuran/pipeline": "workspace:*",
+    "sharp": "^0.35.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}

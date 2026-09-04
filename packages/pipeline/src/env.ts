@@ -46,6 +46,12 @@ function required(name: string): string {
   return value;
 }
 
+/** Tanimsizsa veya bossa null — cagiran taraf eksikligi kendi yorumlar. */
+function optional(name: string): string | null {
+  const value = process.env[name];
+  return value === undefined || value.trim() === "" ? null : value.trim();
+}
+
 function requiredInt(name: string): number {
   const raw = required(name);
   const value = Number(raw);
@@ -67,4 +73,18 @@ export const env = {
   concurrency: requiredInt("IMPORT_CONCURRENCY"),
   cacheDir: resolve(repoRoot, process.env["CACHE_DIR"] ?? "cache"),
   reportsDir: resolve(repoRoot, "reports"),
+  /**
+   * Kaldirma talebi kanallari — plan 23.4.
+   *
+   * ZORUNLU DEGIL, cunku site bugun hoca notu yayinlamiyor ve diger
+   * scriptlerin bunlara ihtiyaci yok. Ama K2 "iletisim yolu sayfada
+   * yazilidir" diyor: ikisi de bos oldugu surece `import_notes` hicbir notu
+   * `published` yazmaz, `reviewed`e dusurur ve sebebini rapora yazar.
+   *
+   * Boylece kapi bir insanin hatirlamasina degil, yapilandirmaya bagli.
+   */
+  contact: {
+    takedownEmail: optional("TAKEDOWN_EMAIL"),
+    repoUrl: optional("REPO_URL"),
+  },
 } as const;
