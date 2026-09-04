@@ -650,3 +650,88 @@ metne bulaşıp aramayı bozuyordu.
 çeviriyazı Inter'in işi. Ayrı bir "meal" korpusu tanımlandı; beş fontun beşi
 de temiz. Ayrıca `˹ ˺` (U+02F9/02FA, İngilizce meallerde 5763 kez) Source
 Serif'te yok; `--font-reading` yığınına Inter eklendi, o karakterler ona düşüyor.
+
+### 3.13 2026-09-04 — Marka kimliği, yazı tipi değişimi, tanıtım sayfası, kanonik adres
+
+Sunucu yapılandırması **değişmedi.** Yayın: `20260904T204027Z`, 7996 sayfa,
+duman testi 24 denetim temiz.
+
+**Marka üretimi otomatikleştirildi.** Yeni paket `scripts/brand`
+(`@kuran/brand`, sharp). Tek kaynak `logo-source.png` (512×512); on çıktı
+ondan **küçültülerek** türetilir — webp 256/128/96/48, png 256/96,
+favicon 32/16, apple-touch-icon 180, og-image 1200×630. Fontlarda olduğu gibi
+`manifest.json` her dosyanın sha256'sını yazar ve `pnpm brand:check` üretilenle
+diskteki baytları karşılaştırır; ikisi ayrışırsa komut düşer.
+
+İki ayrıntı ölçüldü, varsayılmadı:
+
+- **apple-touch-icon zemini düzleştiriliyor.** iOS saydam zemini siyaha çevirir;
+  logo altın çerçeveli bir daire olduğu için saydam bırakılsa kenarda siyah
+  halka kalırdı. Zemin açıkça `#071023`'e düzleştirildi.
+- **og-image büyütülmüyordu, artık küçültülüyor.** İlk sürüm 260 piksellik bir
+  ara çıktıyı 340'a büyütüyordu; kaynaktan doğrudan 340'a küçültülüyor.
+
+**Latin yazı tipleri değişti.** Inter → **Karla** (arayüz ve gövde),
+Playfair Display → **Cormorant Garamond** (başlık). Değişimin sakladığı bir
+tuzak vardı ve `fonts:verify` yakaladı:
+
+> **Karla, ayet okunuşundaki harfleri taşımıyor.** ḳ ẕ ḥ ḫ ṣ ḍ ŝ ṭ — Cormorant
+> ve Source Serif de ḳ ile ẕ'yi taşımıyor. Eski gövde fontu Inter hepsini
+> taşıdığı için sorun *görünmüyordu*: font değişince 5751 çeviriyazı satırı
+> sessizce sistem fontuna düşecekti.
+
+Çözüm: eksik 15 kod noktası Inter'den alt kümelenip **Kesif Latin Ek** adıyla
+ayrı bir aile olarak yığının başına konuldu — 2,3 KB, `unicode-range` ile
+sınırlı, o harfler sayfada geçmiyorsa indirilmez. Doğrulayıcıya altıncı font
+olarak eklendi; altı fontun altısı da temiz.
+
+Sayfa başına font yükü yeniden ölçüldü ve plan §20.4 güncellendi: okuma ekranı
+**156,3 KB**, tanıtım 123,9 KB, Latin sayfa 83,5 KB. Hedef 150 → 160 KB'a
+çıkarıldı; sebebi Cormorant'ın Playfair'den 24,5 KB büyük olması (Karla,
+Inter'e göre 18,8 KB kazandırıyor ama farkı kapatmıyor). Cormorant'ın ağırlık
+ekseni 400'e sabitlenirse 18 KB daha iner; başlık hiyerarşisi düzleşeceği için
+karara açık bırakıldı (DESIGN.md §12).
+
+**Tanıtım sayfası yeniden yazıldı** — `docs/landing.html` görsel diline göre on
+bölüm. İki yerde tasarım JS istiyordu, ikisi de betiksiz karşılandı:
+
+| Tasarımdaki davranış | JS'siz karşılık |
+|---|---|
+| Menü hero üzerinde saydam, kaydırınca katılaşır | Menü her zaman katı; aynı okunaklılık, 0 bayt JS |
+| Bülten kayıt formu | Form konulmadı — arkasında sunucu yok, çalışmayan kutu göstermek yanıltmak olurdu |
+
+**İki sessiz hata bulundu ve düzeltildi.** İkisi de 200 döndüğü için hiçbir
+duman testi yakalamıyordu:
+
+1. **Kanonik adres `.html` ile çıkıyordu.** `build.format: "file"` ile
+   `Astro.url.pathname` derleme sırasında ÇIKTI DOSYASININ yolunu veriyor
+   (`/bakara-suresi/153.html`), yayınlanan adresi değil. Site kendi hiçbir
+   yerinden bağlanmadığı bir adresi kanonik ilan ediyordu.
+2. **Menüde `aria-current="page"` hiç çalışmıyordu.** Aynı sebep:
+   `"/sureler.html" === "/sureler"` yanlış. Ekran okuyucu bulunulan bölümü
+   söyleyemiyordu.
+
+Tek düzeltme ikisini birden kapattı: `apps/web/src/lib/site.ts` içinde
+`routePath()` çıktı yolunu yayın adresine çeviriyor. `SITE` sabiti de oraya
+taşındı — `sitemap.xml` ile Open Graph'ın ayrışması mümkün değil artık.
+
+**Open Graph tamamlandı.** `og:image` **göreli** yazılmıştı; paylaşım botları
+göreli adres çözmez, önizleme görselsiz çıkardı. Mutlak yapıldı; `og:url`,
+`og:image:width/height/alt` ve kanonik bağlantı eklendi. `theme-color` tek
+koyu değerdeydi, iki temaya ayrıldı (`#071023` / `#EFE6D3`).
+
+**Duman testi içerik denetimi kazandı.** Durum kodu doğruyken içeriği yanlış
+olabilen şeyler için `contains()` eklendi; `og:image`'ın mutlak olduğunu ve
+kanonik adresi metinden okuyarak doğruluyor. Ayrıca yeni font ve marka
+dosyaları denetime girdi: 19 → 24 denetim.
+
+**`pnpm deploy` çalışmıyor — `pnpm run deploy` kullanılmalı.** `deploy`,
+`import` gibi pnpm'in **yerleşik** komutudur; script'i gölgeliyor ve
+`ERR_PNPM_NOTHING_TO_DEPLOY` veriyor. `pnpm import` tuzağının aynısı
+(bkz. §3.5); BACKLOG'a işlendi.
+
+**Doğrulama:** typecheck 21 dosya 0 hata · 29/29 test · `fonts:check` temiz ·
+`fonts:verify` altı font temiz · `brand:check` temiz · linter 39.995 denetim
+temiz (6 uyarı, hepsi bilinen) · parmak izi `63157dbd257a87fa` (değişmedi —
+veri boru hattına dokunulmadı) · JS 0 bayt · CSS 3,0 KB (tanıtım) / 6,1 KB
+(okuma) gzip.

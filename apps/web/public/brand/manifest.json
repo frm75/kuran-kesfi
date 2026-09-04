@@ -1,0 +1,71 @@
+{
+  "//": [
+    "URETILEN DOSYA — elle duzenlenmez.",
+    "Uretim: pnpm --filter @kuran/brand brand",
+    "Tek kaynak: scripts/brand/logo-source.png"
+  ],
+  "sourceSha256": "d7b059ab590bf70c6d1f635ceeb552a1fea24790117164a5092deea2d8aa3aed",
+  "sourceBytes": 435421,
+  "files": [
+    {
+      "file": "logo-256.webp",
+      "bytes": 21942,
+      "sha256": "ff24930437999f2586ccbb754225970ddda3b6ea4b0b237eaee377017fb20ad4",
+      "note": "Hero logosu."
+    },
+    {
+      "file": "logo-128.webp",
+      "bytes": 8450,
+      "sha256": "5587a20f1d8598bf5afe64a3d0e133e87e32e6b47a8b58206f5411a30165ea4a",
+      "note": "Yedek orta boy."
+    },
+    {
+      "file": "logo-96.webp",
+      "bytes": 5532,
+      "sha256": "716adbf7b9c3929175fa031190e059d5a74a85d8c15dbcd444200f02fdb514f9",
+      "note": "Menu markasi ve kapanis."
+    },
+    {
+      "file": "logo-48.webp",
+      "bytes": 2202,
+      "sha256": "dc0a20301d8f9dda5885f76063d18ce61f444d7bb2e0b04536c2ec17c6f33fc3",
+      "note": "Site seridi."
+    },
+    {
+      "file": "logo-256.png",
+      "bytes": 33887,
+      "sha256": "2bb2a9bac55c22dfe0b67ed8a3cd40a9815edaadd9654b99992251c252e174dd",
+      "note": "WebP desteklemeyen ortam icin yedek."
+    },
+    {
+      "file": "logo-96.png",
+      "bytes": 7113,
+      "sha256": "6f2675aaa10b26a26ae16ec06353572f8d2a33d17e7fc1f76085fe7a1d5cf963",
+      "note": "WebP desteklemeyen ortam icin yedek."
+    },
+    {
+      "file": "favicon-32.png",
+      "bytes": 1887,
+      "sha256": "60ff71f1281fc0106348a4fa28590debaa0223a0647867ac854b45c8c79cf023",
+      "note": "Sekme simgesi."
+    },
+    {
+      "file": "favicon-16.png",
+      "bytes": 1158,
+      "sha256": "61a8886fb202e7593ffcfbb255b684faa4dcb086797c6494a6611fa5f5687f40",
+      "note": "Sekme simgesi, kucuk."
+    },
+    {
+      "file": "apple-touch-icon.png",
+      "bytes": 19571,
+      "sha256": "89dc73772b997b9da608bc1a0e2e26782fe592a4d7ffea31553647e313b04a00",
+      "note": "iOS ana ekran simgesi — zemin opak duzlestirildi."
+    },
+    {
+      "file": "og-image.png",
+      "bytes": 64101,
+      "sha256": "f4775d314be03f53c70a537ef0b41df0122de3893d8458cbf723f65bd0efc941",
+      "note": "Paylasim onizlemesi 1200x630 — logo lacivert zeminde ortali."
+    }
+  ]
+}

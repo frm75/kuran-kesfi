@@ -1,8 +1,6 @@
 ---
 import Base from "~/layouts/Base.astro";
-import Section from "~/components/Section.astro";
 import SourceBadge from "~/components/SourceBadge.astro";
-import VerseArabic from "~/components/VerseArabic.astro";
 import Translation from "~/components/Translation.astro";
 import {
   getArabicSource,
@@ -19,13 +17,24 @@ import {
 /**
  * Tanıtım sayfası — plan §14.1, DESIGN.md §7.
  *
- * On iki bölüm, planın verdiği sırayla. Uygulamanın kendi ana sayfası (beş
- * keşif kapısı, plan §14) ayrıdır ve Faz 1'de gelir.
+ * Görsel dil 2026-09-04 tasarımından gelir (docs/landing.html): mürekkep
+ * laciverdi zemin, pirinç vurgu, Cormorant başlık, Karla gövde.
+ *
+ * TASARIMDAN İKİ SAPMA — ikisi de zorunlu, ikisi de gerekçeli:
+ *
+ *  1. Hero'daki <video> ve canvas ağ animasyonu YOK. Sunucu CSP'si
+ *     `default-src 'none'` diyor; `script-src` ve `media-src` tanımlı değil,
+ *     yani betik de video da sessizce engellenir (infra/nginx/*.conf).
+ *     Dekoratif bir animasyon için CSP gevşetilmedi — ağ metaforu statik SVG
+ *     takımyıldızı ve §5'teki şema ile anlatılıyor. Sayfa 0 bayt JS.
+ *  2. Menüdeki açılır listeler yalnızca CSS (:focus-within); mobil menü
+ *     <details>. Aynı sebep: JS yok.
  *
  * DÜRÜSTLÜK KURALI: hazır olmayan bölüm "yakında" diye işaretlenir, çalışıyor
  * gibi gösterilmez. Bülten için form KONULMADI — arkasında sunucu yok ve CSP
  * `form-action 'none'` diyor; çalışmayan bir kutu koymak kullanıcıyı kandırmak
- * olurdu (plan §1.5, CLAUDE.md kural 5).
+ * olurdu (plan §1.5, CLAUDE.md kural 5). Menüde de yalnızca var olan sayfalar
+ * bağlantıdır; gerisi "yakında" etiketiyle, tıklanamaz durur.
  */
 
 const { surahs, totals } = getSurahsIndex();
@@ -35,13 +44,24 @@ const englishAuthors = authors.filter((a) => a.language === "en");
 const sources = getSources().sources;
 const defaultAuthor = getDefaultAuthor();
 
+const arabicSource = getArabicSource();
+const transcriptionSource = getTranscriptionSource();
+const defaultAuthorSource = getSourceForAuthor(defaultAuthor);
+
+/**
+ * Hero ayeti: Âl-i İmrân 103. Sabit seçim — sayfanın "ağ" fikrini taşıyan
+ * ayet bu ("Allah'ın ipine hep birlikte sarılın"). Metin ve meal yine
+ * veriden gelir, koda gömülmez.
+ */
+const heroVerse = getVerseDetail(3, 103);
+const heroTranslation = heroVerse.translations.find((t) => t.authorSlug === defaultAuthor.slug);
+
 /**
  * "Kur'an'da Bugün" — build gününe göre seçilir.
  *
  * Sunucu tarafı kod yok; site tamamen statik. Bu yüzden ayet BUILD anında
  * seçilir ve bir sonraki build'e kadar aynı kalır. Sayfada bu açıkça yazıyor;
- * "her gün değişir" denip değişmemesi yalan olurdu. Günlük yenilenmesi
- * istenirse günde bir kez `pnpm build && pnpm deploy` yeterli.
+ * "her gün değişir" denip değişmemesi yalan olurdu.
  */
 const buildDate = new Date();
 const dayOfYear = Math.floor(
@@ -60,51 +80,151 @@ for (const surah of surahs) {
   running += surah.verseCount;
 }
 const featured = getVerseDetail(featuredSurahId, featuredVerseNumber);
-const featuredTranslation = featured.translations.find(
-  (t) => t.authorSlug === defaultAuthor.slug,
-);
+const featuredTranslation = featured.translations.find((t) => t.authorSlug === defaultAuthor.slug);
 const featuredDateLabel = buildDate.toLocaleDateString("tr-TR", {
   day: "numeric",
   month: "long",
   year: "numeric",
 });
 
-const arabicSource = getArabicSource();
-const transcriptionSource = getTranscriptionSource();
-const defaultAuthorSource = getSourceForAuthor(defaultAuthor);
-
-/** Beş keşif kapısı — plan §2. Hiçbiri henüz hazır değil. */
-const gates: { name: string; note: string; href?: string }[] = [
-  { name: "Harita", note: "Ayetlerin geçtiği yerler, kıssaların coğrafyası" },
-  { name: "Zaman", note: "Nüzul sırası ve tarihsel olaylar aynı çizelgede" },
-  { name: "Kavram", note: "Sabır, adalet, tevekkül — kavramdan ayete" },
+/** Beş keşif kapısı — plan §2. Yalnızca Kelime hazır. */
+const gates = [
   {
+    numeral: "I",
+    name: "Harita",
+    note: "Nuh'un gemisi, Yusuf'un kuyusu, Musa'nın yolculuğu — kıssaların geçtiği yerler, her birinin ne kadar kesin olduğu belirtilerek.",
+    href: undefined,
+  },
+  {
+    numeral: "II",
+    name: "Zaman",
+    note: "Sureleri mushaf sırasıyla değil indikleri sırayla okuyun. O gün Mekke'de ne oluyordu, hemen yanında.",
+    href: undefined,
+  },
+  {
+    numeral: "III",
+    name: "Kavram",
+    note: "Sabır nereye bağlanıyor, şükürle nasıl kesişiyor? Kavramlar arasında gezinin, her düğümde ayetleri görün.",
+    href: undefined,
+  },
+  {
+    numeral: "IV",
     name: "Kelime",
-    note: "Kök ağacı: bir kökün Kur'an'daki bütün geçişleri",
+    note: "Arapça bilmeden de kökleri izleyin. Bir kelimenin kökü, türevleri ve Kur'an'ın her yerindeki izi.",
     href: "/kok",
   },
-  { name: "İlkeler", note: "Ayetlerden çıkan ilkeler, kaynağıyla" },
-];
+  {
+    numeral: "V",
+    name: "İlkeler",
+    note: "Adalet, emanet, ölçüde dürüstlük, öfkeyi yutmak — dayandığı ayetler ve tefsir kaynaklarıyla birlikte.",
+    href: undefined,
+  },
+] as const;
+
+/** Ayet merkezli ağ — §5'teki şemanın etiketleri (plan §15). */
+const spokes = [
+  { name: "Bağlam", note: "Önceki ve sonraki ayetler, sure içindeki konu başlığı" },
+  { name: "Kıssa", note: "Ayetin parçası olduğu anlatı, kronolojik sırasıyla" },
+  { name: "Kavram", note: "İçinde geçen kavramlar ve bağlı kavramlar" },
+  { name: "Kök", note: "Kelimelerin kökleri ve Kur'an'daki diğer kullanımları" },
+  { name: "Nüzul", note: "İniş sırası, dönemi ve o döneme ait olaylar" },
+  { name: "Konum", note: "Anlatılan olayın geçtiği yer, güven derecesiyle" },
+] as const;
 
 /** Modüller — plan §2. Durum dürüstçe işaretlenir. */
 const modules = [
-  { name: "Klasik okuma", state: "hazir", note: `${totals.surahs} sure, ${totals.verses} ayet` },
-  { name: "Meal karşılaştırma", state: "hazir", note: `${authors.length} meal yan yana` },
-  { name: "Çeviriyazı", state: "hazir", note: "Her ayetin Latin harfli okunuşu" },
-  { name: "Kaynak şeffaflığı", state: "hazir", note: "Her bilgi kaynağıyla" },
-  { name: "Kelime ve kök", state: "hazir", note: "77.429 kelime, 1.641 kök" },
-  { name: "Kıssalar", state: "yakinda", note: "Kıssa akışı ve kronoloji" },
-  { name: "Kavram ağı", state: "yakinda", note: "Kavramdan ayete, ayetten kavrama" },
-  { name: "Harita", state: "yakinda", note: "Liste alternatifi zorunlu" },
-  { name: "Hoca notları", state: "yakinda", note: "Kaynağı ve güven derecesiyle" },
-  { name: "Ses (kıraat)", state: "yakinda", note: "Lisans uyumlu kârîler" },
+  {
+    name: "Klasik okuma",
+    state: "hazir",
+    note: `${totals.surahs} sure, ${totals.verses} ayet; Arapça metin ve meal yan yana.`,
+  },
+  {
+    name: "Meal karşılaştırma",
+    state: "hazir",
+    note: `${authors.length} meal yan yana. Aynı ayetin farklı karşılanışını görün.`,
+  },
+  {
+    name: "Çeviriyazı",
+    state: "hazir",
+    note: "Her ayetin Latin harfli okunuşu. Arapça bilmeden de takip edilir.",
+  },
+  {
+    name: "Kaynak şeffaflığı",
+    state: "hazir",
+    note: "Ekrandaki her açıklamanın yanında kaynağı durur.",
+  },
+  {
+    name: "Kelime ve kök",
+    state: "hazir",
+    note: "77.429 kelime, 1.641 kök. Kökten türevlere, türevlerden ayetlere.",
+  },
+  {
+    name: "Kıssalar",
+    state: "yakinda",
+    note: "Kıssa akışı ve kronoloji; her adım ayete bağlı.",
+  },
+  {
+    name: "Kavram ağı",
+    state: "yakinda",
+    note: "Kavramdan ayete, ayetten kavrama; bağları izleyin.",
+  },
+  {
+    name: "Harita",
+    state: "yakinda",
+    note: "Kıssaların coğrafyası. Liste alternatifi zorunlu.",
+  },
+  {
+    name: "Hoca notları",
+    state: "yakinda",
+    note: "Ders videolarından çıkarılmış açıklamalar, tam dakikasına bağlı.",
+  },
+  {
+    name: "Okuma günlüğü",
+    state: "yakinda",
+    note: "Notlarınız ve ezber tekrarınız; sunucuda değil, cihazınızda.",
+  },
+  {
+    name: "Ses (kıraat)",
+    state: "yakinda",
+    note: "Lisans uyumlu kârîler arasından.",
+  },
+  {
+    name: "Çevrimdışı okuma",
+    state: "yakinda",
+    note: "Okuduğunuz cüz cihazınıza iner, bağlantı zayıfken de açılır.",
+  },
 ] as const;
 
 const stateLabel = {
   hazir: "hazır",
-  "veri-hazir": "verisi hazır",
   yakinda: "yakında",
 } as const;
+
+/** Menü — yalnızca var olan sayfalar bağlantıdır (dürüstlük kuralı). */
+const menu = [
+  {
+    label: "Keşfet",
+    href: "#kapilar",
+    items: [
+      { name: "Kök Kelime Keşfi", note: "Kökten türevlere, türevlerden ayetlere", href: "/kok" },
+      { name: "Kıssa Haritası", note: "Kıssaların geçtiği yerler", href: undefined },
+      { name: "Nüzul Zaman Çizelgesi", note: "Sureler iniş sırasıyla", href: undefined },
+      { name: "Kavram Haritası", note: "Kavramlar arası bağlar", href: undefined },
+      { name: "İlkeler", note: "Kur'an'ın tavsiye ettiği ilkeler", href: undefined },
+    ],
+  },
+  {
+    label: "Oku",
+    href: "/sureler",
+    items: [
+      { name: "Sure Listesi", note: `${totals.surahs} sure`, href: "/sureler" },
+      { name: "Meal Karşılaştırma", note: "Mealleri yan yana", href: "/sureler" },
+      { name: "Mushaf Modu", note: "Sayfa düzeninde Arapça metin", href: undefined },
+      { name: "Sade Okuma", note: "Dikkat dağıtmayan tek sütun", href: undefined },
+    ],
+  },
+  { label: "Kaynaklar", href: "/kaynaklar", items: [] },
+] as const;
 ---
 
 <Base
@@ -113,383 +233,1402 @@ const stateLabel = {
   arabic
   bareHeader
 >
+  {/* --- Menü ------------------------------------------------------------ */}
+  <nav class="lp-nav" aria-label="Ana gezinme">
+    <div class="lp-nav-in">
+      <a href="/" class="lp-brand">
+        <img src="/brand/logo-96.webp" width="38" height="38" alt="" aria-hidden="true" />
+        <span class="lp-brand-txt">
+          Kur'an-ı Kerim Keşfi
+          <em>kurankesfi.tr</em>
+        </span>
+      </a>
+
+      {/* Masaüstü menü: açılır listeler yalnızca CSS (:hover / :focus-within). */}
+      <ul class="lp-menu">
+        {
+          menu.map((entry) => (
+            <li class:list={["lp-mi", entry.items.length > 0 && "has"]}>
+              <a href={entry.href}>{entry.label}</a>
+              {entry.items.length > 0 && (
+                <div class="lp-drop">
+                  {entry.items.map((item) =>
+                    item.href === undefined ? (
+                      <span class="is-soon">
+                        {item.name}
+                        <span>{item.note} — yakında</span>
+                      </span>
+                    ) : (
+                      <a href={item.href}>
+                        {item.name}
+                        <span>{item.note}</span>
+                      </a>
+                    ),
+                  )}
+                </div>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+
+      <a href="/sureler" class="lp-nav-cta">Keşfetmeye başla</a>
+
+      {/* Mobil menü: <details> — betik gerektirmez. */}
+      <details class="lp-burger">
+        <summary aria-label="Menüyü aç"><span></span><span></span><span></span></summary>
+        <div class="lp-burger-panel">
+          {
+            menu.map((entry) => (
+              <a href={entry.href}>{entry.label}</a>
+            ))
+          }
+          <a href="/sureler" class="is-cta">
+            Keşfetmeye başla
+          </a>
+        </div>
+      </details>
+    </div>
+  </nav>
+
   <main id="icerik">
     {/* --- 1. Hero ------------------------------------------------------- */}
-    <header class="mx-auto max-w-wide px-4 pt-16 pb-12 text-center md:pt-24">
-      <h1 class="text-accent-text m-0 text-4xl md:text-5xl">Kur'an-ı Kerim Keşfi</h1>
-      <p class="text-text-secondary mt-4 text-lg tracking-widest uppercase">
-        Keşfet <span aria-hidden="true">•</span> Oku <span aria-hidden="true">•</span> Anla
-      </p>
-      <p class="text-text-secondary mx-auto mt-6 max-w-normal text-md">
-        Kur'an-ı Kerim metni, Latin harfli okunuşu ve {turkishAuthors.length} Türkçe meal —
-        her biri kaynağıyla birlikte. Ücretsiz, reklamsız, üyeliksiz, takipsiz.
-      </p>
-      <p class="mt-8">
-        <a href="/sureler" class="cta">Sureleri aç</a>
-        <a href="#kaynaklar" class="cta cta-ghost">Kaynaklarımız</a>
-      </p>
+    <header class="lp-hero">
+      {/* Ambiyans: statik takımyıldızı. Canvas yerine SVG — 0 bayt JS. */}
+      <svg class="lp-hero-stars" viewBox="0 0 1200 700" aria-hidden="true" focusable="false">
+        <g class="lp-links" stroke="currentColor" stroke-width="0.6">
+          <path d="M120 140L310 90M310 90L470 180M470 180L250 260M250 260L120 140" />
+          <path d="M760 120L940 200M940 200L1080 110M760 120L850 280M850 280L940 200" />
+          <path d="M180 520L360 470M360 470L520 560M180 520L300 620" />
+          <path d="M700 560L880 500M880 500L1030 590M700 560L820 660" />
+        </g>
+        <g class="lp-dots" fill="currentColor">
+          <circle cx="120" cy="140" r="1.8"></circle>
+          <circle cx="310" cy="90" r="1.3"></circle>
+          <circle cx="470" cy="180" r="2.1"></circle>
+          <circle cx="250" cy="260" r="1.4"></circle>
+          <circle cx="760" cy="120" r="1.6"></circle>
+          <circle cx="940" cy="200" r="2"></circle>
+          <circle cx="1080" cy="110" r="1.3"></circle>
+          <circle cx="850" cy="280" r="1.5"></circle>
+          <circle cx="180" cy="520" r="1.7"></circle>
+          <circle cx="360" cy="470" r="1.3"></circle>
+          <circle cx="520" cy="560" r="1.9"></circle>
+          <circle cx="300" cy="620" r="1.4"></circle>
+          <circle cx="700" cy="560" r="1.6"></circle>
+          <circle cx="880" cy="500" r="2"></circle>
+          <circle cx="1030" cy="590" r="1.4"></circle>
+          <circle cx="820" cy="660" r="1.5"></circle>
+        </g>
+      </svg>
+      <div class="lp-hero-veil" aria-hidden="true"></div>
+
+      <div class="lp-hero-in">
+        <img
+          class="lp-hero-logo"
+          src="/brand/logo-256.webp"
+          width="215"
+          height="215"
+          alt="Kur'an-ı Kerim Keşfi"
+        />
+
+        <p class="lp-eyebrow"><span>KEŞFET • OKU • ANLA</span></p>
+
+        <h1 class="lp-h1">
+          Kur'an bir liste değil
+          <span class="lp-l2">bir ağdır</span>
+        </h1>
+
+        <p class="lp-hero-sub">
+          Bir ayeti açın; geçtiği kıssa, bağlı olduğu kavram, kökü, indiği dönem ve
+          anlatıldığı yer aynı anda önünüze gelsin. {authors.length} meal ve kaynağı
+          gösterilen açıklamalarla.
+        </p>
+
+        <p class="lp-hero-acts">
+          <a href="#kapilar" class="lp-btn lp-btn-p">Keşfetmeye başla</a>
+          <a href="/sureler" class="lp-btn lp-btn-s">Klasik okumaya geç</a>
+        </p>
+
+        <div class="lp-hero-verse">
+          <p class="lp-hv-ar" lang="ar" dir="rtl">{heroVerse.textUthmani}</p>
+          {
+            heroTranslation !== undefined && (
+              <p class="lp-hv-tr" lang="tr">
+                “{heroTranslation.text}”
+              </p>
+            )
+          }
+          <p class="lp-hv-src">
+            {verseLabel(heroVerse.surahNameTr, heroVerse.verseNumber)}
+            <span aria-hidden="true"> · </span>
+            {defaultAuthor.name} meali
+          </p>
+        </div>
+      </div>
     </header>
 
     {/* --- 2. Neden Farklı ----------------------------------------------- */}
-    <Section
-      id="neden-farkli"
-      title="Neden farklı"
-      lead="Bu platform kâr amacı gütmez, Allah rızası için hazırlanmıştır. Sözün karşılığı koddadır."
-    >
-      <ul class="grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3">
-        <li class="card">
-          <h3 class="card-title">Ücretsiz ve reklamsız</h3>
-          <p class="card-note">Tek bir reklam, tek bir ödeme duvarı yok.</p>
-        </li>
-        <li class="card">
-          <h3 class="card-title">Üyeliksiz</h3>
-          <p class="card-note">Hesap açmadan her şeye erişilir. Tercihler kendi cihazınızda kalır.</p>
-        </li>
-        <li class="card">
-          <h3 class="card-title">Takipsiz</h3>
-          <p class="card-note">
-            Analitik, çerez, piksel yok. Yazı tipleri bile kendi sunucumuzdan gelir —
-            tarayıcınız üçüncü bir siteye istek atmaz.
+    <section class="lp-manifesto" aria-labelledby="neden-farkli-baslik">
+      <h2 id="neden-farkli-baslik" class="sr-only">Neden farklı</h2>
+      <div class="lp-wrap lp-man-grid">
+        <div class="lp-man-cell">
+          <h3>Her bilgi kaynağıyla</h3>
+          <p>
+            Tefsir de meal de hoca açıklaması da bir yorumdur. Hepsini kimin söylediğiyle,
+            hangi esere dayandığıyla birlikte gösteriyoruz. Farklı görüşler yan yana durur.
           </p>
-        </li>
-        <li class="card">
-          <h3 class="card-title">JavaScript'siz çalışır</h3>
-          <p class="card-note">
-            Okuma ekranlarında <strong>0 bayt</strong> JavaScript var. Sayfa güvenlik
-            başlığıyla betik çalıştırmayı zaten yasaklıyor.
+        </div>
+        <div class="lp-man-cell">
+          <h3>Reklamsız, üyeliksiz</h3>
+          <p>
+            Ücretli bölüm, reklam, takip kodu yok. Yazı tipleri bile kendi sunucumuzdan
+            gelir — tarayıcınız üçüncü bir siteye istek atmaz. Girmek için hesap açmanız
+            gerekmez.
           </p>
-        </li>
-        <li class="card">
-          <h3 class="card-title">Kaynaksız içerik yok</h3>
-          <p class="card-note">
-            Kaynağı olmayan bir metin siteye giremez; kural yorum değil, derlemede
-            zorlanıyor.
+        </div>
+        <div class="lp-man-cell">
+          <h3>Belirsizlik gizlenmez</h3>
+          <p>
+            Bir konum tartışmalıysa haritada öyle görünür. Nüzul sırasında farklı görüş
+            varsa ikisi de yazar. Kesin olmayan hiçbir şey kesinmiş gibi sunulmaz.
           </p>
-        </li>
-        <li class="card">
-          <h3 class="card-title">Açık kaynak</h3>
-          <p class="card-note">Kod da veri de açık; herkes kontrol edebilir.</p>
-        </li>
-      </ul>
-    </Section>
+        </div>
+      </div>
+    </section>
 
     {/* --- 3. Beş Keşif Kapısı ------------------------------------------- */}
-    <Section
-      id="kesif-kapilari"
-      title="Beş keşif kapısı"
-      lead="Kur'an'a beş ayrı yoldan girilir; hepsi aynı ayete çıkar. Kelime kapısı açıldı; diğer dördünün altyapısı hazırlanıyor."
-    >
-      <ul class="grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2 lg:grid-cols-5">
-        {
-          gates.map((gate) => (
-            <li class="card">
-              <h3 class="card-title">
-                {gate.href === undefined ? gate.name : <a href={gate.href}>{gate.name}</a>}
-              </h3>
-              <p class="card-note">{gate.note}</p>
-              <p class:list={["state", gate.href === undefined ? "state-yakinda" : "state-hazir"]}>
-                {gate.href === undefined ? "yakında" : "hazır"}
-              </p>
-            </li>
-          ))
-        }
-      </ul>
-    </Section>
+    <section class="lp-sec" id="kapilar" aria-labelledby="kapilar-baslik">
+      <div class="lp-wrap">
+        <p class="rule-ornament" aria-hidden="true"><span></span></p>
+        <h2 id="kapilar-baslik" class="lp-h2">Beş ayrı yoldan girin</h2>
+        <p class="lp-lead">
+          Her kapı sizi aynı yere, ayete götürür. Nereden başlayacağınızı siz seçersiniz.
+          Şu an Kelime kapısı açık; diğer dördünün altyapısı hazırlanıyor.
+        </p>
+
+        <ul class="lp-gates">
+          {
+            gates.map((gate) => (
+              <li class:list={["lp-gate", gate.href === undefined && "is-soon"]}>
+                <span class="lp-gate-num" aria-hidden="true">
+                  {gate.numeral}
+                </span>
+                <h3>
+                  {gate.href === undefined ? gate.name : <a href={gate.href}>{gate.name}</a>}
+                </h3>
+                <p>{gate.note}</p>
+                <p class:list={["state", gate.href === undefined ? "state-yakinda" : "state-hazir"]}>
+                  {gate.href === undefined ? "yakında" : "hazır"}
+                </p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
 
     {/* --- 4. Nasıl Çalışır ---------------------------------------------- */}
-    <Section
-      id="nasil-calisir"
-      title="Nasıl çalışır"
-      lead="Her yol ayete çıkar; her ayet başka bir yola açılır. Keşif zinciri kopmaz."
-      narrow
-    >
-      <ol class="steps">
-        <li>
-          <strong>Bir ayet açarsınız.</strong> Arapça metin, Latin harfli okunuşu ve
-          seçtiğiniz mealler yan yana durur.
-        </li>
-        <li>
-          <strong>Ayetin bağlantılarını görürsünüz.</strong> Hangi kıssada geçiyor, hangi
-          kavrama bağlı, kökü nereye uzanıyor, nerede ve ne zaman indi.
-        </li>
-        <li>
-          <strong>Bir bağlantıyı takip edersiniz.</strong> Kavramdan başka ayetlere,
-          oradan başka kıssalara. Gittiğiniz yol üstte durur, geri dönebilirsiniz.
-        </li>
-        <li>
-          <strong>Her adımda kaynağı görürsünüz.</strong> Hangi meal, hangi tefsir, hangi
-          rivayet — ve bilginin ne kadar kesin olduğu.
-        </li>
-      </ol>
-    </Section>
+    <section class="lp-net" aria-labelledby="nasil-baslik">
+      <div class="lp-wrap lp-net-grid">
+        <div>
+          <p class="rule-ornament" aria-hidden="true"><span></span></p>
+          <h2 id="nasil-baslik" class="lp-h2">Merkezde ayet var</h2>
+          <p class="lp-lead">
+            Bir ayete tıkladığınızda tek bir meal değil, o ayetin bağlı olduğu her şey
+            açılır. Bulunduğunuz yerden başka bir yere geçmek tek tık sürer; nereden
+            geldiğinizi de unutmazsınız.
+          </p>
+          <ul class="lp-net-list">
+            {
+              spokes.map((spoke) => (
+                <li>
+                  <b>{spoke.name}</b>
+                  <span>{spoke.note}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="lp-net-vis">
+          <svg viewBox="0 0 460 420" role="img" aria-labelledby="net-sema-baslik">
+            <title id="net-sema-baslik">
+              Ayet merkezli bağlantı şeması: merkezde ayet, çevresinde bağlam, kıssa,
+              kavram, kök, nüzul ve konum düğümleri.
+            </title>
+            <g class="lp-net-spoke">
+              <path
+                d="M230 210L108 96M230 210L352 96M230 210L64 210M230 210L396 210M230 210L108 324M230 210L352 324"
+              ></path>
+            </g>
+            <g class="lp-net-ring">
+              <path d="M108 96L352 96M64 210L108 324M396 210L352 324M108 96L64 210"></path>
+            </g>
+
+            <circle class="lp-net-core" cx="230" cy="210" r="46"></circle>
+            <text x="230" y="205" text-anchor="middle" class="lp-net-core-t">Ayet</text>
+            <text x="230" y="224" text-anchor="middle" class="lp-net-core-s">3:103</text>
+
+            <g class="lp-net-node">
+              <circle cx="108" cy="96" r="27"></circle>
+              <text x="108" y="100" text-anchor="middle">Bağlam</text>
+              <circle cx="352" cy="96" r="27"></circle>
+              <text x="352" y="100" text-anchor="middle">Kıssa</text>
+              <circle cx="64" cy="210" r="27"></circle>
+              <text x="64" y="214" text-anchor="middle">Kavram</text>
+              <circle cx="396" cy="210" r="27"></circle>
+              <text x="396" y="214" text-anchor="middle">Kök</text>
+              <circle cx="108" cy="324" r="27"></circle>
+              <text x="108" y="328" text-anchor="middle">Nüzul</text>
+              <circle cx="352" cy="324" r="27"></circle>
+              <text x="352" y="328" text-anchor="middle">Konum</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
 
     {/* --- 5. Modüller ---------------------------------------------------- */}
-    <Section
-      id="moduller"
-      title="Modüller"
-      lead="Neyin hazır olduğu, neyin yolda olduğu açıkça yazılıdır."
-    >
-      <ul class="grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3">
-        {
-          modules.map((module) => (
-            <li class="card">
-              <h3 class="card-title">{module.name}</h3>
-              <p class="card-note">{module.note}</p>
-              <p class:list={["state", `state-${module.state}`]}>{stateLabel[module.state]}</p>
-            </li>
-          ))
-        }
-      </ul>
-    </Section>
+    <section class="lp-sec" id="moduller" aria-labelledby="moduller-baslik">
+      <div class="lp-wrap">
+        <p class="rule-ornament" aria-hidden="true"><span></span></p>
+        <h2 id="moduller-baslik" class="lp-h2">Kullanacağınız araçlar</h2>
+        <p class="lp-lead">
+          Hepsi ücretsiz, hepsi hesap açmadan. Neyin hazır olduğu, neyin yolda olduğu
+          açıkça yazılıdır.
+        </p>
+
+        <ul class="lp-mods">
+          {
+            modules.map((module) => (
+              <li class:list={["lp-mod", module.state === "yakinda" && "is-soon"]}>
+                <h3>{module.name}</h3>
+                <p>{module.note}</p>
+                <p class:list={["state", `state-${module.state}`]}>{stateLabel[module.state]}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
 
     {/* --- 6. Kaynaklar --------------------------------------------------- */}
-    <Section
-      id="kaynaklar"
-      title="Kaynaklar"
-      lead="Metin nereden geliyor, kim hazırladı, hangi lisansla kullanılıyor."
-    >
-      <ul class="grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2">
-        {
-          sources.map((source) => (
-            <li class="card">
-              <h3 class="card-title">{source.name}</h3>
-              {source.author && <p class="card-note">{source.author}</p>}
-              <p class="card-note">{source.reference}</p>
-              <p class="text-text-muted mt-2 mb-0 text-xs">Lisans: {source.license}</p>
-            </li>
-          ))
-        }
-      </ul>
-      <p class="text-text-secondary mt-6 text-sm">
-        {turkishAuthors.length} Türkçe meal, {englishAuthors.length} İngilizce çeviri.
-        Tam liste ve lisans ayrıntıları: <a href="/kaynaklar">Kaynak Şeffaflığı</a>.
-      </p>
-    </Section>
+    <section class="lp-sec" id="kaynaklar" aria-labelledby="kaynaklar-baslik">
+      <div class="lp-wrap">
+        <p class="rule-ornament" aria-hidden="true"><span></span></p>
+        <h2 id="kaynaklar-baslik" class="lp-h2">{authors.length} meal, tek ekranda</h2>
+        <p class="lp-lead">
+          Açılışta öntanımlı meal gelir; dilediğinizi ekleyip çıkarabilirsiniz. Her mealin
+          altında kaynağı ve lisansı yazar.
+        </p>
+
+        <ul class="lp-chips">
+          {
+            turkishAuthors.map((author) => (
+              <li class:list={["lp-chip", author.priority !== null && "is-pri"]}>{author.name}</li>
+            ))
+          }
+        </ul>
+
+        <p class="lp-note">
+          {turkishAuthors.length} Türkçe meal, {englishAuthors.length} İngilizce çeviri.
+          Tam liste ve lisans ayrıntıları: <a href="/kaynaklar">Kaynak Şeffaflığı</a>.
+        </p>
+
+        <ul class="lp-src-grid">
+          {
+            sources.map((source) => (
+              <li class="lp-src-card">
+                <h3>{source.name}</h3>
+                {source.author && <p>{source.author}</p>}
+                <p>{source.reference}</p>
+                <p class="lp-lic">Lisans: {source.license}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
 
     {/* --- 7. Kaynak Şeffaflığı ------------------------------------------ */}
-    <Section
-      id="kaynak-seffafligi"
-      title="Kaynak şeffaflığı"
-      lead="Platform kendi yorumunu üretmez. Tefsir, meal, hoca açıklaması — hepsi bir kaynağa bağlı yorumdur; kaynağıyla gösterilir, tek doğru gibi sunulmaz, farklı görüşler yan yana verilir."
-      narrow
-    >
-      <div class="flex flex-wrap gap-3">
-        <SourceBadge contentClass="kaynakli" sources={[arabicSource]} label="Arapça metin" />
-        <SourceBadge
-          contentClass="alternatif"
-          sources={[defaultAuthorSource]}
-          label="Alternatif görüş örneği"
-        />
-        <SourceBadge contentClass="platform" label="Kavram eşleştirmesi" />
+    <section class="lp-tp" aria-labelledby="seffaflik-baslik">
+      <div class="lp-wrap lp-tp-grid">
+        <div>
+          <p class="rule-ornament" aria-hidden="true"><span></span></p>
+          <h2 id="seffaflik-baslik" class="lp-h2">Bu bilgi nereden geliyor?</h2>
+          <p class="lp-lead">
+            Ekrandaki her açıklamanın yanında kaynağı duruyor. Kur'an metni, meal, tefsir
+            ve bizim yaptığımız sınıflandırma birbirine karışmaz — üçü de ayrı işaretlenir.
+          </p>
+          <p class="lp-lead">
+            Tartışmalı bir konu varsa iki görüşü de görürsünüz. Bir bilgiyi biz
+            derlediysek bunu da açıkça yazarız. Renk körlüğünde ve gri baskıda ayrışsın
+            diye kenarlık biçimi ve metin de değişir.
+          </p>
+        </div>
+
+        <div class="lp-badge-demo">
+          <SourceBadge contentClass="kaynakli" sources={[arabicSource]} label="Arapça metin" />
+          <SourceBadge
+            contentClass="alternatif"
+            sources={[defaultAuthorSource]}
+            label="Alternatif görüş örneği"
+          />
+          <SourceBadge contentClass="platform" label="Kavram eşleştirmesi" />
+        </div>
       </div>
-      <p class="text-text-secondary mt-6 text-sm">
-        Üç rozet üç şeyi ayırır: <strong>kaynaklı bilgi</strong>, <strong>alternatif
-        görüş</strong> ve <strong>platformun kendi derlemesi</strong>. Renk körlüğünde
-        ve gri baskıda da ayrışsınlar diye kenarlık biçimi ve metin de değişir.
-      </p>
-    </Section>
+    </section>
 
-    {/* --- 8. Bülten ------------------------------------------------------ */}
-    <Section
-      id="bulten"
-      title="Bülten"
-      lead="Günlük veya haftalık bir ayet, bir ilke — e-postayla."
-      narrow
-    >
-      <p class="text-text-secondary m-0">
-        Henüz açılmadı. Kayıt formu koymuyoruz çünkü arkasında çalışan bir sunucu yok;
-        çalışmayan bir kutu göstermek sizi yanıltmak olurdu. Bülten Faz 3'te,
-        e-posta adresi dışında hiçbir veri toplamadan gelecek.
-      </p>
-      <p class="state state-yakinda mt-4">yakında</p>
-    </Section>
+    {/* --- 8. Kur'an'da Bugün -------------------------------------------- */}
+    <section class="lp-sec" id="bugun" aria-labelledby="bugun-baslik">
+      <div class="lp-wrap">
+        <p class="rule-ornament" aria-hidden="true"><span></span></p>
+        <h2 id="bugun-baslik" class="lp-h2">Kur'an'da bugün</h2>
+        <p class="lp-lead">
+          {featuredDateLabel} — {verseLabel(featured.surahNameTr, featured.verseNumber)}
+        </p>
 
-    {/* --- 9. Kur'an'da Bugün -------------------------------------------- */}
-    <Section
-      id="bugun"
-      title="Kur'an'da bugün"
-      lead={`${featuredDateLabel} — ${verseLabel(featured.surahNameTr, featured.verseNumber)}`}
-      narrow
-    >
-      <VerseArabic
-        text={featured.textUthmani}
-        verseNumber={featured.verseNumber}
-        label={verseLabel(featured.surahNameTr, featured.verseNumber)}
-        large
-      />
-
-      {
-        featured.transcriptionTr !== null && (
-          <p lang="tr" class="transcription">{featured.transcriptionTr}</p>
-        )
-      }
-
-      <div class="mt-4 flex flex-wrap gap-2">
-        <SourceBadge contentClass="kaynakli" sources={[arabicSource]} label="Arapça metin" />
-        <SourceBadge
-          contentClass="kaynakli"
-          sources={[transcriptionSource]}
-          label="Okunuş (çeviriyazı)"
-        />
-        <SourceBadge
-          contentClass="kaynakli"
-          sources={[defaultAuthorSource]}
-          label={`${defaultAuthor.name} meali`}
-        />
-      </div>
-
-      {
-        featuredTranslation !== undefined && (
-          <div class="mt-6">
-            <Translation
-              authorName={featuredTranslation.authorName}
-              authorSlug={featuredTranslation.authorSlug}
-              text={featuredTranslation.text}
-              footnotes={featuredTranslation.footnotes}
-              sourceDeclaredBy="bu bölümdeki kaynak rozetleri"
-              anchorPrefix={`bugun-${featured.surahId}-${featured.verseNumber}`}
-            />
+        <div class="lp-today">
+          <div>
+            <p class="lp-today-ar" lang="ar" dir="rtl">{featured.textUthmani}</p>
+            {
+              featuredTranslation !== undefined && (
+                <div class="lp-today-meal">
+                  <Translation
+                    authorName={featuredTranslation.authorName}
+                    authorSlug={featuredTranslation.authorSlug}
+                    text={featuredTranslation.text}
+                    footnotes={featuredTranslation.footnotes}
+                    sourceDeclaredBy="bu bölümdeki kaynak rozetleri"
+                    anchorPrefix={`bugun-${featured.surahId}-${featured.verseNumber}`}
+                  />
+                </div>
+              )
+            }
+            {
+              featured.transcriptionTr !== null && (
+                <p class="lp-today-tr" lang="tr">
+                  {featured.transcriptionTr}
+                </p>
+              )
+            }
           </div>
-        )
-      }
 
-      <p class="mt-6">
-        <a href={`/${featured.surahSlug}/${featured.verseNumber}`} class="cta">
-          Bu ayetin bütün meallerini gör
-        </a>
-      </p>
-      <p class="text-text-muted mt-4 text-xs">
-        Site tamamen statiktir; bu ayet her yeni yayında değişir, saat başı değil.
-      </p>
-    </Section>
+          <div class="lp-today-side">
+            <h3>KAYNAKLAR</h3>
+            <div class="lp-today-badges">
+              <SourceBadge contentClass="kaynakli" sources={[arabicSource]} label="Arapça metin" />
+              <SourceBadge
+                contentClass="kaynakli"
+                sources={[transcriptionSource]}
+                label="Okunuş (çeviriyazı)"
+              />
+              <SourceBadge
+                contentClass="kaynakli"
+                sources={[defaultAuthorSource]}
+                label={`${defaultAuthor.name} meali`}
+              />
+            </div>
+            <p class="lp-today-links">
+              <a href={`/${featured.surahSlug}/${featured.verseNumber}`}>
+                Bu ayetin bütün meallerini gör
+              </a>
+              <a href={`/${featured.surahSlug}`}>{featured.surahNameTr} suresini aç</a>
+            </p>
+            <p class="lp-note">
+              Site tamamen statiktir; bu ayet her yeni yayında değişir, saat başı değil.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    {/* --- 10. Açık Kaynak ------------------------------------------------ */}
-    <Section
-      id="acik-kaynak"
-      title="Açık kaynak"
-      lead="Kod da veri de açıktır. İddia edilen her şey kontrol edilebilir."
-      narrow
-    >
-      <dl class="license-list">
-        <dt>Kod</dt>
-        <dd>MIT</dd>
-        <dt>Kendi derlediğimiz veri</dt>
-        <dd>CC BY-NC-SA 4.0</dd>
-        <dt>Üçüncü taraf metinler</dt>
-        <dd>Kendi lisansları geçerlidir — Arapça metin, mealler ve çeviriyazı bize ait değildir.</dd>
-      </dl>
-      <p class="text-text-secondary mt-6 text-sm">
-        Hata bildirimi, düzeltme ve katkı beklenmektedir. Özellikle meal metinlerindeki
-        dizgi hataları ve kaynak atıflarındaki eksikler bildirilirse düzeltilir.
-      </p>
-    </Section>
+    {/* --- 9. Bülten ------------------------------------------------------ */}
+    <section class="lp-bulten" aria-labelledby="bulten-baslik">
+      <div class="lp-wrap lp-bulten-in">
+        <div>
+          <h2 id="bulten-baslik" class="lp-h2">Her sabah bir ayet, bir ilke</h2>
+          <p class="lp-lead">
+            Henüz açılmadı. Kayıt formu koymuyoruz çünkü arkasında çalışan bir sunucu yok;
+            çalışmayan bir kutu göstermek sizi yanıltmak olurdu. Bülten Faz 3'te, e-posta
+            adresi dışında hiçbir veri toplamadan gelecek.
+          </p>
+        </div>
+        <p class="state state-yakinda">yakında</p>
+      </div>
+    </section>
 
-    {/* --- 11. Sadaka-i Cariye ------------------------------------------- */}
-    <Section id="sadaka" title="Sadaka-i cariye" narrow>
-      <p class="text-text-secondary m-0 text-md">
-        Bu platform Allah rızası için hazırlanmıştır. Kâr amacı gütmez, bağış toplamaz,
-        reklam almaz. Ne satmaya ne de veri toplamaya çalışır. Faydası olursa bir
-        sadaka-i cariye olması ümit edilir.
-      </p>
-    </Section>
+    {/* --- 10. Sadaka-i Cariye / Açık Kaynak ----------------------------- */}
+    <section class="lp-closing" aria-labelledby="sadaka-baslik">
+      <div class="lp-wrap">
+        <img
+          class="lp-closing-logo"
+          src="/brand/logo-96.webp"
+          width="74"
+          height="74"
+          alt=""
+          aria-hidden="true"
+        />
+        <h2 id="sadaka-baslik" class="lp-closing-h">
+          Bu site Allah rızası için hazırlanmıştır
+        </h2>
+        <p class="lp-closing-p">
+          Ücretsiz kalacak, reklam almayacak, kimseyi takip etmeyecek. Kâr amacı gütmez,
+          bağış toplamaz. Faydası olursa bir sadaka-i cariye olması ümit edilir.
+        </p>
+
+        <dl class="lp-lic-list">
+          <dt>Kod</dt>
+          <dd>MIT</dd>
+          <dt>Kendi derlediğimiz veri</dt>
+          <dd>CC BY-NC-SA 4.0</dd>
+          <dt>Üçüncü taraf metinler</dt>
+          <dd>
+            Kendi lisansları geçerlidir — Arapça metin, mealler ve çeviriyazı bize ait
+            değildir.
+          </dd>
+        </dl>
+
+        <p class="lp-hero-acts">
+          <a href="/sureler" class="lp-btn lp-btn-p">Keşfetmeye başla</a>
+          <a href="/kaynaklar" class="lp-btn lp-btn-s">Kaynakları incele</a>
+        </p>
+      </div>
+    </section>
   </main>
 </Base>
 
 <style is:global>
-  /* Landing'e özgü, DESIGN.md §6 ve §7'nin karşılığı. */
+  /* ==========================================================================
+     Tanıtım sayfası — DESIGN.md §7, görsel dil docs/landing.html (2026-09-04).
 
-  .cta {
-    display: inline-block;
-    margin: var(--space-1) var(--space-2) var(--space-1) 0;
-    padding: var(--space-3) var(--space-6);
-    border: 1px solid var(--accent);
-    border-radius: var(--radius-md);
-    background-color: var(--accent);
-    /* Altın zeminde koyu lacivert metin: karanlıkta 7,41:1, açıkta 5,21:1 */
-    color: #0b1b3b;
-    font-weight: var(--fw-semi);
+     Bu blok YALNIZCA bu sayfaya yüklenir; okuma sayfalarının CSS bütçesini
+     şişirmez. Renk/ölçü değerleri token'dan gelir, hex gömülmez.
+     ======================================================================= */
+
+  /* --- Menü ------------------------------------------------------------- */
+
+  /* Tasarımda menü hero üzerinde saydam başlayıp kaydırınca katılaşıyordu;
+     o davranış betik istiyor (CSP `default-src 'none'`). Bunun yerine menü
+     her zaman katı: aynı okunaklılık, 0 bayt JS. */
+  .lp-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--border);
+    background-color: color-mix(in srgb, var(--bg-primary) 92%, transparent);
+    backdrop-filter: blur(14px);
+  }
+  .lp-nav-in {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    max-width: var(--content-wide);
+    margin-inline: auto;
+    padding: var(--space-3) var(--space-4);
+  }
+  .lp-brand {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--text-primary);
     text-decoration: none;
+  }
+  .lp-brand img {
+    flex: none;
+    width: 38px;
+    height: 38px;
+  }
+  .lp-brand-txt {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    line-height: 1.15;
+    white-space: nowrap;
+  }
+  .lp-brand-txt em {
+    display: block;
+    margin-top: 1px;
+    color: var(--accent-text);
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-style: normal;
+    letter-spacing: 0.34em;
+  }
+
+  .lp-menu {
+    display: flex;
+    margin: 0 0 0 auto;
+    padding: 0;
+    gap: var(--space-1);
+    list-style: none;
+  }
+  .lp-mi {
+    position: relative;
+  }
+  .lp-mi > a {
+    display: block;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+  .lp-mi:hover > a,
+  .lp-mi > a:focus-visible {
+    color: var(--text-primary);
+  }
+  /* Açılır liste olduğunu gösteren ok — yalnızca süs, metin de var. */
+  .lp-mi.has > a::after {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    margin-left: var(--space-2);
+    border-right: 1px solid currentColor;
+    border-bottom: 1px solid currentColor;
+    opacity: 0.55;
+    transform: translateY(-1px) rotate(45deg);
+  }
+
+  .lp-drop {
+    position: absolute;
+    top: calc(100% + var(--space-2));
+    left: calc(var(--space-2) * -1);
+    min-width: 17rem;
+    padding: var(--space-2);
+    border: 1px solid var(--border);
+    background-color: var(--bg-elevated);
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition:
+      opacity var(--duration-normal) var(--ease-out),
+      transform var(--duration-normal) var(--ease-out),
+      visibility var(--duration-normal);
+  }
+  /* :focus-within — klavyeyle de açılır, betik gerekmez. */
+  .lp-mi:hover .lp-drop,
+  .lp-mi:focus-within .lp-drop {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+  .lp-drop a,
+  .lp-drop .is-soon {
+    display: block;
+    padding: var(--space-2) var(--space-3);
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    transition:
+      background-color var(--duration-fast) var(--ease-out),
+      color var(--duration-fast) var(--ease-out);
+  }
+  .lp-drop a:hover,
+  .lp-drop a:focus-visible {
+    background-color: var(--bg-overlay);
+    color: var(--text-primary);
+  }
+  /* Hazır olmayan sayfa bağlantı DEĞİL: tıklanamaz, "yakında" yazar. */
+  .lp-drop .is-soon {
+    color: var(--text-muted);
+    cursor: default;
+  }
+  .lp-drop a span,
+  .lp-drop .is-soon span {
+    display: block;
+    margin-top: 1px;
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+  }
+
+  .lp-nav-cta {
+    flex: none;
+    margin-left: var(--space-3);
+    padding: var(--space-2) var(--space-6);
+    background-color: var(--accent);
+    color: var(--bg-primary);
+    font-size: var(--text-sm);
+    font-weight: var(--fw-medium);
+    text-decoration: none;
+    white-space: nowrap;
     transition: background-color var(--duration-fast) var(--ease-out);
   }
-  .cta:hover {
+  .lp-nav-cta:hover {
     background-color: var(--accent-hover);
-    border-color: var(--accent-hover);
-    color: #0b1b3b;
-  }
-  .cta-ghost {
-    background-color: transparent;
-    color: var(--accent-text);
-  }
-  .cta-ghost:hover {
-    background-color: transparent;
-    color: var(--accent-hover);
   }
 
-  .card {
-    padding: var(--space-4);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    background-color: var(--bg-elevated);
+  /* Mobil menü — <details>, betik yok. */
+  .lp-burger {
+    display: none;
+    margin-left: auto;
   }
-  .card-title {
+  .lp-burger > summary {
+    padding: var(--space-2);
+    list-style: none;
+    cursor: pointer;
+  }
+  .lp-burger > summary::-webkit-details-marker {
+    display: none;
+  }
+  .lp-burger > summary span {
+    display: block;
+    width: 22px;
+    height: 1px;
+    margin: 5px 0;
+    background-color: var(--text-primary);
+  }
+  .lp-burger-panel {
+    position: absolute;
+    right: var(--space-4);
+    left: var(--space-4);
+    padding: var(--space-2);
+    border: 1px solid var(--border);
+    background-color: var(--bg-elevated);
+    box-shadow: var(--shadow-lg);
+  }
+  .lp-burger-panel a {
+    display: block;
+    padding: var(--space-3);
+    color: var(--text-secondary);
+    text-decoration: none;
+  }
+  .lp-burger-panel a.is-cta {
+    margin-top: var(--space-2);
+    background-color: var(--accent);
+    color: var(--bg-primary);
+    font-weight: var(--fw-medium);
+    text-align: center;
+  }
+
+  /* --- Hero -------------------------------------------------------------- */
+
+  .lp-hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    min-height: 88svh;
+  }
+  /* Ambiyans takımyıldızı: canvas yerine statik SVG (CSP betiğe izin vermiyor).
+     Nefes alma animasyonu CSS; prefers-reduced-motion'da durur. */
+  .lp-hero-stars {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    color: var(--accent);
+  }
+  .lp-hero-stars .lp-links {
+    opacity: 0.16;
+  }
+  .lp-hero-stars .lp-dots {
+    opacity: 0.5;
+    animation: lp-twinkle 6s var(--ease-in-out) infinite alternate;
+  }
+  @keyframes lp-twinkle {
+    from {
+      opacity: 0.28;
+    }
+    to {
+      opacity: 0.6;
+    }
+  }
+  .lp-hero-veil {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      radial-gradient(
+        120% 90% at 50% 40%,
+        transparent 0%,
+        color-mix(in srgb, var(--bg-primary) 82%, transparent) 62%,
+        var(--bg-primary) 100%
+      ),
+      linear-gradient(to bottom, transparent 60%, var(--bg-primary) 100%);
+  }
+  .lp-hero-in {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: var(--content-wide);
+    margin-inline: auto;
+    padding: var(--space-16) var(--space-4) var(--space-12);
+    text-align: center;
+  }
+  .lp-hero-logo {
+    width: clamp(9rem, 19vw, 13.5rem);
+    height: auto;
+    margin: 0 auto var(--space-6);
+  }
+  .lp-eyebrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    margin: 0 0 var(--space-6);
+    color: var(--accent-text);
+    font-size: var(--text-xs);
+    letter-spacing: 0.3em;
+  }
+  .lp-eyebrow::before,
+  .lp-eyebrow::after {
+    content: "";
+    width: 2.2rem;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent));
+  }
+  .lp-eyebrow::after {
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+  .lp-h1 {
     margin: 0;
     color: var(--text-primary);
-    font-size: var(--text-lg);
+    font-family: var(--font-heading);
+    font-size: var(--text-hero);
+    font-weight: var(--fw-light);
+    line-height: 1.02;
+    letter-spacing: -0.015em;
   }
-  .card-note {
+  .lp-h1 .lp-l2 {
+    display: block;
+    color: var(--accent-hover);
+    font-style: italic;
+  }
+  .lp-hero-sub {
+    max-width: var(--content-normal);
+    margin: var(--space-6) auto 0;
+    color: var(--text-secondary);
+    font-size: var(--text-md);
+    line-height: var(--lh-relaxed);
+  }
+  .lp-hero-acts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+    margin-top: var(--space-8);
+  }
+
+  .lp-btn {
+    padding: var(--space-3) var(--space-8);
+    border: 1px solid transparent;
+    font-size: var(--text-sm);
+    font-weight: var(--fw-medium);
+    text-decoration: none;
+    transition: all var(--duration-normal) var(--ease-out);
+  }
+  .lp-btn-p {
+    background-color: var(--accent);
+    color: var(--bg-primary);
+  }
+  .lp-btn-p:hover {
+    background-color: var(--accent-hover);
+  }
+  .lp-btn-s {
+    border-color: var(--accent-text);
+    color: var(--accent-text);
+  }
+  .lp-btn-s:hover {
+    background-color: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+
+  .lp-hero-verse {
+    max-width: 34rem;
+    margin: var(--space-12) auto 0;
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--border-strong);
+  }
+  .lp-hv-ar {
+    margin: 0;
+    color: var(--text-primary);
+    font-family: var(--font-arabic);
+    font-size: var(--text-ar-md);
+    line-height: var(--lh-arabic);
+  }
+  .lp-hv-tr {
+    margin: var(--space-3) 0 0;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    font-style: italic;
+  }
+  .lp-hv-src {
     margin: var(--space-2) 0 0;
+    color: var(--accent-text);
+    font-size: var(--text-xs);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  /* --- Ortak bölüm iskeleti ---------------------------------------------- */
+
+  .lp-wrap {
+    max-width: var(--content-wide);
+    margin-inline: auto;
+    padding-inline: var(--space-4);
+  }
+  .lp-sec {
+    padding-block: var(--space-16);
+  }
+  @media (min-width: 48rem) {
+    .lp-sec {
+      padding-block: var(--space-24);
+    }
+  }
+  .lp-h2 {
+    margin: var(--space-6) 0 var(--space-3);
+    color: var(--text-primary);
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    font-weight: var(--fw-light);
+    line-height: 1.14;
+  }
+  .lp-lead {
+    max-width: var(--content-normal);
+    margin: 0 0 var(--space-8);
+    color: var(--text-secondary);
+    font-size: var(--text-md);
+    line-height: var(--lh-relaxed);
+  }
+  .lp-note {
+    margin-top: var(--space-6);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+
+  /* --- Neden farklı ------------------------------------------------------ */
+
+  .lp-manifesto {
+    border-block: 1px solid var(--border);
+    background-color: var(--bg-elevated);
+  }
+  .lp-man-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 60rem) {
+    .lp-man-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .lp-man-cell {
+    padding: var(--space-12) var(--space-6);
+    border-bottom: 1px solid var(--border);
+  }
+  .lp-man-cell:last-child {
+    border-bottom: 0;
+  }
+  @media (min-width: 60rem) {
+    .lp-man-cell {
+      border-right: 1px solid var(--border);
+      border-bottom: 0;
+    }
+    .lp-man-cell:last-child {
+      border-right: 0;
+    }
+  }
+  .lp-man-cell h3 {
+    margin: 0 0 var(--space-3);
+    color: var(--text-primary);
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    font-weight: var(--fw-normal);
+  }
+  .lp-man-cell p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    line-height: var(--lh-relaxed);
+  }
+
+  /* --- Beş kapı ---------------------------------------------------------- */
+
+  .lp-gates {
+    display: grid;
+    grid-template-columns: 1fr;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--border);
+    list-style: none;
+  }
+  @media (min-width: 40rem) {
+    .lp-gates {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 64rem) {
+    .lp-gates {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+  .lp-gate {
+    position: relative;
+    padding: var(--space-8) var(--space-6);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    transition: background-color var(--duration-slow) var(--ease-out);
+  }
+  .lp-gate:hover {
+    background-color: var(--bg-elevated);
+  }
+  .lp-gate-num {
+    position: absolute;
+    top: var(--space-6);
+    right: var(--space-6);
+    color: var(--accent-text);
+    font-family: var(--font-heading);
+    font-size: var(--text-sm);
+    opacity: 0.45;
+  }
+  .lp-gate h3 {
+    margin: 0 0 var(--space-2);
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    font-weight: var(--fw-normal);
+    line-height: 1.2;
+  }
+  .lp-gate h3,
+  .lp-gate h3 a {
+    color: var(--text-primary);
+  }
+  .lp-gate.is-soon h3 {
+    color: var(--text-muted);
+  }
+  /* Tasarımda açıklama yalnızca üzerine gelince açılıyordu; dokunmatik ve
+     klavye kullanıcısı için her zaman görünür bırakıldı (plan §20.4
+     erişilebilirlik). */
+  .lp-gate p {
+    margin: 0;
     color: var(--text-secondary);
     font-size: var(--text-sm);
     line-height: var(--lh-normal);
   }
 
-  /* Durum etiketi: renk + metin. Renk tek başına anlam taşımaz. */
+  /* --- Nasıl çalışır ----------------------------------------------------- */
+
+  .lp-net {
+    padding-block: var(--space-16);
+    border-block: 1px solid var(--border);
+    background-color: var(--bg-elevated);
+  }
+  @media (min-width: 48rem) {
+    .lp-net {
+      padding-block: var(--space-24);
+    }
+  }
+  .lp-net-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-12);
+    align-items: center;
+  }
+  @media (min-width: 64rem) {
+    .lp-net-grid {
+      grid-template-columns: 1fr 1.05fr;
+    }
+  }
+  .lp-net-list {
+    margin: var(--space-8) 0 0;
+    padding: 0;
+    border-top: 1px solid var(--border);
+    list-style: none;
+  }
+  .lp-net-list li {
+    display: flex;
+    gap: var(--space-4);
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--border);
+    font-size: var(--text-sm);
+  }
+  .lp-net-list b {
+    flex: 0 0 7rem;
+    color: var(--accent-text);
+    font-weight: var(--fw-medium);
+  }
+  .lp-net-list span {
+    color: var(--text-secondary);
+  }
+
+  .lp-net-vis svg {
+    width: 100%;
+    height: auto;
+  }
+  .lp-net-spoke path {
+    fill: none;
+    stroke: var(--border-strong);
+    stroke-width: 1;
+  }
+  .lp-net-ring path {
+    fill: none;
+    stroke: var(--teal);
+    stroke-width: 1;
+    opacity: 0.45;
+  }
+  .lp-net-core {
+    fill: var(--bg-primary);
+    stroke: var(--accent);
+    stroke-width: 1.2;
+  }
+  .lp-net-core-t {
+    fill: var(--text-primary);
+    font-family: var(--font-heading);
+    font-size: 21px;
+  }
+  .lp-net-core-s {
+    fill: var(--accent-text);
+    font-family: var(--font-body);
+    font-size: 10px;
+    letter-spacing: 1.6px;
+  }
+  .lp-net-node circle {
+    fill: var(--bg-primary);
+    stroke: var(--border-strong);
+  }
+  .lp-net-node text {
+    fill: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 11.5px;
+  }
+
+  /* --- Modüller ---------------------------------------------------------- */
+
+  .lp-mods {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--border);
+    background-color: var(--border);
+    list-style: none;
+  }
+  @media (min-width: 40rem) {
+    .lp-mods {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 64rem) {
+    .lp-mods {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .lp-mod {
+    padding: var(--space-6);
+    background-color: var(--bg-primary);
+    transition: background-color var(--duration-normal) var(--ease-out);
+  }
+  .lp-mod:hover {
+    background-color: var(--bg-elevated);
+  }
+  .lp-mod h3 {
+    margin: 0 0 var(--space-2);
+    color: var(--text-primary);
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    font-weight: var(--fw-medium);
+  }
+  .lp-mod.is-soon h3 {
+    color: var(--text-muted);
+  }
+  .lp-mod p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    line-height: var(--lh-normal);
+  }
+
+  /* --- Durum etiketi (hazır / yakında) ------------------------------------ */
+
+  /* Renk TEK BAŞINA anlam taşımaz: metin de yazıyor, kenarlık biçimi de
+     ayrışıyor (DESIGN.md §1). */
   .state {
     display: inline-block;
     margin: var(--space-3) 0 0;
-    padding: 0.1em 0.5em;
-    border: 1px solid currentColor;
+    padding: 2px var(--space-2);
     border-radius: var(--radius-sm);
     font-size: var(--text-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
   }
   .state-hazir {
+    border: 1px solid var(--success);
     color: var(--success);
-    border-style: solid;
-  }
-  .state-veri-hazir {
-    color: var(--warning);
-    border-style: dashed;
   }
   .state-yakinda {
+    border: 1px dashed var(--text-muted);
     color: var(--text-muted);
-    border-style: dotted;
   }
 
-  .steps {
+  /* --- Kaynaklar --------------------------------------------------------- */
+
+  .lp-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
     margin: 0;
-    padding-inline-start: var(--space-6);
+    padding: 0;
+    list-style: none;
+  }
+  .lp-chip {
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--border-strong);
     color: var(--text-secondary);
+    font-size: var(--text-sm);
+  }
+  /* Öncelikli mealler (author.priority) — ince altın kenarlık. */
+  .lp-chip.is-pri {
+    border-color: var(--accent-text);
+    color: var(--accent-text);
+  }
+
+  .lp-src-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    margin: var(--space-8) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  @media (min-width: 40rem) {
+    .lp-src-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .lp-src-card {
+    padding: var(--space-6);
+    border: 1px solid var(--border);
+    background-color: var(--bg-elevated);
+  }
+  .lp-src-card h3 {
+    margin: 0 0 var(--space-2);
+    color: var(--text-primary);
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    font-weight: var(--fw-medium);
+  }
+  .lp-src-card p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+  }
+  .lp-src-card .lp-lic {
+    margin-top: var(--space-2);
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+  }
+
+  /* --- Kaynak şeffaflığı ------------------------------------------------- */
+
+  .lp-tp {
+    padding-block: var(--space-16);
+    border-block: 1px solid var(--border);
+    background-color: var(--bg-elevated);
+  }
+  @media (min-width: 48rem) {
+    .lp-tp {
+      padding-block: var(--space-24);
+    }
+  }
+  .lp-tp-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-12);
+    align-items: center;
+  }
+  @media (min-width: 64rem) {
+    .lp-tp-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .lp-badge-demo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    align-items: flex-start;
+    padding: var(--space-6);
+    border: 1px solid var(--border);
+    background-color: var(--bg-primary);
+  }
+
+  /* --- Kur'an'da bugün --------------------------------------------------- */
+
+  .lp-today {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+    align-items: start;
+    padding: var(--space-8);
+    border: 1px solid var(--border);
+    background: linear-gradient(160deg, var(--bg-elevated), var(--bg-primary));
+  }
+  @media (min-width: 64rem) {
+    .lp-today {
+      grid-template-columns: 1.15fr 1fr;
+      gap: var(--space-12);
+    }
+  }
+  .lp-today-ar {
+    margin: 0;
+    color: var(--text-primary);
+    font-family: var(--font-arabic);
+    font-size: var(--text-ar-lg);
+    line-height: var(--lh-arabic);
+    text-align: right;
+  }
+  .lp-today-meal {
+    margin-top: var(--space-6);
+  }
+  .lp-today-tr {
+    margin: var(--space-4) 0 0;
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    font-style: italic;
+  }
+  .lp-today-side h3 {
+    margin: 0 0 var(--space-3);
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    font-weight: var(--fw-medium);
+    letter-spacing: 0.22em;
+  }
+  .lp-today-badges {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    align-items: flex-start;
+  }
+  .lp-today-links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    align-items: flex-start;
+    margin: var(--space-6) 0 0;
+  }
+  .lp-today-links a {
+    padding-bottom: 2px;
+    border-bottom: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
+    color: var(--accent-text);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    transition: border-color var(--duration-fast) var(--ease-out);
+  }
+  .lp-today-links a:hover {
+    border-bottom-color: var(--accent);
+  }
+
+  /* --- Bülten ------------------------------------------------------------ */
+
+  .lp-bulten {
+    padding-block: var(--space-16);
+    border-block: 1px solid var(--border);
+    background-color: var(--bg-elevated);
+  }
+  .lp-bulten-in {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    align-items: center;
+  }
+  @media (min-width: 64rem) {
+    .lp-bulten-in {
+      grid-template-columns: 1fr auto;
+      gap: var(--space-12);
+    }
+  }
+  .lp-bulten .lp-h2 {
+    margin-top: 0;
+    font-size: var(--text-2xl);
+  }
+  .lp-bulten .lp-lead {
+    margin-bottom: 0;
+  }
+  .lp-bulten .state {
+    margin: 0;
+  }
+
+  /* --- Kapanış ----------------------------------------------------------- */
+
+  .lp-closing {
+    padding-block: var(--space-16);
+    text-align: center;
+  }
+  @media (min-width: 48rem) {
+    .lp-closing {
+      padding-block: var(--space-24);
+    }
+  }
+  .lp-closing-logo {
+    width: 74px;
+    height: 74px;
+    margin: 0 auto var(--space-6);
+    opacity: 0.92;
+  }
+  .lp-closing-h {
+    max-width: 40rem;
+    margin: 0 auto;
+    color: var(--text-primary);
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    font-style: italic;
+    font-weight: var(--fw-light);
+    line-height: 1.35;
+  }
+  .lp-closing-p {
+    max-width: 34rem;
+    margin: var(--space-6) auto 0;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
     line-height: var(--lh-relaxed);
   }
-  .steps li + li {
-    margin-top: var(--space-4);
-  }
-  .steps strong {
-    color: var(--text-primary);
-  }
-
-  .license-list {
-    margin: 0;
+  .lp-lic-list {
     display: grid;
-    grid-template-columns: auto 1fr;
-    gap: var(--space-2) var(--space-6);
+    grid-template-columns: 1fr;
+    gap: var(--space-1) var(--space-4);
+    max-width: 40rem;
+    margin: var(--space-8) auto 0;
+    font-size: var(--text-sm);
+    text-align: left;
+  }
+  @media (min-width: 40rem) {
+    .lp-lic-list {
+      grid-template-columns: auto 1fr;
+    }
+  }
+  .lp-lic-list dt {
+    color: var(--accent-text);
+    font-weight: var(--fw-medium);
+  }
+  .lp-lic-list dd {
+    margin: 0 0 var(--space-2);
     color: var(--text-secondary);
   }
-  .license-list dt {
-    color: var(--text-primary);
-    font-weight: var(--fw-semi);
+  .lp-closing .lp-hero-acts {
+    margin-top: var(--space-8);
   }
-  .license-list dd {
-    margin: 0;
+
+  /* --- Duyarlılık -------------------------------------------------------- */
+
+  @media (max-width: 63.99rem) {
+    .lp-menu,
+    .lp-nav-cta {
+      display: none;
+    }
+    .lp-burger {
+      display: block;
+    }
+  }
+
+  /* Hareket azaltma: parıltı durur, geçişler kaybolur (DESIGN.md §5). */
+  @media (prefers-reduced-motion: reduce) {
+    .lp-hero-stars .lp-dots {
+      animation: none;
+      opacity: 0.45;
+    }
   }
 </style>

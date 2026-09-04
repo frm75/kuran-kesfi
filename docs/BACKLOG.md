@@ -39,6 +39,11 @@
   lockfile'dan `pnpm-lock.yaml` üretir) ve çalıştırıldığında mevcut lockfile'ı siler. Bu
   oturumda bir kez oldu, git'ten geri alındı. Script `data:import` olarak adlandırıldı; plan
   metni `pnpm data:import && pnpm build` olarak düzeltilmeli.
+- **`pnpm deploy` de yerleşik komut.** Aynı tuzağın ikinci örneği: `deploy` pnpm'in yerleşik
+  komutudur, kök script'i gölgeler ve `ERR_PNPM_NOTHING_TO_DEPLOY` verir. Zarar vermiyor ama
+  sessizce hiçbir şey yapmıyor — "yayınladım" sanılabilir. Kullanım **`pnpm run deploy`**.
+  Script adını değiştirmek yerine `run` kullanılması yeterli görüldü; ad `release` yapılırsa
+  belgeler ve alışkanlık da değişir. `pnpm run` gerektiren adlar README'de işaretli.
 
 ## Verilen kararlar — 2026-09-03
 

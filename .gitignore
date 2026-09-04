@@ -29,6 +29,18 @@ reports/
 # gecici gorsel uretim alani
 data/images/tmp/
 
+# tasarim kaynak dosyalari — diskte kalir, git'e girmez.
+#
+# docs/logo_*.png: logo_512.png ile scripts/brand/logo-source.png BAYT BAYT
+# aynidir (sha256 d7b059ab); digerleri artik pipeline'in urettigi boyutlar.
+# Tek kaynak scripts/brand/logo-source.png'dir, kopyasi tutulmaz.
+#
+# docs/hero-video.mp4 (9,3 MB): tanitim sayfasinda KULLANILMIYOR. Sunucu CSP'si
+# `default-src 'none'` ve `media-src` tanimli degil — video sessizce engellenir.
+# Gerekce apps/web/src/pages/index.astro basindaki not.
+docs/logo_*.png
+docs/hero-video.mp4
+
 # editor / isletim sistemi
 .DS_Store
 .vscode/

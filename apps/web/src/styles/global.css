@@ -51,9 +51,9 @@
   unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
 }
 
-/* Gövde: değişken font, 300–700 tek dosyada. */
 /* Meal ve dipnot metni: uzun okuma serifi (kullanıcı kararı 2026-09-04).
-   Tek ağırlık (400) ve opsz sabit — ölçüldü, değişken eksen iki katı. */
+   Tek ağırlık (400) ve opsz sabit — ölçüldü, değişken eksen iki katı.
+   Yalnızca okuma sayfalarında yüklenir; landing bu fontu indirmez. */
 @font-face {
   font-family: "Source Serif 4";
   src: url("/fonts/source-serif-latin.woff2") format("woff2");
@@ -62,21 +62,56 @@
   font-display: swap;
 }
 
+/* Gövde ve arayüz: değişken font, 300–600 tek dosyada (30,3 KB ölçüldü). */
 @font-face {
-  font-family: "Inter";
-  src: url("/fonts/inter-latin.woff2") format("woff2");
-  font-weight: 400 700;
+  font-family: "Karla";
+  src: url("/fonts/karla-latin.woff2") format("woff2");
+  font-weight: 300 600;
   font-style: normal;
   font-display: swap;
 }
 
-/* Başlık: ağırlık 600'e sabitlendi (bkz. scripts/fonts/build_fonts.ts —
-   değişken eksen 48,7 KB, sabit 26,4 KB; plan §20.4 font bütçesi).
-   Başlıklar boyutla ayrışır, ağırlıkla değil. */
+/*
+ * Çeviriyazı yama fontu — 2,3 KB.
+ *
+ * Karla, Türkçe Kur'an çeviriyazısının harflerini TAŞIMIYOR: ḳ (7364 geçiş),
+ * ẕ (5266), ḥ, ḫ, ṣ, ḍ, ŝ, ṭ. Eski gövde fontu Inter hepsini taşıyordu;
+ * güvenlik ağı oydu. Karla'ya geçince ayet okunuşu kelime ortasında sistem
+ * fontuna düşerdi.
+ *
+ * Tam kapsamalı sans fontları tarandı (Source Sans 3, Noto Sans, Lato tamam)
+ * ama hiçbiri tasarımın fontu değil. Tasarım fontunu değiştirmek yerine eksik
+ * harfler Inter'den alt kümelendi. unicode-range sayesinde sayfada bu
+ * harflerden biri geçmiyorsa dosya İNDİRİLMEZ.
+ *
+ * Görsel dikiş: bu 8 harf Karla değil Inter çizgisiyle gelir. İkisi de
+ * grotesk; ölçekleri yakın. Doğru harfi yanlış fontla göstermek, yanlış harfi
+ * doğru fontla göstermekten iyidir.
+ */
 @font-face {
-  font-family: "Playfair Display";
-  src: url("/fonts/playfair-display-latin.woff2") format("woff2");
-  font-weight: 600;
+  font-family: "Kesif Latin Ek";
+  src: url("/fonts/kesif-latin-ek.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0124-0125, U+0128-0129, U+015C-015D, U+0168-0169, U+018F, U+0259,
+    U+1E0C-1E0D, U+1E24-1E25, U+1E2A-1E2B, U+1E32-1E33, U+1E62-1E63, U+1E6C-1E6D,
+    U+1E94-1E95;
+}
+
+/* Başlık: ağırlık ekseni 300–500 AÇIK bırakıldı.
+   Playfair'de eksen sabitlenmişti; Cormorant'ta tasarımın karakteri ağırlık
+   farkına dayanıyor — hero ve bölüm başlıkları 300 (ince, ferah), kart
+   başlıkları 400, modül başlıkları 500. Ölçüldü:
+     wght 300-500 değişken  50,8 KB   ← seçildi
+     wght 300-400 değişken  47,6 KB
+     wght 400 sabit         32,8 KB
+   Sabitlemek 18 KB kazandırıyordu ama başlık hiyerarşisini düzleştiriyor.
+   Bütçe etkisi plan §20.4'te. */
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: url("/fonts/cormorant-garamond-latin.woff2") format("woff2");
+  font-weight: 300 500;
   font-style: normal;
   font-display: swap;
 }
@@ -90,87 +125,105 @@
 :root {
   color-scheme: dark light;
 
-  /* --- Zemin --- */
-  --bg-primary: #0b1b3b; /* koyu lacivert */
-  --bg-elevated: #122649; /* kart, panel */
-  --bg-overlay: #1a3059; /* modal, dropdown */
+  /* --- Zemin (afişteki mürekkep laciverdi) --- */
+  --bg-primary: #071023; /* sayfa zemini */
+  --bg-elevated: #0c1b33; /* kart, panel */
+  --bg-overlay: #132743; /* modal, dropdown */
 
-  /* --- Metin --- */
-  --text-primary: #f5efe0; /* kağıt tonu */
-  --text-secondary: #c9d3e8;
-  --text-muted: #8a99b8;
+  /* --- Metin (parşömen) --- */
+  --text-primary: #efe6d3; /* 15,29:1 */
+  --text-secondary: #cfc7b6; /* 11,29:1 */
+  --text-muted: #b9b2a2; /* 8,99:1 */
 
-  /* --- Vurgu (altın) --- */
-  --accent: #c9a756;
-  --accent-hover: #d6b76a;
-  --accent-muted: #8a7238; /* pasif altın — ZEMİN olarak kullanılır */
+  /* --- Birincil vurgu: pirinç/altın --- */
+  --accent: #c9a253; /* ZEMİN rengi — CTA dolgusu, ince süs çizgisi */
+  --accent-hover: #e0c489;
+  --accent-muted: #8a7238; /* pasif altın — ZEMİN, metin olarak kullanılmaz */
   /*
    * Metin ve anlam taşıyan kenarlık için altın.
    *
-   * DESIGN.md'de yok, kontrast denetiminden sonra eklendi: açık modda
-   * --accent (#A88B3F) kağıt üzerinde 2,85:1 veriyor; bağlantı metni için
-   * AA sınırı 4,5:1, anlam taşıyan kenarlık için 3:1. Karanlık modda
-   * --accent zaten 7,41:1 olduğu için aynı değer. Ölçümler: DESIGN.md
-   * "Kontrast düzeltmeleri".
+   * Açık modda --accent (#C9A253) kağıt üzerinde 2,45:1 veriyor; bağlantı
+   * metni için AA sınırı 4,5:1. Altını büsbütün koyulaştırmak markayı
+   * bozardı, bu yüzden zemin/metin ikiye ayrıldı. Karanlık modda --accent
+   * zaten 7,93:1 olduğu için aynı değer.
    */
-  --accent-text: #c9a756;
+  --accent-text: #c9a253; /* 7,93:1 */
+
+  /*
+   * --- İkincil vurgu: firuze ---
+   *
+   * Plan §22'de altın "tek vurgu" idi; 2026-09-04 tasarımıyla ikinci bir
+   * vurgu girdi. Marka rengi DEĞİL, ayrım rengi: yalnızca "alternatif görüş"
+   * ve keşif ağı bağlantılarında kullanılır, CTA'da kullanılmaz.
+   * Tasarımdaki #3E8E86 kart üzerinde 4,44:1 kalıyordu (sınır 4,5); hue
+   * korunarak açıldı.
+   */
+  --teal: #449c93; /* 5,80:1 · tasarım #3E8E86 → 4,44:1 kalıyordu */
 
   /* --- Kenarlık --- */
-  --border: #1f3560;
-  --border-strong: #2a4676;
+  /* DEKORATİF: kart çerçevesi, ayraç. Anlam taşımaz, kontrast eşiği yok.
+     Anlam taşıyan kenarlık --accent-text / --teal / --text-muted kullanır. */
+  --border: #1e3355;
+  --border-strong: #2e4a7a;
 
   /* --- Durum --- */
-  --success: #6baa6b;
-  --warning: #c9a756;
-  --danger: #df6863; /* DESIGN.md #B85450 → 3,58:1 kalıyordu, açıldı */
+  --success: #6fbf8e; /* 8,60:1 */
+  --warning: #c9a253;
+  --danger: #e3736e; /* 6,27:1 */
 }
 
 /* Açık mod — sistem tercihi, kullanıcı açıkça "dark" seçmediyse */
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
-    --bg-primary: #f5efe0;
-    --bg-elevated: #ffffff;
-    --bg-overlay: #fbf7ea;
+    --bg-primary: #efe6d3; /* parşömen */
+    --bg-elevated: #fbf7ea;
+    --bg-overlay: #ffffff;
 
-    --text-primary: #0b1b3b;
-    --text-secondary: #3a4a6b;
-    --text-muted: #5f6d86; /* DESIGN.md #6B7A96 → 3,77:1 kalıyordu */
+    --text-primary: #071023; /* 15,29:1 */
+    --text-secondary: #3c4657; /* 7,67:1 */
+    --text-muted: #69614f; /* 4,95:1 */
 
-    --accent: #a88b3f;
-    --accent-hover: #957a35;
-    --accent-muted: #e8dcb8;
-    --accent-text: #816a2f; /* kağıt üzerinde 4,54:1 */
+    /* --accent zemin olarak KOYU MODDAKİ değerde kalır: altın dolgu üzerinde
+       koyu lacivert metin iki modda da 7,93:1. Metin sürümü ayrı. */
+    --accent: #c9a253;
+    --accent-hover: #dcb974;
+    --accent-muted: #e4d5ae;
+    --accent-text: #7c601f; /* 4,77:1 · #C9A253 kağıt üzerinde 2,45:1 kalıyordu */
 
-    --border: #e5ddc5;
+    --teal: #2e6a64; /* 5,04:1 */
+
+    --border: #dcd2ba;
     --border-strong: #c9bfa0;
 
-    --success: #4a774a; /* #6BAA6B kağıt üzerinde 2,3:1 kalıyordu */
-    --warning: #816a2f;
-    --danger: #8e3f3c;
+    --success: #2f6b45; /* 5,11:1 */
+    --warning: #7c601f;
+    --danger: #9b3a36; /* 5,55:1 */
   }
 }
 
 /* Kullanıcının açık seçimi sistem tercihini ezer */
 :root[data-theme="light"] {
-  --bg-primary: #f5efe0;
-  --bg-elevated: #ffffff;
-  --bg-overlay: #fbf7ea;
+  --bg-primary: #efe6d3;
+  --bg-elevated: #fbf7ea;
+  --bg-overlay: #ffffff;
 
-  --text-primary: #0b1b3b;
-  --text-secondary: #3a4a6b;
-  --text-muted: #5f6d86;
+  --text-primary: #071023;
+  --text-secondary: #3c4657;
+  --text-muted: #69614f;
 
-  --accent: #a88b3f;
-  --accent-hover: #957a35;
-  --accent-muted: #e8dcb8;
-  --accent-text: #816a2f;
+  --accent: #c9a253;
+  --accent-hover: #dcb974;
+  --accent-muted: #e4d5ae;
+  --accent-text: #7c601f;
 
-  --border: #e5ddc5;
+  --teal: #2e6a64;
+
+  --border: #dcd2ba;
   --border-strong: #c9bfa0;
 
-  --success: #4a774a;
-  --warning: #816a2f;
-  --danger: #8e3f3c;
+  --success: #2f6b45;
+  --warning: #7c601f;
+  --danger: #9b3a36;
 }
 
 /* Güven derecesi renkleri — DESIGN.md §1 "Güven ve Rozet Renkleri".
@@ -198,10 +251,13 @@
   --space-24: 6rem;
 
   --content-narrow: 36rem; /* okuma sütunu, 65-75 karakter */
-  --content-normal: 48rem;
-  --content-wide: 72rem; /* landing bölümleri */
+  --content-normal: 40rem; /* landing okuma satırı (--read) */
+  --content-wide: 73.75rem; /* landing bölümleri (--wide, 1180px) */
   --content-full: 90rem; /* harita, graf */
 
+  /* Cormorant Garamond 300–500 taşır. 600/700 YOK: başlık fontu o ağırlıkları
+     içermiyor, istenirse tarayıcı sentetik kalın çizer ve serif bozulur. */
+  --fw-light: 300;
   --fw-normal: 400;
   --fw-medium: 500;
   --fw-semi: 600;
@@ -233,6 +289,7 @@
   --color-accent-hover: var(--accent-hover);
   --color-accent-muted: var(--accent-muted);
   --color-accent-text: var(--accent-text);
+  --color-teal: var(--teal);
 
   --color-border: var(--border);
   --color-border-strong: var(--border-strong);
@@ -244,15 +301,20 @@
 
 @theme {
   /* --- §2 Yazı tipleri --- */
-  --font-heading: "Playfair Display", "Cormorant Garamond", Georgia, serif;
+  /* "Kesif Latin Ek" her yığında ÖNDE: unicode-range ile yalnızca çeviriyazı
+     harflerini yakalar, gerisi bir sonrakine düşer. Önde olmazsa Karla'nın
+     .notdef'i kazanır. */
+  --font-heading: "Kesif Latin Ek", "Cormorant Garamond", Georgia, "Times New Roman", serif;
   /* "Amiri Quran" gövde yığınında: meal ve dipnotların içinde geçen Arap
-     harfli alıntılar Inter'de yok, tarayıcı karakter bazında düşer. */
-  --font-body: "Inter", "Amiri Quran", -apple-system, system-ui, sans-serif;
+     harfli alıntılar Karla'da yok, tarayıcı karakter bazında düşer. */
+  --font-body: "Kesif Latin Ek", "Karla", "Amiri Quran", -apple-system, system-ui, sans-serif;
   --font-arabic: "Amiri Quran", "Scheherazade New", serif;
-  /* Meal ve dipnot: uzun okuma serifi. Arayüz, kelime ve rozetler Inter
+  /* Meal ve dipnot: uzun okuma serifi. Arayüz, kelime ve rozetler Karla
      kalır — DESIGN.md §2'nin gövde/başlık ayrımı bozulmuyor, araya bir
-     "okuma metni" rolü giriyor (plan §23 kararlarıyla aynı oturumda). */
-  --font-reading: "Source Serif 4", "Inter", "Iowan Old Style", Georgia, serif;
+     "okuma metni" rolü giriyor (plan §23 kararlarıyla aynı oturumda).
+     Cormorant Garamond bu rolde KULLANILMAZ: görüntü serifi, gövde
+     boyutunda fazla ince. */
+  --font-reading: "Kesif Latin Ek", "Source Serif 4", "Karla", "Iowan Old Style", Georgia, serif;
   /* JetBrains Mono kendi sunucumuzda YOK: yalnızca birkaç kod parçasında
      kullanılıyor, CDN yasak, 30+ KB'lık bir font bunun için indirilmiyor. */
   --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", monospace;
@@ -280,6 +342,10 @@
   --text-4xl--line-height: 1.2;
   --text-5xl: 3.75rem;
   --text-5xl--line-height: 1.2;
+  /* Landing hero — ekranla ölçeklenir, mobilde 2,9rem'e iner.
+     Ölçekte sabit bir kademe değil, tek bir yer için tanımlı. */
+  --text-hero: clamp(2.9rem, 7.5vw, 5.6rem);
+  --text-hero--line-height: 1.02;
 
   /* Arapça kendi ölçeğini kullanır — aynı punto Arapça'da çok daha küçük
      okunur. Satır aralığı 2'den aşağı inmez: hareke ve şedde üst üste biner. */
@@ -412,14 +478,18 @@
   line-height: var(--text-xs--line-height);
 }
 
-/* Üç içerik sınıfı: altın düz / altın kesikli / nötr noktalı.
+/* Üç içerik sınıfı: altın düz / firuze kesikli / nötr noktalı.
    Renk tek başına anlam taşımaz (DESIGN.md §1) — kenarlık biçimi ve
-   metin de ayrışır, gri baskıda da okunur. */
+   metin de ayrışır, gri baskıda da okunur.
+   Firuze 2026-09-04 tasarımıyla girdi: alternatif görüş artık altının bir
+   varyantı değil, ayrı bir hue. Üç sınıf gri baskıda da hâlâ düz/kesikli/
+   noktalı olarak ayrışıyor. */
 .source-badge.is-kaynakli {
   border-style: solid;
 }
 .source-badge.is-alternatif {
   border-style: dashed;
+  border-color: var(--teal);
 }
 .source-badge.is-platform {
   border-style: dotted;
@@ -430,6 +500,9 @@
   margin-inline-end: 0.35em;
   color: var(--accent-text);
   vertical-align: -0.1em;
+}
+.source-badge.is-alternatif .badge-icon {
+  color: var(--teal);
 }
 .source-badge.is-platform .badge-icon {
   color: var(--text-muted);
@@ -858,10 +931,20 @@
   background-color: var(--bg-elevated);
 }
 .site-header .site-name {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   color: var(--accent-text);
   font-family: var(--font-heading);
   font-size: var(--text-lg);
   text-decoration: none;
+}
+/* Logo dekoratiftir: yanında site adı zaten yazıyor, alt="" ve aria-hidden.
+   Boyut sabit — yüklenmeden önce de yer kaplar, CLS olmaz (plan §20.4). */
+.site-header .site-mark {
+  flex: none;
+  width: 30px;
+  height: 30px;
 }
 .site-header .site-nav {
   display: flex;

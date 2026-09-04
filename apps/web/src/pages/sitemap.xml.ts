@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { getRootsIndex, getSurahsIndex } from "~/lib/data";
+import { SITE } from "~/lib/site";
 
 /**
  * sitemap.xml — arama motorları için adres listesi.
@@ -15,8 +16,6 @@ import { getRootsIndex, getSurahsIndex } from "~/lib/data";
  * yalan söylemek olurdu (site haftada bir yeniden derlenirse 6354 sayfa
  * "değişti" görünür).
  */
-
-const SITE = "https://kurankesfi.tr";
 
 export const GET: APIRoute = () => {
   const { surahs } = getSurahsIndex();

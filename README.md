@@ -85,13 +85,20 @@ chmod 600 .env
 | `pnpm fonts` | Yazı tiplerini indir ve alt kümele |
 | `pnpm fonts:check` | Üretilen font çıktısı diskteki ile aynı mı |
 | `pnpm fonts:verify` | HarfBuzz ile dizgi doğrulaması (eksik glif var mı) |
-| `pnpm deploy` | Atomik yayın + duman testi |
+| `pnpm brand` | Marka görsellerini tek kaynak logodan üret |
+| `pnpm brand:check` | Üretilen marka çıktısı diskteki ile aynı mı |
+| `pnpm run deploy` | Atomik yayın + duman testi |
 | `pnpm deploy:rollback` | Bir önceki yayına dön |
-
-> `import` adı kullanılamaz: `pnpm import` pnpm'in yerleşik komutudur ve `pnpm-lock.yaml`'ı siler.
+| `pnpm deploy:smoke` | Yalnızca duman testi (yayın yapmadan) |
 | `pnpm db:up` / `pnpm db:down` | Build veritabanı container'ını başlat / durdur |
 | `pnpm db:reset` | Veritabanını sil ve şemayı sıfırdan kur |
 | `pnpm db:psql` | Veritabanına psql ile bağlan |
+
+> **`pnpm import` ve `pnpm deploy` pnpm'in yerleşik komutlarıdır** ve aynı adlı
+> script'i gölgeler. `import` çalıştırılırsa `pnpm-lock.yaml` **silinir** (bir kez
+> oldu, git'ten geri alındı) — script bu yüzden `data:import` adını taşıyor.
+> `deploy` ise `ERR_PNPM_NOTHING_TO_DEPLOY` verip hiçbir şey yapmaz; araya `run`
+> koymak gerekir: **`pnpm run deploy`**.
 
 ### Build veritabanı
 

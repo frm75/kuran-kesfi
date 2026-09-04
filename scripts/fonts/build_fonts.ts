@@ -37,7 +37,7 @@ const MANIFEST_FILE = resolve(OUT_DIR, "manifest.json");
 
 const GOOGLE_FONTS_RAW = "https://raw.githubusercontent.com/google/fonts/main";
 
-type Coverage = "arabic" | "latin" | "latin-headings";
+type Coverage = "arabic" | "latin" | "latin-headings" | "latin-fallback";
 
 interface FontSpec {
   id: string;
@@ -67,40 +67,74 @@ interface FontSpec {
  */
 const FONTS: readonly FontSpec[] = [
   {
-    id: "inter",
-    family: "Inter",
-    upstreamPath: "ofl/inter/Inter%5Bopsz,wght%5D.ttf",
-    licensePath: "ofl/inter/OFL.txt",
-    outFile: "inter-latin.woff2",
-    licenseFile: "OFL-Inter.txt",
+    id: "karla",
+    family: "Karla",
+    upstreamPath: "ofl/karla/Karla%5Bwght%5D.ttf",
+    licensePath: "ofl/karla/OFL.txt",
+    outFile: "karla-latin.woff2",
+    licenseFile: "OFL-Karla.txt",
     coverage: "latin",
-    // opsz sabitlendi: optik boyut ekseni kullanilmiyor (font-optical-sizing
-    // kapali), tasimanin bedeli var. wght 300-700'e daraltildi; tasarim dili
-    // bu araligin disina cikmiyor (DESIGN.md 2).
-    // Meal metni artik Source Serif 4 ile diziliyor; Inter arayuz, ceviriyazi
-    // ve kelime metnini tasiyor. 300 (light) hicbir yerde kullanilmiyor,
-    // araliktan cikarildi: 61,4 KB -> 49,1 KB (olculdu).
-    variationAxes: { opsz: 16, wght: { min: 400, max: 700 } },
-    weightRange: "400 700",
-    note: "Arayuz ve meal metni.",
+    // Inter'in yerini aldi (tasarim karari 2026-09-04, DESIGN.md 2).
+    // Agirlik araligi 300-600: tasarim dili 300 (hero alt metni) ile 600
+    // (buton, vurgu) arasinda kaliyor, 700 kullanilmiyor.
+    variationAxes: { wght: { min: 300, max: 600 } },
+    weightRange: "300 600",
+    note: "Arayuz ve govde metni.",
   },
   {
-    id: "playfair-display",
-    family: "Playfair Display",
-    upstreamPath: "ofl/playfairdisplay/PlayfairDisplay%5Bwght%5D.ttf",
-    licensePath: "ofl/playfairdisplay/OFL.txt",
-    outFile: "playfair-display-latin.woff2",
-    licenseFile: "OFL-PlayfairDisplay.txt",
+    id: "cormorant-garamond",
+    family: "Cormorant Garamond",
+    upstreamPath: "ofl/cormorantgaramond/CormorantGaramond%5Bwght%5D.ttf",
+    licensePath: "ofl/cormorantgaramond/OFL.txt",
+    outFile: "cormorant-garamond-latin.woff2",
+    licenseFile: "OFL-CormorantGaramond.txt",
     coverage: "latin-headings",
-    // Agirlik ekseni 600'e SABITLENDI. Olculdu:
-    //   wght 500-700 degisken  48,7 KB
-    //   wght 600-700 degisken  40,2 KB
-    //   wght 600 sabit         26,4 KB
-    // Plan 20.4 font butcesi (Latin-only sayfa < 95 KB) yalnizca sonuncusuyla
-    // tutuyor. Basliklar zaten boyutla ayrisiyor, agirlikla degil.
-    variationAxes: { wght: 600 },
-    weightRange: "600",
+    // Playfair Display'in yerini aldi (tasarim karari 2026-09-04).
+    // Playfair'de agirlik SABITLENMISTI cunku degisken eksen dosyayi iki
+    // katina cikariyordu. Cormorant'ta baslik hiyerarsisi 300 (hero, ince)
+    // ile 400 (bolum basligi) arasinda oynuyor — tasarimin karakteri buna
+    // dayaniyor, bu yuzden dar bir aralik acik birakildi. Olculen boyut
+    // asagida manifest'te.
+    variationAxes: { wght: { min: 300, max: 500 } },
+    weightRange: "300 500",
     note: "Baslik yazi tipi (DESIGN.md 2). Govde metninde kullanilmaz.",
+  },
+  {
+    /*
+     * CEVIRIYAZI YAMA FONTU — 2026-09-04.
+     *
+     * Karla (ve Cormorant, ve Source Serif) Turkce Kur'an ceviriyazisinin
+     * harflerini tasimiyor. Olculdu:
+     *
+     *   harf   gecis   etkilenen ayet   Karla   Cormorant   Source Serif
+     *   ḳ      7364    3750             yok     yok         yok
+     *   ẕ      5266    3139             yok     yok         yok
+     *   ḥ      4151    2714             yok     var         var
+     *   ḫ      2540    1849             yok     var         var
+     *   ṣ      2427    1603             yok     var         var
+     *   ḍ      1763    1294             yok     var         var
+     *   ŝ      1454    1096             yok     var         var
+     *   ṭ      1403    1059             yok     var         var
+     *
+     * Eskiden govde fontu Inter'di ve hepsini tasiyordu; guvenlik agi oydu.
+     * Karla'ya gecince ag koptu: ayet okunusu kelime ortasinda sistem fontuna
+     * duserdi ve hicbir sayfa testi bunu yakalamazdi.
+     *
+     * Tam kapsamasi olan sans fontlari tarandi — Source Sans 3, Noto Sans ve
+     * Lato tamam; hicbiri Karla degil. Tasarim fontunu degistirmek yerine
+     * eksik 24 kod noktasi Inter'den alt kumelendi: 2,9 KB, unicode-range ile
+     * sinirli, yalnizca o harfler sayfada gecerse indirilir.
+     */
+    id: "inter-transcription",
+    family: "Kesif Latin Ek",
+    upstreamPath: "ofl/inter/Inter%5Bopsz,wght%5D.ttf",
+    licensePath: "ofl/inter/OFL.txt",
+    outFile: "kesif-latin-ek.woff2",
+    licenseFile: "OFL-Inter.txt",
+    coverage: "latin-fallback",
+    variationAxes: { opsz: 16, wght: 400 },
+    weightRange: "400",
+    note: "Ceviriyazi yama fontu: Karla'nin tasimadigi Latin Genisletilmis harfler.",
   },
   {
     id: "source-serif",
@@ -147,7 +181,7 @@ const FONTS: readonly FontSpec[] = [
  * Veriden turetilemeyen tek sey arayuz metinleridir (buton yazilari, hata
  * mesajlari, ilerde eklenecek sayfalar). Bu yuzden veriye ek olarak kucuk,
  * acik bir taban aliniyor. Genis bloklar degil — 869 kod noktalik acik
- * araliklar denendi ve Inter'i 184 KB yapti; taban 200 kod noktasinin altinda
+ * araliklar denendi ve Karla'i 184 KB yapti; taban 200 kod noktasinin altinda
  * tutuluyor.
  */
 const UI_BASE_RANGES: readonly (readonly [number, number])[] = [
@@ -165,6 +199,32 @@ const UI_BASE_RANGES: readonly (readonly [number, number])[] = [
   [0x2190, 0x2193], // ← ↑ → ↓  (kesif yolu cubugu)
   [0x203a, 0x203a], // ›  (kesif yolu ayirici)
   [0x2713, 0x2714], // ✓ ✔
+];
+
+/**
+ * Ceviriyazi yama kumesi.
+ *
+ * Turkce Kur'an ceviriyazisinda gecen, tasarim fontlarinin tasimadigi Latin
+ * Genisletilmis harfler. Buyuk ve kucuk bicimleri birlikte alinir: sure
+ * adlari ve baslik konumunda buyuk harf de gorunur.
+ *
+ * Bu liste ELLE tutulur, cunku hangi harfin hangi fontta eksik oldugu fontun
+ * kendi kapsamasina bagli; veriden turetilemez. Yeni bir harf cikarsa
+ * fonts:verify Karla'da .notdef olarak yakalar.
+ */
+const TRANSCRIPTION_FALLBACK: readonly number[] = [
+  0x0125, 0x0124, // ĥ Ĥ
+  0x0129, 0x0128, // ĩ Ĩ
+  0x015d, 0x015c, // ŝ Ŝ
+  0x0169, 0x0168, // ŭ Ŭ
+  0x0259, 0x018f, // ə Ə
+  0x1e0d, 0x1e0c, // ḍ Ḍ
+  0x1e25, 0x1e24, // ḥ Ḥ
+  0x1e2b, 0x1e2a, // ḫ Ḫ
+  0x1e33, 0x1e32, // ḳ Ḳ
+  0x1e63, 0x1e62, // ṣ Ṣ
+  0x1e6d, 0x1e6c, // ṭ Ṭ
+  0x1e95, 0x1e94, // ẕ Ẕ
 ];
 
 /** Fontta karsiligi olmayan, bicimlendirme/kontrol amacli kod noktalari. */
@@ -186,7 +246,7 @@ function isNonRenderable(cp: number): boolean {
 /**
  * Baslik tabani.
  *
- * Playfair Display yalnizca basliklarda kullaniliyor (DESIGN.md 2). Basliklar
+ * Cormorant Garamond yalnizca basliklarda kullaniliyor (DESIGN.md 2). Basliklar
  * ceviriyazi (ḍ ḥ ṣ ṭ ẕ), Ibranice alinti ya da kesir isareti icermez; govde
  * kapsamasinin tamamini tasimak olculdu ve 57,3 KB yapiyordu — plan 20.4 font
  * butcesi (Latin-only sayfa < 95 KB) asiliyordu. Bu taban + sure adlarindaki
@@ -219,7 +279,7 @@ interface Coverages {
    */
   arabicExtra: number[];
   latin: number[];
-  /** Yalnizca basliklarda gecen kod noktalari — Playfair Display icin. */
+  /** Yalnizca basliklarda gecen kod noktalari — Cormorant Garamond icin. */
   latinHeadings: number[];
   derivedFrom: string;
 }
@@ -356,7 +416,7 @@ function deriveCoverages(): Coverages {
   for (const cp of expandRanges(HEADING_BASE_RANGES)) {
     if (!isNonRenderable(cp)) headings.add(cp);
   }
-  // Baslik kumesi govde kumesinin alt kumesidir; Inter zaten hepsini tasiyor.
+  // Baslik kumesi govde kumesinin alt kumesidir; Karla zaten hepsini tasiyor.
   for (const cp of headings) other.add(cp);
   for (const cp of arabicRequired) arabic.delete(cp);
 
@@ -471,7 +531,15 @@ async function main(): Promise<void> {
     // Istenen kume: zorunlu + "olursa iyi olur" (arap harfli alintilar).
     const isArabic = spec.coverage === "arabic";
     const latinSet =
-      spec.coverage === "latin-headings" ? coverages.latinHeadings : coverages.latin;
+      spec.coverage === "latin-headings"
+        ? coverages.latinHeadings
+        : spec.coverage === "latin-fallback"
+          ? // Yama fontu: yalnizca listedeki harfler, hem de veride fiilen
+            // gecenler. Gecmeyen bir harf icin bayt tasinmaz.
+            TRANSCRIPTION_FALLBACK.filter((cp) => coverages.latin.includes(cp)).sort(
+              (a, b) => a - b,
+            )
+          : coverages.latin;
     const mandatory = isArabic ? coverages.arabicRequired : latinSet;
     const wanted = isArabic
       ? [...coverages.arabicRequired, ...coverages.arabicExtra].sort((a, b) => a - b)

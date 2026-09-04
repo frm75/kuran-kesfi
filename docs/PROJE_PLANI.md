@@ -568,18 +568,26 @@ Ana sayfa klasik sure listesiyle başlamaz.
 Yukarıdaki şema uygulamanın ana sayfasıdır. `kurankesfi.tr` kök adresinde karşılayan **tanıtım sayfası**nın
 bölüm sırası aşağıdaki gibidir. Görsel karşılığı (bölüm şablonu, boşluk, tipografi) `docs/DESIGN.md` §7.
 
-1. **Hero** — proje adı, tagline "Keşfet • Oku • Anla", birincil CTA
-2. **Neden Farklı** — ücretsiz, reklamsız, üyeliksiz, takipsiz, açık kaynak (§1)
+0. **Menü** — logo + marka, açılır listelerle gezinme; yalnızca var olan sayfalar bağlantı
+1. **Hero** — logo, "Kur'an bir liste değil, bir ağdır", tagline, iki CTA, Âl-i İmrân 103
+2. **Neden Farklı** — her bilgi kaynağıyla · reklamsız, üyeliksiz · belirsizlik gizlenmez (§1)
 3. **5 Keşif Kapısı** — Harita · Zaman · Kavram · Kelime · İlkeler (§2)
-4. **Nasıl Çalışır** — ayet merkezli keşif akışının kısa anlatımı (§15)
-5. **Modüller** — modül kartları (§2)
-6. **Kaynaklar** — Tanzil, Açık Kuran, mealler, tefsir (§3)
-7. **Kaynak Şeffaflığı** — her bilginin kaynağıyla gösterilmesi ilkesi (§12.10)
-8. **Bülten** — günlük/haftalık ayet ve ilke aboneliği (§19)
-9. **Kur'an'da Bugün** — günün keşfi önizlemesi
-10. **Açık Kaynak** — repo, lisans (kod MIT, `data/` CC BY-NC-SA 4.0), katkı çağrısı
-11. **Sadaka-i Cariye** — projenin Allah rızası için hazırlandığı, kâr amacı gütmediği notu
-12. **Footer** — zorunlu atıf bağlantıları, iletişim, yasal
+4. **Nasıl Çalışır** — "merkezde ayet var": ayet merkezli bağlantı şeması (§15)
+5. **Modüller** — modül kartları, durum etiketiyle (§2)
+6. **Kaynaklar** — meal listesi + kaynak kartları, lisanslarıyla (§3)
+7. **Kaynak Şeffaflığı** — üç rozet: kaynaklı · alternatif · derleme (§12.10)
+8. **Kur'an'da Bugün** — günün ayeti, meali ve kaynak rozetleri
+9. **Bülten** — günlük/haftalık ayet ve ilke aboneliği (§19)
+10. **Kapanış** — Sadaka-i Cariye notu + açık kaynak lisans tablosu + CTA
+11. **Footer** — zorunlu atıf bağlantıları (`<Attribution>`, her sayfada)
+
+**Dürüstlük kuralı.** Hazır olmayan bölüm "yakında" etiketiyle işaretlenir, çalışıyor gibi gösterilmez.
+Bülten için kayıt formu KONULMAZ: arkasında sunucu yok ve CSP `form-action 'none'` diyor; çalışmayan bir
+kutu göstermek kullanıcıyı yanıltmak olur (§1.5). Menüde de yalnızca var olan sayfalar bağlantıdır.
+
+**Betik yok.** Sunucu CSP'si `default-src 'none'`; `script-src` ve `media-src` tanımlı değil. Tasarımdaki
+video, canvas animasyonu, kaydırınca katılaşan menü ve burger menüsü JS'siz karşılıklarıyla kuruldu
+(statik SVG, `backdrop-filter`, `<details>`). Ayrıntı ve gerekçe: `docs/DESIGN.md` §11.
 
 ---
 
@@ -772,30 +780,42 @@ Telegram botu Faz 3; WhatsApp Faz 5 (yayın sonrası). İlkeler modülü (Bölü
 
 ## 20.4 Performans Bütçesi
 - İlk yükleme: < 100 KB JS, < 200 KB toplam (fontlar hariç)
-- **Font bütçesi — ölçüldü, 2026-09-04.** Dört yazı tipi kendi sunucumuzdan servis edilir:
+- **Font bütçesi — yeniden ölçüldü, 2026-09-04 (tasarım değişikliği sonrası).** Altı yazı tipi kendi
+  sunucumuzdan servis edilir; Google Fonts CDN kullanılmaz (§1.3, §1.7):
 
   | Yazı tipi | Boyut | Nerede |
   |---|---|---|
-  | Inter | 49,1 KB | Arayüz, çeviriyazı, kelimeler (400–700; 300 kullanılmıyor, çıkarıldı) |
+  | Karla | 30,3 KB | Arayüz ve gövde (300–600 değişken) |
+  | Cormorant Garamond | 50,9 KB | Başlıklar (300–500 değişken) |
   | Source Serif 4 | 32,4 KB | Meal ve dipnot metni (tek ağırlık 400) |
-  | Playfair Display | 26,4 KB | Başlıklar (tek ağırlık 600) |
-  | Amiri Quran | 39,3 KB | Arapça ayet metni |
-  | Scheherazade New | 21,0 KB | Arapça 2. seçenek — öntanımlı indirilmez |
+  | Amiri Quran | 40,4 KB | Arapça ayet metni |
+  | Scheherazade New | 22,1 KB | Arapça 2. seçenek — öntanımlı indirilmez |
+  | Kesif Latin Ek | 2,3 KB | Çeviriyazı yaması — bkz. aşağıda |
 
-  Sayfa başına gerçek yük (`@font-face unicode-range` sayesinde kullanılmayan
-  font hiç indirilmez):
+  Sayfa başına gerçek yük (`@font-face unicode-range` ve `preload` sayesinde
+  kullanılmayan font hiç indirilmez):
 
   | Sayfa | Yük |
   |---|---|
-  | Okuma ekranı (ayet/sure — dördü de var) | **147,2 KB** |
-  | `/sureler` (Arapça sure adları, meal yok) | 114,8 KB |
-  | `/kaynaklar`, `/kok` (Latin) | **75,5 KB** |
+  | Okuma ekranı (ayet/sure — hepsi var) | **156,3 KB** |
+  | Tanıtım sayfası (Arapça var, meal gövdesi yok) | 123,9 KB |
+  | `/kaynaklar`, `/kok` (Latin) | **83,5 KB** |
 
-  Önceki hedef 140 / 95 KB idi. Okuma ekranı **7,2 KB aşıyor**: o hedef üç
-  yazı tipine göre konmuştu, Source Serif 4 sonradan eklendi (meal metni için,
-  karar 2026-09-04). Hedef ölçülen değere göre **150 / 95 KB** olarak
-  güncellenmiştir. Aşımın karşılığı meal metninin uzun okuma serifiyle
-  dizilmesidir; sayfada JavaScript 0 bayt olduğu için toplam yük yine düşüktür
+  Hedef: okuma ekranı **< 160 KB**, Latin-only **< 85 KB**. Önceki hedef
+  150 / 95 KB idi; Inter → Karla değişimi 18,8 KB kazandırdı, Playfair
+  Display → Cormorant Garamond 24,5 KB ekledi. Cormorant'ın ağırlık ekseni
+  400'e sabitlenirse 18 KB daha iner ama başlık hiyerarşisi düzleşir
+  (`docs/DESIGN.md` §12, karara açık nokta).
+
+  **Çeviriyazı yaması zorunludur.** Karla, ayet okunuşundaki ḳ ẕ ḥ ḫ ṣ ḍ ŝ ṭ
+  harflerini taşımıyor; Cormorant ve Source Serif de ḳ ile ẕ'yi taşımıyor.
+  Eski gövde fontu Inter hepsini taşıdığı için sorun görünmüyordu. Eksik
+  harfler Inter'den alt kümelenip ayrı bir aile olarak yığının başına konuldu;
+  `unicode-range` ile sınırlı, o harfler sayfada geçmiyorsa indirilmez.
+  Ölçüm ve gerekçe: `docs/DESIGN.md` §2
+- **JavaScript: 0 bayt.** Hedef değil, ölçülen durum — hiçbir sayfada betik yok.
+  Sunucu CSP'si `default-src 'none'` ile bunu zorluyor; betik eklenecekse önce
+  CSP'ye `script-src 'self'` girmelidir (`infra/nginx/kurankesfi.tr.conf`)
 - LCP < 2 sn (3G), CLS < 0.1
 - Sure JSON'ları ve ses dosyaları lazy; harita/graf kütüphaneleri yalnızca ilgili sayfada
 - Görseller WebP/AVIF, `loading="lazy"`, boyut belirtilmiş
@@ -843,16 +863,24 @@ Site kullanıcının kendi Linux sunucusuna kurulacaktır. Sunucuda başka uygul
 Arayüz "güzel" olmalı: sakin, okumaya odaklı, dinî içeriğe yakışır bir ağırbaşlılık; klişe "İslami site" kalıplarından
 (yeşil-altın, aşırı süsleme, stok cami görselleri) uzak.
 
-- **Karakter:** Modern, minimal, tipografi odaklı. Karanlık mod birinci sınıf vatandaş.
-- **Renk paleti:** Koyu lacivert `#0B1B3B` zemin + altın `#C9A756` tek vurgu; açık modda kağıt tonu `#F5EFE0`
-  zemin, lacivert metin, kontrast için biraz koyulaştırılmış altın `#A88B3F`. Kaçınılan klişe **yeşil-altın**
-  paletidir; lacivert-altın ondan ayrıdır ve altın tek vurgu rengi olarak kalır, ikinci bir marka rengi yoktur.
-  Tam token listesi (elevated/overlay zeminler, kenarlık, güven rozeti renkleri, açık/koyu eşleşmeleri)
-  `docs/DESIGN.md` §1'dedir.
-- **Tipografi hiyerarşisi:** Başlıklar **Playfair Display** (yedek: Cormorant Garamond, Georgia, serif); gövde,
-  meal ve arayüz metni **Inter** (yedek: DM Sans, system-ui, sans-serif); Arapça metin büyük ve rahat satır
-  aralığıyla **Amiri Quran** (yedek: Scheherazade New, serif). Tip ölçeği ve satır yükseklikleri `docs/DESIGN.md` §2.
-  Fontlar kendi sunucumuzdan servis edilir, CDN kullanılmaz (§1.3, §1.7).
+- **Karakter:** Modern, minimal, tipografi odaklı. Karanlık mod birinci sınıf vatandaş; açık mod aynı
+  paletten türetilir.
+- **Renk paleti:** Mürekkep laciverdi `#071023` zemin + pirinç `#C9A253` birincil vurgu; açık modda parşömen
+  `#EFE6D3` zemin, lacivert metin. Kaçınılan klişe **yeşil-altın** paletidir; lacivert-altın ondan ayrıdır.
+  Altın **zemin** rengidir (CTA dolgusu); metin ve anlam taşıyan kenarlık için ayrı bir `--accent-text`
+  vardır, çünkü altın açık modda kağıt üzerinde 2,45:1 kalıyor. **İkincil vurgu firuze** `#449C93` —
+  marka rengi değil ayrım rengi, yalnızca "alternatif görüş" rozetinde ve keşif ağı şemasında kullanılır.
+  Tam token listesi ve her değerin ölçülmüş kontrast oranı `docs/DESIGN.md` §1'dedir.
+- **Tipografi hiyerarşisi:** Başlıklar **Cormorant Garamond** (300–500 değişken; ince 300 hero ve bölüm
+  başlıklarında); gövde ve arayüz **Karla** (300–600); meal ve dipnot **Source Serif 4** (uzun okuma serifi);
+  Arapça metin büyük ve rahat satır aralığıyla **Amiri Quran** (yedek: Scheherazade New).
+  Tip ölçeği ve satır yükseklikleri `docs/DESIGN.md` §2. Fontlar kendi sunucumuzdan servis edilir, CDN
+  kullanılmaz (§1.3, §1.7).
+  **Uyarı:** Karla ve Cormorant, Türkçe çeviriyazının bazı harflerini (ḳ ẕ ḥ ḫ ṣ ḍ ŝ ṭ) taşımaz; eksikler
+  ayrı bir 2,3 KB'lık yama fontuyla kapatılır. Yeni bir Latin fontu seçilirse bu kapsama **önce ölçülmelidir**
+  (`pnpm --filter @kuran/fonts fonts:verify` yakalar).
+- **Marka:** Logo (altın çerçeveli daire, hilal ve rahle üstünde mushaf) menüde, hero'da ve kapanışta
+  kullanılır; varlıklar `apps/web/public/brand/`. Ayrıntı `docs/DESIGN.md` §9.
 - **Boşluk:** Cömert padding, tek sütun okuma genişliği (~65-75 karakter), gereksiz kutu/çerçeve yok.
 - **Hareket:** Harita uçuşları ve panel geçişleri yumuşak ama kısa (200-300 ms); `prefers-reduced-motion` saygı görür.
 - **Bileşen tutarlılığı:** Ayet paneli, kaynak rozeti, güven rozeti, keşif yolu çubuğu tüm sayfalarda aynı bileşen.

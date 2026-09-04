@@ -18,6 +18,8 @@
     "fonts": "pnpm --filter @kuran/fonts fonts",
     "fonts:check": "pnpm --filter @kuran/fonts fonts:check",
     "fonts:verify": "pnpm --filter @kuran/fonts fonts:verify",
+    "brand": "pnpm --filter @kuran/brand brand",
+    "brand:check": "pnpm --filter @kuran/brand brand:check",
     "deploy": "./scripts/deploy/deploy.sh",
     "deploy:list": "./scripts/deploy/deploy.sh --list",
     "deploy:smoke": "./scripts/deploy/deploy.sh --smoke",

@@ -93,14 +93,44 @@ smoke_test() {
   check "/sitemap.xml"             200
   check "/robots.txt"              200
   check "/404.html"                200
-  check "/fonts/inter-latin.woff2" 200
-  check "/fonts/playfair-display-latin.woff2" 200
+  # Yazi tipleri — adlari 2026-09-04 tasarim degisikliginde degisti
+  # (Inter -> Karla, Playfair Display -> Cormorant Garamond).
+  check "/fonts/karla-latin.woff2"  200
+  check "/fonts/cormorant-garamond-latin.woff2" 200
   check "/fonts/source-serif-latin.woff2" 200
+  check "/fonts/amiri-quran-arabic.woff2" 200
+  # Ceviriyazi yama fontu: dusrse ayet okunusu bozulur, sayfa yine 200 doner.
+  check "/fonts/kesif-latin-ek.woff2" 200
+  # Marka varliklari — logo dusrse menu ve hero bos kutu gosterir.
+  check "/brand/logo-96.webp"      200
+  check "/brand/favicon-32.png"    200
   check "/data/surahs_index.json"  200
   check "/olmayan-bir-adres"       404
   # Depo ve gizli dosyalar disari acilmamali.
   check "/.user.ini"               404
   check "/manifest.json"           404
+
+  # Icerik denetimi: durum kodu 200 iken de yanlis olabilecek seyler.
+  #
+  # og:image goreli yazilirsa sayfa yine 200 doner ama paylasim onizlemesi
+  # gorselsiz cikar — kimse fark etmez. Bu yuzden metnin kendisi okunur.
+  contains() {
+    local path="$1" needle="$2" label="$3"
+    local body
+    body="$(curl -sS --max-time 20 --retry 3 --retry-delay 1 --retry-all-errors \
+      --resolve "kurankesfi.tr:443:127.0.0.1" "https://kurankesfi.tr$path" 2>/dev/null)" || body=""
+    if printf '%s' "$body" | grep -qF -- "$needle"; then
+      printf '    %-34s %s\n' "$path" "$label"
+    else
+      printf '    %-34s %s BULUNAMADI\n' "$path" "$label"
+      fail=1
+    fi
+  }
+  contains "/bakara-suresi/153" \
+    'property="og:image" content="https://kurankesfi.tr/brand/og-image.png"' "og:image mutlak"
+  contains "/bakara-suresi/153" \
+    'rel="canonical" href="https://kurankesfi.tr/bakara-suresi/153"' "kanonik adres"
+
   [ "$fail" -eq 0 ] || die "duman testi basarisiz"
   log "duman testi temiz"
 }

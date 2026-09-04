@@ -24,7 +24,7 @@ import hbPromise, { type Harfbuzz, type ShapedGlyph } from "harfbuzzjs";
  * esitlik beklenemez. Sayi ve kume dizisi degismezdir.
  *
  * Ayni yontem Latin tarafina da uygulanir: ceviriyazi ve meal metinleri
- * Inter alt kumesiyle dizilir ve tam fontla karsilastirilir. Ceviriyazi
+ * Karla alt kumesiyle dizilir ve tam fontla karsilastirilir. Ceviriyazi
  * ḍ ḥ ḫ ḳ ṣ ṭ ẕ gibi Latin Genisletilmis Ek karakterler kullaniyor; bunlarin
  * biri dusse ayet okunusu bozuk gorunur ve hicbir sayfa testi bunu yakalamaz.
  *
@@ -36,6 +36,29 @@ const CACHE_DIR = resolve(repoRoot, "cache/fonts");
 const DATA_DIR = resolve(repoRoot, "apps/web/public/data");
 const SURAH_DIR = resolve(DATA_DIR, "surah");
 
+/**
+ * Ceviriyazi yama fontunun ustlendigi harfler — global.css'teki
+ * "Kesif Latin Ek" @font-face'inin unicode-range'i ile AYNI liste olmalidir.
+ *
+ * Bu harfleri tarayicida Karla/Cormorant/Source Serif hic gormez; yigina
+ * unicode-range ile once yama fontu giriyor. Dogrulama da gercegi taklit
+ * etmelidir: bu harfler metinden cikarilarak dizilir, yoksa tasimayan font
+ * haksiz yere "eksik glif" verir.
+ */
+const PATCHED = new Set(
+  [
+    0x0124, 0x0125, 0x0128, 0x0129, 0x015c, 0x015d, 0x0168, 0x0169, 0x018f, 0x0259, 0x1e0c,
+    0x1e0d, 0x1e24, 0x1e25, 0x1e2a, 0x1e2b, 0x1e32, 0x1e33, 0x1e62, 0x1e63, 0x1e6c, 0x1e6d,
+    0x1e94, 0x1e95,
+  ].map((cp) => String.fromCodePoint(cp)),
+);
+
+function stripPatched(text: string): string {
+  let out = "";
+  for (const ch of text) if (!PATCHED.has(ch)) out += ch;
+  return out;
+}
+
 interface Target {
   id: string;
   family: string;
@@ -43,7 +66,13 @@ interface Target {
   upstreamCache: string;
   script: "arab" | "latn";
   /** Hangi metin kumesiyle dogrulanacak. */
-  corpus: "arabic" | "latin" | "headings" | "reading";
+  corpus: "arabic" | "latin" | "headings" | "reading" | "patch";
+  /**
+   * true ise yama fontunun ustlendigi harfler metinden cikarilarak dizilir.
+   * Latin fontlarinin hepsinde acik: hicbiri o harfleri cizmiyor, cizmesi de
+   * beklenmiyor.
+   */
+  patched?: boolean;
 }
 
 const TARGETS: readonly Target[] = [
@@ -64,32 +93,45 @@ const TARGETS: readonly Target[] = [
     corpus: "arabic",
   },
   {
-    id: "inter",
-    family: "Inter",
-    subsetFile: "inter-latin.woff2",
-    upstreamCache: "inter.ttf",
+    id: "karla",
+    family: "Karla",
+    patched: true,
+    subsetFile: "karla-latin.woff2",
+    upstreamCache: "karla.ttf",
     script: "latn",
     corpus: "latin",
   },
   {
     id: "source-serif",
     family: "Source Serif 4",
+    patched: true,
     subsetFile: "source-serif-latin.woff2",
     upstreamCache: "source-serif.ttf",
     script: "latn",
     // Meal metnini bu font ciziyor — ceviriyazi ve arayuz metnini DEGIL
-    // (onlar Inter). Dogrulama da yalnizca meal korpusuyla yapilir.
+    // (onlar Karla). Dogrulama da yalnizca meal korpusuyla yapilir.
     corpus: "reading",
   },
   {
-    id: "playfair-display",
-    family: "Playfair Display",
-    subsetFile: "playfair-display-latin.woff2",
-    upstreamCache: "playfair-display.ttf",
+    id: "cormorant-garamond",
+    family: "Cormorant Garamond",
+    patched: true,
+    subsetFile: "cormorant-garamond-latin.woff2",
+    upstreamCache: "cormorant-garamond.ttf",
     script: "latn",
     // Baslik fontu govde metnini hic cizmez; ceviriyazi ve meal kapsamasi
     // aranmaz. Dogrulama sure adlari ve arayuz basliklariyla yapilir.
     corpus: "headings",
+  },
+  {
+    // Yama fontunun KENDISI: yalnizca ustlendigi harfleri cizmesi beklenir.
+    // Bu hedefte strip YOK — tam tersi, cikarilan harfler burada sinaniyor.
+    id: "inter-transcription",
+    family: "Kesif Latin Ek",
+    subsetFile: "kesif-latin-ek.woff2",
+    upstreamCache: "inter-transcription.ttf",
+    script: "latn",
+    corpus: "patch",
   },
 ];
 
@@ -106,6 +148,8 @@ interface Corpus {
   headings: Verse[];
   /** Yalnizca meal ve dipnot metni — okuma serifinin dizecegi metin. */
   reading: Verse[];
+  /** Yalnizca yama fontunun ustlendigi harfler — ceviriyazidan suzulur. */
+  patch: Verse[];
 }
 
 function loadCorpus(): Corpus {
@@ -116,6 +160,7 @@ function loadCorpus(): Corpus {
   const latin: Verse[] = [];
   const headings: Verse[] = [];
   const reading: Verse[] = [];
+  const patch: Verse[] = [];
 
   // Arayuzde gecen sabit basliklar. Veriden turetilemez, elle yazilir;
   // yeni bir baslik eklenirse buraya da eklenmelidir.
@@ -182,7 +227,13 @@ function loadCorpus(): Corpus {
     }
   }
 
-  return { arabic, latin, headings, reading };
+  // Ceviriyazi satirlarindan yalnizca yamali harfleri iceren diziler cikarilir.
+  for (const line of latin) {
+    const only = [...line.text].filter((ch) => PATCHED.has(ch)).join("");
+    if (only.length > 0) patch.push({ key: `${line.key} yama`, text: only });
+  }
+
+  return { arabic, latin, headings, reading, patch };
 }
 
 function makeShaper(
@@ -241,8 +292,10 @@ async function main(): Promise<void> {
     const examples: string[] = [];
 
     for (const verse of corpusForTarget) {
-      const subset = shapeSubset(verse.text);
-      const full = shapeFull(verse.text);
+      const text = target.patched === true ? stripPatched(verse.text) : verse.text;
+      if (text.length === 0) continue;
+      const subset = shapeSubset(text);
+      const full = shapeFull(text);
 
       // Tam fontta da .notdef varsa sorun alt kumelemede degil kaynaktadir;
       // yalnizca alt kumelemenin EKLEDIGI eksikler sayilir.

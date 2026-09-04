@@ -98,11 +98,20 @@ Dağıtım kökü: `/opt/kuran/`, build çıktısı `/opt/kuran/dist/`, güncell
 - **`docs/DESIGN.md` tasarım sisteminin tek kaynağıdır.** Renk token'ları, tip ölçeği, boşluk/yuvarlaklık/gölge
   ölçekleri, hareket süreleri, ortak bileşen anahtarları ve landing bölüm şablonu orada tanımlıdır. Bileşen
   yazmadan önce okunur; hex/px değeri koda gömülmez, token'dan gelir. DESIGN.md değişecekse önce onay alınır
-- Palet: koyu lacivert `#0B1B3B` + altın `#C9A756` tek vurgu; açık modda kağıt tonu `#F5EFE0` (DESIGN.md §1)
-- Tipografi: başlık Playfair Display, gövde Inter (yedek DM Sans), Arapça Amiri Quran / Scheherazade New (DESIGN.md §2)
-- Sakin, tipografi odaklı, tek vurgu rengi, karanlık mod birinci sınıf
+- Palet: mürekkep laciverdi `#071023` + pirinç `#C9A253`; açık modda parşömen `#EFE6D3` (DESIGN.md §1).
+  Altın **zemin** rengidir; metin ve anlam taşıyan kenarlık `--accent-text` kullanır (açık modda altın 2,45:1)
+- İkincil vurgu firuze `#449C93` — marka rengi değil, yalnızca "alternatif görüş" ve keşif ağı şemasında
+- Tipografi: başlık Cormorant Garamond, gövde Karla, meal Source Serif 4, Arapça Amiri Quran (DESIGN.md §2)
+- Sakin, tipografi odaklı, karanlık mod birincil; açık mod aynı paletten türetilir
 - Klişe "İslami site" estetiği (yeşil-altın, stok cami görseli, aşırı süs) kullanılmaz
 - Fontlar kendi sunucumuzdan servis edilir; Google Fonts CDN kullanılmaz (takip yok, üretimde harici bağımlılık yok)
+- **Yeni Latin fontu seçilmeden önce çeviriyazı kapsaması ölçülür.** Karla ḳ ẕ ḥ ḫ ṣ ḍ ŝ ṭ taşımıyor;
+  eksikler 2,3 KB'lık "Kesif Latin Ek" yama fontuyla kapatıldı. `pnpm --filter @kuran/fonts fonts:verify`
+  HarfBuzz ile yakalar — bu komut geçmeden font değişikliği birleştirilmez
+- **JavaScript 0 bayt.** Sunucu CSP'si `default-src 'none'`; betik sessizce engellenir. Betik gerektiren
+  bir tasarım öğesi JS'siz karşılığıyla kurulur (statik SVG, `<details>`, CSS `:focus-within`).
+  Gerçekten gerekiyorsa önce CSP'ye `script-src 'self'` girer ve bu ayrıca onaylanır
+- Marka varlıkları `apps/web/public/brand/`; logo dekoratif kullanımda `alt=""` + `aria-hidden`
 - Arapça: Amiri Quran / Scheherazade New, `dir="rtl"`; meal `ltr`
 - Ortak bileşenler: AyetPaneli, SourceBadge, ConfidenceBadge, DiscoveryPath (breadcrumb), ComparisonBasket
 - Harita/graf için zorunlu liste alternatifi; `prefers-reduced-motion` desteklenir
