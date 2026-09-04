@@ -213,6 +213,16 @@ koyulaştırmak markayı bozardı; bunun yerine ikiye ayrıldı:
 `--accent-muted` (`#8A7238`) koyu modda 3,68:1 — DESIGN.md'de zaten "rozet
 arka planı" olarak tanımlı, **metin olarak kullanılmaz.**
 
+### Başlıklarda altın
+
+Başlıklar `--accent-text` kullanır, `--accent` değil. Açık modda `--accent`
+(`#A88B3F`) kağıt üzerinde **2,85:1**; büyük metin için AA sınırı 3:1 ve o bile
+tutmuyor. `--accent-text` (`#816A2F`) 4,54:1 veriyor — normal metin sınırının
+da üstünde.
+
+`--accent` yalnızca **zemin** ve **süs** olarak kullanılır: CTA dolgusu (üstünde
+koyu lacivert metin, 5,21:1) ve bölüm ayracının ince çizgisi.
+
 ### Kenarlık kontrastı
 
 `--border` ve `--border-strong` yalnızca ayraçtır (1,4–1,8:1) ve öyle kalır.

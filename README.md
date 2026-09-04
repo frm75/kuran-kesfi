@@ -1,4 +1,6 @@
-# Kur'an-ı Kerim Keşif Platformu
+# Kur'an-ı Kerim Keşfi
+
+**Keşfet • Oku • Anla** — <https://kurankesfi.tr>
 
 Ücretsiz, reklamsız, üyeliksiz ve takipsiz bir Kur'an keşif sitesi. Kur'an'ı sure/ayet listesi
 olarak sunmak yerine **harita, zaman, kavram, kelime ve ilkeler** eksenlerinde gezilebilir kılar;
@@ -6,9 +8,42 @@ her keşif yolunun merkezinde **ayet** bulunur.
 
 Proje Allah rızası için, kâr amacı gütmeden hazırlanmaktadır.
 
-## Durum
+## Durum — 2026-09-04
 
-**Faz 0 — Altyapı.** Henüz veri yok, arayüz yok. Bkz. [docs/PROJE_PLANI.md](docs/PROJE_PLANI.md) §9.
+**Faz 0 tamamlandı, site yayında.** 7996 sayfa, **0 bayt JavaScript.**
+
+| Hazır | |
+|---|---|
+| Klasik okuma | 114 sure, 6236 ayet — Arapça, okunuşu, meali |
+| Meal karşılaştırma | 23 Türkçe + 27 İngilizce çeviri yan yana |
+| Çeviriyazı | 6236/6236 ayet, Latin harfli okunuş |
+| Kelime ve kök | 77.429 kelime, 1.641 kök, kelimelerin %61'i köke bağlı |
+| Kaynak şeffaflığı | Her metnin kaynağı, hazırlayanı, lisansı |
+
+| Yolda (plan §2) | |
+|---|---|
+| Harita · Zaman · Kavram · İlkeler | Keşif kapıları — Faz 1 |
+| Kıssalar, kavram ağı, hoca notları | Faz 1-3 |
+| Ses (kıraat) | Faz 4 |
+
+Ayrıntılı yol haritası: [docs/PROJE_PLANI.md](docs/PROJE_PLANI.md) §9.
+Yayın geçmişi ve sunucu kararları: [docs/DEPLOY_REPORT.md](docs/DEPLOY_REPORT.md).
+
+## Sözün karşılığı koddadır
+
+İddialar denetlenebilir olsun diye kurala bağlandı:
+
+- **Takip yok.** Sayfa `Content-Security-Policy: default-src 'none'` ile geliyor;
+  `script-src` hiç yok. Üçüncü taraf istek tarayıcı düzeyinde imkânsız.
+  Yazı tipleri bile kendi sunucumuzdan.
+- **Kaynaksız içerik yok.** `<SourceBadge>` kaynaksız çağrılırsa **derleme
+  durur.** `<Translation>` ya kaynağını ister ya da kaynağın sayfada nerede
+  bildirildiğini.
+- **Belirsizlik saklanmaz.** Kaynak taraflı eksikler
+  [/kaynaklar](https://kurankesfi.tr/kaynaklar) sayfasında yazılı.
+- **Tekrarlanabilir.** `pnpm data:import && pnpm build` aynı parmak izini üretir.
+- **Doğrulanır.** Referans linter 39.995 denetim; yazı tipleri HarfBuzz ile
+  6236 ayet + 12.586 satır dizilerek sınanır.
 
 ## İlkeler
 
@@ -40,12 +75,18 @@ chmod 600 .env
 | Komut | Açıklama |
 |---|---|
 | `pnpm dev` | Astro geliştirme sunucusu (`SITE_PORT`, varsayılan 4321) |
-| `pnpm data:import` | Tanzil import — `surah` + `verse` |
+| `pnpm data:import` | Kaynak import: Tanzil → Açık Kuran → çeviriyazı |
 | `pnpm build:data` | PostgreSQL → `apps/web/public/data/*.json` |
 | `pnpm lint:refs` | Referans linter (plan §20.1) |
 | `pnpm build` | Tam zincir: `build:data` → `lint:refs` → `build:web` |
 | `pnpm build:web` | Yalnızca Astro derlemesi (veritabanı gerekmez) |
 | `pnpm typecheck` | Tüm paketlerde tip denetimi |
+| `pnpm test` | Şema testleri |
+| `pnpm fonts` | Yazı tiplerini indir ve alt kümele |
+| `pnpm fonts:check` | Üretilen font çıktısı diskteki ile aynı mı |
+| `pnpm fonts:verify` | HarfBuzz ile dizgi doğrulaması (eksik glif var mı) |
+| `pnpm deploy` | Atomik yayın + duman testi |
+| `pnpm deploy:rollback` | Bir önceki yayına dön |
 
 > `import` adı kullanılamaz: `pnpm import` pnpm'in yerleşik komutudur ve `pnpm-lock.yaml`'ı siler.
 | `pnpm db:up` / `pnpm db:down` | Build veritabanı container'ını başlat / durdur |
@@ -67,7 +108,9 @@ Bot aboneliği ayrı bir veritabanı kullanır (`infra/db/bot_schema.sql`, Faz 3
 apps/web/            Astro site (statik export)
 packages/schema/     Zod şemaları + migration üreticileri (yerel proje ile ortak)
 packages/pipeline/   Build makinesi yardımcıları: ortam, veritabanı, önbellek, günlük
-scripts/import/      Kaynak import (tanzil, quran_com, corpus)
+scripts/import/      Kaynak import (tanzil, acikkuran, ceviriyazi)
+scripts/fonts/       Yazı tipi alt kümeleme ve HarfBuzz doğrulaması
+scripts/deploy/      Atomik yayın betiği
 scripts/build/       PostgreSQL → public/data/*.json + referans linter
 scripts/sync/        inbox/ → DB: yerel projeden gelen hoca notu paketleri
 inbox/               kuran-extract paketleri — repoya girmez
@@ -80,7 +123,12 @@ docs/                Plan, tasarım, deploy raporu, backlog
 ## Lisans
 
 - **Kod:** MIT — bkz. [LICENSE](LICENSE)
-- **Veri (`data/`):** CC BY-NC-SA 4.0 — bkz. [data/LICENSE](data/LICENSE)
+- **Kendi derlediğimiz veri:** CC BY-NC-SA 4.0 — bkz. [data/LICENSE](data/LICENSE)
+- **Üçüncü taraf metinler:** kendi lisansları geçerlidir. Arapça metin
+  (Tanzil), mealler ve kelime/kök verisi (Açık Kuran, CC BY-NC-SA 4.0),
+  çeviriyazı (Muhammet Abay, Tanzil üzerinden) **bize ait değildir ve
+  tarafımızdan yeniden lisanslanamaz.** Şartların tamamı
+  [data/LICENSE](data/LICENSE) içinde.
 
 Lisansı belirsiz meal, tefsir, ses veya görsel projeye eklenmez.
 

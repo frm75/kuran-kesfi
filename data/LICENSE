@@ -52,14 +52,45 @@ ticari değildir.
 **Yükümlülüklerimiz:** atıf (Açık Kuran, CC BY-NC-SA 4.0) · aynı lisansla paylaşım ·
 ticari kullanmama.
 
-Kapsam: 23 Türkçe + 27 İngilizce meal, dipnotlar, kelime bazlı `verse_part` verisi,
-kök bilgisi (Türkçe anlamıyla) ve morfoloji.
+Kapsam: 23 Türkçe + 27 İngilizce meal, dipnotlar, kelime bazlı `verse_part` verisi
+(77.429 kelime; Arapça, okunuş ve Türkçe karşılık), kök bilgisi (1.641 kök, Türkçe
+anlamıyla) ve morfoloji.
 
-### Türkçe mealler ve çeviriyazı — Tanzil çeviri seti (YEDEK)
+**Metin onarımı notu:** kaynaktan gelen metinlerde 32 adet kodlama artığı bulundu
+(cp1252 metnin UTF-8 sanılmasından kalan C1 kontrol karakterleri) ve onarıldı.
+Bu editoryal bir değişiklik değildir — yazarın koyduğu karakter zaten tırnak,
+kısa çizgi veya üç noktaydı. Onarımların tamamı import raporuna yazılır;
+ayrıntı `packages/pipeline/src/text.ts` ve `docs/BACKLOG.md`.
+
+Kök anlamları kaynakta HTML olarak gelir; düz metne çevrilerek yayınlanır
+(etiket atılır, içerik ve satır sonları korunur).
+
+### Çeviriyazı (Latin harfli okunuş) — Tanzil, hazırlayan Muhammet Abay (KULLANILIYOR)
+
+**Bu kaynak varsayılan import zincirindedir** (`scripts/import/transcription.ts`,
+`pnpm data:import`). Açık Kuran çeviriyazı vermiyor; 6236 ayetin tamamının Latin
+harfli okunuşu `https://tanzil.net/trans/tr.transliteration` dosyasından alınır.
+
+Telif Tanzil'e değil **hazırlayanına** aittir. Hazırlayanın adı dosyanın kendi üst
+bilgisinden okunur, kodda sabit yazılmaz; `sources.json` içinde
+`tanzil-transliteration` olarak kayıtlıdır ve arayüzde `<SourceBadge>` ile
+gösterilir.
+
+> "The translations provided at this page are for non-commercial purposes only."
+> — <https://tanzil.net/trans/>
+
+**Yükümlülüklerimiz:** projeyi ticari kullanıma açmamak · hazırlayanın adını
+göstermek · `https://tanzil.net/trans/` bağlantısı vermek. Zorunlu atıf listesi
+`authors_index.json` içinde veriyle birlikte taşınır; eksikse **derleme durur.**
+
+**Çeviriyazı CC BY-NC-SA 4.0 ile yeniden lisanslanamaz.**
+
+### Türkçe mealler — Tanzil çeviri seti (YEDEK, KULLANILMIYOR)
 
 Aşağıdaki şartlar yalnızca `scripts/import/tanzil_translations.ts` çalıştırıldığında
 geçerlidir. Bu script varsayılan zincirde çalışmaz; Açık Kuran erişimi kesilirse
-kullanılmak üzere korunmaktadır.
+kullanılmak üzere korunmaktadır. (Aynı dosya çeviriyazıyı da içerir, ama çeviriyazı
+için ayrı ve varsayılan olan script yukarıda anlatılmıştır.)
 
 > "The translations provided at this page are for non-commercial purposes only.
 > If used otherwise, you need to obtain necessary permission from the translator
