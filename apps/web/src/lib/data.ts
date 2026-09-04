@@ -3,6 +3,9 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type {
   StaticAuthor,
+  StaticRoot,
+  StaticRootsIndex,
+  StaticVerseWords,
   StaticAuthorsIndex,
   StaticSource,
   StaticSources,
@@ -66,6 +69,25 @@ export function getSurah(id: number): StaticSurah {
 
 export function getVerseDetail(surahId: number, verseNumber: number): StaticVerseDetail {
   return readJson<StaticVerseDetail>(`verse/verse_${surahId}_${verseNumber}.json`);
+}
+
+/**
+ * Bir ayetin kelimeleri.
+ *
+ * Kaynakta olmayabilir; o zaman null doner ve sayfa "Kelimeler" bolumunu hic
+ * cizmez. Bos bir baslik gostermek belirsizligi saklamak olurdu (plan 1.5).
+ */
+export function getVerseWords(surahId: number, verseNumber: number): StaticVerseWords | null {
+  const path = resolve(DATA_DIR, `word/verse_${surahId}_${verseNumber}.json`);
+  if (!existsSync(path)) return null;
+  return JSON.parse(readFileSync(path, "utf8")) as StaticVerseWords;
+}
+
+export const getRootsIndex = once(() => readJson<StaticRootsIndex>("roots_index.json"));
+
+/** Kok dosyasi adi Arapca harflerdir; adres de oyle (/kok/قول). */
+export function getRoot(arabic: string): StaticRoot {
+  return readJson<StaticRoot>(`root/${arabic}.json`);
 }
 
 /**

@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { getSurahsIndex } from "~/lib/data";
+import { getRootsIndex, getSurahsIndex } from "~/lib/data";
 
 /**
  * sitemap.xml — arama motorları için adres listesi.
@@ -20,12 +20,19 @@ const SITE = "https://kurankesfi.tr";
 
 export const GET: APIRoute = () => {
   const { surahs } = getSurahsIndex();
+  const { roots } = getRootsIndex();
 
   const urls: { loc: string; priority: string }[] = [
     { loc: "/", priority: "1.0" },
     { loc: "/sureler", priority: "0.9" },
     { loc: "/kaynaklar", priority: "0.7" },
+    { loc: "/kok", priority: "0.8" },
   ];
+
+  // Kok adresleri Arapca harf tasiyor; sitemap'te yuzde kodlu olmalari gerekir.
+  for (const root of roots) {
+    urls.push({ loc: `/kok/${encodeURIComponent(root.arabic)}`, priority: "0.5" });
+  }
 
   for (const surah of surahs) {
     urls.push({ loc: `/${surah.slug}`, priority: "0.8" });

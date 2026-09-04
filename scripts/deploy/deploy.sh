@@ -86,6 +86,12 @@ smoke_test() {
   check "/bakara-suresi/153"       200
   check "/nas-suresi/6"            200
   check "/kaynaklar"               200
+  check "/kok"                     200
+  # Kok adresleri Arap harfi tasiyor; nginx'in yuzde kodlu istegi cozdugu
+  # her yayinda dogrulanir (bir kez elle test edildi, sonra buraya alindi).
+  check "/kok/%D9%82%D9%88%D9%84"  200
+  check "/sitemap.xml"             200
+  check "/robots.txt"              200
   check "/404.html"                200
   check "/fonts/inter-latin.woff2" 200
   check "/fonts/playfair-display-latin.woff2" 200

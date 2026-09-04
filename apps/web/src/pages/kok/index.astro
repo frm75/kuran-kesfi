@@ -1,0 +1,139 @@
+---
+import Base from "~/layouts/Base.astro";
+import SourceBadge from "~/components/SourceBadge.astro";
+import { getRootsIndex, getSources } from "~/lib/data";
+
+/**
+ * Kök listesi — plan §2 "Kelime" kapısı.
+ *
+ * 1641 kök, geçiş sayısına göre sıralı. Kök adresleri Arapça harflerle
+ * kurulur (/kok/قول): Latin çevriyazı büyük-küçük harf anlamlı (S=ص, s=س)
+ * ve küçültüldüğünde 141 kök çakışıyor, adres olarak kullanılamaz.
+ */
+
+const { roots, totals } = getRootsIndex();
+const wordSource = getSources().sources.find((s) => s.slug === "acikkuran");
+if (wordSource === undefined) {
+  throw new Error("Kelime ve kok verisinin kaynagi (acikkuran) sources.json icinde yok.");
+}
+
+const withoutRoot = totals.words - totals.wordsWithRoot;
+const percent = Math.round((totals.wordsWithRoot / totals.words) * 100);
+
+/** En çok geçen 50 — hızlı giriş. */
+const mostFrequent = roots.slice(0, 50);
+
+/**
+ * Alfabetik gruplar.
+ *
+ * 1641 kartlık tek liste taranamıyor. Kökler ilk harfe göre gruplanıp harf
+ * çubuğuyla geziliyor — JavaScript gerekmiyor, çapa bağlantıları yetiyor.
+ */
+const byLetter = new Map<string, typeof roots>();
+for (const root of [...roots].sort((a, b) => a.arabic.localeCompare(b.arabic, "ar"))) {
+  const letter = [...root.arabic][0] ?? "?";
+  const bucket = byLetter.get(letter) ?? [];
+  bucket.push(root);
+  byLetter.set(letter, bucket);
+}
+const letterGroups = [...byLetter.entries()].sort((a, b) => a[0].localeCompare(b[0], "ar"));
+---
+
+<Base
+  title="Kökler — Kur'an-ı Kerim Keşfi"
+  description={`Kur'an'da geçen ${totals.roots} kök ve ${totals.wordsWithRoot} kelime bağlantısı.`}
+  arabic
+>
+  <main id="icerik" class="mx-auto max-w-wide px-4 py-8">
+    <nav aria-label="Konum" class="text-text-secondary mb-6 text-sm">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">Kökler</span>
+    </nav>
+
+    <h1 class="text-accent m-0 text-3xl">Kökler</h1>
+    <p class="text-text-secondary mt-2 text-md">
+      Arapça'da kelimeler üç harfli köklerden türer. Aynı kökten gelen kelimeler
+      anlamca akrabadır; kökü takip etmek Kur'an'ın kendi iç bağlarını gösterir.
+    </p>
+
+    <dl class="text-text-secondary mt-6 flex flex-wrap gap-x-8 gap-y-2 text-sm">
+      <div><dt class="inline">Kök:</dt> <dd class="m-0 inline">{totals.roots}</dd></div>
+      <div><dt class="inline">Kelime:</dt> <dd class="m-0 inline">{totals.words}</dd></div>
+      <div>
+        <dt class="inline">Köke bağlı:</dt>
+        <dd class="m-0 inline">{totals.wordsWithRoot} (%{percent})</dd>
+      </div>
+    </dl>
+
+    <p class="text-text-muted mt-2 text-sm">
+      {withoutRoot} kelimeye kök atanmamış — harf-i cerler, zamirler ve özel
+      adların çoğu. Eksiklik gizlenmiyor: o kelimeler kelime kelime görünümde
+      bağlantısız gösteriliyor.
+    </p>
+
+    <div class="mt-4">
+      <SourceBadge
+        contentClass="kaynakli"
+        sources={[wordSource]}
+        label="Kelime ve kök verisi"
+      />
+    </div>
+
+    <h2 class="mt-10 text-xl">En çok geçen 50 kök</h2>
+    <ol class="root-grid mt-4">
+      {
+        mostFrequent.map((root) => (
+          <li>
+            <a href={`/kok/${root.arabic}`}>
+              <span class="r-head">
+                <span lang="ar" dir="rtl" class="r-arabic">
+                  {root.arabic}
+                </span>
+                <span class="r-count">{root.occurrenceCount}</span>
+              </span>
+              <span class="r-latin">{root.latin}</span>
+              {root.meaningSummary && <span class="r-meaning">{root.meaningSummary}</span>}
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+
+    <h2 class="mt-12 text-xl">Alfabetik</h2>
+    <nav aria-label="Harfe git" class="letter-bar mt-3">
+      {
+        letterGroups.map(([letter]) => (
+          <a href={`#harf-${encodeURIComponent(letter)}`} lang="ar" dir="rtl">
+            {letter}
+          </a>
+        ))
+      }
+    </nav>
+
+    {
+      letterGroups.map(([letter, group]) => (
+        <section id={`harf-${letter}`} class="mt-8 scroll-mt-4">
+          <h3 class="border-border m-0 border-b pb-2 text-lg">
+            <span lang="ar" dir="rtl">
+              {letter}
+            </span>
+            <span class="text-text-muted ms-2 text-sm">({group.length})</span>
+          </h3>
+          <ol class="root-list mt-3">
+            {group.map((root) => (
+              <li>
+                <a href={`/kok/${root.arabic}`}>
+                  <span lang="ar" dir="rtl" class="rl-arabic">
+                    {root.arabic}
+                  </span>
+                  <span class="rl-latin">{root.latin}</span>
+                  <span class="rl-count">{root.occurrenceCount}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))
+    }
+  </main>
+</Base>

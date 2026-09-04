@@ -190,3 +190,84 @@ export const staticSources = z.object({
   sources: z.array(staticSource),
 });
 export type StaticSources = z.infer<typeof staticSources>;
+
+// ---------------------------------------------------------------------------
+// Kelime ve kok katmani — plan §2 "Kelime" kapisi, §12.6
+// ---------------------------------------------------------------------------
+
+/**
+ * Ayetteki tek bir kelime.
+ *
+ * `rootArabic` kok sayfasina baglantidir: kok adresleri Arapca harflerle
+ * kuruluyor (/kok/قول). Latin harfli `latin` alani Buckwalter benzeri bir
+ * cevriyazi ve BUYUK-KUCUK HARF ANLAMLI (S=ص, s=س; T=ط, t=ت). Kucultuldugunde
+ * 1641 kokten 141'i cakisiyor — bu yuzden adres icin kullanilamaz.
+ */
+export const staticWord = z.object({
+  /** Ayet icindeki siras — 1'den baslar */
+  position: z.number().int().positive(),
+  arabic: nonEmptyText,
+  transcriptionTr: z.string().nullable(),
+  /** Kelimenin Turkce karsiligi — meal degil, kelime kelime anlam */
+  translationTr: z.string().nullable(),
+  /** Kok atanmamis kelimeler var (harf-i cerler, zamirler): null */
+  rootArabic: z.string().nullable(),
+  rootLatin: z.string().nullable(),
+});
+export type StaticWord = z.infer<typeof staticWord>;
+
+/** data/word/verse_{s}_{v}.json */
+export const staticVerseWords = z.object({
+  surahId: z.number().int().min(1).max(114),
+  verseNumber: z.number().int().positive(),
+  words: z.array(staticWord).min(1),
+});
+export type StaticVerseWords = z.infer<typeof staticVerseWords>;
+
+/** Bir kokun bir ayetteki gecisi. */
+export const staticRootOccurrence = z.object({
+  surahId: z.number().int().min(1).max(114),
+  surahSlug: slug,
+  surahNameTr: nonEmptyText,
+  verseNumber: z.number().int().positive(),
+  position: z.number().int().positive(),
+  arabic: nonEmptyText,
+  transcriptionTr: z.string().nullable(),
+  translationTr: z.string().nullable(),
+});
+export type StaticRootOccurrence = z.infer<typeof staticRootOccurrence>;
+
+/** data/root/{arapca}.json */
+export const staticRoot = z.object({
+  arabic: nonEmptyText,
+  latin: nonEmptyText,
+  /**
+   * Kok anlami. Kaynakta HTML olarak geliyor; duz metne cevrilip yaziliyor
+   * (packages/pipeline/src/text.ts → stripSourceHtml). Satir sonlari korunur.
+   */
+  meaningTr: z.string().nullable(),
+  occurrenceCount: z.number().int().nonnegative(),
+  occurrences: z.array(staticRootOccurrence),
+});
+export type StaticRoot = z.infer<typeof staticRoot>;
+
+/** data/roots_index.json — kok listesi sayfasi icin */
+export const staticRootsIndex = z.object({
+  roots: z
+    .array(
+      z.object({
+        arabic: nonEmptyText,
+        latin: nonEmptyText,
+        /** Anlamin ilk cumlesi; tam metin kok dosyasinda */
+        meaningSummary: z.string().nullable(),
+        occurrenceCount: z.number().int().nonnegative(),
+      }),
+    )
+    .min(1),
+  totals: z.object({
+    roots: z.number().int().positive(),
+    words: z.number().int().positive(),
+    wordsWithRoot: z.number().int().nonnegative(),
+  }),
+});
+export type StaticRootsIndex = z.infer<typeof staticRootsIndex>;

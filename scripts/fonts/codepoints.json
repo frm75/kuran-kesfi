@@ -5,7 +5,7 @@
     "noktalari + arayuz tabani (UI_BASE_RANGES). Alt kumeleme buna dayanir.",
     "Uretim: pnpm --filter @kuran/fonts fonts"
   ],
-  "scannedFiles": 12052,
+  "scannedFiles": 19930,
   "arabicRequired": [
     "0020",
     "0621",
@@ -77,6 +77,13 @@
     "0656",
     "06AF",
     "06CC",
+    "06D6",
+    "06D7",
+    "06D8",
+    "06D9",
+    "06DA",
+    "06DB",
+    "06E9",
     "FDFA"
   ],
   "latin": [
@@ -303,6 +310,7 @@
     "05BC",
     "05BE",
     "05C1",
+    "05D0",
     "05D1",
     "05D9",
     "05DB",
@@ -311,6 +319,7 @@
     "05E0",
     "05E2",
     "05E4",
+    "05E8",
     "05E9",
     "05EA",
     "1E0D",

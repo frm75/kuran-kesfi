@@ -19,6 +19,9 @@ import { extname, join, relative } from "node:path";
 import {
   parseVerseRef,
   staticAuthorsIndex,
+  staticRoot,
+  staticRootsIndex,
+  staticVerseWords,
   staticSources,
   staticSurah,
   staticSurahTranslation,
@@ -281,6 +284,13 @@ function checkStaticOutput(): void {
   const expectedFilesByAuthor = new Map<string, number>();
   const seenIds = new Set<number>();
   const seenSlugs = new Set<string>();
+  let rootFiles = 0;
+  let wordFiles = 0;
+  let wordCount = 0;
+  let rootsIndexEntries = 0;
+  /** Kelimelerin gosterdigi kokler ve gercekten var olan kok dosyalari */
+  const referencedRoots = new Set<string>();
+  const rootFileNames = new Set<string>();
 
   for (const path of files) {
     const relativePath = relative(dataRoot, path);
@@ -293,10 +303,28 @@ function checkStaticOutput(): void {
     }
 
     // Dosya adi alt cizgili olmali (plan 20.2)
+    //
+    // TEK ISTISNA: root/ altindaki dosyalar Arapca kok harfleriyle adlandirilir
+    // (root/قول.json) cunku adres de oyle kurulur (/kok/قول). Latin cevriyazi
+    // buyuk-kucuk harf anlamlidir (S=ص, s=س; T=ط, t=ت) ve kucultuldugunde
+    // 1641 kokten 141'i cakisir — adres olarak kullanilamaz. Arapca kok ise
+    // veritabaninda UNIQUE. Sunucuda dogrulandi: nginx hem yuzde kodlu hem ham
+    // UTF-8 istegi cozuyor.
+    //
+    // Istisna genis degil: yalnizca Arap harfleri, en fazla 8 harf. Bosluk,
+    // buyuk-kucuk harf karisikligi ya da baska bir alfabe yine reddedilir.
     const base = relativePath.split("/").pop() ?? "";
+    const isRootFile = relativePath.startsWith("root/");
     checksRun += 1;
-    if (!/^[a-z0-9_]+\.json$/.test(base)) {
-      errors.push(`${relativePath}: dosya adi alt cizgili kucuk harf olmali (plan 20.2)`);
+    const nameOk = isRootFile
+      ? /^[\u0621-\u064A]{1,8}\.json$/.test(base)
+      : /^[a-z0-9_]+\.json$/.test(base);
+    if (!nameOk) {
+      errors.push(
+        isRootFile
+          ? `${relativePath}: kok dosya adi yalnizca Arap harfi olmali (1-8 harf)`
+          : `${relativePath}: dosya adi alt cizgili kucuk harf olmali (plan 20.2)`,
+      );
     }
 
     if (relativePath === "surahs_index.json") {
@@ -421,6 +449,66 @@ function checkStaticOutput(): void {
           errors.push(`${relativePath}: ayet ${verse.verseNumber} id formulune uymuyor`);
         }
       });
+    } else if (relativePath === "roots_index.json") {
+      const result = staticRootsIndex.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) errors.push(`${relativePath}: ${result.error.message}`);
+      else rootsIndexEntries = result.data.roots.length;
+    } else if (relativePath.startsWith("root/")) {
+      const result = staticRoot.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) {
+        errors.push(`${relativePath}: ${result.error.message}`);
+        continue;
+      }
+      rootFiles += 1;
+      const root = result.data;
+      rootFileNames.add(root.arabic);
+      // Dosya adi kokun kendisi olmali; adres de bu adi kullaniyor.
+      if (base !== `${root.arabic}.json`) {
+        errors.push(`${relativePath}: dosya adi ${root.arabic}.json olmali`);
+      }
+      if (root.occurrences.length !== root.occurrenceCount) {
+        errors.push(
+          `${relativePath}: occurrenceCount ${root.occurrenceCount} ama ` +
+            `${root.occurrences.length} gecis var`,
+        );
+      }
+      // Gecisler sure/ayet sirasinda olmali; sayfa onlari sirayla grupluyor.
+      let previous = 0;
+      for (const occurrence of root.occurrences) {
+        const key = occurrence.surahId * 1000 + occurrence.verseNumber;
+        if (key < previous) {
+          errors.push(`${relativePath}: gecisler sirali degil (${occurrence.surahId}:${occurrence.verseNumber})`);
+          break;
+        }
+        previous = key;
+      }
+    } else if (relativePath.startsWith("word/")) {
+      const result = staticVerseWords.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) {
+        errors.push(`${relativePath}: ${result.error.message}`);
+        continue;
+      }
+      wordFiles += 1;
+      const wordData = result.data;
+      if (base !== `verse_${wordData.surahId}_${wordData.verseNumber}.json`) {
+        errors.push(
+          `${relativePath}: dosya adi verse_${wordData.surahId}_${wordData.verseNumber}.json olmali`,
+        );
+      }
+      wordData.words.forEach((word, index) => {
+        if (word.position !== index + 1) {
+          errors.push(`${relativePath}: ${index + 1}. sirada konum ${word.position} var`);
+        }
+        // Kok bilgisi ya tam gelir ya hic gelmez; yarim kayit baglanti kirar.
+        if ((word.rootArabic === null) !== (word.rootLatin === null)) {
+          errors.push(`${relativePath}: kelime ${word.position} yarim kok bilgisi tasiyor`);
+        }
+        if (word.rootArabic !== null) referencedRoots.add(word.rootArabic);
+      });
+      wordCount += wordData.words.length;
     } else {
       warn("statik cikti", `${relativePath} icin tanimli sema yok, atlandi`);
     }
@@ -435,6 +523,41 @@ function checkStaticOutput(): void {
   if (verseFiles !== 6236) {
     errors.push(`statik cikti: 6236 ayet dosyasi bekleniyordu, ${verseFiles} bulundu`);
   }
+
+  // --- kok ve kelime butunlugu ---
+  //
+  // Kok dosyalari kelime dosyalarindan bagimsiz uretiliyor; ikisi arasindaki
+  // baglanti kopuk kalirsa sayfada olu baglanti olusur. Burada eslesiyorlar mi
+  // diye bakiliyor.
+  checksRun += 1;
+  if (rootFiles !== rootsIndexEntries) {
+    errors.push(
+      `statik cikti: roots_index.json ${rootsIndexEntries} kok sayiyor ama ` +
+        `${rootFiles} kok dosyasi var`,
+    );
+  }
+
+  checksRun += 1;
+  if (wordFiles > 0 && wordFiles !== 6236) {
+    // Kelime verisi bir ayette hic olmayabilir; ama varsa hepsinde olmali.
+    warn("statik cikti", `${wordFiles}/6236 ayette kelime dosyasi var`);
+  }
+
+  // Kelimelerin gosterdigi her kok icin dosya olmali — /kok/... baglantilari
+  // buradan uretiliyor.
+  checksRun += 1;
+  const missingRootFiles = [...referencedRoots].filter((arabic) => !rootFileNames.has(arabic));
+  if (missingRootFiles.length > 0) {
+    errors.push(
+      `statik cikti: ${missingRootFiles.length} kok kelimelerde geciyor ama dosyasi yok: ` +
+        missingRootFiles.slice(0, 5).join(", "),
+    );
+  }
+
+  info(
+    `   kok/kelime: ${rootFiles} kok dosyasi, ${wordFiles} ayette ${wordCount} kelime, ` +
+      `${referencedRoots.size} farkli kok kullanilmis`,
+  );
 
   // Her yazarin dosya sayisi, authors_index.json'da ilan ettigi kaynak
   // bosluklariyla tutarli olmali. Bosluk ilan edilmemisse 114 beklenir.

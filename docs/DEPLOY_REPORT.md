@@ -572,3 +572,46 @@ Plan §20.4 bütçesi 140 / 95 KB — ikisi de tutuyor.
 **Hatırlatma:** CSP'de `script-src` yok (`default-src 'none'`). Faz 1'de
 Astro island'ı eklenirse vhost'a `script-src 'self'` yazılmalı, yoksa
 sessizce çalışmaz. Bkz. §3.9.
+
+### 3.11 2026-09-04 — Kelime ve kök kapısı
+
+Sunucu yapılandırması **değişmedi.**
+
+| | |
+|---|---|
+| Sayfa | 7996 (önceki 6354 + 1641 kök + kök listesi) |
+| Boyut | ~400 MB |
+| Duman testi | 17 kontrol, temiz |
+
+Plan §2'nin beş keşif kapısından **"Kelime" açıldı**: 77.429 kelime,
+1.641 kök, kelimelerin %61'i bir köke bağlı.
+
+- Ayet sayfasına "Kelimeler" bölümü — kelime kelime karşılık ve kök bağlantısı
+- `/kok` — 1641 kök; en çok geçen 50 kart hâlinde, altında harf harf alfabetik
+- `/kok/<arapça kök>` — kökün anlamı ve bütün geçişleri, sure sure gruplu
+
+#### Kök adresleri Arapça harf taşıyor
+
+`/kok/قول`. Latin çevriyazı (`qwl`, `Sbr`, `$tt`) **büyük-küçük harf
+anlamlıdır** — `S`=ص ama `s`=س, `T`=ط ama `t`=ت. Küçültüldüğünde 1641 kökten
+141'i çakışıyor, adres olarak kullanılamaz. Arapça kök ise veritabanında
+`UNIQUE`.
+
+Yayınlamadan **önce** sunucuda denendi: geçici bir `kok/قول.html` dosyası
+konup nginx'in hem yüzde kodlu (`%D9%82%D9%88%D9%84`) hem ham UTF-8 isteği
+çözdüğü doğrulandı, sonra dosya silindi. Artık duman testinin parçası.
+
+#### Süreç hatası — kayda geçiyor
+
+Bu yayında `pnpm lint:refs` **başarısızdı ve fark edilmeden deploy edildi.**
+Sebep: komut `| tail -2` ile borulanmıştı, `&&` zincirinin gördüğü çıkış kodu
+`tail`'inki (0) oldu. Hatanın kendisi zararsızdı — linter kök dosya adlarını
+(Arapça) plan §20.2'nin "alt çizgili küçük harf" kuralına takmıştı, veri
+bütünlüğüyle ilgisi yoktu — ama süreç yine de kırılmıştı.
+
+Alınan önlem: linter'a kök dosyaları için dar bir istisna yazıldı (yalnızca
+Arap harfleri, 1-8 harf; boşluk ve karışık alfabe hâlâ reddediliyor) ve
+kök/kelime çıktıları artık gerçekten **doğrulanıyor** — önceden "şeması yok,
+atlandı" diye 7884 uyarı basıyordu.
+
+Denetim sayısı 24.236 → **39.995**.

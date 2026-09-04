@@ -74,11 +74,15 @@ const transcriptionSource = getTranscriptionSource();
 const defaultAuthorSource = getSourceForAuthor(defaultAuthor);
 
 /** Beş keşif kapısı — plan §2. Hiçbiri henüz hazır değil. */
-const gates = [
+const gates: { name: string; note: string; href?: string }[] = [
   { name: "Harita", note: "Ayetlerin geçtiği yerler, kıssaların coğrafyası" },
   { name: "Zaman", note: "Nüzul sırası ve tarihsel olaylar aynı çizelgede" },
   { name: "Kavram", note: "Sabır, adalet, tevekkül — kavramdan ayete" },
-  { name: "Kelime", note: "Kök ağacı: bir kökün Kur'an'daki bütün türevleri" },
+  {
+    name: "Kelime",
+    note: "Kök ağacı: bir kökün Kur'an'daki bütün geçişleri",
+    href: "/kok",
+  },
   { name: "İlkeler", note: "Ayetlerden çıkan ilkeler, kaynağıyla" },
 ];
 
@@ -88,7 +92,7 @@ const modules = [
   { name: "Meal karşılaştırma", state: "hazir", note: `${authors.length} meal yan yana` },
   { name: "Çeviriyazı", state: "hazir", note: "Her ayetin Latin harfli okunuşu" },
   { name: "Kaynak şeffaflığı", state: "hazir", note: "Her bilgi kaynağıyla" },
-  { name: "Kelime ve kök", state: "veri-hazir", note: "77.429 kelime, 1.641 kök — arayüz yazılmadı" },
+  { name: "Kelime ve kök", state: "hazir", note: "77.429 kelime, 1.641 kök" },
   { name: "Kıssalar", state: "yakinda", note: "Kıssa akışı ve kronoloji" },
   { name: "Kavram ağı", state: "yakinda", note: "Kavramdan ayete, ayetten kavrama" },
   { name: "Harita", state: "yakinda", note: "Liste alternatifi zorunlu" },
@@ -173,15 +177,19 @@ const stateLabel = {
     <Section
       id="kesif-kapilari"
       title="Beş keşif kapısı"
-      lead="Kur'an'a beş ayrı yoldan girilir; hepsi aynı ayete çıkar. Bu kapılar henüz açılmadı — altyapıları hazırlanıyor."
+      lead="Kur'an'a beş ayrı yoldan girilir; hepsi aynı ayete çıkar. Kelime kapısı açıldı; diğer dördünün altyapısı hazırlanıyor."
     >
       <ul class="grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2 lg:grid-cols-5">
         {
           gates.map((gate) => (
             <li class="card">
-              <h3 class="card-title">{gate.name}</h3>
+              <h3 class="card-title">
+                {gate.href === undefined ? gate.name : <a href={gate.href}>{gate.name}</a>}
+              </h3>
               <p class="card-note">{gate.note}</p>
-              <p class="state state-yakinda">yakında</p>
+              <p class:list={["state", gate.href === undefined ? "state-yakinda" : "state-hazir"]}>
+                {gate.href === undefined ? "yakında" : "hazır"}
+              </p>
             </li>
           ))
         }

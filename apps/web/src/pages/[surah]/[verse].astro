@@ -5,6 +5,7 @@ import Base from "~/layouts/Base.astro";
 import SourceBadge from "~/components/SourceBadge.astro";
 import Translation from "~/components/Translation.astro";
 import VerseArabic from "~/components/VerseArabic.astro";
+import WordByWord from "~/components/WordByWord.astro";
 import {
   getArabicSource,
   getAuthorsIndex,
@@ -12,6 +13,7 @@ import {
   getSurahsIndex,
   getTranscriptionSource,
   getVerseDetail,
+  getVerseWords,
   sortAuthorsForDisplay,
   verseLabel,
 } from "~/lib/data";
@@ -43,6 +45,7 @@ if (surahMeta === undefined) throw new Error(`surahs_index.json icinde ${surahId
 
 const label = verseLabel(verse.surahNameTr, verse.verseNumber);
 const arabicSource = getArabicSource();
+const verseWords = getVerseWords(surahId, verseNumber);
 
 const authorBySlug = new Map(getAuthorsIndex().authors.map((author) => [author.slug, author]));
 const orderedSlugs = sortAuthorsForDisplay(
@@ -147,6 +150,26 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
               contentClass="kaynakli"
               sources={[getTranscriptionSource()]}
               label="Okunuş (çeviriyazı)"
+            />
+          </div>
+        </section>
+      )
+    }
+
+    {
+      verseWords !== null && (
+        <section class="mb-10">
+          <h2 class="text-xl mb-1">Kelimeler</h2>
+          <p class="text-text-secondary mt-0 mb-4 text-sm">
+            Kelime kelime karşılık ve kök. Kök bağlantısı o kökün Kur'an'daki
+            bütün geçişlerine götürür.
+          </p>
+          <WordByWord words={verseWords.words} label={label} />
+          <div class="mt-4">
+            <SourceBadge
+              contentClass="kaynakli"
+              sources={translationSources}
+              label="Kelime ve kök verisi"
             />
           </div>
         </section>

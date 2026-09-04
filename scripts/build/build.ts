@@ -13,6 +13,9 @@
  *   translation/{yazar}/surah_{id}.json      TEK MEAL
  *   verse/verse_{s}_{v}.json                 TEK AYET + tum mealler
  *   sources.json                             Kaynak Seffafligi
+ *   word/verse_{s}_{v}.json                  AYETIN KELIMELERI (kok baglantili)
+ *   root/{arapca}.json                       BIR KOK + tum gecisleri
+ *   roots_index.json                         kok listesi
  *
  * Tek dosyada sure + tum mealler tutulunca Bakara 1179 KB oluyordu; plan 20.4
  * ilk yukleme butcesi < 200 KB.
@@ -21,21 +24,28 @@
  */
 
 import type {
+  StaticRoot,
+  StaticRootOccurrence,
   StaticSurah,
   StaticSurahMeta,
   StaticSurahTranslation,
   StaticVerse,
   StaticVerseDetail,
+  StaticVerseWords,
+  StaticWord,
 } from "@kuran/schema";
 import {
   staticAuthorsIndex,
+  staticRoot,
+  staticRootsIndex,
   staticSources,
   staticSurah,
   staticSurahTranslation,
   staticSurahsIndex,
   staticVerseDetail,
+  staticVerseWords,
 } from "@kuran/schema";
-import { Report, closePool, fail, info, pool } from "@kuran/pipeline";
+import { Report, closePool, fail, info, pool, stripSourceHtml } from "@kuran/pipeline";
 import { Emitter, dataRoot } from "./lib/emit.js";
 
 interface SurahRow {
@@ -81,6 +91,22 @@ interface TranslationRow {
   author_name: string;
   text: string;
   footnotes: { number: number; text: string }[] | null;
+}
+
+interface WordRow {
+  verse_id: number;
+  sort_number: number;
+  arabic: string;
+  transcription_tr: string | null;
+  translation_tr: string | null;
+  root_arabic: string | null;
+  root_latin: string | null;
+}
+
+interface RootRow {
+  arabic: string;
+  latin: string;
+  meaning_tr: string | null;
 }
 
 interface SourceRow {
@@ -168,6 +194,26 @@ async function main(): Promise<void> {
     )
   ).rows;
 
+  // Kelime kelime veri — plan 2 "Kelime" kapisi.
+  // Kok atanmamis kelimeler de okunur (harf-i cer, zamir): kelime dizisinde
+  // bosluk olmasin, ayet eksiksiz gorunsun.
+  const words = (
+    await pool.query<WordRow>(
+      `SELECT vp.verse_id, vp.sort_number, vp.arabic,
+              vp.transcription_tr, vp.translation_tr,
+              r.arabic AS root_arabic, r.latin AS root_latin
+         FROM verse_part vp
+         LEFT JOIN root r ON r.id = vp.root_id
+        ORDER BY vp.verse_id, vp.sort_number`,
+    )
+  ).rows;
+
+  const roots = (
+    await pool.query<RootRow>(
+      `SELECT arabic, latin, meaning_tr FROM root ORDER BY arabic`,
+    )
+  ).rows;
+
   const sources = (
     await pool.query<SourceRow>(
       `SELECT slug, name, work_title, author, reference, url, license, note
@@ -178,7 +224,8 @@ async function main(): Promise<void> {
 
   info(
     `okundu: ${surahs.length} sure, ${verses.length} ayet, ${authors.length} yazar, ` +
-      `${translations.length} meal satiri, ${sources.length} kaynak`,
+      `${translations.length} meal satiri, ${sources.length} kaynak, ` +
+      `${words.length} kelime, ${roots.length} kok`,
   );
 
   // --- ayetleri sureye gore grupla ---
@@ -190,6 +237,13 @@ async function main(): Promise<void> {
     } else {
       bucket.push(verse);
     }
+  }
+
+  const wordsByVerse = new Map<number, WordRow[]>();
+  for (const row of words) {
+    const bucket = wordsByVerse.get(row.verse_id);
+    if (bucket === undefined) wordsByVerse.set(row.verse_id, [row]);
+    else bucket.push(row);
   }
 
   const translationsByVerse = new Map<number, TranslationRow[]>();
@@ -209,6 +263,8 @@ async function main(): Promise<void> {
   const metas: StaticSurahMeta[] = [];
   /** yazar slug -> kaynakta eksik olan sureler ve ayet sayisi */
   const authorGaps = new Map<string, { surahs: number[]; verses: number }>();
+  /** Kelime verisi olmayan ayet sayisi — sessizce gecilmez, rapora yazilir */
+  let versesWithoutWords = 0;
 
   for (const row of surahs) {
     const meta = toMeta(row);
@@ -316,6 +372,33 @@ async function main(): Promise<void> {
         );
       }
       emitter.write(`verse/verse_${row.id}_${verse.verse_number}.json`, detail);
+
+      // --- 4. katman: kelime kelime ---
+      const verseWords = wordsByVerse.get(verse.id) ?? [];
+      if (verseWords.length > 0) {
+        const wordPayload: StaticVerseWords = {
+          surahId: row.id,
+          verseNumber: verse.verse_number,
+          words: verseWords.map<StaticWord>((word) => ({
+            position: word.sort_number,
+            arabic: word.arabic,
+            transcriptionTr: word.transcription_tr,
+            translationTr: word.translation_tr,
+            rootArabic: word.root_arabic,
+            rootLatin: word.root_latin,
+          })),
+        };
+        const wordParsed = staticVerseWords.safeParse(wordPayload);
+        if (!wordParsed.success) {
+          fail(
+            `ayet ${row.id}:${verse.verse_number} kelime semasi basarisiz:\n` +
+              wordParsed.error.message,
+          );
+        }
+        emitter.write(`word/verse_${row.id}_${verse.verse_number}.json`, wordPayload);
+      } else {
+        versesWithoutWords += 1;
+      }
     }
   }
 
@@ -408,6 +491,116 @@ async function main(): Promise<void> {
     fail(`authors_index.json sema dogrulamasi basarisiz:\n${authorsParsed.error.message}`);
   }
   emitter.write("authors_index.json", authorsPayload);
+
+  // --- kokler ---
+  //
+  // Kok adresleri Arapca harflerle kuruluyor (/kok/قول). Latin cevriyazi
+  // buyuk-kucuk harf anlamli (S=ص, s=س) ve kucultuldugunde 1641 kokten
+  // 141'i cakisiyor; adres olarak kullanilamaz. Arapca kok ise veritabaninda
+  // UNIQUE.
+  const surahById = new Map(metas.map((m) => [m.id, m]));
+  const occurrencesByRoot = new Map<string, StaticRootOccurrence[]>();
+  for (const word of words) {
+    if (word.root_arabic === null) continue;
+    const surahId = Math.floor(word.verse_id / 1000);
+    const verseNumber = word.verse_id % 1000;
+    const meta = surahById.get(surahId);
+    if (meta === undefined) {
+      fail(`kelime ${word.verse_id}:${word.sort_number} bilinmeyen sureye bagli (${surahId})`);
+    }
+    const bucket = occurrencesByRoot.get(word.root_arabic) ?? [];
+    bucket.push({
+      surahId,
+      surahSlug: meta.slug,
+      surahNameTr: meta.nameTr,
+      verseNumber,
+      position: word.sort_number,
+      arabic: word.arabic,
+      transcriptionTr: word.transcription_tr,
+      translationTr: word.translation_tr,
+    });
+    occurrencesByRoot.set(word.root_arabic, bucket);
+  }
+
+  const rootsIndexEntries: {
+    arabic: string;
+    latin: string;
+    meaningSummary: string | null;
+    occurrenceCount: number;
+  }[] = [];
+  const unknownHtmlTags = new Set<string>();
+  let rootsWithoutOccurrence = 0;
+
+  for (const root of roots) {
+    let meaning: string | null = null;
+    if (root.meaning_tr !== null) {
+      const stripped = stripSourceHtml(root.meaning_tr);
+      for (const tag of stripped.unknownTags) unknownHtmlTags.add(tag);
+      meaning = stripped.text === "" ? null : stripped.text;
+    }
+
+    const occurrences = occurrencesByRoot.get(root.arabic) ?? [];
+    if (occurrences.length === 0) rootsWithoutOccurrence += 1;
+
+    const rootPayload: StaticRoot = {
+      arabic: root.arabic,
+      latin: root.latin,
+      meaningTr: meaning,
+      occurrenceCount: occurrences.length,
+      occurrences,
+    };
+    const rootParsed = staticRoot.safeParse(rootPayload);
+    if (!rootParsed.success) {
+      fail(`kok ${root.arabic} sema dogrulamasi basarisiz:\n${rootParsed.error.message}`);
+    }
+    emitter.write(`root/${root.arabic}.json`, rootPayload);
+
+    rootsIndexEntries.push({
+      arabic: root.arabic,
+      latin: root.latin,
+      // Ilk cumle ozet; tam metin kok dosyasinda. Nokta yoksa ilk satir.
+      // 80 karakter: kok listesi 1641 kart tasiyor, 160 karakterle sayfa
+      // 543 KB / 97 KB gzip oluyordu (olculdu).
+      meaningSummary:
+        meaning === null
+          ? null
+          : ((meaning.split("\n")[0] ?? meaning).split(/(?<=[.;])\s/)[0] ?? "")
+              .slice(0, 80)
+              .trim() || null,
+      occurrenceCount: occurrences.length,
+    });
+  }
+
+  const rootsIndexPayload = {
+    roots: rootsIndexEntries.sort((a, b) => b.occurrenceCount - a.occurrenceCount),
+    totals: {
+      roots: roots.length,
+      words: words.length,
+      wordsWithRoot: words.filter((w) => w.root_arabic !== null).length,
+    },
+  };
+  const rootsIndexParsed = staticRootsIndex.safeParse(rootsIndexPayload);
+  if (!rootsIndexParsed.success) {
+    fail(`roots_index.json sema dogrulamasi basarisiz:\n${rootsIndexParsed.error.message}`);
+  }
+  emitter.write("roots_index.json", rootsIndexPayload);
+
+  if (unknownHtmlTags.size > 0) {
+    report.issue(
+      `kok anlamlarinda tanimlanmayan HTML etiketi: ${[...unknownHtmlTags].join(", ")} ` +
+        "— duz metne cevrilmedi, oldugu gibi birakildi",
+    );
+  }
+  if (rootsWithoutOccurrence > 0) {
+    report.note(`Hicbir kelimeye baglanmayan kok: ${rootsWithoutOccurrence}`);
+  }
+  if (versesWithoutWords > 0) {
+    report.note(`Kelime verisi olmayan ayet: ${versesWithoutWords}`);
+  }
+  info(
+    `kok: ${roots.length} dosya, ${rootsIndexPayload.totals.wordsWithRoot} kelime koke bagli ` +
+      `(${words.length} kelimenin %${((rootsIndexPayload.totals.wordsWithRoot / words.length) * 100).toFixed(0)}'i)`,
+  );
 
   const sourcesPayload = {
     sources: sources.map((s) => ({

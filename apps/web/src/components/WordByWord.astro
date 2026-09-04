@@ -1,0 +1,61 @@
+---
+import type { StaticWord } from "@kuran/schema";
+
+/**
+ * Kelime kelime görünüm — plan §2 "Kelime" kapısı, §12.6.
+ *
+ * Ayetin her kelimesi: Arapça, Latin harfli okunuşu, Türkçe karşılığı ve
+ * varsa kök bağlantısı. Kök adresleri Arapça harflerle kurulur (/kok/قول);
+ * Latin çevriyazı büyük-küçük harf anlamlı olduğu için adres olamıyor.
+ *
+ * Akış RTL: Arapça okuma yönünde, sağdan sola. Her kelime kendi kutusunda
+ * olduğu için `dir="rtl"` yalnızca sıralamayı çeviriyor, metinleri değil.
+ *
+ * Kök atanmamış kelimeler var (harf-i cerler, zamirler — 77.429 kelimenin
+ * %39'u). Onlar bağlantısız gösterilir; atlanmaz, ayet eksik görünmesin.
+ */
+
+interface Props {
+  words: readonly StaticWord[];
+  /** Ekran okuyucu başlığı için: "Bakara suresi, 153. ayet" */
+  label: string;
+}
+
+const { words, label } = Astro.props;
+---
+
+<ol class="word-list" dir="rtl" aria-label={`${label} — kelime kelime`}>
+  {
+    words.map((word) => (
+      <li class="word">
+        <span lang="ar" class="word-arabic">
+          {word.arabic}
+        </span>
+        {word.transcriptionTr && (
+          <span lang="tr" dir="ltr" class="word-transcription">
+            {word.transcriptionTr}
+          </span>
+        )}
+        {word.translationTr && (
+          <span lang="tr" dir="ltr" class="word-meaning">
+            {word.translationTr}
+          </span>
+        )}
+        {word.rootArabic ? (
+          <a href={`/kok/${word.rootArabic}`} class="word-root" dir="ltr">
+            <span class="sr-only" lang="tr">
+              kök:{" "}
+            </span>
+            <span lang="ar" dir="rtl">
+              {word.rootArabic}
+            </span>
+          </a>
+        ) : (
+          <span class="word-root is-empty" aria-hidden="true">
+            —
+          </span>
+        )}
+      </li>
+    ))
+  }
+</ol>

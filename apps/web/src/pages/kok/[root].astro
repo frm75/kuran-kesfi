@@ -1,0 +1,143 @@
+---
+import type { GetStaticPaths } from "astro";
+import Base from "~/layouts/Base.astro";
+import SourceBadge from "~/components/SourceBadge.astro";
+import { getRoot, getRootsIndex, getSources } from "~/lib/data";
+
+/**
+ * Tek kök sayfası — plan §2 "Kelime" kapısı, §12.6.
+ *
+ * Kökün anlamı ve Kur'an'daki bütün geçişleri, sure sure gruplanmış.
+ * En kalabalık kök 1722 geçiş (قول); tamamı listeleniyor çünkü bu bir
+ * referans sayfası — kısaltmak veriyi saklamak olurdu.
+ *
+ * Adres Arapça harflerle: /kok/قول. Nginx yüzde kodlu ve ham UTF-8 isteğin
+ * ikisini de çözüyor (canlıda doğrulandı).
+ */
+
+export const getStaticPaths = (() => {
+  return getRootsIndex().roots.map((root) => ({
+    params: { root: root.arabic },
+    props: { arabic: root.arabic },
+  }));
+}) satisfies GetStaticPaths;
+
+const { arabic } = Astro.props;
+const root = getRoot(arabic);
+
+const wordSource = getSources().sources.find((s) => s.slug === "acikkuran");
+if (wordSource === undefined) {
+  throw new Error("Kelime ve kok verisinin kaynagi (acikkuran) sources.json icinde yok.");
+}
+
+/** Geçişleri sureye göre grupla — 1722 satırlık düz liste okunmaz. */
+interface SurahGroup {
+  surahId: number;
+  surahSlug: string;
+  surahNameTr: string;
+  items: typeof root.occurrences;
+}
+const groups: SurahGroup[] = [];
+for (const occurrence of root.occurrences) {
+  const last = groups[groups.length - 1];
+  if (last !== undefined && last.surahId === occurrence.surahId) {
+    last.items.push(occurrence);
+  } else {
+    groups.push({
+      surahId: occurrence.surahId,
+      surahSlug: occurrence.surahSlug,
+      surahNameTr: occurrence.surahNameTr,
+      items: [occurrence],
+    });
+  }
+}
+---
+
+<Base
+  title={`${root.arabic} (${root.latin}) kökü — Kur'an-ı Kerim Keşfi`}
+  description={`${root.arabic} kökü Kur'an'da ${root.occurrenceCount} kez geçiyor.`}
+  arabic
+>
+  <main id="icerik" class="mx-auto max-w-normal px-4 py-8">
+    <nav aria-label="Konum" class="text-text-secondary mb-6 text-sm">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <a href="/kok">Kökler</a> <span aria-hidden="true">›</span>
+      <span aria-current="page" lang="ar" dir="rtl">{root.arabic}</span>
+    </nav>
+
+    <header class="border-border border-b pb-6">
+      <h1 class="root-hero m-0">
+        <span lang="ar" dir="rtl" class="root-arabic">{root.arabic}</span>
+        <span class="root-latin">{root.latin}</span>
+      </h1>
+      <p class="text-text-secondary mt-3 mb-0">
+        Kur'an'da <strong>{root.occurrenceCount}</strong> kelimede geçiyor.
+      </p>
+      <div class="mt-4">
+        <SourceBadge
+          contentClass="kaynakli"
+          sources={[wordSource]}
+          label={`${root.arabic} kökü ve anlamı`}
+        />
+      </div>
+    </header>
+
+    {
+      root.meaningTr === null ? (
+        <p class="text-text-muted mt-8 text-sm">
+          Bu kökün anlamı kaynakta yok.
+        </p>
+      ) : (
+        <section class="mt-8">
+          <h2 class="text-xl">Anlam</h2>
+          <p class="root-meaning mt-2">{root.meaningTr}</p>
+        </section>
+      )
+    }
+
+    <section class="mt-10">
+      <h2 class="text-xl">
+        Geçtiği yerler <span class="text-text-muted text-sm">({root.occurrenceCount})</span>
+      </h2>
+
+      {
+        groups.length === 0 ? (
+          <p class="text-text-muted mt-2 text-sm">
+            Bu köke bağlı kelime bulunmuyor.
+          </p>
+        ) : (
+          groups.map((group) => (
+            <section class="mt-6">
+              <h3 class="text-lg m-0">
+                <a href={`/${group.surahSlug}`}>
+                  {group.surahId}. {group.surahNameTr} suresi
+                </a>
+                <span class="text-text-muted ms-2 text-sm">({group.items.length})</span>
+              </h3>
+              <ol class="root-occurrences mt-2">
+                {group.items.map((occurrence) => (
+                  <li>
+                    <span class="occ-line">
+                      <a
+                        class="occ-ref"
+                        href={`/${occurrence.surahSlug}/${occurrence.verseNumber}`}
+                      >
+                        {occurrence.surahNameTr} {occurrence.verseNumber}
+                      </a>
+                      <span lang="ar" dir="rtl" class="occ-arabic">
+                        {occurrence.arabic}
+                      </span>
+                      {occurrence.translationTr && (
+                        <span class="occ-meaning">{occurrence.translationTr}</span>
+                      )}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          ))
+        )
+      }
+    </section>
+  </main>
+</Base>

@@ -149,3 +149,74 @@ export function summarizeRepairs(repairs: readonly TextRepair[]): string[] {
       return `${hex} -> ${target} (${sample.action}) · ${count} kez · ornek: ${sample.where}`;
     });
 }
+
+/**
+ * Kaynak metnindeki basit HTML'i duz metne cevirir.
+ *
+ * Acik Kuran'in kok anlami alani HTML tasiyor:
+ *   "...onaylamak<br><br> <strong>Türkçe'ye girmiş türevler:</strong> mümin, ..."
+ *
+ * Bu metni sayfaya HAM HTML olarak basmak istemiyoruz: kaynak verisi bir gun
+ * degisirse sayfaya istemedigimiz isaretleme girer. Anlam kaybolmadan duz
+ * metne ceviriliyor — <br> satir sonu olur, <strong> etiketi atilir, icerigi
+ * kalir.
+ *
+ * Bilinmeyen bir etikete rastlarsa ATMAZ, oldugu gibi birakir ve `unknownTags`
+ * ile bildirir; sessizce icerik kaybi olmaz.
+ */
+export interface StripHtmlResult {
+  text: string;
+  unknownTags: string[];
+}
+
+const KNOWN_TAGS = new Set(["br", "strong", "b", "em", "i", "p", "span", "div"]);
+
+const ENTITIES: Readonly<Record<string, string>> = {
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  apos: "'",
+  nbsp: " ",
+  hellip: "…",
+  ndash: "–",
+  mdash: "—",
+  rsquo: "’",
+  lsquo: "‘",
+  rdquo: "”",
+  ldquo: "“",
+};
+
+export function stripSourceHtml(raw: string): StripHtmlResult {
+  const unknown = new Set<string>();
+
+  const withBreaks = raw.replace(/<\s*br\s*\/?\s*>/gi, "\n").replace(/<\s*\/?\s*p\s*>/gi, "\n");
+
+  const withoutTags = withBreaks.replace(/<\s*\/?\s*([a-zA-Z][a-zA-Z0-9]*)[^>]*>/g, (match, tag) => {
+    const name = String(tag).toLowerCase();
+    if (!KNOWN_TAGS.has(name)) {
+      unknown.add(name);
+      return match; // dokunma — kayip olmasin, rapora gecsin
+    }
+    return "";
+  });
+
+  const decoded = withoutTags.replace(/&(#x?[0-9a-fA-F]+|[a-zA-Z]+);/g, (match, entity) => {
+    const value = String(entity);
+    if (value.startsWith("#x") || value.startsWith("#X")) {
+      return String.fromCodePoint(Number.parseInt(value.slice(2), 16));
+    }
+    if (value.startsWith("#")) return String.fromCodePoint(Number.parseInt(value.slice(1), 10));
+    return ENTITIES[value.toLowerCase()] ?? match;
+  });
+
+  // Ucten fazla ard arda satir sonu ve satir sonu bosluklari toparlanir.
+  const tidy = decoded
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n[ \t]+/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .replace(/[ \t]{2,}/g, " ")
+    .trim();
+
+  return { text: tidy, unknownTags: [...unknown] };
+}
