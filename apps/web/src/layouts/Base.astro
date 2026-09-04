@@ -13,9 +13,13 @@ interface Props {
    * geri verirdi.
    */
   arabic?: boolean;
+  /** Tanıtım sayfası kendi başlığını taşır; site şeridi çizilmez. */
+  bareHeader?: boolean;
 }
 
-const { title, description, arabic = false } = Astro.props;
+const { title, description, arabic = false, bareHeader = false } = Astro.props;
+const path = Astro.url.pathname;
+const isCurrent = (href: string): boolean => path === href || path === `${href}/`;
 ---
 
 <!doctype html>
@@ -29,9 +33,11 @@ const { title, description, arabic = false } = Astro.props;
     {/* Fontlar kendi sunucumuzdan gelir; CDN yok (plan §1.3, §1.7).
         crossorigin: aynı kaynakta bile font isteği CORS modunda gider —
         yoksa preload boşa çıkar ve dosya iki kez indirilir. */}
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+    {/* Playfair her sayfanın başlığında kullanılıyor; 26 KB. */}
     <link
       rel="preload"
-      href="/fonts/inter-latin.woff2"
+      href="/fonts/playfair-display-latin.woff2"
       as="font"
       type="font/woff2"
       crossorigin
@@ -52,9 +58,30 @@ const { title, description, arabic = false } = Astro.props;
   </head>
   <body>
     <a href="#icerik" class="skip-link">İçeriğe geç</a>
+
+    {
+      !bareHeader && (
+        <div class="site-header">
+          <div class="mx-auto flex max-w-wide flex-wrap items-baseline gap-x-6 gap-y-2 px-4">
+            <a href="/" class="site-name">
+              Kur'an-ı Kerim Keşfi
+            </a>
+            <nav aria-label="Ana gezinme" class="site-nav">
+              <a href="/sureler" aria-current={isCurrent("/sureler") ? "page" : undefined}>
+                Sureler
+              </a>
+              <a href="/kaynaklar" aria-current={isCurrent("/kaynaklar") ? "page" : undefined}>
+                Kaynaklar
+              </a>
+            </nav>
+          </div>
+        </div>
+      )
+    }
+
     <slot />
+
     {/* Zorunlu atıf alanı — DESIGN.md §5. Her sayfada, istisnasız. */}
     <Attribution />
   </body>
 </html>
-

@@ -26,6 +26,25 @@
       "note": "Arayuz ve meal metni."
     },
     {
+      "id": "playfair-display",
+      "family": "Playfair Display",
+      "file": "playfair-display-latin.woff2",
+      "bytes": 26988,
+      "sha256": "c1613cf9898a79c017e2a3379db56031ba8e4e7a224db4c1bbbac77bfdade3c9",
+      "upstream": "google/fonts:ofl/playfairdisplay/PlayfairDisplay[wght].ttf",
+      "upstreamSha256": "82e0a4b35daf05de8cc282307adc655f9d2189d86d3628c69de66a83541edebc",
+      "upstreamBytes": 300724,
+      "fontVersion": "Version 1.203",
+      "license": "SIL Open Font License 1.1",
+      "licenseFile": "OFL-PlayfairDisplay.txt",
+      "coverage": "latin-headings",
+      "weightRange": "600",
+      "codepoints": 175,
+      "glyphsBefore": 1103,
+      "glyphsAfter": 403,
+      "note": "Baslik yazi tipi (DESIGN.md 2). Govde metninde kullanilmaz."
+    },
+    {
       "id": "amiri-quran",
       "family": "Amiri Quran",
       "file": "amiri-quran-arabic.woff2",

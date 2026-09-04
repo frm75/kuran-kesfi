@@ -1,0 +1,265 @@
+---
+import Base from "~/layouts/Base.astro";
+import SourceBadge from "~/components/SourceBadge.astro";
+import { getAuthorsIndex, getSources, getSurahsIndex } from "~/lib/data";
+
+/**
+ * Kaynak Şeffaflığı sayfası — plan §9 ve §12.10.
+ *
+ * Sitedeki her metnin nereden geldiğini tek yerde gösterir: kaynaklar,
+ * hangi mealin hangi lisansla kullanıldığı ve kaynak taraflı eksikler.
+ *
+ * Eksikler GİZLENMEZ (plan §1.5): bir mealde hiç bulunmayan sureler ve
+ * eksik ayet sayıları burada yazılıdır.
+ */
+
+const sources = getSources().sources;
+const { authors, requiredAttributionLinks } = getAuthorsIndex();
+const surahById = new Map(getSurahsIndex().surahs.map((s) => [s.id, s]));
+
+const turkish = authors
+  .filter((a) => a.language === "tr")
+  .sort((a, b) => (a.priority ?? 99) - (b.priority ?? 99) || a.name.localeCompare(b.name, "tr"));
+const english = authors
+  .filter((a) => a.language !== "tr")
+  .sort((a, b) => a.name.localeCompare(b.name, "tr"));
+
+const incomplete = authors.filter((a) => a.missingSurahs.length > 0 || a.missingVerseCount > 0);
+
+const sourceBySlug = new Map(sources.map((s) => [s.slug, s]));
+
+// Rozet örnekleri için gerçek bir kaynak; sources.json boşsa build durur
+// (kaynaksız rozet zaten <SourceBadge> tarafından reddedilir).
+const sampleSource = sources[0];
+if (sampleSource === undefined) {
+  throw new Error("sources.json bos: Kaynak Seffafligi sayfasi uretilmez.");
+}
+---
+
+<Base
+  title="Kaynak Şeffaflığı — Kur'an-ı Kerim Keşfi"
+  description="Sitedeki her metnin kaynağı, hazırlayanı ve lisansı. Kaynak taraflı eksikler dahil."
+>
+  <main id="icerik" class="mx-auto max-w-normal px-4 py-8">
+    <nav aria-label="Konum" class="text-text-secondary mb-6 text-sm">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">Kaynak Şeffaflığı</span>
+    </nav>
+
+    <h1 class="text-accent m-0 text-3xl">Kaynak Şeffaflığı</h1>
+    <p class="text-text-secondary mt-2 text-md">
+      Platform kendi editoryal yorumunu üretmez. Buradaki her metin bir kaynaktan
+      gelir; hangisinden geldiği ve hangi lisansla kullanıldığı aşağıdadır.
+    </p>
+
+    <section class="mt-10">
+      <h2 class="text-xl">Kaynaklar</h2>
+      <ul class="mt-4 list-none space-y-4 p-0">
+        {
+          sources.map((source) => (
+            <li class="source-card">
+              <h3 class="m-0 text-lg">{source.name}</h3>
+              {source.workTitle && <p class="meta">{source.workTitle}</p>}
+              {source.author && <p class="meta">Hazırlayan: {source.author}</p>}
+              {source.reference && <p class="meta">{source.reference}</p>}
+              <p class="meta">
+                <strong>Lisans:</strong> {source.license}
+              </p>
+              {source.note && <p class="meta">{source.note}</p>}
+              {source.url && (
+                <p class="meta">
+                  <a href={source.url} rel="noopener noreferrer" target="_blank">
+                    {source.url}
+                    <span class="sr-only"> (yeni sekmede açılır)</span>
+                  </a>
+                </p>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="text-xl">İçerik sınıfları</h2>
+      <p class="text-text-secondary mt-2 text-sm">
+        Kaynaklı hiçbir içerik bu rozetler olmadan gösterilmez. Renk körlüğünde ve
+        gri baskıda ayrışsınlar diye kenarlık biçimi ve metin de değişir.
+      </p>
+      <div class="mt-4 flex flex-wrap gap-3">
+        <SourceBadge
+          contentClass="kaynakli"
+          sources={[sampleSource]}
+          label="Kaynaklı bilgi örneği"
+        />
+        <SourceBadge
+          contentClass="alternatif"
+          sources={[sampleSource]}
+          label="Alternatif görüş örneği"
+        />
+        <SourceBadge contentClass="platform" label="Platform verisi örneği" />
+      </div>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="text-xl">Türkçe mealler <span class="count">({turkish.length})</span></h2>
+      <table class="author-table mt-4">
+        <thead>
+          <tr>
+            <th scope="col">Meal</th>
+            <th scope="col">Eser</th>
+            <th scope="col">Kaynak</th>
+            <th scope="col">Lisans</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            turkish.map((author) => (
+              <tr>
+                <th scope="row">{author.name}</th>
+                <td>{author.workTitle ?? "—"}</td>
+                <td>{sourceBySlug.get(author.source)?.name ?? author.source}</td>
+                <td>{author.license}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="text-xl">İngilizce çeviriler <span class="count">({english.length})</span></h2>
+      <p class="text-text-secondary mt-2 text-sm">
+        İngilizce dil seçeneği henüz açılmadı; çeviriler ayet sayfalarında
+        karşılaştırma için gösteriliyor.
+      </p>
+      <table class="author-table mt-4">
+        <thead>
+          <tr>
+            <th scope="col">Çeviri</th>
+            <th scope="col">Kaynak</th>
+            <th scope="col">Lisans</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            english.map((author) => (
+              <tr>
+                <th scope="row">{author.name}</th>
+                <td>{sourceBySlug.get(author.source)?.name ?? author.source}</td>
+                <td>{author.license}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="text-xl">Kaynak taraflı eksikler</h2>
+      <p class="text-text-secondary mt-2 text-sm">
+        Belirsizlik saklanmaz. Aşağıdaki meallerde bazı sureler ya da ayetler
+        kaynakta bulunmuyor; o ayetlerde ilgili meal gösterilmez.
+      </p>
+      {
+        incomplete.length === 0 ? (
+          <p class="text-text-secondary mt-4 text-sm">Bilinen eksik yok.</p>
+        ) : (
+          <ul class="mt-4 list-none space-y-3 p-0">
+            {incomplete.map((author) => (
+              <li class="source-card">
+                <h3 class="m-0 text-base">{author.name}</h3>
+                {author.missingSurahs.length > 0 && (
+                  <p class="meta">
+                    Hiç bulunmayan sure:{" "}
+                    {author.missingSurahs
+                      .map((id) => `${id}. ${surahById.get(id)?.nameTr ?? ""}`)
+                      .join(", ")}
+                  </p>
+                )}
+                {author.missingVerseCount > 0 && (
+                  <p class="meta">Eksik ayet sayısı: {author.missingVerseCount}</p>
+                )}
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </section>
+
+    <section class="mt-12">
+      <h2 class="text-xl">Zorunlu atıf</h2>
+      <p class="text-text-secondary mt-2 text-sm">
+        Bu bağlantılar kodda sabit değildir; hangi kaynaktan veri alındıysa derleme
+        onları üretir ve eksikse derlemeyi durdurur.
+      </p>
+      <ul class="mt-4 list-none space-y-2 p-0">
+        {
+          requiredAttributionLinks.map((link) => (
+            <li>
+              <a href={link.url} rel="noopener noreferrer" target="_blank">
+                {link.label}
+                <span class="sr-only"> (yeni sekmede açılır)</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </main>
+</Base>
+
+<style is:global>
+  .source-card {
+    padding: var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-elevated);
+  }
+  .source-card .meta {
+    margin: var(--space-2) 0 0;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    line-height: var(--lh-normal);
+  }
+  .source-card .meta strong {
+    color: var(--text-primary);
+  }
+
+  .count {
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: var(--fw-normal);
+  }
+
+  /* Geniş tablo dar ekranda sayfayı yatay kaydırmasın: kendi içinde kaysın. */
+  .author-table {
+    display: block;
+    overflow-x: auto;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+  }
+  .author-table th,
+  .author-table td {
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--border);
+    text-align: start;
+    vertical-align: top;
+  }
+  .author-table thead th {
+    color: var(--accent-text);
+    font-family: var(--font-body);
+    font-weight: var(--fw-semi);
+    white-space: nowrap;
+  }
+  .author-table tbody th {
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-weight: var(--fw-medium);
+  }
+  .author-table td {
+    color: var(--text-secondary);
+  }
+</style>

@@ -5,7 +5,8 @@
 
 ## Karar bekleyen (plan §11'den devralınan)
 
-- Alan adı ve proje adı — `kurankesfi.tr` kullanılıyor, proje adı netleşmedi
+- ~~Alan adı ve proje adı~~ → **KAPANDI 2026-09-04**: `kurankesfi.tr`, "Kur'an-ı Kerim Keşfi",
+  tagline "Keşfet • Oku • Anla" (CLAUDE.md → Domain ve Marka; plan §11)
 - Diyanet Kur'an Yolu tefsirinin kullanım şartları; yazılı izin gerekip gerekmediği
 - Kavram setinin ilk kaynağı: Diyanet konu fihristi mi, özgün derleme mi
 - Arapça kıraat için hangi kârîler (lisans uyumlu olanlar arasından)
@@ -117,7 +118,11 @@ Doğrulandı: dördü de artık **HTTP 404**. Web kökü deploy için temiz.
 
 ## Eksik veri — okuma ekranı yazılırken bulundu (2026-09-03)
 
-- **Çeviriyazı (transkripsiyon) yok: 0/6236.** `staticVerse.transcriptionTr`
+- ~~**Çeviriyazı (transkripsiyon) yok: 0/6236.**~~ **ÇÖZÜLDÜ 2026-09-04**:
+  `scripts/import/transcription.ts` eklendi, 6236/6236 dolu. Ayrıntı commit
+  a9df4f2. Aşağıdaki özgün kayıt tarihsel olarak duruyor.
+
+- **(çözüldü) Çeviriyazı (transkripsiyon) yok: 0/6236.** `staticVerse.transcriptionTr`
   alanı şemada var, veritabanında var, ama **hiçbir ayette dolu değil**.
   Açık Kuran import'u çeviriyazı getirmiyor. Plan §2.5 çeviriyazının "Arapça
   bilmeyen okuyucu için her zaman erişilebilir" olmasını istiyor; DESIGN.md

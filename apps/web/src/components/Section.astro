@@ -1,0 +1,42 @@
+---
+/**
+ * Landing bölüm şablonu — DESIGN.md §7.
+ *
+ * Her bölüm: --content-wide maksimum genişlik, --space-24 dikey padding
+ * (mobilde --space-12). Üstte ince altın çizgi, başlık Playfair, altında
+ * kısa açıklama, sonra içerik.
+ */
+
+interface Props {
+  id: string;
+  title: string;
+  lead?: string;
+  /** Okuma sütunu genişliğinde dar içerik */
+  narrow?: boolean;
+  class?: string;
+}
+
+const { id, title, lead, narrow = false, class: className } = Astro.props;
+---
+
+<section id={id} class:list={["landing-section", className]} aria-labelledby={`${id}-baslik`}>
+  <div class:list={["mx-auto px-4", narrow ? "max-w-narrow" : "max-w-wide"]}>
+    <p class="rule-ornament" aria-hidden="true"><span></span></p>
+
+    <h2 id={`${id}-baslik`} class="text-accent mt-6 mb-2 text-3xl">{title}</h2>
+    {lead && <p class="text-text-secondary mt-0 mb-8 max-w-normal text-md">{lead}</p>}
+
+    <slot />
+  </div>
+</section>
+
+<style is:global>
+  .landing-section {
+    padding-block: var(--space-12);
+  }
+  @media (min-width: 48rem) {
+    .landing-section {
+      padding-block: var(--space-24);
+    }
+  }
+</style>

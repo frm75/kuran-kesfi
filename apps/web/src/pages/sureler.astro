@@ -16,14 +16,14 @@ const arabicSource = getArabicSource();
 ---
 
 <Base title="Sureler — Kur'an-ı Kerim" description="114 surenin listesi.">
-  <main id="icerik" class="mx-auto max-w-(--container-measure) px-4 py-8">
-    <nav aria-label="Konum" class="text-text-muted mb-6 text-sm">
+  <main id="icerik" class="mx-auto max-w-narrow px-4 py-8">
+    <nav aria-label="Konum" class="text-text-secondary mb-6 text-sm">
       <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
       <span aria-current="page">Sureler</span>
     </nav>
 
     <h1 class="m-0 text-3xl">Sureler</h1>
-    <p class="text-text-muted mt-1 mb-4">
+    <p class="text-text-secondary mt-1 mb-4">
       {totals.surahs} sure, {totals.verses} ayet, {totals.pages} sayfa, {totals.juzs} cüz.
     </p>
     <SourceBadge
@@ -35,14 +35,14 @@ const arabicSource = getArabicSource();
     <ol class="mt-8 grid list-none grid-cols-1 gap-px p-0 sm:grid-cols-2">
       {
         surahs.map((surah) => (
-          <li class="bg-bg-raised border-line border">
+          <li class="bg-bg-elevated border-border border">
             <a href={`/${surah.slug}`} class="flex items-baseline gap-3 px-3 py-2 no-underline">
-              <span class="text-text-faint w-8 shrink-0 text-end text-sm tabular-nums">
+              <span class="text-text-muted w-8 shrink-0 text-end text-sm tabular-nums">
                 {surah.id}
               </span>
               <span class="flex-1">
-                <span class="text-text block">{surah.nameTr}</span>
-                <span class="text-text-muted block text-xs">
+                <span class="text-text-primary block">{surah.nameTr}</span>
+                <span class="text-text-secondary block text-xs">
                   {surah.verseCount} ayet ·{" "}
                   {surah.revelationType === "mekki" ? "Mekkî" : "Medenî"}
                 </span>

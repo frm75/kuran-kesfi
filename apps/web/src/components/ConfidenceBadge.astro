@@ -2,18 +2,21 @@
 import type { Confidence } from "@kuran/schema";
 
 /**
- * Güven derecesi rozeti — plan §12.9, DESIGN.md §1 ve §5.
+ * Güven derecesi rozeti — plan §12.9, DESIGN.md §1 ve §6.
  *
  * Konum, nüzul sırası, tarihsel olay, kıssa kronolojisi ve ayet ilişkilerinde
  * aynı üç değerli sistem kullanılır. Belirsizlik saklanmaz, gösterilir
  * (CLAUDE.md kural 5 / plan §1.5).
  *
- * Ayrışma kanalı üç katmanlı — renk tek başına anlam taşımaz:
- *   kenarlık:  düz / kesikli / noktalı
- *   işaret:    dolu / kesikli halkalı / şeffaf daire (harita pini diliyle aynı)
+ * Ayrışma üç kanaldan — renk tek başına anlam taşımaz (DESIGN.md §1):
+ *   renk:      yeşil / altın / gri   (--confidence-* token'ları)
+ *   işaret:    dolu / kesikli halka / şeffaf daire — harita pini diliyle aynı
  *   metin:     "kesin" / "muhtemel" / "rivayet"
  *
- * Sıfır JavaScript, sıfır ağ isteği: işaret satır içi SVG.
+ * Gri baskıda ve renk körlüğünde ilk kanal düşer, diğer ikisi kalır.
+ *
+ * Görsel kurallar `global.css` → `.confidence-badge` içinde; renkler
+ * `data-confidence` özniteliğine bağlı. Sıfır JavaScript, işaret satır içi SVG.
  */
 
 interface Props {
@@ -24,44 +27,10 @@ interface Props {
 }
 
 const { confidence, label, class: className } = Astro.props;
-
-const borderStyle: Record<Confidence, string> = {
-  kesin: "border-solid",
-  muhtemel: "border-dashed",
-  rivayet: "border-dotted",
-};
-
-/**
- * Metin rengi. Üç ayrı hue kullanılmadı: 12px metinde AA kontrastını
- * (≥ 4.5:1) her iki modda tutan üç ayrı hue paleti gereksiz yere şişirirdi ve
- * DESIGN.md §0'daki sakin karakteri bozardı. Ayrışma kenarlık + işaret +
- * metinle zaten üç kanaldan sağlanıyor; renk yalnızca ağırlık veriyor.
- */
-const toneClass: Record<Confidence, string> = {
-  kesin: "text-text",
-  muhtemel: "text-text-muted",
-  rivayet: "text-text-muted",
-};
 ---
 
-<span
-  class:list={[
-    "confidence-badge inline-flex items-center gap-1 rounded-sm border px-2 py-0.5 text-xs",
-    "border-line",
-    borderStyle[confidence],
-    toneClass[confidence],
-    className,
-  ]}
-  data-confidence={confidence}
->
-  <svg
-    width="8"
-    height="8"
-    viewBox="0 0 8 8"
-    aria-hidden="true"
-    focusable="false"
-    class="shrink-0"
-  >
+<span class:list={["confidence-badge", className]} data-confidence={confidence}>
+  <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true" focusable="false">
     {confidence === "kesin" && <circle cx="4" cy="4" r="3.2" fill="currentColor" />}
     {
       confidence === "muhtemel" && (

@@ -42,6 +42,8 @@ interface Target {
   subsetFile: string;
   upstreamCache: string;
   script: "arab" | "latn";
+  /** Hangi metin kumesiyle dogrulanacak. */
+  corpus: "arabic" | "latin" | "headings";
 }
 
 const TARGETS: readonly Target[] = [
@@ -51,6 +53,7 @@ const TARGETS: readonly Target[] = [
     subsetFile: "amiri-quran-arabic.woff2",
     upstreamCache: "amiri-quran.ttf",
     script: "arab",
+    corpus: "arabic",
   },
   {
     id: "scheherazade-new",
@@ -58,6 +61,7 @@ const TARGETS: readonly Target[] = [
     subsetFile: "scheherazade-new-arabic.woff2",
     upstreamCache: "scheherazade-new.ttf",
     script: "arab",
+    corpus: "arabic",
   },
   {
     id: "inter",
@@ -65,6 +69,17 @@ const TARGETS: readonly Target[] = [
     subsetFile: "inter-latin.woff2",
     upstreamCache: "inter.ttf",
     script: "latn",
+    corpus: "latin",
+  },
+  {
+    id: "playfair-display",
+    family: "Playfair Display",
+    subsetFile: "playfair-display-latin.woff2",
+    upstreamCache: "playfair-display.ttf",
+    script: "latn",
+    // Baslik fontu govde metnini hic cizmez; ceviriyazi ve meal kapsamasi
+    // aranmaz. Dogrulama sure adlari ve arayuz basliklariyla yapilir.
+    corpus: "headings",
   },
 ];
 
@@ -75,8 +90,10 @@ interface Verse {
 
 interface Corpus {
   arabic: Verse[];
-  /** Ceviriyazi + ontanimli meal — Latin fontun gercekte dizecegi metin. */
+  /** Ceviriyazi + ontanimli meal — govde fontunun gercekte dizecegi metin. */
   latin: Verse[];
+  /** Sure adlari ve arayuz basliklari — baslik fontunun dizecegi metin. */
+  headings: Verse[];
 }
 
 function loadCorpus(): Corpus {
@@ -85,12 +102,39 @@ function loadCorpus(): Corpus {
   }
   const arabic: Verse[] = [];
   const latin: Verse[] = [];
+  const headings: Verse[] = [];
+
+  // Arayuzde gecen sabit basliklar. Veriden turetilemez, elle yazilir;
+  // yeni bir baslik eklenirse buraya da eklenmelidir.
+  const UI_HEADINGS = [
+    "Kur'an-ı Kerim Keşfi",
+    "Keşfet • Oku • Anla",
+    "Sureler",
+    "Türkçe mealler",
+    "İngilizce çeviriler",
+    "Okunuşu",
+    "Kaynaklar ve atıf",
+    "Sayfa bulunamadı",
+    "Neden Farklı",
+    "Beş Keşif Kapısı",
+    "Nasıl Çalışır",
+    "Modüller",
+    "Kaynak Şeffaflığı",
+    "Bülten",
+    "Kur'an'da Bugün",
+    "Açık Kaynak",
+    "Sadaka-i Cariye",
+  ];
+  for (const [index, text] of UI_HEADINGS.entries()) {
+    headings.push({ key: `arayuz basligi ${index + 1}`, text });
+  }
 
   for (const name of readdirSync(SURAH_DIR).filter((f) => f.endsWith(".json"))) {
     const surah = JSON.parse(readFileSync(resolve(SURAH_DIR, name), "utf8")) as {
       id: number;
       slug: string;
       nameTr: string;
+      nameEn: string;
       verses: { verseNumber: number; textUthmani: string; transcriptionTr: string | null }[];
     };
     for (const verse of surah.verses) {
@@ -101,6 +145,10 @@ function loadCorpus(): Corpus {
       }
     }
     latin.push({ key: `${surah.id} sure adi`, text: `${surah.nameTr} ${surah.slug}` });
+    headings.push({
+      key: `${surah.id} sure basligi`,
+      text: `${surah.id}. ${surah.nameTr} Suresi — ${surah.nameEn}`,
+    });
   }
 
   // Ontanimli mealin tamami: arayuzde en cok gorunen Latin metin bu.
@@ -120,7 +168,7 @@ function loadCorpus(): Corpus {
     }
   }
 
-  return { arabic, latin };
+  return { arabic, latin, headings };
 }
 
 function makeShaper(
@@ -149,7 +197,10 @@ function makeShaper(
 
 async function main(): Promise<void> {
   const corpus = loadCorpus();
-  info(`dizilecek metin: ${corpus.arabic.length} Arapca ayet, ${corpus.latin.length} Latin satir`);
+  info(
+    `dizilecek metin: ${corpus.arabic.length} Arapca ayet, ${corpus.latin.length} Latin satir, ` +
+      `${corpus.headings.length} baslik`,
+  );
 
   const hb: Harfbuzz = await hbPromise;
   info(`HarfBuzz ${hb.version_string()}`);
@@ -169,7 +220,7 @@ async function main(): Promise<void> {
     const shapeSubset = makeShaper(hb, subsetSfnt, target.script);
     const shapeFull = makeShaper(hb, readFileSync(upstreamPath), target.script);
 
-    const corpusForTarget = target.script === "arab" ? corpus.arabic : corpus.latin;
+    const corpusForTarget = corpus[target.corpus];
 
     let notdef = 0;
     let mismatch = 0;

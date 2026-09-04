@@ -182,3 +182,71 @@ Kısa açıklama (Inter, --text-md, --text-secondary)
 ## 9. Onay
 Bu doküman `main` branch'e girmeden Fatih'in onayı alınır. Sonra `apps/web/src/styles/tokens.css`
 ve `tailwind.config.ts` bu değerlerden üretilir.
+
+---
+
+## 10. Kontrast düzeltmeleri — 2026-09-04
+
+§1'deki palet WCAG AA'ya göre ölçüldü ve **açık modda birkaç değer kalıyordu.**
+Metnin okunamaması bir tasarım tercihi değil hatadır (plan §1.8 "erişilebilir");
+aşağıdaki değerler asgari düzeltmeyle, hue korunarak açıldı. Ölçüm: sRGB
+bağıl parlaklık, WCAG 2.1 kontrast oranı.
+
+| Token | Mod | DESIGN.md | Ölçülen | Düzeltildi | Yeni ölçüm |
+|---|---|---|---|---|---|
+| `--text-muted` | açık | `#6B7A96` | 3,77:1 ✗ | `#5F6D86` | 4,56:1 ✓ |
+| `--success` | açık | `#6BAA6B` | 2,30:1 ✗ | `#4A774A` | 4,54:1 ✓ |
+| `--danger` | koyu | `#B85450` | 3,58:1 ✗ | `#DF6863` | 5,10:1 ✓ |
+| `--danger` | açık | `#B85450` | 3,53:1 ✗ | `#8E3F3C` | 6,26:1 ✓ |
+
+### Yeni token: `--accent-text`
+
+Açık modda `--accent` (`#A88B3F`) kağıt üzerinde **2,85:1** veriyor. Bağlantı
+metni için AA sınırı 4,5:1, anlam taşıyan kenarlık için 3:1. Altını büsbütün
+koyulaştırmak markayı bozardı; bunun yerine ikiye ayrıldı:
+
+- `--accent` — **zemin** rengi olarak kalır (CTA dolgusu, ince süs çizgisi).
+  Altın zeminde koyu lacivert metin: koyu modda 7,41:1, açık modda 5,21:1 ✓
+- `--accent-text` — altının **metin ve anlam taşıyan kenarlık** sürümü.
+  Koyu modda `#C9A756` (7,41:1), açık modda `#816A2F` (4,54:1) ✓
+
+`--accent-muted` (`#8A7238`) koyu modda 3,68:1 — DESIGN.md'de zaten "rozet
+arka planı" olarak tanımlı, **metin olarak kullanılmaz.**
+
+### Kenarlık kontrastı
+
+`--border` ve `--border-strong` yalnızca ayraçtır (1,4–1,8:1) ve öyle kalır.
+Ama **anlam taşıyan** kenarlıklar — `<SourceBadge>`'in üç sınıfı,
+`<ConfidenceBadge>` — 3:1 istiyor. Onlar `--accent-text` ve `--text-muted`
+kullanır:
+
+| | koyu | açık |
+|---|---|---|
+| altın kenarlık | 7,41:1 | 4,54:1 |
+| nötr kenarlık | 5,94:1 | 4,56:1 |
+
+## 11. Uygulama notları
+
+- **`--content-full` → `--container-map`.** Tailwind'de `max-w-full` zaten
+  `100%` demek; aynı adı kullanmak çakışırdı.
+- **`--container-arabic: 46ch`** eklendi. DESIGN.md §3'te Arapça okuma
+  genişliği yok; aynı satır uzunluğu Arapça'da daha uzun görünüyor.
+- **Playfair Display ağırlığı 600'e sabitlendi.** Ölçüldü: değişken eksen
+  (500–700) 48,7 KB, (600–700) 40,2 KB, sabit 600 **26,4 KB**. Plan §20.4
+  font bütçesi (Latin-only sayfa < 95 KB) yalnızca sonuncusuyla tutuyor.
+  Başlıklar boyutla ayrışıyor, ağırlıkla değil.
+- **JetBrains Mono indirilmedi.** `--font-mono` yalnızca birkaç yerde
+  kullanılıyor, CDN yasak, 30+ KB'lık bir font bunun için indirilmiyor;
+  `ui-monospace` yığınına düşüyor.
+- **Kod içinde hex yok.** Tek istisna: altın zemin üzerindeki CTA metni
+  `#0B1B3B` sabit yazılı — o metin temayla birlikte değişemez, çünkü zemin
+  her iki modda da altındır.
+
+### Ölçüm — bu tasarımla
+
+| | |
+|---|---|
+| CSS (tek dosya, tüm site) | 20,1 KB ham / **5,3 KB gzip** |
+| Sayfa JS | **0 bayt** |
+| Yazı tipleri | 127,1 KB (Arapçalı sayfa) / 87,8 KB (Latin-only) — bütçe 140 / 95 |
+| Üretilen sayfa | 6354 |

@@ -37,7 +37,7 @@ const MANIFEST_FILE = resolve(OUT_DIR, "manifest.json");
 
 const GOOGLE_FONTS_RAW = "https://raw.githubusercontent.com/google/fonts/main";
 
-type Coverage = "arabic" | "latin";
+type Coverage = "arabic" | "latin" | "latin-headings";
 
 interface FontSpec {
   id: string;
@@ -53,7 +53,7 @@ interface FontSpec {
    * Degisken font eksenlerinin daraltilmasi. Kullanmadigimiz bir ekseni
    * sabitlemek dosyayi ciddi kuculttugu icin acikca yaziliyor.
    */
-  variationAxes?: Record<string, number | { min: number; max: number }>;
+  variationAxes?: Record<string, number | { min: number; max: number; default?: number }>;
   /** font-face'te yazilacak agirlik araligi */
   weightRange: string;
   note: string;
@@ -80,6 +80,24 @@ const FONTS: readonly FontSpec[] = [
     variationAxes: { opsz: 16, wght: { min: 300, max: 700 } },
     weightRange: "300 700",
     note: "Arayuz ve meal metni.",
+  },
+  {
+    id: "playfair-display",
+    family: "Playfair Display",
+    upstreamPath: "ofl/playfairdisplay/PlayfairDisplay%5Bwght%5D.ttf",
+    licensePath: "ofl/playfairdisplay/OFL.txt",
+    outFile: "playfair-display-latin.woff2",
+    licenseFile: "OFL-PlayfairDisplay.txt",
+    coverage: "latin-headings",
+    // Agirlik ekseni 600'e SABITLENDI. Olculdu:
+    //   wght 500-700 degisken  48,7 KB
+    //   wght 600-700 degisken  40,2 KB
+    //   wght 600 sabit         26,4 KB
+    // Plan 20.4 font butcesi (Latin-only sayfa < 95 KB) yalnizca sonuncusuyla
+    // tutuyor. Basliklar zaten boyutla ayrisiyor, agirlikla degil.
+    variationAxes: { wght: 600 },
+    weightRange: "600",
+    note: "Baslik yazi tipi (DESIGN.md 2). Govde metninde kullanilmaz.",
   },
   {
     id: "amiri-quran",
@@ -147,6 +165,28 @@ function isNonRenderable(cp: number): boolean {
 // Kapsama listesi — uretilen veriden turetilir
 // ---------------------------------------------------------------------------
 
+/**
+ * Baslik tabani.
+ *
+ * Playfair Display yalnizca basliklarda kullaniliyor (DESIGN.md 2). Basliklar
+ * ceviriyazi (ḍ ḥ ṣ ṭ ẕ), Ibranice alinti ya da kesir isareti icermez; govde
+ * kapsamasinin tamamini tasimak olculdu ve 57,3 KB yapiyordu — plan 20.4 font
+ * butcesi (Latin-only sayfa < 95 KB) asiliyordu. Bu taban + sure adlarindaki
+ * harfler yeterli.
+ */
+const HEADING_BASE_RANGES: readonly (readonly [number, number])[] = [
+  [0x0020, 0x007e], // Temel Latin
+  [0x00c0, 0x00ff], // Latin-1 aksanli harfler (â î û ü ö ç ...)
+  [0x011e, 0x011f], // Ğ ğ
+  [0x0130, 0x0131], // İ ı
+  [0x015e, 0x015f], // Ş ş
+  [0x2013, 0x2014], // – —
+  [0x2018, 0x201d], // ' ' " "
+  [0x2022, 0x2022], // •
+  [0x2026, 0x2026], // …
+  [0x203a, 0x203a], // ›
+];
+
 interface Coverages {
   /**
    * Uthmani ayet metninde gecen kod noktalari. Arapca fontun bunlari
@@ -161,6 +201,8 @@ interface Coverages {
    */
   arabicExtra: number[];
   latin: number[];
+  /** Yalnizca basliklarda gecen kod noktalari — Playfair Display icin. */
+  latinHeadings: number[];
   derivedFrom: string;
 }
 
@@ -204,6 +246,7 @@ function deriveCoverages(): Coverages {
       arabicRequired: string[];
       arabicExtra: string[];
       latin: string[];
+      latinHeadings: string[];
     };
     const parse = (list: string[]): number[] =>
       list.map((hex) => Number.parseInt(hex, 16)).sort((a, b) => a - b);
@@ -211,11 +254,13 @@ function deriveCoverages(): Coverages {
       arabicRequired: parse(stored.arabicRequired),
       arabicExtra: parse(stored.arabicExtra),
       latin: parse(stored.latin),
+      latinHeadings: parse(stored.latinHeadings),
       derivedFrom: "codepoints.json",
     };
   }
 
   const arabicRequired = new Set<number>();
+  const headings = new Set<number>();
   const arabic = new Set<number>();
   const other = new Set<number>();
   const nonRenderable = new Map<number, number>();
@@ -238,8 +283,15 @@ function deriveCoverages(): Coverages {
   const surahDir = resolve(DATA_DIR, "surah");
   for (const name of readdirSync(surahDir).filter((f) => f.endsWith(".json"))) {
     const parsed = JSON.parse(readFileSync(resolve(surahDir, name), "utf8")) as {
+      nameTr: string;
+      nameEn: string;
       verses: { textUthmani: string }[];
     };
+    // Sure adlari baslik olarak cizilir; harfleri baslik kapsamasina girer.
+    for (const char of `${parsed.nameTr} ${parsed.nameEn}`) {
+      const cp = char.codePointAt(0);
+      if (cp !== undefined && !isNonRenderable(cp) && !isArabicBlock(cp)) headings.add(cp);
+    }
     for (const verse of parsed.verses) {
       for (const char of verse.textUthmani) {
         const cp = char.codePointAt(0);
@@ -283,12 +335,18 @@ function deriveCoverages(): Coverages {
   for (const cp of expandRanges(UI_BASE_RANGES)) {
     if (!isNonRenderable(cp)) other.add(cp);
   }
+  for (const cp of expandRanges(HEADING_BASE_RANGES)) {
+    if (!isNonRenderable(cp)) headings.add(cp);
+  }
+  // Baslik kumesi govde kumesinin alt kumesidir; Inter zaten hepsini tasiyor.
+  for (const cp of headings) other.add(cp);
   for (const cp of arabicRequired) arabic.delete(cp);
 
   const result: Coverages = {
     arabicRequired: [...arabicRequired].sort((a, b) => a - b),
     arabicExtra: [...arabic].sort((a, b) => a - b),
     latin: [...other].sort((a, b) => a - b),
+    latinHeadings: [...headings].sort((a, b) => a - b),
     derivedFrom: `${scannedFiles} JSON dosyasi + arayuz tabani`,
   };
 
@@ -307,6 +365,7 @@ function deriveCoverages(): Coverages {
         arabicRequired: hex(result.arabicRequired),
         arabicExtra: hex(result.arabicExtra),
         latin: hex(result.latin),
+        latinHeadings: hex(result.latinHeadings),
       },
       null,
       2,
@@ -381,7 +440,8 @@ async function main(): Promise<void> {
   const coverages = deriveCoverages();
   info(
     `kapsama (${coverages.derivedFrom}): ayet metni ${coverages.arabicRequired.length} ` +
-      `(+${coverages.arabicExtra.length} arap harfli alinti), latin ${coverages.latin.length}`,
+      `(+${coverages.arabicExtra.length} arap harfli alinti), latin ${coverages.latin.length}, ` +
+      `baslik ${coverages.latinHeadings.length}`,
   );
 
   mkdirSync(OUT_DIR, { recursive: true });
@@ -392,10 +452,12 @@ async function main(): Promise<void> {
     // Zorunlu kume: karsilanmazsa build durur.
     // Istenen kume: zorunlu + "olursa iyi olur" (arap harfli alintilar).
     const isArabic = spec.coverage === "arabic";
-    const mandatory = isArabic ? coverages.arabicRequired : coverages.latin;
+    const latinSet =
+      spec.coverage === "latin-headings" ? coverages.latinHeadings : coverages.latin;
+    const mandatory = isArabic ? coverages.arabicRequired : latinSet;
     const wanted = isArabic
       ? [...coverages.arabicRequired, ...coverages.arabicExtra].sort((a, b) => a - b)
-      : coverages.latin;
+      : latinSet;
 
     const original = await download(spec.upstreamPath, `${spec.id}.ttf`);
     const before = readFontInfo(original);

@@ -1,57 +1,487 @@
 ---
 import Base from "~/layouts/Base.astro";
-import { getAuthorsIndex, getDefaultAuthor, getSurahsIndex } from "~/lib/data";
+import Section from "~/components/Section.astro";
+import SourceBadge from "~/components/SourceBadge.astro";
+import VerseArabic from "~/components/VerseArabic.astro";
+import Translation from "~/components/Translation.astro";
+import {
+  getArabicSource,
+  getAuthorsIndex,
+  getDefaultAuthor,
+  getSourceForAuthor,
+  getSources,
+  getSurahsIndex,
+  getTranscriptionSource,
+  getVerseDetail,
+  verseLabel,
+} from "~/lib/data";
 
 /**
- * Geçici ana sayfa.
+ * Tanıtım sayfası — plan §14.1, DESIGN.md §7.
  *
- * Plan §14 ana sayfayı beş keşif kapısı + Keşfet + Bugünün Keşfi olarak
- * tarif ediyor; onlar Faz 1 işi. Şu an yalnızca klasik okuma ekranına giriş
- * ve neyin hazır olduğunun dürüst özeti var.
+ * On iki bölüm, planın verdiği sırayla. Uygulamanın kendi ana sayfası (beş
+ * keşif kapısı, plan §14) ayrıdır ve Faz 1'de gelir.
+ *
+ * DÜRÜSTLÜK KURALI: hazır olmayan bölüm "yakında" diye işaretlenir, çalışıyor
+ * gibi gösterilmez. Bülten için form KONULMADI — arkasında sunucu yok ve CSP
+ * `form-action 'none'` diyor; çalışmayan bir kutu koymak kullanıcıyı kandırmak
+ * olurdu (plan §1.5, CLAUDE.md kural 5).
  */
 
-const { totals } = getSurahsIndex();
+const { surahs, totals } = getSurahsIndex();
 const authors = getAuthorsIndex().authors;
-const turkishCount = authors.filter((author) => author.language === "tr").length;
+const turkishAuthors = authors.filter((a) => a.language === "tr");
+const englishAuthors = authors.filter((a) => a.language === "en");
+const sources = getSources().sources;
 const defaultAuthor = getDefaultAuthor();
+
+/**
+ * "Kur'an'da Bugün" — build gününe göre seçilir.
+ *
+ * Sunucu tarafı kod yok; site tamamen statik. Bu yüzden ayet BUILD anında
+ * seçilir ve bir sonraki build'e kadar aynı kalır. Sayfada bu açıkça yazıyor;
+ * "her gün değişir" denip değişmemesi yalan olurdu. Günlük yenilenmesi
+ * istenirse günde bir kez `pnpm build && pnpm deploy` yeterli.
+ */
+const buildDate = new Date();
+const dayOfYear = Math.floor(
+  (buildDate.getTime() - new Date(buildDate.getFullYear(), 0, 0).getTime()) / 86_400_000,
+);
+const featuredIndex = (dayOfYear * 137) % totals.verses;
+let running = 0;
+let featuredSurahId = 1;
+let featuredVerseNumber = 1;
+for (const surah of surahs) {
+  if (running + surah.verseCount > featuredIndex) {
+    featuredSurahId = surah.id;
+    featuredVerseNumber = featuredIndex - running + 1;
+    break;
+  }
+  running += surah.verseCount;
+}
+const featured = getVerseDetail(featuredSurahId, featuredVerseNumber);
+const featuredTranslation = featured.translations.find(
+  (t) => t.authorSlug === defaultAuthor.slug,
+);
+const featuredDateLabel = buildDate.toLocaleDateString("tr-TR", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+
+const arabicSource = getArabicSource();
+const transcriptionSource = getTranscriptionSource();
+const defaultAuthorSource = getSourceForAuthor(defaultAuthor);
+
+/** Beş keşif kapısı — plan §2. Hiçbiri henüz hazır değil. */
+const gates = [
+  { name: "Harita", note: "Ayetlerin geçtiği yerler, kıssaların coğrafyası" },
+  { name: "Zaman", note: "Nüzul sırası ve tarihsel olaylar aynı çizelgede" },
+  { name: "Kavram", note: "Sabır, adalet, tevekkül — kavramdan ayete" },
+  { name: "Kelime", note: "Kök ağacı: bir kökün Kur'an'daki bütün türevleri" },
+  { name: "İlkeler", note: "Ayetlerden çıkan ilkeler, kaynağıyla" },
+];
+
+/** Modüller — plan §2. Durum dürüstçe işaretlenir. */
+const modules = [
+  { name: "Klasik okuma", state: "hazir", note: `${totals.surahs} sure, ${totals.verses} ayet` },
+  { name: "Meal karşılaştırma", state: "hazir", note: `${authors.length} meal yan yana` },
+  { name: "Çeviriyazı", state: "hazir", note: "Her ayetin Latin harfli okunuşu" },
+  { name: "Kaynak şeffaflığı", state: "hazir", note: "Her bilgi kaynağıyla" },
+  { name: "Kelime ve kök", state: "veri-hazir", note: "77.429 kelime, 1.641 kök — arayüz yazılmadı" },
+  { name: "Kıssalar", state: "yakinda", note: "Kıssa akışı ve kronoloji" },
+  { name: "Kavram ağı", state: "yakinda", note: "Kavramdan ayete, ayetten kavrama" },
+  { name: "Harita", state: "yakinda", note: "Liste alternatifi zorunlu" },
+  { name: "Hoca notları", state: "yakinda", note: "Kaynağı ve güven derecesiyle" },
+  { name: "Ses (kıraat)", state: "yakinda", note: "Lisans uyumlu kârîler" },
+] as const;
+
+const stateLabel = {
+  hazir: "hazır",
+  "veri-hazir": "verisi hazır",
+  yakinda: "yakında",
+} as const;
 ---
 
 <Base
-  title="Kur'an-ı Kerim Keşif Platformu"
-  description="Ücretsiz, reklamsız, üyeliksiz, takipsiz. Kur'an-ı Kerim metni ve mealleri, kaynağıyla birlikte."
+  title="Kur'an-ı Kerim Keşfi — Keşfet • Oku • Anla"
+  description="Ücretsiz, reklamsız, üyeliksiz, takipsiz. Kur'an-ı Kerim metni, çeviriyazısı ve mealleri; her bilgi kaynağıyla birlikte."
+  arabic
+  bareHeader
 >
-  <main id="icerik" class="mx-auto max-w-(--container-measure) px-4 py-8">
-    <h1 class="m-0 text-3xl">Kur'an-ı Kerim Keşif Platformu</h1>
-    <p class="text-text-muted mt-2">
-      Ücretsiz, reklamsız, üyeliksiz, takipsiz. Her bilgi kaynağıyla birlikte
-      gösterilir; farklı görüşler yan yana durur.
-    </p>
+  <main id="icerik">
+    {/* --- 1. Hero ------------------------------------------------------- */}
+    <header class="mx-auto max-w-wide px-4 pt-16 pb-12 text-center md:pt-24">
+      <h1 class="text-accent m-0 text-4xl md:text-5xl">Kur'an-ı Kerim Keşfi</h1>
+      <p class="text-text-secondary mt-4 text-lg tracking-widest uppercase">
+        Keşfet <span aria-hidden="true">•</span> Oku <span aria-hidden="true">•</span> Anla
+      </p>
+      <p class="text-text-secondary mx-auto mt-6 max-w-normal text-md">
+        Kur'an-ı Kerim metni, Latin harfli okunuşu ve {turkishAuthors.length} Türkçe meal —
+        her biri kaynağıyla birlikte. Ücretsiz, reklamsız, üyeliksiz, takipsiz.
+      </p>
+      <p class="mt-8">
+        <a href="/sureler" class="cta">Sureleri aç</a>
+        <a href="#kaynaklar" class="cta cta-ghost">Kaynaklarımız</a>
+      </p>
+    </header>
 
-    <nav aria-label="Bölümler" class="mt-8">
-      <ul class="m-0 list-none space-y-3 p-0">
-        <li>
-          <a href="/sureler" class="text-lg">Sureler</a>
-          <p class="text-text-muted m-0 text-sm">
-            {totals.surahs} sure, {totals.verses} ayet. Arapça metin ve
-            {" "}{defaultAuthor.name} meali.
+    {/* --- 2. Neden Farklı ----------------------------------------------- */}
+    <Section
+      id="neden-farkli"
+      title="Neden farklı"
+      lead="Bu platform kâr amacı gütmez, Allah rızası için hazırlanmıştır. Sözün karşılığı koddadır."
+    >
+      <ul class="grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3">
+        <li class="card">
+          <h3 class="card-title">Ücretsiz ve reklamsız</h3>
+          <p class="card-note">Tek bir reklam, tek bir ödeme duvarı yok.</p>
+        </li>
+        <li class="card">
+          <h3 class="card-title">Üyeliksiz</h3>
+          <p class="card-note">Hesap açmadan her şeye erişilir. Tercihler kendi cihazınızda kalır.</p>
+        </li>
+        <li class="card">
+          <h3 class="card-title">Takipsiz</h3>
+          <p class="card-note">
+            Analitik, çerez, piksel yok. Yazı tipleri bile kendi sunucumuzdan gelir —
+            tarayıcınız üçüncü bir siteye istek atmaz.
           </p>
         </li>
-        <li>
-          <a href="/fatiha-suresi/1" class="text-lg">Örnek ayet sayfası</a>
-          <p class="text-text-muted m-0 text-sm">
-            Bir ayetin {turkishCount} Türkçe meali yan yana.
+        <li class="card">
+          <h3 class="card-title">JavaScript'siz çalışır</h3>
+          <p class="card-note">
+            Okuma ekranlarında <strong>0 bayt</strong> JavaScript var. Sayfa güvenlik
+            başlığıyla betik çalıştırmayı zaten yasaklıyor.
           </p>
+        </li>
+        <li class="card">
+          <h3 class="card-title">Kaynaksız içerik yok</h3>
+          <p class="card-note">
+            Kaynağı olmayan bir metin siteye giremez; kural yorum değil, derlemede
+            zorlanıyor.
+          </p>
+        </li>
+        <li class="card">
+          <h3 class="card-title">Açık kaynak</h3>
+          <p class="card-note">Kod da veri de açık; herkes kontrol edebilir.</p>
         </li>
       </ul>
-    </nav>
+    </Section>
 
-    <section class="border-line mt-10 border-t pt-6">
-      <h2 class="text-lg">Bu sayfa geçici</h2>
-      <p class="text-text-muted m-0 text-sm">
-        Ana sayfanın asıl hâli beş keşif kapısıyla açılacak: kıssalar, kavramlar,
-        kelime kökleri, zaman çizelgesi ve harita. Şu an yalnızca klasik okuma
-        ekranı hazır.
+    {/* --- 3. Beş Keşif Kapısı ------------------------------------------- */}
+    <Section
+      id="kesif-kapilari"
+      title="Beş keşif kapısı"
+      lead="Kur'an'a beş ayrı yoldan girilir; hepsi aynı ayete çıkar. Bu kapılar henüz açılmadı — altyapıları hazırlanıyor."
+    >
+      <ul class="grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2 lg:grid-cols-5">
+        {
+          gates.map((gate) => (
+            <li class="card">
+              <h3 class="card-title">{gate.name}</h3>
+              <p class="card-note">{gate.note}</p>
+              <p class="state state-yakinda">yakında</p>
+            </li>
+          ))
+        }
+      </ul>
+    </Section>
+
+    {/* --- 4. Nasıl Çalışır ---------------------------------------------- */}
+    <Section
+      id="nasil-calisir"
+      title="Nasıl çalışır"
+      lead="Her yol ayete çıkar; her ayet başka bir yola açılır. Keşif zinciri kopmaz."
+      narrow
+    >
+      <ol class="steps">
+        <li>
+          <strong>Bir ayet açarsınız.</strong> Arapça metin, Latin harfli okunuşu ve
+          seçtiğiniz mealler yan yana durur.
+        </li>
+        <li>
+          <strong>Ayetin bağlantılarını görürsünüz.</strong> Hangi kıssada geçiyor, hangi
+          kavrama bağlı, kökü nereye uzanıyor, nerede ve ne zaman indi.
+        </li>
+        <li>
+          <strong>Bir bağlantıyı takip edersiniz.</strong> Kavramdan başka ayetlere,
+          oradan başka kıssalara. Gittiğiniz yol üstte durur, geri dönebilirsiniz.
+        </li>
+        <li>
+          <strong>Her adımda kaynağı görürsünüz.</strong> Hangi meal, hangi tefsir, hangi
+          rivayet — ve bilginin ne kadar kesin olduğu.
+        </li>
+      </ol>
+    </Section>
+
+    {/* --- 5. Modüller ---------------------------------------------------- */}
+    <Section
+      id="moduller"
+      title="Modüller"
+      lead="Neyin hazır olduğu, neyin yolda olduğu açıkça yazılıdır."
+    >
+      <ul class="grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          modules.map((module) => (
+            <li class="card">
+              <h3 class="card-title">{module.name}</h3>
+              <p class="card-note">{module.note}</p>
+              <p class:list={["state", `state-${module.state}`]}>{stateLabel[module.state]}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </Section>
+
+    {/* --- 6. Kaynaklar --------------------------------------------------- */}
+    <Section
+      id="kaynaklar"
+      title="Kaynaklar"
+      lead="Metin nereden geliyor, kim hazırladı, hangi lisansla kullanılıyor."
+    >
+      <ul class="grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2">
+        {
+          sources.map((source) => (
+            <li class="card">
+              <h3 class="card-title">{source.name}</h3>
+              {source.author && <p class="card-note">{source.author}</p>}
+              <p class="card-note">{source.reference}</p>
+              <p class="text-text-muted mt-2 mb-0 text-xs">Lisans: {source.license}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="text-text-secondary mt-6 text-sm">
+        {turkishAuthors.length} Türkçe meal, {englishAuthors.length} İngilizce çeviri.
+        Tam liste ve lisans ayrıntıları: <a href="/kaynaklar">Kaynak Şeffaflığı</a>.
       </p>
-    </section>
+    </Section>
+
+    {/* --- 7. Kaynak Şeffaflığı ------------------------------------------ */}
+    <Section
+      id="kaynak-seffafligi"
+      title="Kaynak şeffaflığı"
+      lead="Platform kendi yorumunu üretmez. Tefsir, meal, hoca açıklaması — hepsi bir kaynağa bağlı yorumdur; kaynağıyla gösterilir, tek doğru gibi sunulmaz, farklı görüşler yan yana verilir."
+      narrow
+    >
+      <div class="flex flex-wrap gap-3">
+        <SourceBadge contentClass="kaynakli" sources={[arabicSource]} label="Arapça metin" />
+        <SourceBadge
+          contentClass="alternatif"
+          sources={[defaultAuthorSource]}
+          label="Alternatif görüş örneği"
+        />
+        <SourceBadge contentClass="platform" label="Kavram eşleştirmesi" />
+      </div>
+      <p class="text-text-secondary mt-6 text-sm">
+        Üç rozet üç şeyi ayırır: <strong>kaynaklı bilgi</strong>, <strong>alternatif
+        görüş</strong> ve <strong>platformun kendi derlemesi</strong>. Renk körlüğünde
+        ve gri baskıda da ayrışsınlar diye kenarlık biçimi ve metin de değişir.
+      </p>
+    </Section>
+
+    {/* --- 8. Bülten ------------------------------------------------------ */}
+    <Section
+      id="bulten"
+      title="Bülten"
+      lead="Günlük veya haftalık bir ayet, bir ilke — e-postayla."
+      narrow
+    >
+      <p class="text-text-secondary m-0">
+        Henüz açılmadı. Kayıt formu koymuyoruz çünkü arkasında çalışan bir sunucu yok;
+        çalışmayan bir kutu göstermek sizi yanıltmak olurdu. Bülten Faz 3'te,
+        e-posta adresi dışında hiçbir veri toplamadan gelecek.
+      </p>
+      <p class="state state-yakinda mt-4">yakında</p>
+    </Section>
+
+    {/* --- 9. Kur'an'da Bugün -------------------------------------------- */}
+    <Section
+      id="bugun"
+      title="Kur'an'da bugün"
+      lead={`${featuredDateLabel} — ${verseLabel(featured.surahNameTr, featured.verseNumber)}`}
+      narrow
+    >
+      <VerseArabic
+        text={featured.textUthmani}
+        verseNumber={featured.verseNumber}
+        label={verseLabel(featured.surahNameTr, featured.verseNumber)}
+        large
+      />
+
+      {
+        featured.transcriptionTr !== null && (
+          <p lang="tr" class="transcription">{featured.transcriptionTr}</p>
+        )
+      }
+
+      <div class="mt-4 flex flex-wrap gap-2">
+        <SourceBadge contentClass="kaynakli" sources={[arabicSource]} label="Arapça metin" />
+        <SourceBadge
+          contentClass="kaynakli"
+          sources={[transcriptionSource]}
+          label="Okunuş (çeviriyazı)"
+        />
+        <SourceBadge
+          contentClass="kaynakli"
+          sources={[defaultAuthorSource]}
+          label={`${defaultAuthor.name} meali`}
+        />
+      </div>
+
+      {
+        featuredTranslation !== undefined && (
+          <div class="mt-6">
+            <Translation
+              authorName={featuredTranslation.authorName}
+              authorSlug={featuredTranslation.authorSlug}
+              text={featuredTranslation.text}
+              footnotes={featuredTranslation.footnotes}
+              sourceDeclaredBy="bu bölümdeki kaynak rozetleri"
+              anchorPrefix={`bugun-${featured.surahId}-${featured.verseNumber}`}
+            />
+          </div>
+        )
+      }
+
+      <p class="mt-6">
+        <a href={`/${featured.surahSlug}/${featured.verseNumber}`} class="cta">
+          Bu ayetin bütün meallerini gör
+        </a>
+      </p>
+      <p class="text-text-muted mt-4 text-xs">
+        Site tamamen statiktir; bu ayet her yeni yayında değişir, saat başı değil.
+      </p>
+    </Section>
+
+    {/* --- 10. Açık Kaynak ------------------------------------------------ */}
+    <Section
+      id="acik-kaynak"
+      title="Açık kaynak"
+      lead="Kod da veri de açıktır. İddia edilen her şey kontrol edilebilir."
+      narrow
+    >
+      <dl class="license-list">
+        <dt>Kod</dt>
+        <dd>MIT</dd>
+        <dt>Kendi derlediğimiz veri</dt>
+        <dd>CC BY-NC-SA 4.0</dd>
+        <dt>Üçüncü taraf metinler</dt>
+        <dd>Kendi lisansları geçerlidir — Arapça metin, mealler ve çeviriyazı bize ait değildir.</dd>
+      </dl>
+      <p class="text-text-secondary mt-6 text-sm">
+        Hata bildirimi, düzeltme ve katkı beklenmektedir. Özellikle meal metinlerindeki
+        dizgi hataları ve kaynak atıflarındaki eksikler bildirilirse düzeltilir.
+      </p>
+    </Section>
+
+    {/* --- 11. Sadaka-i Cariye ------------------------------------------- */}
+    <Section id="sadaka" title="Sadaka-i cariye" narrow>
+      <p class="text-text-secondary m-0 text-md">
+        Bu platform Allah rızası için hazırlanmıştır. Kâr amacı gütmez, bağış toplamaz,
+        reklam almaz. Ne satmaya ne de veri toplamaya çalışır. Faydası olursa bir
+        sadaka-i cariye olması ümit edilir.
+      </p>
+    </Section>
   </main>
 </Base>
+
+<style is:global>
+  /* Landing'e özgü, DESIGN.md §6 ve §7'nin karşılığı. */
+
+  .cta {
+    display: inline-block;
+    margin: var(--space-1) var(--space-2) var(--space-1) 0;
+    padding: var(--space-3) var(--space-6);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-md);
+    background-color: var(--accent);
+    /* Altın zeminde koyu lacivert metin: karanlıkta 7,41:1, açıkta 5,21:1 */
+    color: #0b1b3b;
+    font-weight: var(--fw-semi);
+    text-decoration: none;
+    transition: background-color var(--duration-fast) var(--ease-out);
+  }
+  .cta:hover {
+    background-color: var(--accent-hover);
+    border-color: var(--accent-hover);
+    color: #0b1b3b;
+  }
+  .cta-ghost {
+    background-color: transparent;
+    color: var(--accent-text);
+  }
+  .cta-ghost:hover {
+    background-color: transparent;
+    color: var(--accent-hover);
+  }
+
+  .card {
+    padding: var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-elevated);
+  }
+  .card-title {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: var(--text-lg);
+  }
+  .card-note {
+    margin: var(--space-2) 0 0;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    line-height: var(--lh-normal);
+  }
+
+  /* Durum etiketi: renk + metin. Renk tek başına anlam taşımaz. */
+  .state {
+    display: inline-block;
+    margin: var(--space-3) 0 0;
+    padding: 0.1em 0.5em;
+    border: 1px solid currentColor;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+  }
+  .state-hazir {
+    color: var(--success);
+    border-style: solid;
+  }
+  .state-veri-hazir {
+    color: var(--warning);
+    border-style: dashed;
+  }
+  .state-yakinda {
+    color: var(--text-muted);
+    border-style: dotted;
+  }
+
+  .steps {
+    margin: 0;
+    padding-inline-start: var(--space-6);
+    color: var(--text-secondary);
+    line-height: var(--lh-relaxed);
+  }
+  .steps li + li {
+    margin-top: var(--space-4);
+  }
+  .steps strong {
+    color: var(--text-primary);
+  }
+
+  .license-list {
+    margin: 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-2) var(--space-6);
+    color: var(--text-secondary);
+  }
+  .license-list dt {
+    color: var(--text-primary);
+    font-weight: var(--fw-semi);
+  }
+  .license-list dd {
+    margin: 0;
+  }
+</style>

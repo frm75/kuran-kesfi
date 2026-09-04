@@ -1,20 +1,37 @@
 @import "tailwindcss";
 
 /* =============================================================================
-   Yazı tipleri
+   Kur'an-ı Kerim Keşfi — tasarım sistemi
 
-   Kendi sunucumuzdan servis edilir. Google Fonts CDN'i kullanılmaz: font
-   isteği de IP adresi ve Referer taşır, yani üçüncü bir tarafa ziyaretçinin
-   hangi sayfayı açtığı bilgisini verir (plan §1.3, §1.7).
+   TEK KAYNAK: docs/DESIGN.md (CLAUDE.md → "docs/DESIGN.md tasarım sisteminin
+   tek kaynağıdır"). Buradaki her değer oradan gelir; hex/px kod içine gömülmez,
+   token üzerinden okunur.
 
-   Dosyalar `pnpm fonts` ile üretilir; kapsama listesi uydurulmaz, üretilen
-   verideki kod noktalarından türetilir. Ayrıntı: scripts/fonts/build_fonts.ts
-   ve apps/web/public/fonts/manifest.json. Hepsi SIL OFL 1.1; lisans metinleri
-   aynı dizinde.
+   İki katman var:
+     1. `:root` üzerinde DESIGN.md'nin KENDİ token adları (--bg-primary,
+        --accent, --space-4 …). Belgeyi okuyup kod yazan biri bunları bulur.
+     2. `@theme inline` ile Tailwind ad alanına köprü (--color-bg-primary …),
+        böylece `bg-bg-primary`, `text-accent` gibi yardımcı sınıflar üretilir.
+        `inline` olması önemli: değer kopyalanmaz, `var()` referansı kalır —
+        tema değişince yardımcı sınıflar da değişir.
+
+   Karanlık mod BİRİNCİL (DESIGN.md §1): temel değerler karanlıktır, açık mod
+   üzerine yazar.
    ========================================================================== */
 
-/* Arap harfleri: bu aralıklar sayfada geçmiyorsa tarayıcı dosyayı hiç
-   indirmez. Latin-only sayfalar 39 KB'ı boşuna çekmez. */
+/* =============================================================================
+   Yazı tipleri — kendi sunucumuzdan
+
+   Google Fonts CDN kullanılmaz. Font isteği de IP adresi ve Referer taşır;
+   üçüncü bir tarafa ziyaretçinin hangi sayfayı açtığını söyler (plan §1.3,
+   §1.7; CLAUDE.md).
+
+   Dosyalar `pnpm fonts` ile üretilir, `pnpm fonts:verify` HarfBuzz ile
+   doğrular. Kapsama listesi uydurulmaz, üretilen veriden türetilir.
+   Ayrıntı: apps/web/public/fonts/manifest.json. Hepsi SIL OFL 1.1.
+   ========================================================================== */
+
+/* Arap harfleri: bu aralıklar sayfada geçmiyorsa tarayıcı dosyayı indirmez. */
 @font-face {
   font-family: "Amiri Quran";
   src: url("/fonts/amiri-quran-arabic.woff2") format("woff2");
@@ -24,8 +41,7 @@
   unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
 }
 
-/* İkinci Arapça seçeneği. Öntanımlı değil; yalnızca kullanıcı seçerse
-   (--font-quran değişince) indirilir. */
+/* İkinci Arapça seçeneği; öntanımlı değil, yalnızca seçilirse indirilir. */
 @font-face {
   font-family: "Scheherazade New";
   src: url("/fonts/scheherazade-new-arabic.woff2") format("woff2");
@@ -35,8 +51,7 @@
   unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
 }
 
-/* Değişken font: 300-700 tek dosyada. opsz ekseni sabitlendiği için
-   font-optical-sizing ayarı gerekmez. */
+/* Gövde: değişken font, 300–700 tek dosyada. */
 @font-face {
   font-family: "Inter";
   src: url("/fonts/inter-latin.woff2") format("woff2");
@@ -45,126 +60,266 @@
   font-display: swap;
 }
 
-/* =============================================================================
-   Tasarım token'ları — docs/DESIGN.md
+/* Başlık: ağırlık 600'e sabitlendi (bkz. scripts/fonts/build_fonts.ts —
+   değişken eksen 48,7 KB, sabit 26,4 KB; plan §20.4 font bütçesi).
+   Başlıklar boyutla ayrışır, ağırlıkla değil. */
+@font-face {
+  font-family: "Playfair Display";
+  src: url("/fonts/playfair-display-latin.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
 
-   Renkler OKLCH: algısal olarak eşit adımlı, açık/koyu geçişte parlaklık
-   kayması olmaz. Karanlık mod ayrı ayarlanmıştır, açık modun ters çevrilmişi
-   değildir (plan §22: "karanlık mod birinci sınıf").
+/* =============================================================================
+   §1 Renk token'ları — DESIGN.md
+
+   Karanlık mod birincildir; temel değerler burada.
    ========================================================================== */
 
-/* Karanlık mod: hem sistem tercihi hem de kullanıcının açık seçimi.
-   data-theme="dark" sistem tercihini ezer; data-theme="light" da öyle. */
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+:root {
+  color-scheme: dark light;
 
-@theme {
-  /* --- Yazı tipleri ---------------------------------------------------- */
-  /* "Amiri Quran" gövde yığınında da var: meal ve dipnotların içinde geçen
-     Arap harfli alıntılar (7 kod noktası, U+06AF dahil) Inter'de yok;
-     tarayıcı karakter bazında bir sonraki aileye düşer. */
-  --font-sans: "Inter", "Amiri Quran", system-ui, -apple-system, "Segoe UI", sans-serif;
-  /* Source Serif henüz kendi sunucumuzda değil — DESIGN.md'deki serif kararı
-     açık olduğu için ölçüsü belli olmayan bir font indirilmedi. Georgia
-     her iki masaüstü sisteminde de var; karar netleşince eklenir. */
-  --font-serif: Georgia, "Times New Roman", serif;
-  --font-quran: "Amiri Quran", "Scheherazade New", serif;
+  /* --- Zemin --- */
+  --bg-primary: #0b1b3b; /* koyu lacivert */
+  --bg-elevated: #122649; /* kart, panel */
+  --bg-overlay: #1a3059; /* modal, dropdown */
 
-  /* --- Tip ölçeği ------------------------------------------------------ */
-  --text-xs: 0.75rem;
-  --text-xs--line-height: 1.5;
-  --text-sm: 0.875rem;
-  --text-sm--line-height: 1.6;
-  --text-base: 1rem;
-  --text-base--line-height: 1.7;
-  --text-lg: 1.125rem;
-  --text-lg--line-height: 1.65;
-  --text-xl: 1.5rem;
-  --text-xl--line-height: 1.4;
-  --text-2xl: 1.875rem;
-  --text-2xl--line-height: 1.3;
-  --text-3xl: 2.25rem;
-  --text-3xl--line-height: 1.2;
+  /* --- Metin --- */
+  --text-primary: #f5efe0; /* kağıt tonu */
+  --text-secondary: #c9d3e8;
+  --text-muted: #8a99b8;
 
-  /* Arapça kendi ölçeğini kullanır — aynı punto Arapça'da çok daha küçük
-     okunur. Satır aralığı 2.1'den aşağı inmez: hareke ve şedde üst üste biner. */
-  --text-arabic: 1.75rem;
-  --text-arabic--line-height: 2.1;
-  --text-arabic-lg: 2.25rem;
-  --text-arabic-lg--line-height: 2.1;
+  /* --- Vurgu (altın) --- */
+  --accent: #c9a756;
+  --accent-hover: #d6b76a;
+  --accent-muted: #8a7238; /* pasif altın — ZEMİN olarak kullanılır */
+  /*
+   * Metin ve anlam taşıyan kenarlık için altın.
+   *
+   * DESIGN.md'de yok, kontrast denetiminden sonra eklendi: açık modda
+   * --accent (#A88B3F) kağıt üzerinde 2,85:1 veriyor; bağlantı metni için
+   * AA sınırı 4,5:1, anlam taşıyan kenarlık için 3:1. Karanlık modda
+   * --accent zaten 7,41:1 olduğu için aynı değer. Ölçümler: DESIGN.md
+   * "Kontrast düzeltmeleri".
+   */
+  --accent-text: #c9a756;
 
-  /* --- Boşluk (4px tabanlı) -------------------------------------------- */
-  --spacing: 0.25rem;
+  /* --- Kenarlık --- */
+  --border: #1f3560;
+  --border-strong: #2a4676;
 
-  /* --- Köşe yarıçapı --------------------------------------------------- */
-  --radius-sm: 4px;
-  --radius-DEFAULT: 8px;
-  --radius-lg: 16px;
-
-  /* --- Okuma genişliği -------------------------------------------------- */
-  --container-measure: 68ch;
-  --container-measure-arabic: 46ch;
-
-  /* --- Hareket ---------------------------------------------------------- */
-  --ease-out-soft: cubic-bezier(0.2, 0, 0, 1);
-  --duration-fast: 150ms;
-  --duration-DEFAULT: 220ms;
-  --duration-slow: 300ms;
+  /* --- Durum --- */
+  --success: #6baa6b;
+  --warning: #c9a756;
+  --danger: #df6863; /* DESIGN.md #B85450 → 3,58:1 kalıyordu, açıldı */
 }
 
-/* -----------------------------------------------------------------------------
-   Renk token'ları
-   -------------------------------------------------------------------------- */
+/* Açık mod — sistem tercihi, kullanıcı açıkça "dark" seçmediyse */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg-primary: #f5efe0;
+    --bg-elevated: #ffffff;
+    --bg-overlay: #fbf7ea;
 
-@theme {
-  --color-bg: oklch(98.5% 0.005 85);
-  --color-bg-raised: oklch(100% 0 0);
-  --color-bg-sunken: oklch(96% 0.006 85);
-  --color-text: oklch(24% 0.01 265);
-  --color-text-muted: oklch(48% 0.012 265);
-  --color-text-faint: oklch(62% 0.01 265);
-  --color-line: oklch(90% 0.006 85);
-  --color-accent: oklch(52% 0.14 268);
-  --color-accent-weak: oklch(95% 0.03 268);
-  --color-focus: oklch(60% 0.18 268);
-}
+    --text-primary: #0b1b3b;
+    --text-secondary: #3a4a6b;
+    --text-muted: #5f6d86; /* DESIGN.md #6B7A96 → 3,77:1 kalıyordu */
 
-/* Sistem karanlık tercihi — kullanıcı açıkça "light" seçmediyse */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --color-bg: oklch(19% 0.012 265);
-    --color-bg-raised: oklch(23% 0.014 265);
-    --color-bg-sunken: oklch(16% 0.01 265);
-    --color-text: oklch(93% 0.006 85);
-    --color-text-muted: oklch(68% 0.012 265);
-    --color-text-faint: oklch(52% 0.012 265);
-    --color-line: oklch(29% 0.014 265);
-    --color-accent: oklch(72% 0.13 268);
-    --color-accent-weak: oklch(28% 0.05 268);
-    --color-focus: oklch(78% 0.15 268);
+    --accent: #a88b3f;
+    --accent-hover: #957a35;
+    --accent-muted: #e8dcb8;
+    --accent-text: #816a2f; /* kağıt üzerinde 4,54:1 */
+
+    --border: #e5ddc5;
+    --border-strong: #c9bfa0;
+
+    --success: #4a774a; /* #6BAA6B kağıt üzerinde 2,3:1 kalıyordu */
+    --warning: #816a2f;
+    --danger: #8e3f3c;
   }
 }
 
 /* Kullanıcının açık seçimi sistem tercihini ezer */
-:root[data-theme="dark"] {
-  --color-bg: oklch(19% 0.012 265);
-  --color-bg-raised: oklch(23% 0.014 265);
-  --color-bg-sunken: oklch(16% 0.01 265);
-  --color-text: oklch(93% 0.006 85);
-  --color-text-muted: oklch(68% 0.012 265);
-  --color-text-faint: oklch(52% 0.012 265);
-  --color-line: oklch(29% 0.014 265);
-  --color-accent: oklch(72% 0.13 268);
-  --color-accent-weak: oklch(28% 0.05 268);
-  --color-focus: oklch(78% 0.15 268);
+:root[data-theme="light"] {
+  --bg-primary: #f5efe0;
+  --bg-elevated: #ffffff;
+  --bg-overlay: #fbf7ea;
+
+  --text-primary: #0b1b3b;
+  --text-secondary: #3a4a6b;
+  --text-muted: #5f6d86;
+
+  --accent: #a88b3f;
+  --accent-hover: #957a35;
+  --accent-muted: #e8dcb8;
+  --accent-text: #816a2f;
+
+  --border: #e5ddc5;
+  --border-strong: #c9bfa0;
+
+  --success: #4a774a;
+  --warning: #816a2f;
+  --danger: #8e3f3c;
 }
 
-/* -----------------------------------------------------------------------------
+/* Güven derecesi renkleri — DESIGN.md §1 "Güven ve Rozet Renkleri".
+   Renk TEK BAŞINA anlam taşımaz; kenarlık biçimi ve metin de ayrışır. */
+:root {
+  --confidence-kesin: var(--success);
+  --confidence-muhtemel: var(--warning);
+  --confidence-rivayet: var(--text-muted);
+}
+
+/* =============================================================================
+   §3 Boşluk · §4 Yuvarlaklık ve gölge · §5 Hareket — DESIGN.md
+   Tema ile değişmezler, doğrudan tanımlanır.
+   ========================================================================== */
+
+:root {
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+
+  --content-narrow: 36rem; /* okuma sütunu, 65-75 karakter */
+  --content-normal: 48rem;
+  --content-wide: 72rem; /* landing bölümleri */
+  --content-full: 90rem; /* harita, graf */
+
+  --fw-normal: 400;
+  --fw-medium: 500;
+  --fw-semi: 600;
+  --fw-bold: 700;
+
+  --lh-tight: 1.2;
+  --lh-normal: 1.5;
+  --lh-relaxed: 1.75;
+  --lh-arabic: 2;
+}
+
+/* =============================================================================
+   Tailwind köprüsü
+
+   Renkler `inline`: değer kopyalanmaz, var() referansı kalır — tema değişince
+   yardımcı sınıflar da değişir. Ölçekler statik olduğu için normal @theme.
+   ========================================================================== */
+
+@theme inline {
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-overlay: var(--bg-overlay);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-muted: var(--accent-muted);
+  --color-accent-text: var(--accent-text);
+
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+}
+
+@theme {
+  /* --- §2 Yazı tipleri --- */
+  --font-heading: "Playfair Display", "Cormorant Garamond", Georgia, serif;
+  /* "Amiri Quran" gövde yığınında: meal ve dipnotların içinde geçen Arap
+     harfli alıntılar Inter'de yok, tarayıcı karakter bazında düşer. */
+  --font-body: "Inter", "Amiri Quran", -apple-system, system-ui, sans-serif;
+  --font-arabic: "Amiri Quran", "Scheherazade New", serif;
+  /* JetBrains Mono kendi sunucumuzda YOK: yalnızca birkaç kod parçasında
+     kullanılıyor, CDN yasak, 30+ KB'lık bir font bunun için indirilmiyor. */
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", monospace;
+  --font-sans: var(--font-body);
+  --font-serif: var(--font-heading);
+
+  /* --- §2 Tip ölçeği (modular scale, oran 1.250) --- */
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.5;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.5;
+  --text-base: 1rem;
+  --text-base--line-height: 1.5;
+  --text-md: 1.125rem;
+  --text-md--line-height: 1.75;
+  --text-lg: 1.25rem;
+  --text-lg--line-height: 1.5;
+  --text-xl: 1.5rem;
+  --text-xl--line-height: 1.2;
+  --text-2xl: 1.875rem;
+  --text-2xl--line-height: 1.2;
+  --text-3xl: 2.25rem;
+  --text-3xl--line-height: 1.2;
+  --text-4xl: 3rem;
+  --text-4xl--line-height: 1.2;
+  --text-5xl: 3.75rem;
+  --text-5xl--line-height: 1.2;
+
+  /* Arapça kendi ölçeğini kullanır — aynı punto Arapça'da çok daha küçük
+     okunur. Satır aralığı 2'den aşağı inmez: hareke ve şedde üst üste biner. */
+  --text-ar-md: 1.5rem;
+  --text-ar-md--line-height: 2;
+  --text-ar-lg: 2rem;
+  --text-ar-lg--line-height: 2;
+  --text-ar-xl: 2.5rem;
+  --text-ar-xl--line-height: 2;
+
+  /* --- §3 Boşluk: 4px tabanı, p-4 = --space-4 --- */
+  --spacing: 0.25rem;
+
+  --container-narrow: 36rem;
+  --container-normal: 48rem;
+  --container-wide: 72rem;
+  /* DESIGN.md'de --content-full; burada "map" çünkü --container-full
+     Tailwind'de zaten var olan `max-w-full` (100%) ile çakışırdı. */
+  --container-map: 90rem;
+  /* Arapça okuma genişliği: aynı satır uzunluğu Arapça'da daha uzun görünür,
+     ~46 karakter rahat okunur. DESIGN.md §3'te karşılığı yok, ölçüyle eklendi. */
+  --container-arabic: 46ch;
+
+  /* --- §4 --- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.2);
+  --shadow-md: 0 4px 12px rgb(0 0 0 / 0.25);
+  --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.3);
+
+  /* --- §5 --- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Süreler: Tailwind'in ad alanında karşılığı yok, düz değişken. */
+:root {
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+}
+
+/* Karanlık mod varyantı: sistem tercihi + kullanıcının açık seçimi */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* =============================================================================
    Temel stiller
-   -------------------------------------------------------------------------- */
+   ========================================================================== */
 
 @layer base {
   :root {
-    color-scheme: light dark;
     /* Kullanıcı ayarı: yazı boyutu (plan §7). Ölçek rem tabanlı olduğu için
        kök boyut değişince her şey orantılı büyür. */
     font-size: 100%;
@@ -172,38 +327,50 @@
   }
 
   body {
-    background-color: var(--color-bg);
-    color: var(--color-text);
-    font-family: var(--font-sans);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-body);
     font-size: var(--text-base);
-    line-height: var(--text-base--line-height);
-    /* Inter'in metriklerine yakın yedek; font yüklenirken CLS'i azaltır */
+    line-height: var(--lh-normal);
     font-synthesis-weight: none;
     text-rendering: optimizeLegibility;
   }
 
+  /* Başlıklar serif — DESIGN.md §2 */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-semi);
+    line-height: var(--lh-tight);
+  }
+
   /* Odak halkası her zaman görünür. outline:none tek başına kullanılmaz. */
   :focus-visible {
-    outline: 2px solid var(--color-focus);
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
     border-radius: var(--radius-sm);
   }
 
   a {
-    color: var(--color-accent);
+    color: var(--accent-text);
     text-underline-offset: 0.2em;
+  }
+  a:hover {
+    color: var(--accent-hover);
   }
 
   hr {
     border: 0;
-    border-top: 1px solid var(--color-line);
+    border-top: 1px solid var(--border);
   }
 
   /* Arapça bloklar. dir="rtl" işaretlemede verilir; burada yalnızca tipografi. */
   [lang="ar"] {
-    font-family: var(--font-quran);
-    font-size: var(--text-arabic);
-    line-height: var(--text-arabic--line-height);
+    font-family: var(--font-arabic);
+    font-size: var(--text-ar-md);
+    line-height: var(--lh-arabic);
     /* Arapça'da kelime kırma yok */
     word-break: keep-all;
   }
@@ -212,27 +379,28 @@
 /* =============================================================================
    Bileşenler
 
-   Bu stiller neden burada, bileşenin içindeki `<style>` bloğunda değil:
-   Astro'nun kapsamlı (scoped) stilleri her öğeye `data-astro-cid-*` özniteliği
-   ekler. 6236 ayet sayfası × sayfa başına ~200 öğe = ölçülebilir bayt.
-   Sınıf adları benzersiz olduğu için kapsam kaybı yok.
+   Bu stiller neden burada, bileşenin `<style>` bloğunda değil: Astro'nun
+   kapsamlı stilleri her öğeye `data-astro-cid-*` özniteliği ekler. 6236 ayet
+   sayfası × sayfa başına ~200 öğe = ölçülebilir bayt. Sınıf adları benzersiz
+   olduğu için kapsam kaybı yok.
    ========================================================================== */
 
-/* --- <SourceBadge> ------------------------------------------------------- */
+/* --- <SourceBadge> — DESIGN.md §6 ---------------------------------------- */
 
 .source-badge {
   display: inline-block;
   max-width: 100%;
-  border: 1px solid var(--color-line);
+  border: 1px solid var(--accent-text);
   border-radius: var(--radius-sm);
-  background-color: var(--color-bg-raised);
-  color: var(--color-text-muted);
+  background-color: var(--bg-elevated);
+  color: var(--text-secondary);
   font-size: var(--text-xs);
   line-height: var(--text-xs--line-height);
 }
 
-/* Üç içerik sınıfı kenarlık biçimiyle ayrışır — DESIGN.md §1:
-   renk tek başına anlam taşımaz. Gri baskıda da ayrışır. */
+/* Üç içerik sınıfı: altın düz / altın kesikli / nötr noktalı.
+   Renk tek başına anlam taşımaz (DESIGN.md §1) — kenarlık biçimi ve
+   metin de ayrışır, gri baskıda da okunur. */
 .source-badge.is-kaynakli {
   border-style: solid;
 }
@@ -241,40 +409,50 @@
 }
 .source-badge.is-platform {
   border-style: dotted;
+  border-color: var(--text-muted);
+}
+
+.source-badge .badge-icon {
+  margin-inline-end: 0.35em;
+  color: var(--accent-text);
+  vertical-align: -0.1em;
+}
+.source-badge.is-platform .badge-icon {
+  color: var(--text-muted);
 }
 
 .source-badge .badge-line {
   display: block;
-  padding: 0.25rem 0.5rem;
+  padding: var(--space-1) var(--space-2);
 }
 
 .source-badge .toggle {
-  margin-inline-start: 0.25rem;
-  color: var(--color-accent);
+  margin-inline-start: var(--space-1);
+  color: var(--accent-text);
   text-decoration: underline;
 }
 
 .source-badge .source-list {
   margin: 0;
-  padding: 0.25rem 0.5rem;
+  padding: var(--space-1) var(--space-2);
   list-style: none;
-  border-top: 1px solid var(--color-line);
+  border-top: 1px solid var(--border);
 }
 .source-badge .source-list > li {
-  padding-block: 0.25rem;
+  padding-block: var(--space-1);
 }
 .source-badge .name {
-  color: var(--color-text);
+  color: var(--text-primary);
 }
 .source-badge .meta {
   display: block;
 }
+.source-badge .source-list .license,
+.source-badge.is-compact .license {
+  color: var(--text-muted);
+}
 .source-badge .source-list .license {
   display: block;
-  color: var(--color-text-faint);
-}
-.source-badge.is-compact .license {
-  color: var(--color-text-faint);
 }
 
 /* Varsayılan açılır ok gizlenir; metin etiketi zaten durumu söylüyor. */
@@ -294,15 +472,38 @@
   display: none;
 }
 
+/* --- <ConfidenceBadge> — DESIGN.md §1, §6 -------------------------------- */
+
+.confidence-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0.15rem var(--space-2);
+  border: 1px solid currentColor;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+}
+.confidence-badge[data-confidence="kesin"] {
+  color: var(--confidence-kesin);
+  border-style: solid;
+}
+.confidence-badge[data-confidence="muhtemel"] {
+  color: var(--confidence-muhtemel);
+  border-style: dashed;
+}
+.confidence-badge[data-confidence="rivayet"] {
+  color: var(--confidence-rivayet);
+  border-style: dotted;
+}
+
 /* --- Çeviriyazı (okunuş) ------------------------------------------------- */
 
-/* Ayet ile meal arasında durur. Gövde metninden ayrışsın diye biraz sönük ve
-   biraz eğik; ama okunacak kadar kontrastlı (--text-muted, AA'yı geçer). */
 .transcription {
-  margin: 0.5rem 0 0;
-  color: var(--color-text-muted);
+  margin: var(--space-2) 0 0;
+  color: var(--text-secondary);
   font-style: italic;
-  line-height: var(--text-base--line-height);
+  line-height: var(--lh-normal);
 }
 
 /* --- <Translation> ------------------------------------------------------- */
@@ -311,26 +512,28 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.25rem;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
 }
 .translation > header h3 {
   margin: 0;
-  color: var(--color-text);
+  color: var(--accent-text);
   font-size: var(--text-sm);
-  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 .translation .translation-text {
   margin: 0;
+  font-size: var(--text-md);
+  line-height: var(--lh-relaxed);
 }
 
 .translation .footnotes {
-  margin-top: 0.5rem;
-  padding-inline-start: 0.75rem;
-  border-inline-start: 2px solid var(--color-line);
-  color: var(--color-text-muted);
+  margin-top: var(--space-2);
+  padding-inline-start: var(--space-3);
+  border-inline-start: 2px solid var(--border);
+  color: var(--text-muted);
   font-size: var(--text-sm);
-  line-height: var(--text-sm--line-height);
+  line-height: var(--lh-normal);
 }
 .translation .footnotes ol {
   margin: 0;
@@ -338,7 +541,7 @@
   list-style: none;
 }
 .translation .footnotes li + li {
-  margin-top: 0.5rem;
+  margin-top: var(--space-2);
 }
 
 /* Dipnot numarası okumayı bölmesin: küçük, sönük, ama tıklanabilir. */
@@ -347,54 +550,111 @@
   line-height: 0;
   margin-inline-start: 0.1em;
 }
-.translation .footnote-marker a {
-  text-decoration: none;
-  padding: 0 0.15em;
-}
+.translation .footnote-marker a,
 .translation .footnote-back {
   text-decoration: none;
+}
+.translation .footnote-marker a {
+  padding: 0 0.15em;
 }
 
 /* Bağlantıyla gelinen dipnot vurgulanır — nereye düşüldüğü belli olsun. */
 .translation li:target {
-  background-color: var(--color-accent-weak);
+  background-color: var(--accent-muted);
   border-radius: var(--radius-sm);
 }
 
 /* --- <VerseArabic> ------------------------------------------------------- */
 
 .verse-arabic.is-large {
-  font-size: var(--text-arabic-lg);
-  line-height: var(--text-arabic-lg--line-height);
+  font-size: var(--text-ar-lg);
+  line-height: var(--lh-arabic);
 }
 
-/* Numara ayetin parçası değil: küçük, sönük, daire içinde. */
+/* Numara ayetin parçası değil: küçük, altın, daire içinde. */
 .verse-arabic .verse-number {
   display: inline-block;
   min-width: 1.9em;
   margin-inline-start: 0.4em;
   padding: 0.1em 0.35em;
-  border: 1px solid var(--color-line);
-  border-radius: 999px;
-  font-family: var(--font-sans);
-  font-size: 0.72rem;
+  border: 1px solid var(--accent-text);
+  border-radius: 9999px;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
   line-height: 1.4;
   text-align: center;
   vertical-align: middle;
-  color: var(--color-text-faint);
+  color: var(--accent-text);
 }
 
 .verse-arabic .sajda {
   display: inline-block;
   margin-inline-start: 0.4em;
   padding: 0.1em 0.5em;
-  border: 1px dashed var(--color-line);
+  border: 1px dashed var(--text-muted);
   border-radius: var(--radius-sm);
-  font-family: var(--font-sans);
-  font-size: 0.72rem;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
   line-height: 1.4;
   vertical-align: middle;
-  color: var(--color-text-muted);
+  color: var(--text-muted);
+}
+
+/* --- Bölüm ayracı — DESIGN.md §8 ----------------------------------------- */
+
+/* İnce altın çizgi, ortada küçük geometrik detay. Figür yok, insan tasviri
+   yok (plan §20.3). Yalnızca CSS; görsel dosyası indirilmez. */
+.rule-ornament {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--accent);
+}
+.rule-ornament::before,
+.rule-ornament::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, currentColor, transparent);
+}
+.rule-ornament span {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border: 1px solid currentColor;
+  transform: rotate(45deg);
+}
+
+/* --- Site şeridi --------------------------------------------------------- */
+
+.site-header {
+  padding-block: var(--space-3);
+  border-bottom: 1px solid var(--border);
+  background-color: var(--bg-elevated);
+}
+.site-header .site-name {
+  color: var(--accent-text);
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  text-decoration: none;
+}
+.site-header .site-nav {
+  display: flex;
+  gap: var(--space-4);
+  font-size: var(--text-sm);
+}
+.site-header .site-nav a {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+.site-header .site-nav a:hover {
+  color: var(--accent-text);
+}
+/* Bulunulan sayfa: renk + alt çizgi. Renk tek başına anlam taşımaz. */
+.site-header .site-nav a[aria-current="page"] {
+  color: var(--accent-text);
+  text-decoration: underline;
+  text-underline-offset: 0.35em;
 }
 
 /* --- Atlama bağlantısı --------------------------------------------------- */
@@ -405,15 +665,18 @@
   inset-inline-start: -9999px;
   top: 0;
   z-index: 10;
-  padding: 0.5rem 1rem;
-  background-color: var(--color-bg-raised);
-  border: 1px solid var(--color-line);
+  padding: var(--space-2) var(--space-4);
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
 }
 .skip-link:focus {
   inset-inline-start: 0;
 }
 
-/* Hareket: kısa ve amaçlı; kullanıcı azaltma isterse tamamen durur. */
+/* =============================================================================
+   Hareket — §5. Kısa ve amaçlı; kullanıcı azaltma isterse tamamen durur.
+   ========================================================================== */
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

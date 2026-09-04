@@ -539,3 +539,36 @@ Ayrıca elle:
 - İlk yayın sonrası `nginx -s reload` ardından gelen ilk istek bir kez
   HTTP/2 çerçeve hatası verdi (kapanmakta olan eski worker). Duman testine
   `--retry 3` eklendi; tekrar görülmedi.
+
+### 3.10 2026-09-04 — Marka kimliği, tanıtım sayfası, çeviriyazı
+
+Sunucu yapılandırması **değişmedi.** Yalnızca içerik yayınlandı.
+
+| | |
+|---|---|
+| Yayın | `20260904T025021Z` |
+| Sayfa | 6354 (114 sure + 6236 ayet + 4 sabit) |
+| Boyut | 360 MB |
+| Duman testi | 13 kontrol, temiz |
+
+**Yeni sayfalar:** `/` (12 bölümlük tanıtım, plan §14.1), `/kaynaklar`
+(Kaynak Şeffaflığı, plan §9 ve §12.10).
+
+**Tasarım:** `docs/DESIGN.md`'deki lacivert + altın sistemi uygulandı.
+Palet WCAG AA'ya göre ölçüldü, açık modda kalan dört değer düzeltildi ve
+`--accent-text` eklendi — ayrıntı ve ölçümler DESIGN.md §10.
+
+**Çeviriyazı** 0/6236'dan 6236/6236'ya çıktı; yeni kaynak kaydı
+`tanzil-transliteration`, atıf listesine "Çeviriyazı: Muhammet Abay (Tanzil)"
+eklendi.
+
+**Yazı tipleri:** Playfair Display eklendi (26,4 KB, ağırlık 600 sabit).
+Toplam 148 KB; sayfa başına en fazla 127,1 KB (Arapçalı) / 87,8 KB (Latin).
+Plan §20.4 bütçesi 140 / 95 KB — ikisi de tutuyor.
+
+**Duman testine eklendi:** `/kaynaklar`,
+`/fonts/playfair-display-latin.woff2`.
+
+**Hatırlatma:** CSP'de `script-src` yok (`default-src 'none'`). Faz 1'de
+Astro island'ı eklenirse vhost'a `script-src 'self'` yazılmalı, yoksa
+sessizce çalışmaz. Bkz. §3.9.

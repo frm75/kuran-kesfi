@@ -85,8 +85,10 @@ smoke_test() {
   check "/fatiha-suresi"           200
   check "/bakara-suresi/153"       200
   check "/nas-suresi/6"            200
+  check "/kaynaklar"               200
   check "/404.html"                200
   check "/fonts/inter-latin.woff2" 200
+  check "/fonts/playfair-display-latin.woff2" 200
   check "/data/surahs_index.json"  200
   check "/olmayan-bir-adres"       404
   # Depo ve gizli dosyalar disari acilmamali.

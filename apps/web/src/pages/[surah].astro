@@ -76,18 +76,18 @@ const title = `${surah.nameTr} Suresi — Kur'an-ı Kerim`;
   description={`${surah.nameTr} suresi: ${surah.verseCount} ayet, Arapça metin ve ${author.name} meali.`}
   arabic
 >
-  <main id="icerik" class="mx-auto max-w-(--container-measure) px-4 py-8">
-    <nav aria-label="Konum" class="text-text-muted mb-6 text-sm">
+  <main id="icerik" class="mx-auto max-w-narrow px-4 py-8">
+    <nav aria-label="Konum" class="text-text-secondary mb-6 text-sm">
       <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
       <span aria-current="page">{surah.nameTr} suresi</span>
     </nav>
 
-    <header class="border-line mb-8 border-b pb-6">
-      <p class="text-text-faint m-0 text-sm">{surah.id}. sure</p>
+    <header class="border-border mb-8 border-b pb-6">
+      <p class="text-text-muted m-0 text-sm">{surah.id}. sure</p>
       <h1 class="m-0 text-3xl">{surah.nameTr} Suresi</h1>
       <p lang="ar" dir="rtl" class="mt-2 mb-3">{surah.nameAr}</p>
 
-      <dl class="text-text-muted m-0 flex flex-wrap gap-x-6 gap-y-1 text-sm">
+      <dl class="text-text-secondary m-0 flex flex-wrap gap-x-6 gap-y-1 text-sm">
         <div><dt class="inline">Ayet sayısı:</dt> <dd class="m-0 inline">{surah.verseCount}</dd></div>
         <div><dt class="inline">İniş yeri:</dt> <dd class="m-0 inline">{revelation}</dd></div>
         <div>
@@ -122,7 +122,7 @@ const title = `${surah.nameTr} Suresi — Kur'an-ı Kerim`;
 
     {
       basmala !== undefined && (
-        <p lang="ar" dir="rtl" class="border-line mb-8 border-b pb-6 text-center">
+        <p lang="ar" dir="rtl" class="border-border mb-8 border-b pb-6 text-center">
           {basmala}
         </p>
       )
@@ -131,7 +131,7 @@ const title = `${surah.nameTr} Suresi — Kur'an-ı Kerim`;
     {
       translation === null && (
         /* Belirsizlik saklanmaz (plan §1.5): mealin bu suresi kaynakta yok. */
-        <p class="border-line text-text-muted mb-8 rounded border border-dashed p-3 text-sm">
+        <p class="border-border text-text-secondary mb-8 rounded border border-dashed p-3 text-sm">
           {author.name} mealinde bu sure kaynakta bulunmuyor. Arapça metin aşağıda;
           diğer meallere ayet sayfalarından ulaşabilirsiniz.
         </p>
@@ -158,7 +158,7 @@ const title = `${surah.nameTr} Suresi — Kur'an-ı Kerim`;
 
               <div class="mt-3">
                 {meal === undefined ? (
-                  <p class="text-text-muted m-0 text-sm">
+                  <p class="text-text-secondary m-0 text-sm">
                     Bu ayetin {author.name} mealinde karşılığı kaynakta yok.
                   </p>
                 ) : (
@@ -173,7 +173,7 @@ const title = `${surah.nameTr} Suresi — Kur'an-ı Kerim`;
                 )}
               </div>
 
-              <p class="text-text-faint mt-2 text-xs">
+              <p class="text-text-muted mt-2 text-xs">
                 <a href={`/${surah.slug}/${verse.verseNumber}`}>
                   {verse.verseNumber}. ayeti tek başına aç
                 </a>
@@ -188,7 +188,7 @@ const title = `${surah.nameTr} Suresi — Kur'an-ı Kerim`;
       }
     </ol>
 
-    <nav aria-label="Sureler arası gezinme" class="border-line mt-12 flex justify-between border-t pt-6 text-sm">
+    <nav aria-label="Sureler arası gezinme" class="border-border mt-12 flex justify-between border-t pt-6 text-sm">
       {
         previous === undefined ? (
           <span />

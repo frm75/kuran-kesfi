@@ -28,7 +28,7 @@ const { text, verseNumber, label, large = false, sajda = false } = Astro.props;
 <p
   lang="ar"
   dir="rtl"
-  class:list={["verse-arabic m-0 max-w-(--container-measure-arabic)", large && "is-large"]}
+  class:list={["verse-arabic m-0 max-w-arabic", large && "is-large"]}
 >
   <span class="sr-only" lang="tr">{label}.</span>
   {text}
