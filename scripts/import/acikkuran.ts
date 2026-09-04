@@ -40,9 +40,12 @@ import {
   fetchCached,
   info,
   pool,
+  sanitizeSourceText,
   slugify,
+  summarizeRepairs,
   upsertMany,
   withTransaction,
+  type TextRepair,
 } from "@kuran/pipeline";
 
 const SITE = "https://acikkuran.com";
@@ -305,6 +308,22 @@ async function main(): Promise<void> {
     const dbRootIdByLatin = new Map(rootIdRows.map((r) => [r.latin, r.id]));
 
     // --- translation ---
+    /**
+     * Kodlama onarimlari.
+     *
+     * Kaynakta C1 kontrol karakterleri var (cp1252 metnin UTF-8 sanilmasi).
+     * Bunlar icerik degil aktarim hatasi; onariliyor ve HEPSI rapora yaziliyor.
+     * Ayrinti: packages/pipeline/src/text.ts
+     */
+    const repairs: TextRepair[] = [];
+    const unknownControls = new Map<number, string>();
+    const clean = (raw: string, where: string): string => {
+      const result = sanitizeSourceText(raw, where);
+      repairs.push(...result.repairs);
+      for (const cp of result.unknown) unknownControls.set(cp, where);
+      return result.text;
+    };
+
     const translationRows: unknown[][] = [];
     let emptyTranslations = 0;
     for (const [verseId, perAuthor] of translationsByVerse) {
@@ -317,7 +336,12 @@ async function main(): Promise<void> {
           emptyTranslations += 1;
           continue;
         }
-        translationRows.push([verseId, dbId, t.text]);
+        const cleanText = clean(t.text, `${slug ?? akAuthorId} ${verseId} meal`);
+        if (cleanText === "") {
+          emptyTranslations += 1;
+          continue;
+        }
+        translationRows.push([verseId, dbId, cleanText]);
       }
     }
     await upsertMany(
@@ -361,7 +385,15 @@ async function main(): Promise<void> {
             emptyFootnotes += 1;
             continue;
           }
-          footnoteRows.push([translationId, f.number, f.text]);
+          const cleanFootnote = clean(
+            f.text,
+            `${slug ?? akAuthorId} ${verseId} dipnot ${f.number}`,
+          );
+          if (cleanFootnote === "") {
+            emptyFootnotes += 1;
+            continue;
+          }
+          footnoteRows.push([translationId, f.number, cleanFootnote]);
         }
       }
     }
@@ -372,6 +404,20 @@ async function main(): Promise<void> {
       footnoteRows,
       ["translation_id", "number"],
     );
+    if (repairs.length > 0) {
+      info(`${repairs.length} kodlama onarimi yapildi:`);
+      for (const line of summarizeRepairs(repairs)) {
+        info(`  ${line}`);
+        report.note(`Onarim: ${line}`);
+      }
+    }
+    for (const [cp, where] of unknownControls) {
+      report.issue(
+        `tanimlanamayan kontrol karakteri U+${cp.toString(16).toUpperCase().padStart(4, "0")} ` +
+          `(${where}) — DEGISTIRILMEDI, elle bakilmali`,
+      );
+    }
+
     if (emptyFootnotes > 0) {
       report.issue(
         `${emptyFootnotes} dipnot kaynakta bos metinle geldi ve yazilmadi ` +

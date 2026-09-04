@@ -136,28 +136,50 @@ Doğrulandı: dördü de artık **HTTP 404**. Web kökü deploy için temiz.
 
 ## Veri kalitesi — font alt kümelemesi sırasında bulundu (2026-09-03)
 
-Font kapsama listesi üretilen verinin tamamı taranarak çıkarıldığı için
-(`scripts/fonts/build_fonts.ts`), metinlerdeki tuhaf karakterler ortaya çıktı.
-Hiçbiri ayet metninde değil; hepsi **meal ve dipnotlarda**.
+**ÇÖZÜLDÜ 2026-09-04.** Font kapsama listesi üretilen verinin tamamı taranarak
+çıkarıldığı için (`scripts/fonts/build_fonts.ts`) metinlerdeki kodlama artıkları
+ortaya çıktı. Hiçbiri ayet metninde değildi; hepsi meal ve dipnotlardaydı.
 
-- **C1 kontrol karakterleri: U+0091 (44 kez), U+0096 (4), U+0085 (4).** Bunlar
-  geçerli metin değil. Neredeyse kesin olarak cp1252 kodlu metnin UTF-8
-  sanılmasından geliyor: U+0091 → `'` (sol tek tırnak), U+0096 → `–` (kısa
-  çizgi), U+0085 → `…`. Kaynakta mı böyle, import'ta mı bozuluyor —
-  bakılmalı. Şu an ekranda görünmez karakter olarak duruyorlar.
-- **U+200B sıfır genişlikli boşluk (2), U+200E soldan-sağa işareti (10).**
-  Zararsız ama gereksiz; temizlenebilir.
+`packages/pipeline/src/text.ts` → `sanitizeSourceText()` eklendi, Açık Kuran
+import'una bağlandı. **32 onarım** yapıldı, hepsi rapora yazıldı:
+
+| Kod noktası | Ne | Kaç | Onarım |
+|---|---|---|---|
+| `U+0091` | cp1252 `‘` | 22 | `‘` |
+| `U+200E` | soldan-sağa işareti | 5 | silindi (metinde RTL yok) |
+| `U+0085` | cp1252 `…` | 2 | `…` |
+| `U+0096` | cp1252 `–` | 2 | `–` |
+| `U+200B` | sıfır genişlikli boşluk | 1 | silindi |
+
+Hepsi tek bir aktarım hatasının izi: cp1252 kodlu metin UTF-8 sanılmış.
+22'sinin 22'si Mahmoud Ghali çevirisinde. Bu **editoryal müdahale değil**;
+yazarın koyduğu karakter zaten tırnak/tire/üç noktaydı, aktarımda bozulmuştu.
+Sanitizer tanımadığı bir kontrol karakteri görürse **değiştirmez**, rapora
+sorun olarak yazar.
+
+Doğrulandı: yeniden import sonrası kalan bozuk karakter **yok**.
+
+### Açık kalan
+
+- **`U+00AD` yumuşak tire — 1046 kez.** Görünmez; satır sonu ipucu olarak
+  geçerli bir karakter, ama bu kadar çoğu muhtemelen kaynak dizgisinden
+  kalma. Zararsız (çizilmiyor, fonta alınmıyor) ama kopyala-yapıştırda
+  metne bulaşıyor. Temizlenip temizlenmeyeceği kararı bekliyor.
 - **İbranice harfler (22 kod noktası, birer kez).** Bir İngilizce meal
-  dipnotunda İbranice alıntı var. Inter İbranice taşımıyor, o satır sistem
-  fontuna düşecek. Kasıtlıysa sorun değil; sayfa yine okunur.
-- **U+06AF (گ, Farsça gaf).** Amiri Quran'da yok, Scheherazade New'de var.
-  Meal içinde geçiyor, ayet metninde değil. Gövde yığını sayesinde
-  Scheherazade'ye düşer.
-- **U+23AF (⎯, 2 kez), U+2C6B (Ⱬ, 5 kez), U+263C (☼, 2), U+0202 (Ȃ, 14).**
-  Muhtemelen kaynak metindeki dizgi artıkları.
+  dipnotunda İbranice alıntı var; Inter İbranice taşımıyor, o satır sistem
+  fontuna düşüyor. Kasıtlıysa sorun değil.
+- **`U+06AF` (گ, Farsça gaf).** Amiri Quran'da yok, Scheherazade New'de var;
+  gövde yığını sayesinde ona düşüyor.
+- **`U+23AF`, `U+2C6B`, `U+263C`, `U+0202`.** Muhtemelen kaynak metindeki
+  dizgi artıkları; içerik olarak zararsız.
 
-Yapılacak: import katmanına bir "şüpheli karakter" raporu eklemek (plan §20.1
-"hiçbir kayıt sessizce yok sayılmaz" ilkesiyle aynı çizgide). Faz 1 işi.
+## Performans
+
+- **`translation/abul-ala-maududi/surah_2.json` 365 KB** — plan §20.4 eşiği
+  300 KB. Referans linter uyarı veriyor ama build'i durdurmuyor. Bu mealin
+  dipnotları çok uzun. Dipnotları ayrı bir dosyaya bölmek çözer; ayet
+  sayfası zaten dipnotları ayrı yüklemiyor, sure sayfası da bu meali
+  kullanmıyor. Faz 1 işi.
 
 ## Teknik borç
 
