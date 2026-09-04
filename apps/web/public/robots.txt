@@ -1,0 +1,15 @@
+# kurankesfi.tr
+#
+# Site tamamen halka acik ve ucretsizdir; taranmasina engel yoktur.
+# Uyeliksiz oldugu icin gizli alan da yoktur.
+
+User-agent: *
+Allow: /
+
+# Uretilen ham JSON verisi ve font dosyalari arama sonuclarinda anlamsiz;
+# sayfalarin kendisi zaten ayni icerigi tasiyor.
+Disallow: /data/
+Disallow: /fonts/
+Disallow: /_astro/
+
+Sitemap: https://kurankesfi.tr/sitemap.xml
