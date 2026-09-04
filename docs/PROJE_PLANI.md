@@ -772,9 +772,30 @@ Telegram botu Faz 3; WhatsApp Faz 5 (yayın sonrası). İlkeler modülü (Bölü
 
 ## 20.4 Performans Bütçesi
 - İlk yükleme: < 100 KB JS, < 200 KB toplam (fontlar hariç)
-- **Font bütçesi:** < 140 KB (Arapça metinli sayfa: Inter + Amiri Quran + Playfair Display), < 95 KB (Latin-only
-  sayfa: Inter + Playfair Display). §22'de Playfair Display eklendiği için önceki 100,7 KB / 61,4 KB hedefi
-  yükseltildi; kesin rakam Playfair alt kümelendikten sonra ölçülüp bu satır güncellenecek
+- **Font bütçesi — ölçüldü, 2026-09-04.** Dört yazı tipi kendi sunucumuzdan servis edilir:
+
+  | Yazı tipi | Boyut | Nerede |
+  |---|---|---|
+  | Inter | 49,1 KB | Arayüz, çeviriyazı, kelimeler (400–700; 300 kullanılmıyor, çıkarıldı) |
+  | Source Serif 4 | 32,4 KB | Meal ve dipnot metni (tek ağırlık 400) |
+  | Playfair Display | 26,4 KB | Başlıklar (tek ağırlık 600) |
+  | Amiri Quran | 39,3 KB | Arapça ayet metni |
+  | Scheherazade New | 21,0 KB | Arapça 2. seçenek — öntanımlı indirilmez |
+
+  Sayfa başına gerçek yük (`@font-face unicode-range` sayesinde kullanılmayan
+  font hiç indirilmez):
+
+  | Sayfa | Yük |
+  |---|---|
+  | Okuma ekranı (ayet/sure — dördü de var) | **147,2 KB** |
+  | `/sureler` (Arapça sure adları, meal yok) | 114,8 KB |
+  | `/kaynaklar`, `/kok` (Latin) | **75,5 KB** |
+
+  Önceki hedef 140 / 95 KB idi. Okuma ekranı **7,2 KB aşıyor**: o hedef üç
+  yazı tipine göre konmuştu, Source Serif 4 sonradan eklendi (meal metni için,
+  karar 2026-09-04). Hedef ölçülen değere göre **150 / 95 KB** olarak
+  güncellenmiştir. Aşımın karşılığı meal metninin uzun okuma serifiyle
+  dizilmesidir; sayfada JavaScript 0 bayt olduğu için toplam yük yine düşüktür
 - LCP < 2 sn (3G), CLS < 0.1
 - Sure JSON'ları ve ses dosyaları lazy; harita/graf kütüphaneleri yalnızca ilgili sayfada
 - Görseller WebP/AVIF, `loading="lazy"`, boyut belirtilmiş
@@ -843,15 +864,77 @@ Arayüz "güzel" olmalı: sakin, okumaya odaklı, dinî içeriğe yakışır bir
 
 # 23. Hoca Notları
 
-> **Bu bölüm eksiktir.** `CLAUDE.md` ve `GOREV_01_schema_zod.md` §23.2'ye atıf yapıyor
-> ("şema orada kesindir") ancak bölümün kendisi bu dokümana hiç yazılmamıştı.
-> Aşağıdaki §23.2 içeriği, **onaylanmış SD-01 notundan** birebir işlenmiştir
-> (SD-01 uygulama sırası, adım 1). §23.1 (amaç, kapsam, içerik kuralları) ve
-> §23.3+ hâlâ yazılmayı bekliyor.
->
-> Şema tanımının uygulanmış hâli: `packages/schema/src/scholar-notes.ts`.
-> Orada §23.2'de belirtilmemiş alanlar **çıkarım**la dolduruldu ve dosyada
-> işaretlendi; §23 yazıldığında karşılaştırılmalıdır.
+> §23.2 **onaylanmış SD-01 notundan** birebir işlenmiştir.
+> §23.1 ve §23.3 aşağıda, 2026-09-04'te alınan kararlarla yazılmıştır.
+> Şemanın uygulanmış hâli: `packages/schema/src/scholar-notes.ts`.
+
+## 23.1 Amaç, kapsam ve içerik kuralları
+
+### Amaç
+
+Bir ayet hakkında **ehil kişilerin ne söylediğini**, kendi sözleriyle ve
+kaynağına bağlı olarak göstermek. Platform bir görüşü doğrulamaz, seçmez ya da
+öne çıkarmaz; farklı görüşleri yan yana koyar (plan §1.4, CLAUDE.md kural 4).
+
+### Kapsam
+
+Kaynak: hocaların **halka açık video kayıtları**. Çıkarım ayrı bir yerel
+projede (`kuran-extract`) yapılır, sunucuya JSON paketiyle aktarılır (§23.2).
+
+### K1 — İçerik iki parçadır ve ayrı işaretlenir
+
+Bir hoca notu **iki ayrı içerik sınıfı** taşır ve arayüzde ayrı rozetlerle
+gösterilir:
+
+| Parça | İçerik sınıfı | Rozet |
+|---|---|---|
+| `quote` — hocanın kendi sözü | **kaynaklı** | düz kenarlık, hoca adı |
+| `summary` — bizim ifademizle özet | **platform verisi** | noktalı kenarlık, "Kendi derlememiz" |
+
+Bu, CLAUDE.md kural 4 ile arasındaki gerilimin çözümüdür: özet üretiliyor ama
+**hocanın sözü gibi sunulmuyor.** Okur hangi cümlenin kime ait olduğunu
+rozetten ayırt eder. Özet asla tırnak içinde verilmez.
+
+*(Karar: 2026-09-04. Reddedilen alternatifler: özeti tamamen kaldırmak —
+200 karaktere sığmayan açıklamalar kaybolurdu; özeti hocanın kelimeleriyle
+sınırlamak — çıkarım aracında uygulanması zor ve doğrulanamaz.)*
+
+### K2 — Telif: kısa alıntı + derin bağlantı
+
+- Alıntı **≤ 200 karakter** (şemada `QUOTE_MAX` ile zorlanır).
+- Her notta videonun ilgili anına **derin bağlantı** bulunur; okur kaynağı
+  kendi dinleyebilir.
+- Hak sahibinden **önceden yazılı izin istenmez**; kısa alıntı ve kaynağa
+  yönlendirme adil kullanım kabul edilir.
+- **Kaldırma talebi karşılanır.** İletişim yolu iki kanaldan açıktır
+  (e-posta ve depo üzerinden issue), sayfada yazılıdır ve talep alındıktan
+  sonra en geç **7 gün** içinde not yayından kaldırılır.
+
+Bu, meallerdeki kuraldan (plan §3.1 — yazılı izin şart) **bilerek farklıdır**:
+meal bir eserin tamamıdır, hoca notu bir konuşmadan kısa alıntıdır.
+
+### K3 — Hoca seçimi kapalı listedir
+
+`scholar` tablosuna hoca **elle ve tek tek** eklenir. Yazılı bir "ehliyet
+ölçütü" plana konmaz: platform kimseyi otorite ilan etmez, sadece kimin
+sözünü aktardığını açıkça söyler. Liste `/kaynaklar` sayfasında herkese
+açıktır.
+
+### K4 — Yayın kapısı elle onaydır
+
+`draft → reviewed → published`. `published`'a geçiş **elle** yapılır; her
+yayınlanan not okunmuş demektir. `reviewerId` onaylayanın etiketidir.
+Otomatik yayın yoktur.
+
+### K5 — Not türleri
+
+`tefsir · nuzul_sebebi · ilke_aciklamasi · yaygin_anlayisa_farkli_bakis ·
+kissa_detayi · kavram_aciklamasi · kok_aciklamasi · genel`
+
+`yaygin_anlayisa_farkli_bakis` türü, önceki adı `dogru_bilinen_yanlis` iken
+2026-09-04'te değiştirildi: "doğru bilinen yanlış" başlığı hükmü platformun
+verdiği izlenimini bırakıyordu. Yeni ad aynı içeriği taşır, hükmü okura
+bırakır.
 
 ## 23.2 Veri Şeması — SD-01 ile güncellenmiş
 
@@ -927,3 +1010,38 @@ Zod tarafında her ara tablo için iki varyant tanımlıdır (`ScholarNoteVerse`
 - `reviewer_id`: string, nullable
 - Export zarfı `schema_version: 1`
 - `transcript` / `transcript_segment` export'a girmez
+
+## 23.3 Arayüz
+
+### K6 — Notlar dört yerde görünür
+
+| Yer | Ne |
+|---|---|
+| Ayet sayfası | "Hoca notları" bölümü — mealler ve kelimelerin altında |
+| `/hoca/<ad>` | Bir hocanın bütün notları, ayet ayet; kanalına atıf burada |
+| Sure sayfası | Notu olan ayetlerin yanında küçük işaret, ayet sayfasına götürür |
+| Tür sayfaları | "Nüzûl sebepleri", "Kavram açıklamaları" gibi liste sayfaları |
+
+### K7 — Çelişen görüşler yan yana ve ilişki etiketli
+
+Aynı ayette birden çok not varsa hepsi yan yana durur ve aralarındaki ilişki
+(`agrees · disagrees · nuances · elaborates`) **açıkça yazılır**:
+"X hocanın görüşüne katılmıyor". Platform hangisinin doğru olduğunu söylemez;
+farkın var olduğunu gizlemez de.
+
+### K8 — Güven derecesi her notta görünür
+
+`kesin | muhtemel | tartismali` — `<ConfidenceBadge>` ile. Bu enum
+konum/kronoloji (`kesin | muhtemel | rivayet`) ve ayet ilişkisi
+(`kesin | muhtemel | olasi`) enum'larından **ayrıdır, birleştirilmez**;
+anlamları farklıdır (§23.2.4, `scholar-notes.ts`).
+
+## 23.4 Yayın öncesi tamamlanacaklar
+
+- [ ] Kaldırma talebi için **e-posta adresi** (kullanıcı belirleyecek)
+- [ ] **Depo adresi** (henüz uzak depo yok)
+- [ ] `scripts/sync/import_notes.ts` — inbox akışı
+- [ ] `/hoca/<ad>` ve tür sayfaları
+- [ ] Ayet ve sure sayfalarında not bölümü
+
+Bu maddeler tamamlanmadan hiçbir hoca notu yayınlanmaz.

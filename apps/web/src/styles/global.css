@@ -52,10 +52,20 @@
 }
 
 /* Gövde: değişken font, 300–700 tek dosyada. */
+/* Meal ve dipnot metni: uzun okuma serifi (kullanıcı kararı 2026-09-04).
+   Tek ağırlık (400) ve opsz sabit — ölçüldü, değişken eksen iki katı. */
+@font-face {
+  font-family: "Source Serif 4";
+  src: url("/fonts/source-serif-latin.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @font-face {
   font-family: "Inter";
   src: url("/fonts/inter-latin.woff2") format("woff2");
-  font-weight: 300 700;
+  font-weight: 400 700;
   font-style: normal;
   font-display: swap;
 }
@@ -239,6 +249,10 @@
      harfli alıntılar Inter'de yok, tarayıcı karakter bazında düşer. */
   --font-body: "Inter", "Amiri Quran", -apple-system, system-ui, sans-serif;
   --font-arabic: "Amiri Quran", "Scheherazade New", serif;
+  /* Meal ve dipnot: uzun okuma serifi. Arayüz, kelime ve rozetler Inter
+     kalır — DESIGN.md §2'nin gövde/başlık ayrımı bozulmuyor, araya bir
+     "okuma metni" rolü giriyor (plan §23 kararlarıyla aynı oturumda). */
+  --font-reading: "Source Serif 4", "Inter", "Iowan Old Style", Georgia, serif;
   /* JetBrains Mono kendi sunucumuzda YOK: yalnızca birkaç kod parçasında
      kullanılıyor, CDN yasak, 30+ KB'lık bir font bunun için indirilmiyor. */
   --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", monospace;
@@ -523,11 +537,13 @@
 }
 .translation .translation-text {
   margin: 0;
+  font-family: var(--font-reading);
   font-size: var(--text-md);
   line-height: var(--lh-relaxed);
 }
 
 .translation .footnotes {
+  font-family: var(--font-reading);
   margin-top: var(--space-2);
   padding-inline-start: var(--space-3);
   border-inline-start: 2px solid var(--border);

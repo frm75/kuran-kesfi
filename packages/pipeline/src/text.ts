@@ -59,8 +59,16 @@ const CP1252_C1: Readonly<Record<number, string>> = {
   0x9f: "Ÿ", // Ÿ
 };
 
-/** Gorunmez, cizilmeyen bicimlendirme karakterleri. */
+/**
+ * Gorunmez, cizilmeyen bicimlendirme karakterleri.
+ *
+ * U+00AD (yumusak tire) burada: gecerli bir karakter ama kaynakta 1046 kez
+ * geciyor ve neredeyse kesin kaynak dizgisinden kalma. Cizilmiyor, fonta
+ * alinmiyor, ama kopyala-yapistirda metne bulasip aramayi bozuyor.
+ * Kullanici karari (2026-09-04): temizlensin.
+ */
 const INVISIBLE = new Set([
+  0x00ad, // yumusak tire — satir sonu ipucu, metinde isi yok
   0x200b, // sifir genislikli bosluk
   0x200c, // sifir genislikli birlestirmeyen
   0x200d, // sifir genislikli birlestiren

@@ -43,7 +43,7 @@ interface Target {
   upstreamCache: string;
   script: "arab" | "latn";
   /** Hangi metin kumesiyle dogrulanacak. */
-  corpus: "arabic" | "latin" | "headings";
+  corpus: "arabic" | "latin" | "headings" | "reading";
 }
 
 const TARGETS: readonly Target[] = [
@@ -72,6 +72,16 @@ const TARGETS: readonly Target[] = [
     corpus: "latin",
   },
   {
+    id: "source-serif",
+    family: "Source Serif 4",
+    subsetFile: "source-serif-latin.woff2",
+    upstreamCache: "source-serif.ttf",
+    script: "latn",
+    // Meal metnini bu font ciziyor — ceviriyazi ve arayuz metnini DEGIL
+    // (onlar Inter). Dogrulama da yalnizca meal korpusuyla yapilir.
+    corpus: "reading",
+  },
+  {
     id: "playfair-display",
     family: "Playfair Display",
     subsetFile: "playfair-display-latin.woff2",
@@ -94,6 +104,8 @@ interface Corpus {
   latin: Verse[];
   /** Sure adlari ve arayuz basliklari — baslik fontunun dizecegi metin. */
   headings: Verse[];
+  /** Yalnizca meal ve dipnot metni — okuma serifinin dizecegi metin. */
+  reading: Verse[];
 }
 
 function loadCorpus(): Corpus {
@@ -103,6 +115,7 @@ function loadCorpus(): Corpus {
   const arabic: Verse[] = [];
   const latin: Verse[] = [];
   const headings: Verse[] = [];
+  const reading: Verse[] = [];
 
   // Arayuzde gecen sabit basliklar. Veriden turetilemez, elle yazilir;
   // yeni bir baslik eklenirse buraya da eklenmelidir.
@@ -163,12 +176,13 @@ function loadCorpus(): Corpus {
         ) as { surahId: number; verses: { verseNumber: number; text: string }[] };
         for (const verse of file.verses) {
           latin.push({ key: `${file.surahId}:${verse.verseNumber} meal`, text: verse.text });
+          reading.push({ key: `${file.surahId}:${verse.verseNumber} meal`, text: verse.text });
         }
       }
     }
   }
 
-  return { arabic, latin, headings };
+  return { arabic, latin, headings, reading };
 }
 
 function makeShaper(
@@ -199,7 +213,7 @@ async function main(): Promise<void> {
   const corpus = loadCorpus();
   info(
     `dizilecek metin: ${corpus.arabic.length} Arapca ayet, ${corpus.latin.length} Latin satir, ` +
-      `${corpus.headings.length} baslik`,
+      `${corpus.headings.length} baslik, ${corpus.reading.length} meal`,
   );
 
   const hb: Harfbuzz = await hbPromise;

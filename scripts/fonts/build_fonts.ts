@@ -77,8 +77,11 @@ const FONTS: readonly FontSpec[] = [
     // opsz sabitlendi: optik boyut ekseni kullanilmiyor (font-optical-sizing
     // kapali), tasimanin bedeli var. wght 300-700'e daraltildi; tasarim dili
     // bu araligin disina cikmiyor (DESIGN.md 2).
-    variationAxes: { opsz: 16, wght: { min: 300, max: 700 } },
-    weightRange: "300 700",
+    // Meal metni artik Source Serif 4 ile diziliyor; Inter arayuz, ceviriyazi
+    // ve kelime metnini tasiyor. 300 (light) hicbir yerde kullanilmiyor,
+    // araliktan cikarildi: 61,4 KB -> 49,1 KB (olculdu).
+    variationAxes: { opsz: 16, wght: { min: 400, max: 700 } },
+    weightRange: "400 700",
     note: "Arayuz ve meal metni.",
   },
   {
@@ -98,6 +101,21 @@ const FONTS: readonly FontSpec[] = [
     variationAxes: { wght: 600 },
     weightRange: "600",
     note: "Baslik yazi tipi (DESIGN.md 2). Govde metninde kullanilmaz.",
+  },
+  {
+    id: "source-serif",
+    family: "Source Serif 4",
+    upstreamPath: "ofl/sourceserif4/SourceSerif4%5Bopsz,wght%5D.ttf",
+    licensePath: "ofl/sourceserif4/OFL.txt",
+    outFile: "source-serif-latin.woff2",
+    licenseFile: "OFL-SourceSerif4.txt",
+    coverage: "latin",
+    // Meal metni tek agirlikta okunuyor; opsz de kullanilmiyor. Ikisi de
+    // sabitlendi — Playfair'de olculdugu gibi degisken eksen dosyayi
+    // iki katina cikariyor.
+    variationAxes: { opsz: 14, wght: 400 },
+    weightRange: "400",
+    note: "Meal ve dipnot metni — uzun okuma serifi (kullanici karari 2026-09-04).",
   },
   {
     id: "amiri-quran",

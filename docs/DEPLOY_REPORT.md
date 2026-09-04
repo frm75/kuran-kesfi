@@ -615,3 +615,38 @@ kök/kelime çıktıları artık gerçekten **doğrulanıyor** — önceden "şe
 atlandı" diye 7884 uyarı basıyordu.
 
 Denetim sayısı 24.236 → **39.995**.
+
+### 3.12 2026-09-04 — Plan §23 kararları, Source Serif 4, yumuşak tire temizliği
+
+Sunucu yapılandırması **değişmedi.**
+
+**Plan §23 yazıldı** (§23.1 amaç/kapsam/içerik kuralları, §23.3 arayüz,
+§23.4 yayın öncesi tamamlanacaklar). Kullanıcı kararları:
+
+| Karar | Sonuç |
+|---|---|
+| Özet vs. CLAUDE.md kural 4 | Özet kalır ama "platform verisi" rozetiyle; alıntı ayrı "kaynaklı" rozetle |
+| Telif | ≤200 karakter alıntı + derin bağlantı, önceden izin istenmez, kaldırma talebi 7 gün içinde |
+| Hoca seçimi | Kapalı liste, elle onay, yazılı "ehliyet ölçütü" yok |
+| Yayın kapısı | `published`'a elle onay |
+| Yerleşim | Ayet sayfası + `/hoca/<ad>` + sure sayfasında işaret + tür sayfaları |
+| Çelişen görüş | Yan yana, ilişki etiketli ("X'e katılmıyor") |
+| `dogru_bilinen_yanlis` | `yaygin_anlayisa_farkli_bakis` olarak yeniden adlandırıldı |
+
+**Source Serif 4 eklendi** — meal ve dipnot metni artık uzun okuma serifiyle
+diziliyor (32,4 KB, tek ağırlık). Inter arayüz, çeviriyazı ve kelimelerde
+kalıyor; ağırlık aralığı 300–700'den 400–700'e daraltıldı (300 hiçbir yerde
+kullanılmıyordu): 61,4 → 49,1 KB.
+
+Font bütçesi ölçülüp plan §20.4 güncellendi: okuma ekranı **147,2 KB**
+(önceki hedef 140), Latin sayfa **75,5 KB** (hedef 95). Hedef 150/95 oldu;
+aşımın sebebi sonradan eklenen okuma serifidir, gerekçe planda yazılı.
+
+**Yumuşak tire temizlendi** — 523 `U+00AD`. Görünmez ama kopyala-yapıştırda
+metne bulaşıp aramayı bozuyordu.
+
+**Doğrulayıcı düzeltildi:** Source Serif 4 önce yanlış korpusla sınandı
+(çeviriyazı) ve 4768 satırda hata verdi. O metni Source Serif hiç çizmiyor —
+çeviriyazı Inter'in işi. Ayrı bir "meal" korpusu tanımlandı; beş fontun beşi
+de temiz. Ayrıca `˹ ˺` (U+02F9/02FA, İngilizce meallerde 5763 kez) Source
+Serif'te yok; `--font-reading` yığınına Inter eklendi, o karakterler ona düşüyor.

@@ -63,7 +63,14 @@ export const noteType = z.enum([
   "tefsir",
   "nuzul_sebebi",
   "ilke_aciklamasi",
-  "dogru_bilinen_yanlis",
+  /**
+   * Yaygin bir anlayisa farkli bir bakis.
+   *
+   * Onceki adi `dogru_bilinen_yanlis` idi; 2026-09-04'te degistirildi
+   * (plan 23.1 / K5). "Dogru bilinen yanlis" basligi hukmu PLATFORMUN
+   * verdigi izlenimini birakiyordu. Ayni icerik, hukum okura birakiliyor.
+   */
+  "yaygin_anlayisa_farkli_bakis",
   "kissa_detayi",
   "kavram_aciklamasi",
   "kok_aciklamasi",

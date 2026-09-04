@@ -43,7 +43,7 @@ CREATE TABLE "scholar_note" (
   "segment_id" INTEGER,
   "segment_start_sec" INTEGER NOT NULL,
   "segment_end_sec" INTEGER NOT NULL,
-  "note_type" TEXT NOT NULL CHECK ("note_type" IN ('tefsir', 'nuzul_sebebi', 'ilke_aciklamasi', 'dogru_bilinen_yanlis', 'kissa_detayi', 'kavram_aciklamasi', 'kok_aciklamasi', 'genel')),
+  "note_type" TEXT NOT NULL CHECK ("note_type" IN ('tefsir', 'nuzul_sebebi', 'ilke_aciklamasi', 'yaygin_anlayisa_farkli_bakis', 'kissa_detayi', 'kavram_aciklamasi', 'kok_aciklamasi', 'genel')),
   "summary" VARCHAR(2000) NOT NULL,
   "quote" VARCHAR(200),
   "deep_link" TEXT NOT NULL,
