@@ -24,7 +24,13 @@ bilgisayarda çalışır (`kuran-extract`) ve buraya JSON dosyalarıyla veri akt
 4. **Platform kendi editoryal yorumu üretmez.** Tefsir, meal, hoca açıklaması — hepsi bir kaynağa bağlı yorumdur;
    platform bunları kaynağıyla gösterir, tek doğru gibi sunmaz, farklı görüşleri yan yana verir. Kaynağı olmayan
    içerik `data/` altına girmez.
-5. **Harici API'ye üretimde bağımlılık yok.** Site build'i internet gerektirmez; import scriptleri ayrıdır.
+5. **Harici API'ye üretimde bağımlılık yok — ağır medya hariç (2026-09-05'te daraltıldı).** Site build'i
+   internet gerektirmez; import scriptleri ayrıdır. Tek istisna ağır medyadır: ses, video ve PMTiles harita
+   altlığı Cloudflare R2'de durur ve `medya.kurankesfi.tr` üzerinden gelir (repoya da release dizinine de
+   girmez — gigabaytları her deploy'da kopyalamak olurdu). **İstisnanın şartı: R2 düşerse site düşmez.**
+   Sayfa metni, meal, ayet ve statik SVG harita R2'siz çalışmaya devam eder; bozulan yalnızca medyadır.
+   Her medya bileşeni bu varsayımla yazılır. Erişim `pub-*.r2.dev` ile değil kendi alan adımızla; böylece
+   sağlayıcı değişimi tek DNS kaydına iner. Yükleme: `pnpm media:r2:push` (`scripts/media/r2_sync.ts`).
 6. **Lisans:** Kod MIT, `data/` CC BY-NC-SA 4.0. Lisansı belirsiz meal, ses, görsel veya tefsir eklenmez.
 7. **Kapsam dondurulmuştur.** Planda olmayan özellik önerilmez; öneri varsa "ilk yayın sonrası" notuyla
    `docs/BACKLOG.md`'ye yazılır.
@@ -94,6 +100,10 @@ Sunucuda başka uygulamalar çalışıyor. Herhangi bir kurulum/servis işlemind
 
 Dağıtım kökü: `/opt/kuran/`, build çıktısı `/opt/kuran/dist/`, güncelleme atomik (`dist_new` → `mv`).
 
+## Oturum devri
+**`docs/DURUM.md` bağlam sıfırlandığında ilk okunacak dosyadır**: yayındaki modüller, komut sırası,
+yapılmayanlar ve NEDENİ, bir kez yaşanmış tuzaklar, sıradaki adımlar. Büyük bir iş bitince güncellenir.
+
 ## Arayüz
 - **`docs/DESIGN.md` tasarım sisteminin tek kaynağıdır.** Renk token'ları, tip ölçeği, boşluk/yuvarlaklık/gölge
   ölçekleri, hareket süreleri, ortak bileşen anahtarları ve landing bölüm şablonu orada tanımlıdır. Bileşen
@@ -111,6 +121,55 @@ Dağıtım kökü: `/opt/kuran/`, build çıktısı `/opt/kuran/dist/`, güncell
 - **JavaScript 0 bayt.** Sunucu CSP'si `default-src 'none'`; betik sessizce engellenir. Betik gerektiren
   bir tasarım öğesi JS'siz karşılığıyla kurulur (statik SVG, `<details>`, CSS `:focus-within`).
   Gerçekten gerekiyorsa önce CSP'ye `script-src 'self'` girer ve bu ayrıca onaylanır
+- **CSP değişirse canlıya da uygulanır.** `infra/nginx/*.conf` repoda güncellenip
+  `/www/server/panel/vhost/nginx/` altına kopyalanmazsa hiçbir şey hata vermez — dosyalar 200 döner,
+  yalnızca `<video>` sessizce engellenir. Duman testi artık CSP başlığının kendisini okuyor
+- **Görsel ve VİDEO kuralı: figür yok.** "Yüzü görünmüyor" yeterli değil (plan §20.3). Hero videosunun
+  kaynağında beş peygamber figür olarak vardı; aralıklar çıkarıldı, karar `scripts/media/build_media.ts`
+  içinde. **2026-09-05: ilk kesim üç yerde figür kaçırmıştı** (7,20 · 8,50–9,00 · 11,45–12,00 ·
+  13,50–13,80 sn) — sahne notuna güvenilmişti, kareye bakılmamıştı. Yeni medya yayına alınmadan önce
+  0,05 sn adımla kare kare taranır ve **çıktı da** taranır, yalnızca kaynak değil.
+  **Kapı artık yapılandırmaya bağlı, hatırlamaya değil** (2026-09-05): R2'ye yüklemek yayına almaktır,
+  bu yüzden `pnpm media:r2:push` görsel bir dosyayı `media/FIGUR_TARAMASI.json` içinde **aynı sha256 ile**
+  kayıtlı bulamazsa hiçbir şey yüklemez ve durur. Dosya bir bayt değişirse hash tutmaz, tarama yenilenir.
+  Ses, PMTiles, font ve metin muaftır — figür taşıyamazlar
+- **Kaynak kutusu (`<SourceBadge>`) içerik sayfalarında yok** (kullanıcı kararı 2026-09-04 tanıtım,
+  2026-09-05 bütün sayfalar): yalnızca mealin/tefsirin kime ait olduğu yazılır. Bu bir sunum kararıdır,
+  atıf yükümlülüğü kalkmadı — atıf üç yerde durur ve üçü de zorunlu: mealin üstündeki yazar adı,
+  `<Attribution>` (Base.astro, her sayfa) ve `/kaynaklar`. `<Translation>` `sourceDeclaredBy` olmadan
+  build'i durdurur. `<SourceBadge>` bileşeni silinmedi; ileride kıssa/kavram gibi çok kaynaklı içerikte
+  gerekirse kullanılır. CC BY-NC-SA 4.0 (`data/LICENSE`)
+- **İç sayfalar tanıtım sayfasının dilini konuşur** (2026-09-05): `.pg-*`, `.chip`, `.fact-row`,
+  `.surah-grid`, `.verse-list`, `.meal-grid` sınıfları `global.css` "Sayfa düzenleri" bölümünde.
+  Yeni sayfa düz Tailwind yardımcılarıyla değil bu sınıflarla kurulur; düzen SIKI tutulur
+- **İçerik katmanı `data/**` altında elle yazılır, veritabanı türetilmiş kopyadır.** Kıssa, konum,
+  kavram, ilke ve zaman çizelgesi dosyaları tek gerçek kaynaktır; `pnpm content:import` onları
+  PostgreSQL'e TRUNCATE + yeniden yazımla aktarır (upsert değil — silinen kayıt veritabanında kalmasın).
+  Şema: `packages/schema/src/content_input.ts`. İçerik kuralları koda dönüştü: kaynaksız ders, kaynaksız
+  konum, kaynaksız kavram ve birincil ayet dayanağı olmayan ilke build'i durdurur (plan §8.1, §8.3, §18.3)
+- **Kavram–ayet eşleştirmesi KÖKTEN hesaplanır, elle seçilmez.** Kavramın kökü ayette geçiyorsa ayet
+  kavrama bağlanır; `source_id` NULL kalır (platform derlemesi). Kavramlar arası "birlikte geçer" bağı
+  kosinüs benzerliğiyle hesaplanır. Elle yazılan ilişki (contrast/cause/part_of) hesaplananı ezer
+- **Harita MapLibre GL JS + PMTiles (2026-09-05'te değişti); kavram grafı hâlâ JavaScript'siz.**
+  CSP artık **sayfaya göre**: `script-src 'self'` yalnız `/harita` ve `/kissa/*` için açık
+  (`infra/nginx` içindeki `map $uri $kesif_csp` bloğu), kalan 8100+ sayfa 0 bayt JS.
+  Altlık kendi sunucumuzdan: R2'de PMTiles (OSM/Protomaps), üçüncü taraf tile yok.
+  **Statik SVG silinmedi** — betik çalışmazsa veya altlık gelmezse yerinde kalır; devir teslim
+  ancak ilk karo geldiğinde olur (8 sn zaman aşımı). Kavram grafı liste olarak kalıyor
+- **Uydu katmanı Esri, ama yalnız RASTER.** `ibasemaps-api.arcgis.com/.../World_Imagery`.
+  Esri'nin hazır `arcgis/imagery` stili 231 katman + **sprite** getirir; sprite üçüncü taraf ikon
+  atlasıdır ve içeriğini biz denetlemiyoruz (Protomaps sprite'ında `theatre` = iki tiyatro maskesi,
+  yani insan yüzü çıkmıştı). Bu yüzden stilin tamamı alınmaz, içinden sadece uydu raster kaynağı
+  çıkarılır — fotoğraf ikon atlası taşımaz. CSP'ye yalnızca `ibasemaps-api` girdi
+- **`PUBLIC_` önekli ortam değişkenleri TARAYICI PAKETİNE GÖMÜLÜR.** `PUBLIC_ARCGIS_API_KEY`
+  bilerek öyle; ArcGIS anahtarı tasarımı gereği istemci taraflıdır ve koruma gizlilikle değil
+  **yönlendirici (referrer) kısıtıyla** sağlanır (ölçüldü: başka kaynaktan "Token Invalid").
+  Anahtar sızarsa yapılacak şey saklamak değil, panelden iptal edip yenisini üretmektir.
+  Pay-as-you-go kapalı tutulur: ücretsiz kota bitince servis durur, fatura gelmez.
+  Değişkenler repo kökündeki tek `.env`'den okunur (`astro.config.mjs` → `vite.envDir`);
+  bu ayar olmadan Astro değişkeni **sessizce** bulamaz ve özellik kapalı görünür
+- **Tanıtım sayfasında kartlar tıklanır** (`.lp-stretch`): hazır olan kendi sayfasına, hazır olmayan
+  "Kullanacağınız araçlar" bölümüne gider. Olmayan bir sayfaya bağlantı verilmez
 - Marka varlıkları `apps/web/public/brand/`; logo dekoratif kullanımda `alt=""` + `aria-hidden`
 - Arapça: Amiri Quran / Scheherazade New, `dir="rtl"`; meal `ltr`
 - Ortak bileşenler: AyetPaneli, SourceBadge, ConfidenceBadge, DiscoveryPath (breadcrumb), ComparisonBasket

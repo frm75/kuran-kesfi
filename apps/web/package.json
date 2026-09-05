@@ -6,14 +6,17 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev --port ${SITE_PORT:-4321}",
-    "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
+    "dev": "pnpm prepare:harita && ASTRO_TELEMETRY_DISABLED=1 astro dev --port ${SITE_PORT:-4321}",
+    "build": "pnpm prepare:harita && ASTRO_TELEMETRY_DISABLED=1 astro build",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview --port ${SITE_PORT:-4321}",
-    "typecheck": "ASTRO_TELEMETRY_DISABLED=1 astro check"
+    "typecheck": "ASTRO_TELEMETRY_DISABLED=1 astro check",
+    "prepare:harita": "node scripts/prepare-harita.mjs"
   },
   "dependencies": {
     "@kuran/schema": "workspace:*",
-    "astro": "^5.18.2"
+    "astro": "^5.18.2",
+    "maplibre-gl": "^6.7.0",
+    "pmtiles": "^4.5.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",

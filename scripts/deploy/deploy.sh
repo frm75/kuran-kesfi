@@ -87,6 +87,17 @@ smoke_test() {
   check "/nas-suresi/6"            200
   check "/kaynaklar"               200
   check "/kok"                     200
+  # Icerik katmani (2026-09-05): kissa, ilke, kavram, zaman, harita.
+  # Bunlar veri tablolari bossa HIC uretilmez; 404 gelirse content import
+  # calismamis demektir ve sessizce eksik site yayinlanmis olur.
+  check "/kissalar"                200
+  check "/kissa/hz-yusuf"          200
+  check "/ilkeler"                 200
+  check "/ilke/adalet"             200
+  check "/kavramlar"               200
+  check "/kavram/sabir"            200
+  check "/zaman"                   200
+  check "/harita"                  200
   # Kok adresleri Arap harfi tasiyor; nginx'in yuzde kodlu istegi cozdugu
   # her yayinda dogrulanir (bir kez elle test edildi, sonra buraya alindi).
   check "/kok/%D9%82%D9%88%D9%84"  200
@@ -154,17 +165,50 @@ smoke_test() {
   }
   # media-src olmadan hero videosu CSP tarafindan sessizce engellenir.
   header_contains "/" "media-src 'self'" "CSP media-src"
-  # script-src ASLA olmamali: 0 bayt JS iddiasini sunucu tarafinda zorlayan sey bu.
-  local csp
-  csp="$(curl -sS -D - -o /dev/null --max-time 20 --retry 3 --retry-delay 1 \
-    --retry-all-errors --resolve "kurankesfi.tr:443:127.0.0.1" \
-    "https://kurankesfi.tr/" 2>/dev/null | grep -i '^content-security-policy:')" || csp=""
-  if printf '%s' "$csp" | grep -qi 'script-src'; then
-    printf '    %-34s %s\n' "/" "CSP script-src ACIK — BEKLENMIYOR"
-    fail=1
-  else
-    printf '    %-34s %s\n' "/" "CSP script-src kapali"
-  fi
+  # CSP KAPSAMI — 2026-09-05'te sayfaya gore ayrildi (bkz. infra/nginx map blogu).
+  #
+  # Iki yonlu denetim, cunku iki yonde de sessiz bozulma mumkun:
+  #   1. Harita sayfasinda script-src DUSERSE harita bos kalir, hata vermez.
+  #   2. Icerik sayfasina script-src SIZARSA 8100+ sayfanin "0 bayt JS"
+  #      garantisi sessizce kaybolur ve kimse fark etmez.
+  #
+  # map blogunun regex'i yanlis yazilirsa (ornegin /kissa yerine /kissalar
+  # eslesirse) ikisi de olur. Bu yuzden ornek adresler tek tek okunuyor.
+  csp_of() {
+    curl -sS -D - -o /dev/null --max-time 20 --retry 3 --retry-delay 1 \
+      --retry-all-errors --resolve "kurankesfi.tr:443:127.0.0.1" \
+      "https://kurankesfi.tr$1" 2>/dev/null | grep -i '^content-security-policy:' || true
+  }
+  csp_must_have() {
+    local path="$1" needle="$2"
+    if printf '%s' "$(csp_of "$path")" | grep -qi -- "$needle"; then
+      printf '    %-34s %s\n' "$path" "CSP $needle var"
+    else
+      printf '    %-34s %s\n' "$path" "CSP $needle YOK — harita calismaz"
+      fail=1
+    fi
+  }
+  csp_must_not_have() {
+    local path="$1" needle="$2"
+    if printf '%s' "$(csp_of "$path")" | grep -qi -- "$needle"; then
+      printf '    %-34s %s\n' "$path" "CSP $needle ACIK — BEKLENMIYOR"
+      fail=1
+    else
+      printf '    %-34s %s\n' "$path" "CSP $needle kapali"
+    fi
+  }
+  # Harita sayfalari: MapLibre ve PMTiles altligi icin acik olmali.
+  csp_must_have "/harita"          "script-src 'self'"
+  csp_must_have "/harita"          "worker-src 'self' blob:"
+  csp_must_have "/harita"          "medya.kurankesfi.tr"
+  # Uydu katmani: eksikse dugme goruntlenir ama tile'lar sessizce engellenir.
+  csp_must_have "/harita"          "ibasemaps-api.arcgis.com"
+  csp_must_have "/kissa/hz-musa"   "script-src 'self'"
+  # Geri kalan her sey: 0 bayt JS garantisini sunucu tarafinda zorlayan sey bu.
+  csp_must_not_have "/"                  "script-src"
+  csp_must_not_have "/bakara-suresi/153" "script-src"
+  csp_must_not_have "/kissalar"          "script-src"
+  csp_must_not_have "/sureler"           "script-src"
 
   [ "$fail" -eq 0 ] || die "duman testi basarisiz"
   log "duman testi temiz"

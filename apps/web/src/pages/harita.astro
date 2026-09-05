@@ -1,0 +1,239 @@
+---
+import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import Base from "~/layouts/Base.astro";
+import HaritaCanli from "~/components/HaritaCanli.astro";
+import { getLocations } from "~/lib/data";
+
+/**
+ * Kıssa haritası — plan §2.1.
+ *
+ * ## Neden MapLibre değil
+ *
+ * Plandaki tasarım MapLibre GL kullanıyor: WebGL, ~200 KB betik ve harita
+ * altlığı için üçüncü taraf tile isteği. İkisi de bugün mümkün değil —
+ * sunucu CSP'si `default-src 'none'`, `script-src` tanımlı değil ve
+ * `connect-src 'self'` üçüncü taraf tile'ı engelliyor (CLAUDE.md: betik
+ * gerektiren öğe JS'siz karşılığıyla kurulur).
+ *
+ * Yerine: build zamanında üretilen STATİK SVG. Kara parçaları Natural Earth
+ * 1:110m verisinden (kamu malı, data/geo/) Mercator ile çiziliyor; konumlar
+ * pin olarak üstüne biniyor. Sıfır bayt JavaScript, sıfır dış istek.
+ *
+ * Kaybedilen: yakınlaştırma ve kaydırma. Karşılığında sayfa altındaki
+ * KONUM LİSTESİ tam veriyi taşıyor — plan §12 haritalar için liste
+ * alternatifini zaten zorunlu kılıyor, burada liste asıl arayüz.
+ *
+ * ## Güven derecesi görsel olarak da ayrışır
+ *
+ * DESIGN.md §1: renk tek başına anlam taşımaz. Pin biçimi de değişir:
+ * kesin = dolu daire, muhtemel = halkalı, rivayet = kesikli halka.
+ */
+
+const locations = getLocations();
+const withCoords = locations.filter(
+  (l): l is typeof l & { lat: number; lng: number } => l.lat !== null && l.lng !== null,
+);
+
+// --- projeksiyon -------------------------------------------------------------
+// Kıssaların tamamı Akdeniz–Arabistan–Mezopotamya üçgeninde; dünya haritası
+// çizmek boş alan olurdu. Kadraj konumlardan hesaplanıyor, sabit yazılmıyor.
+const PAD = 6;
+const bounds = withCoords.reduce(
+  (acc, l) => ({
+    minLng: Math.min(acc.minLng, l.lng),
+    maxLng: Math.max(acc.maxLng, l.lng),
+    minLat: Math.min(acc.minLat, l.lat),
+    maxLat: Math.max(acc.maxLat, l.lat),
+  }),
+  { minLng: 180, maxLng: -180, minLat: 90, maxLat: -90 },
+);
+const box = {
+  minLng: bounds.minLng - PAD,
+  maxLng: bounds.maxLng + PAD,
+  minLat: bounds.minLat - PAD,
+  maxLat: bounds.maxLat + PAD,
+};
+
+const W = 1000;
+/** Mercator y — enlem arttıkça gerilir; kara şekilleri bozulmasın. */
+const merc = (lat: number): number => Math.log(Math.tan(Math.PI / 4 + (lat * Math.PI) / 360));
+const yTop = merc(box.maxLat);
+const yBottom = merc(box.minLat);
+const H = Math.round((W * (yTop - yBottom)) / ((box.maxLng - box.minLng) * (Math.PI / 180)));
+
+const px = (lng: number): number => ((lng - box.minLng) / (box.maxLng - box.minLng)) * W;
+const py = (lat: number): number => ((yTop - merc(lat)) / (yTop - yBottom)) * H;
+
+// --- kara parçaları ----------------------------------------------------------
+const geoPath = resolve(
+  dirname(fileURLToPath(import.meta.url)),
+  "../../../../data/geo/ne_110m_land.geojson",
+);
+interface Geo {
+  features: { geometry: { type: string; coordinates: number[][][] | number[][][][] } }[];
+}
+const geo = JSON.parse(readFileSync(geoPath, "utf8")) as Geo;
+
+/** Kadraj dışındaki halkalar atılır; 5091 noktanın çoğu boşa çizilmesin. */
+function ringPath(ring: number[][]): string | null {
+  let inBox = false;
+  const points: string[] = [];
+  for (const [lng, lat] of ring) {
+    if (lng === undefined || lat === undefined) continue;
+    if (lng >= box.minLng && lng <= box.maxLng && lat >= box.minLat && lat <= box.maxLat) {
+      inBox = true;
+    }
+    points.push(`${px(lng).toFixed(1)},${py(lat).toFixed(1)}`);
+  }
+  if (!inBox || points.length < 3) return null;
+  return `M${points.join("L")}Z`;
+}
+
+const landPaths: string[] = [];
+for (const feature of geo.features) {
+  const polys =
+    feature.geometry.type === "Polygon"
+      ? [feature.geometry.coordinates as number[][][]]
+      : (feature.geometry.coordinates as number[][][][]);
+  for (const poly of polys) {
+    const outer = poly[0];
+    if (outer === undefined) continue;
+    const path = ringPath(outer);
+    if (path !== null) landPaths.push(path);
+  }
+}
+
+// --- konumlar ----------------------------------------------------------------
+const pins = withCoords
+  .map((l) => ({ ...l, x: px(l.lng), y: py(l.lat) }))
+  .sort((a, b) => a.y - b.y);
+
+const byConfidence = {
+  kesin: locations.filter((l) => l.confidence === "kesin").length,
+  muhtemel: locations.filter((l) => l.confidence === "muhtemel").length,
+  rivayet: locations.filter((l) => l.confidence === "rivayet").length,
+};
+const withAlternatives = locations.filter((l) => l.alternatives.length > 0);
+---
+
+<Base
+  title="Kıssa Haritası — Kur'an-ı Kerim Keşfi"
+  description={`Kur'an kıssalarının geçtiği ${locations.length} yer; her birinin güven derecesi ve kaynağıyla.`}
+>
+  <main id="icerik" class="pg pg-wide">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">Harita</span>
+    </nav>
+
+    <header class="pg-head">
+      <p class="pg-kicker">Kıssa coğrafyası</p>
+      <h1 class="pg-title">Harita</h1>
+      <p class="pg-lede">
+        Kıssaların geçtiği yerler. <strong>Hiçbiri "işte tam burası" demez</strong> — her
+        konumun ne kadar kesin olduğu yanında yazılı ve farklı görüşler gizlenmiyor.
+      </p>
+      <ul class="fact-row">
+        <li><b>{locations.length}</b><span>konum</span></li>
+        <li><b>{byConfidence.kesin}</b><span>kesin</span></li>
+        <li><b>{byConfidence.muhtemel}</b><span>muhtemel</span></li>
+        <li><b>{byConfidence.rivayet}</b><span>rivayet</span></li>
+      </ul>
+    </header>
+
+    <section>
+      {/*
+        Etkilesimli harita statik SVG'nin YERINE GECMEZ, ustune eklenir.
+        Bilesen kendini yalnizca MapLibre gercekten yuklendiginde gosterir
+        ve o an SVG'yi gizler; betik calismazsa sayfa aynen eskisi gibidir.
+      */}
+      <HaritaCanli
+        locations={locations}
+        label={`Kur'an kissalarinin gectigi ${String(pins.length)} yerin etkilesimli haritasi`}
+      />
+      <figure class="map-figure" data-map-static>
+        <svg
+          class="map-svg"
+          viewBox={`0 0 ${String(W)} ${String(H)}`}
+          role="img"
+          aria-labelledby="harita-basligi"
+        >
+          <title id="harita-basligi">
+            Kur'an kıssalarının geçtiği {pins.length} yerin haritası. Aynı bilgi aşağıdaki
+            listede metin olarak da var.
+          </title>
+          <g class="map-land">
+            {landPaths.map((d) => <path d={d} />)}
+          </g>
+          <g class="map-pins">
+            {
+              pins.map((pin) => (
+                <g class:list={["pin", `is-${pin.confidence}`]}>
+                  <circle cx={pin.x} cy={pin.y} r="6" />
+                  <text x={pin.x + 10} y={pin.y + 4}>
+                    {pin.name}
+                  </text>
+                </g>
+              ))
+            }
+          </g>
+        </svg>
+        <figcaption>
+          Kara parçaları: Natural Earth 1:110m (kamu malı). Yakınlaştırma yok — harita
+          betik gerektirmeden çiziliyor; tam bilgi aşağıdaki listede.
+        </figcaption>
+      </figure>
+
+      <ul class="map-legend">
+        <li class="pin is-kesin"><span class="lg-mark" aria-hidden="true"></span> kesin — tartışmasız yer</li>
+        <li class="pin is-muhtemel"><span class="lg-mark" aria-hidden="true"></span> muhtemel — çoğunluk görüşü</li>
+        <li class="pin is-rivayet"><span class="lg-mark" aria-hidden="true"></span> rivayet — coğrafi teyit yok</li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="sec-head">
+        <h2>Konumlar</h2>
+        <span class="sec-note">
+          {withAlternatives.length} konumda birden fazla görüş var; hepsi yazılı
+        </span>
+      </div>
+      <ol class="location-list">
+        {
+          locations.map((location) => (
+            <li id={`konum-${location.slug}`}>
+              <div class="lc-head">
+                <h3>{location.name}</h3>
+                <span class:list={["conf", `is-${location.confidence}`]}>{location.confidence}</span>
+                {location.modernName !== null && <span class="lc-modern">{location.modernName}</span>}
+                {location.country !== null && <span class="lc-country">{location.country}</span>}
+              </div>
+              <p class="lc-note">{location.sourceNote}</p>
+              {location.alternatives.length > 0 && (
+                <details class="lc-alts">
+                  <summary>Farklı görüşler ({location.alternatives.length})</summary>
+                  <ul>
+                    {location.alternatives.map((alt) => (
+                      <li>
+                        <strong>{alt.name}</strong> — {alt.note}
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              )}
+              {location.stories.length > 0 && (
+                <ul class="tag-list">
+                  {location.stories.map((story) => (
+                    <li><a href={`/kissa/${story.slug}`}>{story.title}</a></li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+  </main>
+</Base>

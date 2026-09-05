@@ -41,6 +41,9 @@ bağıl parlaklıkla hesaplanmış WCAG 2.1 kontrast oranlarıdır; ölçüm zem
 --success:         #6FBF8E                                6,80:1
 --warning:         #C9A253
 --danger:          #E3736E                                4,96:1
+
+--map-water:       #050F1F   harita: deniz, göl, nehir
+--map-land:        #12233D   harita: kara
 ```
 
 ### Açık Mod (türetilmiş)
@@ -58,6 +61,9 @@ bağıl parlaklıkla hesaplanmış WCAG 2.1 kontrast oranlarıdır; ölçüm zem
 --accent-hover:    #DCB974
 --accent-muted:    #E4D5AE
 --accent-text:     #7C601F                                 4,77:1
+
+--map-water:       #DCE7EC   harita: deniz, göl, nehir
+--map-land:        #F6F1E2   harita: kara
 
 --teal:            #2E6A64                                 5,04:1
 
@@ -99,6 +105,34 @@ değil, ayrım rengidir**: yalnızca "alternatif görüş" rozetinde ve keşif a
 kullanılır. CTA'da, başlıkta, bağlantıda kullanılmaz.
 
 Tasarımdaki `#3E8E86` kart zemini üzerinde **4,44:1** kalıyordu (sınır 4,5). Hue korunarak `#449C93`'e açıldı.
+
+### Harita Renkleri — neden ayrı token (2026-09-05)
+
+`--map-water` ve `--map-land` **coğrafya** rengidir; `--bg-*` ise **arayüz** rengidir.
+İkisi karıştırılmamalıdır.
+
+İlk sürümde harita denizi `--bg-primary`, karayı `--bg-elevated` ile boyuyordu. Karanlık modda
+tesadüfen kabul edilebilir duruyordu; açık modda **ters okunuyordu**: Kızıldeniz parşömen bej
+(sayfa zemini), kara ise beyaz (kart) çıkıyordu — yani deniz kum gibi, kara kâğıt gibi görünüyordu.
+
+Sebep semantikti: `--bg-primary` "sayfanın zemini", `--bg-elevated` "kartın zemini" demektir.
+Hiçbiri "su" ya da "toprak" demez. Bir haritanın rengi arayüzün katman hiyerarşisinden
+türetilemez; kendi anlamını taşıyan token ister.
+
+Değerler paletin içinde kalır — karanlıkta mürekkep laciverdinin iki yanı, açıkta parşömenin
+soğuk ve sıcak yanı:
+
+```
+                 karanlık   açık
+--map-water      #050F1F    #DCE7EC    deniz: soğuk taraf
+--map-land       #12233D    #F6F1E2    kara: sıcak taraf
+```
+
+Kıyı çizgisi ayrıca çizilir (`--border-strong`), çünkü dolgu farkı tek başına küçük ekranda
+ve gri baskıda yetmez — **renk tek başına anlam taşımaz** kuralı burada da geçerli.
+
+Statik SVG harita ve MapLibre haritası **aynı** token'ları kullanır; biri JavaScript'siz
+karşılığı olduğu için ikisinin farklı görünmesi kabul edilemez.
 
 ### Güven ve Rozet Renkleri (plan §12.9 belirsizlik sistemi)
 
@@ -289,6 +323,12 @@ Ayrım öncelikle **ince çizgiyle** yapılır; gölge yalnızca gerçekten yük
 
 ### `<SourceBadge>` — omurga (plan §12.10)
 
+> **2026-09-05:** rozet içerik sayfalarından kaldırıldı (kullanıcı kararı: "sadece meal veya tefsirlerin
+> kime ait olduğunu yazacağız"). Bileşen ve aşağıdaki kural silinmedi; bugün yalnızca `/kaynaklar`
+> kullanıyor. Atıf üç yerde ve üçü kodla zorunlu: mealin üstündeki yazar adı (`<Translation>`,
+> `sourceDeclaredBy` boşsa build durur), `<Attribution>` (her sayfa), `/kaynaklar`. Rozetin bıraktığı yeri
+> `.chip` aldı — sayfa/cüz, meal sahibi, Mekkî/Medenî gibi tek kelimelik gerçekler için.
+
 **Kaynaklı içerik bu bileşen olmadan render edilmez.** Üç varyant:
 
 | Sınıf | Kenarlık | Renk | Metin |
@@ -335,14 +375,75 @@ birbirini takip eder; ayrım ince `--border` çizgisiyle.
 
 Plan §14.1'de. Uygulanmış hâli `apps/web/src/pages/index.astro`.
 
+### Tıklanabilir kart (`.lp-stretch`)
+
+Kartın tamamı tıklanır ama bağlantı **başlıkta** durur; `::after` kartı kaplar. Ekran okuyucu kısa bir
+metin duyar ("Kelime"), kart gövdesini bağlantı olarak okumaz. Klavye odağı harflerde değil kartın
+kenarında görünür (`:has(:focus-visible)`); `:has` desteklenmeyen tarayıcıda varsayılan halka harflerde
+kalır — `outline: none` bu yüzden `@supports selector(:has(a))` içinde (§10: `outline: none` tek başına
+kullanılmaz). Hazır olmayan kapı olmayan bir sayfaya değil "Kullanacağınız araçlar"a gider.
+
 ---
 
-## 8. Süsleme
+## 8. Süsleme ve Hero Videosu
 
 - Bölüm ayraçları: ince altın çizgi + ortada geometrik detay (`.rule-ornament`)
-- Hero ambiyansı: statik SVG takımyıldızı, CSS parıltı (`prefers-reduced-motion`'da durur)
-- **Figür yok, insan tasviri yok** (plan §20.3)
+- Hero: alt katmanda sessiz, döngülü video + CSS perde (`prefers-reduced-motion`'da video gizlenir, poster kalır)
+- **Figür yok, insan tasviri yok** (plan §20.3) — video dahil
 - Stok görsel yok; kullanılırsa özel çizim / hat / geometri
+
+### Hero videosu — kesim (2026-09-05, ikinci sürüm)
+
+Kaynak (`scripts/media/hero-source.mp4`, 20 sn) peygamberleri insan figürü olarak gösteriyor. İlk kesim
+(2026-09-04) sahne notuna göre seçilmişti ve **üç yerde figür kaçırmıştı**; yayına çıktı. 0,05 sn adımla
+yeniden tarandı, aralıklar artık iki ucu ayrı ayrı kareye bakılmış **figürsüz pencere** (`WINDOWS`):
+
+| Pencere | İçerik | Hemen dışında kalan |
+|---|---|---|
+| 1,80–3,10 | dünya uzaydan, iniş, nehir vadisi | 1,80 öncesi siyah · 3,10 sonrası Hz. Âdem |
+| 7,30–8,45 | gemi tufanda | 7,25 gemi önünde figür · 8,50 kıyıda figür |
+| 10,30–11,30 | yarılan deniz | 10,25 figür · 11,45 Hz. Yunus |
+| 13,90–18,30 | çöl şafağı, kervan, şehir, vahiy ışığı | 13,80'e kadar figür · 18,30 sonrası fade |
+
+Ham 7,85 sn; **0,75× hız** ile 9,27 sn (`minterpolate=blend` kare tekrarını siler). Çıktı da ayrıca 4 fps
+ile kare kare tarandı — figür yok.
+
+### Hero videosu — parlaklık
+
+"Video görünmüyor" şikâyetinin sebebi perde değil **kaynağın kendisiydi**: koyu derecelenmiş ve ilk kesim
+2 sn uzay siyahını + 1,5 sn fade-to-black'i içeri almıştı (11,4 sn'lik döngünün %31'i siyah, poster 0. kare).
+Ölçüm `signalstats YAVG`, 0,5 sn adım:
+
+| | En karanlık kare | Ortalama | Boyut |
+|---|---|---|---|
+| Eski çıktı | 31/255 | 89/255 | 763 KB |
+| **Yeni çıktı** | **76/255** | **137/255** | **567 KB** |
+
+Siyah uçlar pencerelerin dışında bırakıldı; `eq=gamma=1.35:saturation=1.10` gölgeleri kaldırdı (gamma Y
+düzlemine uygulanır, renk kaydırmaz). Betik artık her üretimde profili basıyor ve **en karanlık kare 60'ın
+altına düşerse üretimi durduruyor**; poster sabit kare değil, en parlak kare (8,5 sn).
+
+### Perde ve glif gölgesi — ölçüyle
+
+Video parlaklaşınca perdenin işi değişti: görüntüyü karartmak değil, yalnızca metnin arkasını karartmak.
+Merkez %52 → %40, elips **daraltıldı** (%56×64); kenarlar ve alt yarı açık. Okunurluğun asıl taşıyıcısı
+**glif gölgesi**: `0 0 2px 95%` + `0 1px 4px 90%` + `0 2px 18px 65%` — harfin 2 px komşusunu ~%55 örter,
+görüntünün gerisine dokunmaz.
+
+Kontrast WCAG 1.4.3 anlayış belgesinin dediği gibi **haleyle** ölçüldü: harf rengi saydam yapılıp (gölge
+kalır) glif pikselinin 2 px ötesindeki piksel "komşu arka plan" sayıldı. En parlak karede (YAVG 167),
+1440 px, headless Chromium:
+
+| Öğe | Eşik | Koyu min | Koyu p05 | Açık min |
+|---|---|---|---|---|
+| Başlık "Oku. Anla. Keşfet." | 3:1 (büyük) | 4,31 | 5,75 | 13,51 |
+| "Hayatına Taşı." (altın) | 3:1 (büyük) | 3,17 | 4,10 | 4,37 |
+| Alıntı satırı (altın, ≥24 px) | 3:1 (büyük) | **2,93** | 3,61 | 4,30 |
+| Giriş paragrafı (normal) | 4,5:1 | 3,84 | 4,98 | 13,89 |
+
+**Dürüst not:** alıntı satırının mutlak minimumu 2,93 — 7790 komşu pikselden en kötü tekinin değeri,
+kenar yumuşatma pikseli. %5'lik dilim 3,61 ile eşiği geçiyor. Giriş paragrafı bunun için ikincil tondan
+birincil parşömene alındı (medyan 4,36 → 7,13). Betik: oturum çalışma dizininde `halo.mjs`; yöntem burada.
 
 ---
 
@@ -373,6 +474,48 @@ Genişlik/yükseklik HTML'de sabit yazılır: yüklenmeden önce de yer kaplar, 
 
 ---
 
+## 9a. İç Sayfa Düzeni (2026-09-05)
+
+İç sayfalar tanıtım sayfasıyla aynı dili konuşur; sınıflar `global.css` → "Sayfa düzenleri".
+
+| Sınıf | Ne | Nerede |
+|---|---|---|
+| `.pg` + `.pg-narrow/-normal/-wide` | sayfa kabı | hepsi |
+| `.pg-crumb` · `.pg-head` · `.pg-kicker` · `.pg-title` · `.pg-lede` | başlık bloğu; alt kenar pirinç gradyan saç teli | hepsi |
+| `.fact-row` | büyük pirinç sayı + küçük etiket | sureler, kökler, kaynaklar |
+| `.chip` · `.chip-row` | tek kelimelik gerçek; rozetin yerini aldı | sure, ayet, kök |
+| `.jump-bar` | çapa çubuğu (JS yok) | sureler |
+| `.surah-grid` | otomatik dolan ızgara, 1180 px'te 4 sütun | sureler |
+| `.verse-list` | numara kenar boşluğunda, künye satırı yok | sure |
+| `.meal-grid` | ≥24 rem sütunlarda kartlar | ayet |
+| `.sec-head` | bölüm başlığı + sönük not aynı satırda | ayet, kök |
+
+Ölçülen sıkılaşma (1440 px, tam sayfa yüksekliği): sure listesi 2 → 4 sütun; kök sayfası (قول, 1722 geçiş)
+117 320 → **86 996 px** (−26 %); sure sayfasında ayet başına künye satırı ve yazar adı tekrarı kalktı
+(Bakara'da 286 satır). Yazar adı `hideAuthor` ile **görsel olarak** gizlenir, `sr-only` kalır.
+
+---
+
+## 9b. İçerik Katmanı Sayfaları (2026-09-05)
+
+| Sayfa | Ne | JS yerine ne |
+|---|---|---|
+| `/kissalar` · `/kissa/<slug>` | 34 kıssa, anlatı modu (dağınık ayetler kronolojik) | — |
+| `/harita` | 26 konum, statik SVG + tam liste | MapLibre GL → build zamanı SVG |
+| `/zaman` | 22 siyer olayı, dönem dönem; iki nüzul sıralaması yan yana | interaktif çizelge → liste + tablo |
+| `/kavramlar` · `/kavram/<slug>` | 71 kavram, dağılım çubukları | D3 force-directed graf → ağaç + bağ listesi |
+| `/ilkeler` · `/ilke/<slug>` | 32 ilke, birincil/ikincil ayet dayanakları | — |
+| ayet sayfası "Bu ayet neye bağlı" | kıssa · ilke · kavram · nüzul (plan §12.4) | — |
+
+Yeni sınıflar: `.conf` (güven derecesi), `.link-groups` / `.tag-list`, `.story-grid`, `.route-list`,
+`.passage-list`, `.lesson-list`, `.principle-grid`, `.ref-list`, `.concept-grid`, `.dist-bars`,
+`.rel-list`, `.era` / `.event-list`, `.order-table`, `.map-svg` / `.location-list`.
+
+**Kavram sayfasında ayet listesi ilk 60 ile sınırlı** ve kesildiği yazılıyor — "iman" 879 ayette
+geçiyor, hepsini meal metniyle basmak sayfayı 1 MB yapardı. Sessiz kırpma yok (plan §1.5).
+
+---
+
 ## 10. Erişilebilirlik
 
 - Klavyeyle tam gezinilebilir; odak halkası her zaman görünür. `outline: none` tek başına kullanılmaz.
@@ -394,6 +537,7 @@ Plan §20.4 bütçesi. Ölçülen:
 | Tanıtım CSS'i | 16 KB ham · **2,9 KB gzip** |
 | Okuma CSS'i | 28 KB ham · **6,0 KB gzip** |
 | En büyük sayfa (Bakara, 286 ayet) | 436 KB ham · **89,4 KB gzip** |
+| Hero videosu (yalnızca tanıtım sayfası) | **567 KB** (9,27 sn) — poster 12,7 KB ile başlar, video arkadan iner |
 | **JavaScript** | **0 bayt** — hiçbir sayfada yok |
 | Üretilen sayfa | 7996 · build 87 sn |
 
@@ -406,12 +550,17 @@ Sunucu CSP'si `default-src 'none'` diyor ve `script-src` tanımlı değil — be
 
 | Tasarımda | Uygulamada | Sebep |
 |---|---|---|
-| Hero'da `<video>` + canvas ağ animasyonu | statik SVG takımyıldızı + CSS parıltı | `script-src` ve `media-src` yok |
+| Hero'da canvas ağ animasyonu | video + CSS perde | canvas betik ister |
 | Kaydırınca katılaşan menü | her zaman katı, `backdrop-filter` ile | betik gerekiyordu |
 | Burger menü (JS) | `<details>` | betik gerekiyordu |
 | Kapı açıklamasının hover'da açılması | açıklama her zaman görünür | dokunmatik ve klavye erişimi |
 
-Dekoratif bir animasyon için CSP gevşetilmedi.
+**CSP'ye yalnızca `media-src 'self'` eklendi** (2026-09-04), hero videosu için. Üçüncü taraf medya hâlâ
+yasak, `script-src` hâlâ kapalı — sayfa 0 bayt JS.
+
+`prefers-reduced-motion: reduce` durumunda video gizlenir, poster kalır. **Dürüst not:** betik olmadan
+videonun *inmesini* engelleyemiyoruz, yalnızca gösterilmesini. İndirmeyi de durdurmak `script-src` açmayı
+gerektirirdi; o bedel bunun için ödenmedi.
 
 ---
 
@@ -429,6 +578,14 @@ içindeki `:root` ve `@theme inline` bloklarında yaşar (Tailwind v4; ayrı `ta
 | 2026-09-04 | Palet **lacivert + altın**; `--accent` / `--accent-text` ayrımı kontrast ölçümünden doğdu |
 | 2026-09-04 | Görsel dil `docs/landing.html`'e geçti: zemin `#071023`, **Cormorant Garamond** + **Karla**, ikincil vurgu firuze |
 | 2026-09-04 | Karla çeviriyazıyı taşımadığı için **Kesif Latin Ek** yama fontu (2,3 KB) eklendi |
+| 2026-09-05 | Hero videosu yeniden kesildi: ilk kesim üç yerde figür kaçırmıştı; siyah uçlar atıldı, gamma ile parlatıldı, 0,75× |
+| 2026-09-05 | Okunurluk perdeden **glif gölgesine** taşındı; kontrast haleyle ölçülüyor |
+| 2026-09-05 | Kaynak rozeti bütün içerik sayfalarından kaldırıldı; atıf yazar adı + `<Attribution>` + `/kaynaklar` |
+| 2026-09-05 | İç sayfalar tanıtım diline geçti (`.pg-*`, `.chip`, `.surah-grid`, `.verse-list`, `.meal-grid`) |
+| 2026-09-05 | Tanıtım kartları tıklanır (`.lp-stretch`); hazır olmayan "Kullanacağınız araçlar"a iner |
+| 2026-09-05 | İçerik katmanı yayında: kıssa, konum, kavram, ilke, zaman — 8138 sayfa, hâlâ 0 bayt JS |
+| 2026-09-05 | Harita MapLibre yerine **statik SVG** (Natural Earth, build zamanı); kavram grafı liste |
+| 2026-09-05 | Güven derecesi rozeti `.conf` — renk + kenarlık biçimi (düz/kesikli/noktalı), §1 kuralı |
 
 ### Karara açık nokta
 

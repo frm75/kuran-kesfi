@@ -1,0 +1,783 @@
+---
+/**
+ * Etkilesimli harita — MapLibre GL JS + PMTiles.
+ *
+ * ============================================================================
+ * KADEMELI IYILESTIRME: STATIK SVG HER ZAMAN ONCE
+ * ============================================================================
+ *
+ * Bu bilesen bir sey EKLER, hicbir seyi degistirmez. Sayfa once statik SVG
+ * haritayla ve tam konum listesiyle gelir — betik hic calismasa da (CSP,
+ * eski tarayici, WebGL yok, R2 erisilemez, kullanici JS kapatmis) sayfa
+ * eksiksizdir. Etkilesimli harita ancak `map.on("load")` GERCEKTEN atesledigi
+ * an SVG'nin yerini alir.
+ *
+ * Bu, CLAUDE.md kural 5'in R2 istisnasina koydugu sartin uygulamasidir:
+ * "R2 duserse site dusmez."
+ *
+ * ============================================================================
+ * RENK KODA GOMULMEZ
+ * ============================================================================
+ *
+ * MapLibre CSS degiskeni okuyamaz. Palet calisma aninda
+ * `getComputedStyle(document.documentElement)` ile global.css'ten okunur ve
+ * stil ondan uretilir. Tek gercek kaynak global.css olarak kalir (CLAUDE.md:
+ * "hex/px degeri koda gomulmez, token'dan gelir"), karanlik/acik mod
+ * kendiliginden dogru olur ve tema degisince stil yeniden kurulur.
+ *
+ * ============================================================================
+ * GUVEN DERECESI: RENK TEK BASINA ANLAM TASIMAZ
+ * ============================================================================
+ *
+ * DESIGN.md 1. Statik SVG'deki kural birebir korunuyor:
+ *   kesin    dolu daire        yesil
+ *   muhtemel halkali (ic bos)  altin
+ *   rivayet  kesikli halka     gri
+ * Uc sinif renk + BICIM + metin ile ayrisir; renk korlugunde ve gri baskida
+ * da okunur. Tiklaninca acilan panelde derece ayrica YAZIYLA gecer.
+ */
+/**
+ * Yapisal tip — `StaticLocation` DEGIL.
+ *
+ * Iki farkli cagrisan var: /harita tam konum kaydini, /kissa/<slug> ise
+ * kissanin kendi konum listesini (`story.locations`) veriyor. Ikisi ayni
+ * degil ama haritanin ihtiyaci olan alanlar ortak. Genis tipe baglanmak
+ * kissa sayfasini var olmayan alanlari (sourceNote, alternatives) uydurmaya
+ * zorlardi.
+ */
+interface MapLocation {
+  slug: string;
+  name: string;
+  modernName: string | null;
+  lat: number | null;
+  lng: number | null;
+  confidence: "kesin" | "muhtemel" | "rivayet";
+}
+
+interface RouteStop {
+  slug: string;
+  order: number;
+  /** Kissada o durakta ne oluyor — panelde gosterilir */
+  eventDescription: string;
+  /** "Kasas 20-28" gibi ayet etiketleri; o duraga bagli parcalar */
+  verses: string[];
+}
+
+interface Props {
+  locations: MapLocation[];
+  /** Kissa sayfasinda rota; genel haritada bos. */
+  route?: RouteStop[];
+  /** Erisilebilir baslik — ekran okuyucuya haritanin ne oldugunu soyler. */
+  label: string;
+}
+
+const { locations, route = [], label } = Astro.props;
+
+/**
+ * Uydu katmani ANAHTAR VARSA vardir.
+ *
+ * `PUBLIC_ARCGIS_API_KEY` bos ise dugme HIC basilmaz — yarim calisan bir
+ * secenek gostermek, hic gostermemekten kotudur. Anahtar `.env`'e girildigi
+ * ve site yeniden kuruldugu an kendiliginden acilir.
+ *
+ * Anahtarin tarayiciya gitmesi Esri'nin tasarimi; guvenlik gizlilikle degil
+ * YONLENDIRICI KISITIYLA saglanir (yalnizca kurankesfi.tr'den calisir,
+ * olculdu: baska kaynaktan "Token Invalid" doner).
+ */
+const arcgisKey = import.meta.env.PUBLIC_ARCGIS_API_KEY ?? "";
+const uyduVar = arcgisKey !== "";
+
+/**
+ * Tarayiciya giden veri BURADA kesiliyor.
+ *
+ * `locations` icinde sourceNote, alternatives, kaynak listesi ve kissa
+ * baglantilari var; hepsi zaten sayfadaki LISTEDE HTML olarak duruyor.
+ * Haritaya yalnizca cizim ve panel icin gereken alanlar gonderiliyor —
+ * ayni veriyi iki kez indirmek performans butcesini bosuna yer.
+ */
+/**
+ * Ayni yer kissada birden fazla kez gecebilir — Musa kissasinda Sina iki kez
+ * (order 3 ve 5). Nokta listesi TEKILLESTIRILIYOR, yoksa ayni koordinata iki
+ * pin binerdi. Rota listesi tekillestirilmiyor: cizginin Sina'ya iki kez
+ * ugramasi kissanin kendi akisi.
+ */
+const gorulen = new Set<string>();
+const mapData = {
+  points: locations
+    .filter((l) => l.lat !== null && l.lng !== null)
+    .filter((l) => {
+      if (gorulen.has(l.slug)) return false;
+      gorulen.add(l.slug);
+      return true;
+    })
+    .map((l) => ({
+      slug: l.slug,
+      name: l.name,
+      lat: l.lat as number,
+      lng: l.lng as number,
+      confidence: l.confidence,
+      modernName: l.modernName,
+    })),
+  route: [...route].sort((a, b) => a.order - b.order),
+};
+---
+
+<div class="map-live" data-map-live hidden>
+  <div class="map-live-canvas" data-map-canvas role="application" aria-label={label}></div>
+
+  {
+    uyduVar && (
+      /*
+        Gercek radio dugmeleri — MapLibre'nin kendi denetim sinifi degil.
+        Klavyeyle gezilir, ekran okuyucu "Harita katmani" grubunu okur ve
+        betik calismazsa (kutu zaten gizli) hicbir sey bozulmaz.
+      */
+      <fieldset class="map-live-layers" data-map-layers>
+        <legend>Katman</legend>
+        <label>
+          <input type="radio" name="harita-katman" value="vektor" checked />
+          <span>Harita</span>
+        </label>
+        <label>
+          <input type="radio" name="harita-katman" value="uydu" />
+          <span>Uydu</span>
+        </label>
+      </fieldset>
+    )
+  }
+
+  <div class="map-live-panel" data-map-panel hidden aria-live="polite"></div>
+</div>
+
+<script type="application/json" data-map-data set:html={JSON.stringify(mapData)} />
+
+<script>
+  // maplibre-gl v6 varsayilan disa aktarim SUNMAZ; adlandirilmis import sart.
+  // Ayrica boylece paketleyici kullanilmayan siniflari eleyebiliyor.
+  import {
+    Map as MapLibreMap,
+    AttributionControl,
+    LngLatBounds,
+    NavigationControl,
+    ScaleControl,
+    addProtocol,
+    setWorkerUrl,
+  } from "maplibre-gl";
+  import "maplibre-gl/dist/maplibre-gl.css";
+  import { Protocol } from "pmtiles";
+  import { buildStyle, TILE_MAXZOOM } from "~/lib/harita/style";
+  import type { Palette } from "~/lib/harita/style";
+
+  interface Point {
+    slug: string;
+    name: string;
+    lat: number;
+    lng: number;
+    confidence: "kesin" | "muhtemel" | "rivayet";
+    modernName: string | null;
+  }
+  interface RouteStop {
+    slug: string;
+    order: number;
+    eventDescription: string;
+    verses: string[];
+  }
+
+  /**
+   * Vite bunu build sirasinda dize sabitine cevirir. Bos ise uydu katmani
+   * hic eklenmez ve dugme zaten basilmamistir (bkz. frontmatter `uyduVar`).
+   */
+  const ARCGIS_KEY: string = import.meta.env.PUBLIC_ARCGIS_API_KEY ?? "";
+
+  const holder = document.querySelector<HTMLElement>("[data-map-live]");
+  const canvas = document.querySelector<HTMLElement>("[data-map-canvas]");
+  const panel = document.querySelector<HTMLElement>("[data-map-panel]");
+  const dataTag = document.querySelector<HTMLScriptElement>("[data-map-data]");
+  const staticFigure = document.querySelector<HTMLElement>("[data-map-static]");
+
+  /**
+   * WebGL yoksa hic baslamayiz. MapLibre bu durumda kendi hata kutusunu
+   * cizerdi; bizim istedigimiz sey statik SVG'nin yerinde kalmasi.
+   */
+  function webglVar(): boolean {
+    try {
+      const c = document.createElement("canvas");
+      return Boolean(c.getContext("webgl2") ?? c.getContext("webgl"));
+    } catch {
+      return false;
+    }
+  }
+
+  function palette(): Palette {
+    const cs = getComputedStyle(document.documentElement);
+    const t = (name: string): string => cs.getPropertyValue(name).trim();
+    return {
+      bgPrimary: t("--bg-primary"),
+      bgElevated: t("--bg-elevated"),
+      bgOverlay: t("--bg-overlay"),
+      textPrimary: t("--text-primary"),
+      textSecondary: t("--text-secondary"),
+      textMuted: t("--text-muted"),
+      border: t("--border"),
+      borderStrong: t("--border-strong"),
+      accent: t("--accent"),
+      accentText: t("--accent-text"),
+      teal: t("--teal"),
+      success: t("--success"),
+      warning: t("--warning"),
+      danger: t("--danger"),
+      mapWater: t("--map-water"),
+      mapLand: t("--map-land"),
+    };
+  }
+
+  function start(): void {
+    if (!holder || !canvas || !dataTag || !webglVar()) return;
+
+    const data = JSON.parse(dataTag.textContent ?? "{}") as {
+      points: Point[];
+      route: RouteStop[];
+    };
+    if (data.points.length === 0) return;
+
+    /**
+     * Isci adresi ACIKCA veriliyor. maplibre-gl v6 bunu import.meta.url'den
+     * degiskenle kuruyor; paketleyici goremedigi icin isci cikti dizinine
+     * hic konmuyor ve harita SESSIZCE bos kaliyor. Dosya build oncesi
+     * scripts/prepare-harita.mjs ile public/_maplibre altina kopyalanir.
+     */
+    setWorkerUrl("/_maplibre/maplibre-gl-worker.mjs");
+
+    const protocol = new Protocol();
+    addProtocol("pmtiles", protocol.tile);
+
+    let p = palette();
+    const map = new MapLibreMap({
+      container: canvas,
+      style: buildStyle(p),
+      /**
+       * maxBounds KULLANILMIYOR — ilk surumde vardi ve kadraji BOZUYORDU.
+       *
+       * MapLibre maxBounds verildiginde goruntunun kutunun disina tasmamasini
+       * garanti eder; bunu en dusuk zoom'u YUKSELTEREK yapar. Altligin kutusu
+       * 22-60 boylam (42 derece), genis bir ekranda bu 1146 px'i ancak z4,3'te
+       * doldurur. Oysa 26 konumun tamami z3,3 ister. Sonuc: fitBounds sessizce
+       * eziliyordu ve en kuzey (Zulkarneyn Seddi 42,1K) ile en guney
+       * (Habesistan 14,1K) konumlar ekran disinda kaliyordu.
+       *
+       * Yerine minZoom: kullanici butun gezegeni goremesin, cunku altlik
+       * yalniz bu bolgeyi iceriyor. Bolgenin disina KAYDIRABILIR; orada site
+       * zemin rengi gorunur, harita "bozuk" degil "bos" olur.
+       */
+      minZoom: 2.5,
+      maxZoom: TILE_MAXZOOM,
+      attributionControl: false,
+      // DESIGN.md: sakin. Egme ve dondurme kapali — kissa haritasinda
+      // pusulasi kaymis bir harita yon duygusunu bozar.
+      pitchWithRotate: false,
+      dragRotate: false,
+      touchZoomRotate: true,
+    });
+    map.touchZoomRotate.disableRotation();
+
+    map.addControl(new NavigationControl({ showCompass: false }), "top-right");
+    map.addControl(new AttributionControl({ compact: true }));
+    map.addControl(new ScaleControl({ unit: "metric" }));
+
+    /**
+     * ============================================================================
+     * "R2 DUSERSE SITE DUSMEZ" — sartin kod karsiligi
+     * ============================================================================
+     *
+     * `map.on("load")` STIL yuklenince atesler, ALTLIK gelmese bile. Yalnizca
+     * ona guvenirsek R2 erisilemedigi anda kullanici bos gri bir kutu gorur ve
+     * statik SVG de gizlenmis olur — yani harita R2 ile birlikte duser.
+     *
+     * Bu yuzden devir teslim iki kosula baglandi: stil yuklendi VE altligin
+     * ilk karosu geldi. Ikincisi ISLEME_SURESI icinde gelmezse statik SVG
+     * yerinde birakilir; kullanici hicbir sey kaybetmez, hata da gormez.
+     */
+    const ISLEME_SURESI = 8000;
+    let devredildi = false;
+    let vazgecildi = false;
+
+    /**
+     * Kadraj: konumlarin tamami gorunsun, sabit koordinat yazilmasin.
+     *
+     * Kenar payi PIN icin degil ETIKET icin. fitBounds yalniz noktalari
+     * sigdirir; etiket pinin disina tasar ve kirpilirdi. Pay konteyner
+     * genisliginin orani olarak hesaplaniyor — telefonda 80 px sabit pay
+     * haritanin yarisini yerdi.
+     */
+    function kadraj(): void {
+      const b = new LngLatBounds();
+      for (const pt of data.points) b.extend([pt.lng, pt.lat]);
+      const w = canvas!.clientWidth;
+      const h = canvas!.clientHeight;
+      map.fitBounds(b, {
+        padding: {
+          top: Math.min(56, h * 0.1),
+          bottom: Math.min(72, h * 0.12),
+          // Yatay pay uzun konum adlarina gore: "Ibrahim'in Memleketi —
+          // Ur / Harran" iki satira sarsa bile ilk satiri ~90 px. 0,13 ile
+          // olculdu, yetmedi ve etiket yine kirpildi; 0,18'e cikarildi.
+          left: Math.min(120, w * 0.18),
+          right: Math.min(120, w * 0.18),
+        },
+        duration: 0,
+        maxZoom: 7,
+      });
+    }
+
+    function devret(): void {
+      if (devredildi || vazgecildi || !holder) return;
+      devredildi = true;
+      holder.hidden = false;
+      if (staticFigure) staticFigure.hidden = true;
+      // resize ONCE, fitBounds SONRA. Ters sirada kadraj 0x0 boyutlu gizli
+      // konteynere gore hesaplanir ve en guney/dogu konumlar ekran disinda
+      // kalir — 2026-09-05'te tam olarak boyle oldu (Ahkaf gorunmuyordu).
+      map.resize();
+      kadraj();
+    }
+
+    function vazgec(sebep: string): void {
+      if (devredildi || vazgecildi || !holder) return;
+      vazgecildi = true;
+      holder.hidden = true;
+      if (staticFigure) staticFigure.hidden = false;
+      console.warn(`Harita altligi yuklenemedi, statik surum kaliyor: ${sebep}`);
+    }
+
+    const sayac = window.setTimeout(() => {
+      vazgec("zaman asimi");
+    }, ISLEME_SURESI);
+
+    map.on("sourcedata", (e) => {
+      if (e.sourceId === "altlik" && e.isSourceLoaded) {
+        window.clearTimeout(sayac);
+        devret();
+      }
+    });
+
+    map.on("load", () => {
+      // Katmanlar burada kuruluyor; gorunurluk devret()'e ait.
+
+      map.addSource("konumlar", {
+        type: "geojson",
+        data: {
+          type: "FeatureCollection",
+          features: data.points.map((pt) => {
+            const stop = data.route.find((r) => r.slug === pt.slug);
+            return {
+              type: "Feature" as const,
+              geometry: { type: "Point" as const, coordinates: [pt.lng, pt.lat] },
+              properties: {
+                ...(pt as unknown as Record<string, unknown>),
+                // Ayni yer kissada iki kez gecebilir (Musa: Sina iki kez);
+                // en kucuk sira yazilir, cizgi ikisini de dolasir.
+                ...(stop ? { sira: String(stop.order) } : {}),
+              },
+            };
+          }),
+        },
+      });
+
+      // --- rota (kissa sayfasi) ------------------------------------------
+      // Cizgi kesikli: "buradan buraya soyle gitti" degil, "kissa bu
+      // yerlerde SIRAYLA geciyor" demek. Guzergah iddiasi degil sira.
+      if (data.route.length > 1) {
+        const byslug = new Map(data.points.map((pt) => [pt.slug, pt]));
+        const line = data.route
+          .slice()
+          .sort((a, b) => a.order - b.order)
+          .map((s) => byslug.get(s.slug))
+          .filter((pt): pt is Point => pt !== undefined)
+          .map((pt) => [pt.lng, pt.lat]);
+        if (line.length > 1) {
+          map.addSource("rota", {
+            type: "geojson",
+            data: {
+              type: "Feature",
+              geometry: { type: "LineString", coordinates: line },
+              properties: {},
+            },
+          });
+          /**
+           * Golge cizgi — YALNIZ uydu katmaninda gorunur.
+           *
+           * Altin (#C9A253) kum rengi uydu fotografi uzerinde kayboluyor:
+           * cizgi teknik olarak ciziliyor ama okunmuyor. Beyaza cevirmek
+           * kimligi bozardi (altin rota rengimiz), ustelik beyaz da acik
+           * colde kaybolur. Cozum kartografyanin standart yolu: altin
+           * cizginin ALTINA daha genis koyu bir kilif. Vektor altlikta
+           * gereksiz, orada kapali.
+           */
+          map.addLayer({
+            id: "rota-golge",
+            type: "line",
+            source: "rota",
+            layout: { "line-cap": "round", "line-join": "round", visibility: "none" },
+            paint: {
+              "line-color": "rgba(0,0,0,0.7)",
+              "line-width": 5,
+            },
+          });
+          map.addLayer({
+            id: "rota-cizgi",
+            type: "line",
+            source: "rota",
+            layout: { "line-cap": "round", "line-join": "round" },
+            paint: {
+              "line-color": p.accentText,
+              "line-width": 2,
+              "line-dasharray": [2, 2],
+              "line-opacity": 0.85,
+            },
+          });
+        }
+      }
+
+      // --- konum pinleri --------------------------------------------------
+      // DESIGN.md 1: renk TEK BASINA anlam tasimaz. Uc derece uc AYRI
+      // bicimle de ayrisir; asagida ucu de ayri katman, cunku
+      // stroke-dasharray'in daire karsiligi katman basina degisiyor.
+      map.addLayer({
+        id: "konum-kesin",
+        type: "circle",
+        source: "konumlar",
+        filter: ["==", ["get", "confidence"], "kesin"],
+        paint: {
+          "circle-radius": ["interpolate", ["linear"], ["zoom"], 4, 5, 10, 9],
+          "circle-color": p.success,
+          "circle-stroke-color": p.mapLand,
+          "circle-stroke-width": 1.5,
+        },
+      });
+      map.addLayer({
+        id: "konum-muhtemel",
+        type: "circle",
+        source: "konumlar",
+        filter: ["==", ["get", "confidence"], "muhtemel"],
+        paint: {
+          // Ici bos halka — "dolu" degil, cunku yer de kesin degil.
+          "circle-radius": ["interpolate", ["linear"], ["zoom"], 4, 5, 10, 9],
+          "circle-color": p.mapLand,
+          "circle-opacity": 0.55,
+          "circle-stroke-color": p.warning,
+          "circle-stroke-width": 2,
+        },
+      });
+      map.addLayer({
+        id: "konum-rivayet",
+        type: "circle",
+        source: "konumlar",
+        filter: ["==", ["get", "confidence"], "rivayet"],
+        paint: {
+          // En silik: kaynakta gecer ama cografi teyidi yok.
+          "circle-radius": ["interpolate", ["linear"], ["zoom"], 4, 4, 10, 7],
+          "circle-color": "rgba(0,0,0,0)",
+          "circle-stroke-color": p.textMuted,
+          "circle-stroke-width": 1.5,
+          "circle-stroke-opacity": 0.8,
+        },
+      });
+      /**
+       * Konum etiketi EN SONA ekleniyor.
+       *
+       * Once beforeId ile OSM etiketlerinin onune alinmisti; olculdu ve TERS
+       * cikti — "Kenan", "Ninevâ", "Ur / Harran" ve "Denizin Yarildigi Yer"
+       * kayboldu, yerlerini "ISRAIL", "URDUN", "Kerkuk" aldi. Yani MapLibre
+       * symbol cakismasinda SONRA gelen katman oncelikli. Kural olcumle
+       * konuldu, belgeye guvenilmedi.
+       */
+      map.addLayer({
+        id: "konum-etiket",
+        type: "symbol",
+        source: "konumlar",
+        layout: {
+          // Kissa sayfasinda ad yerine SIRA NUMARASI + ad: "1 Misir",
+          // "2 Medyen"... Cizgi zaten kesikli ve yon tasimiyor; sirayi
+          // okunur kilan sey numaradir.
+          // Genel haritada rota bos oldugu icin yalniz ad yazilir.
+          "symbol-sort-key": [
+            "match",
+            ["get", "confidence"],
+            "kesin",
+            0,
+            "muhtemel",
+            1,
+            2,
+          ],
+          "text-field": [
+            "case",
+            ["has", "sira"],
+            ["concat", ["get", "sira"], "  ", ["get", "name"]],
+            ["get", "name"],
+          ],
+          "text-font": ["Noto Sans Medium"],
+          "text-size": ["interpolate", ["linear"], ["zoom"], 4, 11, 10, 15],
+          /**
+           * Etiket pinin ETRAFINDA yer arar, hep altina yazilmaz.
+           * Sabit "altta" iken uzun adlar ("Ibrahim'in Memleketi — Ur /
+           * Harran") harita kenarindan tasip kirpiliyordu. Degisken
+           * capa MapLibre'ye dort yonu deneme izni verir.
+           */
+          "text-variable-anchor": ["bottom", "top", "left", "right"],
+          "text-radial-offset": 0.9,
+          "text-justify": "auto",
+          // 9 em iken uzun adlar tek satirda cok genisliyordu.
+          "text-max-width": 7,
+          "text-allow-overlap": false,
+        },
+        paint: {
+          "text-color": p.textPrimary,
+          "text-halo-color": p.mapLand,
+          "text-halo-width": 1.6,
+        },
+      });
+
+      // --- etkilesim ------------------------------------------------------
+      const duraklar = new Map(data.route.map((r) => [r.slug, r]));
+      const hit = ["konum-kesin", "konum-muhtemel", "konum-rivayet"];
+      for (const layer of hit) {
+        map.on("mouseenter", layer, () => {
+          map.getCanvas().style.cursor = "pointer";
+        });
+        map.on("mouseleave", layer, () => {
+          map.getCanvas().style.cursor = "";
+        });
+        map.on("click", layer, (e) => {
+          const f = e.features?.[0];
+          if (!f || !panel) return;
+          const pr = f.properties as unknown as Point;
+          // Ayrinti sayfada ZATEN var; panel oraya goturur, kopyalamaz.
+          const item = document.getElementById(`konum-${pr.slug}`);
+          panel.hidden = false;
+          panel.innerHTML = "";
+          const h = document.createElement("p");
+          h.className = "mlp-name";
+          h.textContent = pr.name;
+          const c = document.createElement("span");
+          c.className = `conf is-${pr.confidence}`;
+          c.textContent = pr.confidence;
+          h.append(" ", c);
+          panel.append(h);
+          if (pr.modernName) {
+            const m = document.createElement("p");
+            m.className = "mlp-modern";
+            m.textContent = pr.modernName;
+            panel.append(m);
+          }
+
+          /**
+           * Kissa sayfasinda durak bilgisi: o yerde kissanin NE ANLATTIGI ve
+           * hangi ayetlerde gectigi. Genel haritada rota bos oldugu icin bu
+           * blok hic calismaz — tek bilesen iki sayfaya da hizmet eder.
+           *
+           * Ayet metni BURAYA KOPYALANMIYOR, yalnizca etiketi yaziliyor;
+           * metnin kendisi sayfanin "Anlati" bolumunde zaten tam duruyor.
+           */
+          const stop = duraklar.get(pr.slug);
+          if (stop) {
+            const d = document.createElement("p");
+            d.className = "mlp-desc";
+            d.textContent = stop.eventDescription;
+            panel.append(d);
+            if (stop.verses.length > 0) {
+              const v = document.createElement("p");
+              v.className = "mlp-verses";
+              v.textContent = stop.verses.join(" · ");
+              panel.append(v);
+            }
+          }
+
+          if (item) {
+            const a = document.createElement("a");
+            a.href = `#konum-${pr.slug}`;
+            a.className = "mlp-link";
+            a.textContent = stop ? "Bu duraktaki ayetlere git ↓" : "Kaynağı ve farklı görüşleri oku ↓";
+            a.addEventListener("click", () => {
+              item.scrollIntoView({ behavior: "smooth", block: "center" });
+            });
+            panel.append(a);
+          }
+        });
+      }
+
+      // --- uydu katmani ---------------------------------------------------
+      /**
+       * NEDEN SADECE RASTER, NEDEN ESRI'NIN HAZIR STILI DEGIL
+       *
+       * Esri'nin `arcgis/imagery` stili 231 katman ve bir SPRITE getiriyor.
+       * Sprite ucuncu taraf ikon atlasidir ve icerigini biz denetlemiyoruz —
+       * Protomaps'in sprite'inda `theatre` ikonu iki tiyatro maskesi, yani
+       * insan yuzu cikmisti (plan 20.3: yasak yuze degil FIGURE).
+       *
+       * Bu yuzden stilin tamami alinmiyor; icinden YALNIZCA uydu raster
+       * kaynagi cikariliyor. Raster fotograftir, ikon atlasi tasimaz.
+       * Etiketler ve pinler bizim kendi katmanlarimiz olarak ustune biner.
+       */
+      const arcgisKey = ARCGIS_KEY;
+      if (arcgisKey !== "") {
+        map.addSource("uydu", {
+          type: "raster",
+          tiles: [
+            `https://ibasemaps-api.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?token=${arcgisKey}`,
+          ],
+          tileSize: 256,
+          maxzoom: 19,
+          attribution:
+            "Uydu: Esri, Maxar, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN",
+        });
+        // Altligin en altina degil, kendi etiket/pin katmanlarimizin ALTINA.
+        map.addLayer(
+          {
+            id: "uydu-raster",
+            type: "raster",
+            source: "uydu",
+            layout: { visibility: "none" },
+            paint: { "raster-opacity": 1 },
+          },
+          "etiket-ulke",
+        );
+      }
+
+      /**
+       * Katman gecisi.
+       *
+       * Uydu acikken vektor ALTLIK katmanlari kapanir (zemin, kara, su, ortu,
+       * kiyi, sinir, yol) — fotografin ustune sematik kara boyamak anlamsiz.
+       * OSM yer adlari da kapanir: uydu zaten kendi cografyasini gosteriyor,
+       * ve iki etiket kumesi ust uste okunmaz hale geliyor.
+       *
+       * KENDI konum pinlerimiz ve etiketlerimiz HER IKI katmanda da kalir —
+       * haritanin varlik sebebi onlar.
+       */
+      const altlikKatmanlari = [
+        "zemin-su",
+        "kara",
+        "ortu",
+        "su",
+        "kiyi",
+        "sinir-ulke",
+        "yol",
+        "etiket-ulke",
+        "etiket-bolge",
+        "etiket-yerlesim",
+      ];
+      function katmanSec(uydu: boolean): void {
+        for (const id of altlikKatmanlari) {
+          if (map.getLayer(id)) {
+            map.setLayoutProperty(id, "visibility", uydu ? "none" : "visible");
+          }
+        }
+        if (map.getLayer("uydu-raster")) {
+          map.setLayoutProperty("uydu-raster", "visibility", uydu ? "visible" : "none");
+        }
+        /**
+         * Uydu fotografi koyu ve alacali; kendi etiketimizin halesi kara
+         * rengi kalirsa okunmaz. Uydu modunda hale siyaha, metin beyaza
+         * gider — foto uzerinde kontrast garantisi ancak boyle kurulur.
+         * Bu iki deger tema token'i DEGIL, cunku zemin bizim degil.
+         */
+        if (map.getLayer("konum-etiket")) {
+          map.setPaintProperty("konum-etiket", "text-color", uydu ? "#ffffff" : p.textPrimary);
+          map.setPaintProperty(
+            "konum-etiket",
+            "text-halo-color",
+            uydu ? "rgba(0,0,0,0.85)" : p.mapLand,
+          );
+        }
+        /**
+         * PIN RENKLERI — uc derece uydu uzerinde de AYRISMALI.
+         *
+         * Ilk denemede ucunun de hattini beyaz yapmistim; olculdu ve
+         * DESIGN.md §1'i ihlal ediyordu: altin (muhtemel) ile gri (rivayet)
+         * ayrimi tamamen kayboluyor, uc sinif tek gorunuse dusuyordu.
+         *
+         * Dogru cozum derece renklerini KORUMAK, yalniz fotograf uzerinde
+         * kaybolanlari degistirmek:
+         *   kesin    dolgu yesil kalir + beyaz hat (fotograftan ayirir)
+         *   muhtemel ALTIN HALKA KALIR, yalniz ici koyu saydama doner
+         *            (mapLand lacivert dolgu uydu uzerinde yamaya benziyordu)
+         *   rivayet  gri hat fotografta kayboluyor -> beyaz, ama yine EN INCE
+         *            ve ici bos; bicim ayrimi (dolu/halka/ince halka) durur
+         */
+        if (map.getLayer("rota-golge")) {
+          map.setLayoutProperty("rota-golge", "visibility", uydu ? "visible" : "none");
+        }
+        if (map.getLayer("rota-cizgi")) {
+          map.setPaintProperty("rota-cizgi", "line-width", uydu ? 2.5 : 2);
+          map.setPaintProperty("rota-cizgi", "line-color", uydu ? p.accent : p.accentText); // uyduda pirinc dolgu rengi daha parlak
+        }
+        if (map.getLayer("konum-kesin")) {
+          map.setPaintProperty("konum-kesin", "circle-stroke-color", uydu ? "#ffffff" : p.mapLand);
+        }
+        if (map.getLayer("konum-muhtemel")) {
+          map.setPaintProperty(
+            "konum-muhtemel",
+            "circle-color",
+            uydu ? "rgba(0,0,0,0.55)" : p.mapLand,
+          );
+        }
+        if (map.getLayer("konum-rivayet")) {
+          map.setPaintProperty(
+            "konum-rivayet",
+            "circle-stroke-color",
+            uydu ? "#ffffff" : p.textMuted,
+          );
+        }
+      }
+
+      const secici = document.querySelector<HTMLElement>("[data-map-layers]");
+      if (secici) {
+        secici.addEventListener("change", (e) => {
+          const t = e.target as HTMLInputElement;
+          if (t.name === "harita-katman") katmanSec(t.value === "uydu");
+        });
+      }
+
+      // Kadraj devret() icinde kuruluyor (konteyner olculdukten sonra).
+    });
+
+    /**
+     * Tema degisince paleti yeniden oku ve stili yeniden kur.
+     * Site bugun tema secimini prefers-color-scheme ile yapiyor; kullanici
+     * isletim sistemi temasini degistirdiginde harita eski renkte kalmasin.
+     */
+    const scheme = window.matchMedia("(prefers-color-scheme: dark)");
+    scheme.addEventListener("change", () => {
+      p = palette();
+      // setStyle katmanlari sifirlar; uydu secimi ve pinler load'da yeniden
+      // kurulur. Secici "Harita"ya doner — kullaniciya yalan soylememek icin
+      // radio da geri alinir.
+      const vektorRadio = document.querySelector<HTMLInputElement>(
+        '[data-map-layers] input[value="vektor"]',
+      );
+      if (vektorRadio) vektorRadio.checked = true;
+      map.setStyle(buildStyle(p));
+    });
+
+    /**
+     * Altlik kaynagi hata verirse beklemeye gerek yok, hemen vazgec.
+     * Devir teslim olduktan SONRA gelen karo hatalari (tek bir karonun
+     * gelmemesi) haritayi indirmez — o an SVG'ye donmek daha kotu olurdu.
+     */
+    map.on("error", (e) => {
+      const kaynak = (e as unknown as { sourceId?: string }).sourceId;
+      if (kaynak === "altlik" || kaynak === undefined) {
+        window.clearTimeout(sayac);
+        vazgec(e.error?.message ?? "bilinmeyen hata");
+      }
+    });
+  }
+
+  // prefers-reduced-motion: DESIGN.md 5. Haritanin kendisi hareket
+  // animasyonu kullanmiyor (duration: 0), ek bir sey gerekmiyor.
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start, { once: true });
+  } else {
+    start();
+  }
+</script>
