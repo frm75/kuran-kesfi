@@ -56,3 +56,15 @@ pnpm-debug.log*
 # Diskte kalir, git'e girmez — surum gecmisi zaten git'in isi; yedek dosyasini
 # da versiyonlamak ayni bilgiyi iki yerde tutmak olur.
 *.bak.[0-9]*
+
+# R2 hazirlik alani — ses, video, PMTiles altligi. Dosyalar git'e girmez
+# (gigabaytlar), ama FIGUR TARAMASI KAYDI girer: hangi gorselin ne zaman ve
+# hangi hash ile figur taramasindan gectigi surum gecmisinde durmalidir.
+media/*
+!media/.gitkeep
+!media/FIGUR_TARAMASI.json
+
+# MapLibre isci dosyalari — build oncesi node_modules'tan kopyalanir
+# (apps/web/scripts/prepare-harita.mjs). Kaynagi pnpm-lock.yaml; ikinci bir
+# kopyayi surum gecmisinde tutmanin anlami yok.
+apps/web/public/_maplibre/

@@ -841,3 +841,35 @@ sudo cp /opt/kuran/infra/nginx/kurankesfi.tr.conf \
         /www/server/panel/vhost/nginx/kurankesfi.tr.conf
 sudo /www/server/nginx/sbin/nginx -t && cd /opt/kuran && pnpm run deploy
 ```
+
+## Cloudflare R2 — ağır medya deposu (2026-09-05)
+
+Plan §21.1 kaydı. Sunucuya hiçbir servis kurulmadı; R2 dış depodur.
+
+| Alan | Değer |
+|---|---|
+| Bucket | `kuran-medya` (Cloudflare R2, Standard) |
+| Genel adres | `https://medya.kurankesfi.tr` — custom domain, DNS Cloudflare'de, doğrulandı (HTTP/2 200) |
+| S3 endpoint | `https://<R2_ACCOUNT_ID>.r2.cloudflarestorage.com` (region `auto`) |
+| Kimlik | `.env` içinde `R2_*`, izin **Object Read & Write**, yalnızca bu bucket'a kısıtlı |
+| Yükleme | `pnpm media:r2:push` → `scripts/media/r2_sync.ts` |
+| Hazırlık alanı | `/opt/kuran/media/` (git'e girmez; `FIGUR_TARAMASI.json` girer) |
+| Ücretsiz kota | 10 GB depolama · 1M Class A · 10M Class B · **egress ücretsiz** |
+| Yedek | `.env.bak.20260905` (chmod 600) |
+
+**`pub-*.r2.dev` kullanılmadı.** Rate-limitli ve üretim için değil; kendi alan adımızda kalınca
+Cloudflare cache devreye girer (cache hit Class B saymaz — PMTiles range istekleri için ciddi fark)
+ve sağlayıcı değişimi tek DNS kaydına iner.
+
+**İçerik:**
+
+| Anahtar | Ne |
+|---|---|
+| `sistem/saglik.txt` | uçtan uca doğrulama dosyası; `curl https://medya.kurankesfi.tr/sistem/saglik.txt` |
+| `tiles/…` | (planlanan) PMTiles harita altlığı |
+| `ses/…`, `video/…` | (planlanan) kıraat ve medya |
+
+**Cache-Control:** `.pmtiles` → 7 gün (adı değişmeden yeniden üretilir); diğerleri 1 yıl `immutable`.
+
+**Doğrulandı 2026-09-05:** bağlantı TAMAM · yükleme + genel okuma 200 · değişmeyen dosya atlanıyor ·
+figür kapısı taranmamış `.png`'yi durdurdu ve **hiçbir dosyayı yüklemedi** (kapı tüm gruba uygulanır).
