@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { confidence, nonEmptyText, slug, verseRef } from "./common.js";
+import { confidence, locationConfidence, nonEmptyText, slug, verseRef } from "./common.js";
 import { conceptRelationType } from "./concept.js";
 import { principleVerseRole } from "./principle.js";
 import { origin as contentOrigin } from "./source.js";
@@ -72,7 +72,7 @@ export const locationInput = z
     country: z.string().nullable(),
     lat: z.number().min(-90).max(90).nullable(),
     lng: z.number().min(-180).max(180).nullable(),
-    confidence,
+    confidence: locationConfidence,
     /** Neden bu güven derecesi — kullanıcıya gösterilir */
     sourceNote: nonEmptyText,
     alternatives: z.array(locationAlternativeInput),

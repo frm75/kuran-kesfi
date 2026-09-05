@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { confidence, nonEmptyText, slug } from "./common.js";
+import { confidence, locationConfidence, nonEmptyText, slug } from "./common.js";
 import { conceptRelationType } from "./concept.js";
 import { verseRelationType } from "./discovery.js";
 import { origin as contentOrigin } from "./source.js";
@@ -77,7 +77,7 @@ export const staticStoryLocation = z.object({
   country: z.string().nullable(),
   lat: z.number().nullable(),
   lng: z.number().nullable(),
-  confidence,
+  confidence: locationConfidence,
   order: z.number().int().positive(),
   eventDescription: nonEmptyText,
   passageOrders: z.array(z.number().int().positive()),
@@ -134,7 +134,7 @@ export const staticLocation = z.object({
   country: z.string().nullable(),
   lat: z.number().nullable(),
   lng: z.number().nullable(),
-  confidence,
+  confidence: locationConfidence,
   sourceNote: nonEmptyText,
   alternatives: z.array(
     z.object({

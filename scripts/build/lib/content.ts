@@ -94,9 +94,12 @@ export async function emitContent(
     confidence: "kesin" | "muhtemel" | "rivayet"; source_note: string;
   }>('SELECT * FROM timeline_event ORDER BY "order"');
 
+  // Konum DORT dereceli (location_confidence), kronoloji ve iliski UC
+  // (confidence_level). Iki tur bilerek ayri — packages/schema/src/common.ts.
   const locations = await q<{
     id: number; slug: string; name: string; modern_name: string | null; country: string | null;
-    lat: number | null; lng: number | null; confidence: "kesin" | "muhtemel" | "rivayet";
+    lat: number | null; lng: number | null;
+    confidence: "kesin" | "muhtemel" | "gelenek" | "tartismali";
     source_note: string; alternatives: unknown;
   }>("SELECT * FROM location ORDER BY slug");
 

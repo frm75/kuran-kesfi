@@ -136,14 +136,34 @@ karşılığı olduğu için ikisinin farklı görünmesi kabul edilemez.
 
 ### Güven ve Rozet Renkleri (plan §12.9 belirsizlik sistemi)
 
+**Konum dört derecelidir** (2026-09-06'da üçten dörde çıktı); kronoloji ve ayet ilişkisi üç derecede kalır.
+
 ```
---confidence-kesin:      --success      yeşil, düz kenarlık, dolu pin
---confidence-muhtemel:   --warning      altın, kesikli kenarlık, kesikli halka
---confidence-rivayet:    --text-muted   gri, noktalı kenarlık, şeffaf pin
+                biçim                     renk           anlam
+kesin           ● dolu daire              --success      tartışmasız yer
+muhtemel        ○ kalın halka             --warning      bölge kabul, nokta kesin değil
+gelenek         ◉ halka + merkez nokta    --teal         geleneğin gösterdiği yer
+tartışmalı      ◎ iç içe iki ince halka   --danger       birden fazla ciddi aday
 ```
 
-**Renk tek başına anlam taşımaz.** Üç sınıf renk + kenarlık biçimi + metin ile ayrışır; renk körlüğünde ve
-gri baskıda da okunur.
+**Renk tek başına anlam taşımaz.** Dört sınıf renk + BİÇİM + metin ile ayrışır; renk körlüğünde ve gri
+baskıda da okunur. Biçimler bilerek MapLibre'de de SVG'de de çizilebilenlerden seçildi — MapLibre daire
+hattında kesikli çizgi desteklemez, o yüzden eski "noktalı kenarlık" iki haritada tutmuyordu.
+
+Biçimler anlamı taşır, süs değildir:
+- **dolu** = boşluk yok
+- **halka** = merkez belirsiz
+- **halka + nokta** = gelenek bir noktayı işaret ediyor, ama halka teyit olmadığını söylüyor
+- **iki halka** = birden fazla aday; tek bir merkez yok
+
+`--teal` bu listede marka rengi olarak değil, "geleneğin görüşü" ayrımı olarak kullanılır — DESIGN.md'nin
+firuzeye verdiği "alternatif görüş" rolüyle aynı ailedendir.
+
+Kronoloji ve ayet ilişkisi hâlâ üç derecelidir ve `rivayet` orada yaşar; işareti **ince halka** (·).
+Rozet bileşeni beş değeri de tanır, konum sayfaları yalnızca dördünü üretir.
+
+`--danger` burada hata değil **ihtilaf** demektir: bir yerin tartışmalı olması kusur değil, kaynakların
+durumudur. Kırmızı seçilmesinin sebebi dikkat çekmesi, uyarı olması değil.
 
 ---
 

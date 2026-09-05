@@ -41,9 +41,22 @@ $$;
 -- Numaralandırılmış türler
 -- -----------------------------------------------------------------------------
 
--- Güven derecesi (plan §12.9). Konum, kronoloji, tarihsel olay ve ilişki
--- kayıtlarında aynı üç değerli sistem kullanılır. İhtilaf saklanmaz.
+-- Güven derecesi (plan §12.9). Kronoloji, tarihsel olay ve ilişki kayıtları
+-- bu üç değerli sistemi kullanır. İhtilaf saklanmaz.
 CREATE TYPE confidence_level AS ENUM ('kesin', 'muhtemel', 'rivayet');
+
+-- KONUM güven derecesi — 2026-09-06'da dörde çıkarıldı, ayrı tür.
+--
+-- `rivayet` iki ayrı durumu aynı kefeye koyuyordu: "kaynaklar tek bir yer
+-- söylüyor ama coğrafi teyit yok" (Cûdî, Nînevâ, Eyke) ile "kaynaklar dört
+-- ayrı ciddi aday sayıyor" (Kehf mağarası, Zülkarneyn seddi, Kızıldeniz
+-- geçişi, Ur/Harran). Fark kullanıcıdan gizleniyordu.
+--
+-- Ayrı tür, çünkü `confidence_level` konumun yanında KRONOLOJİYİ de
+-- etiketliyor: bir olayın tarihi "tartışmalı" olabilir ama "gelenek" olamaz.
+-- Dördüncü değeri ortak türe eklemek zaman çizelgesine anlamsız bir seçenek
+-- açardı. packages/schema/src/common.ts ile aynı gerekçe.
+CREATE TYPE location_confidence AS ENUM ('kesin', 'muhtemel', 'gelenek', 'tartismali');
 
 CREATE TYPE revelation_type AS ENUM ('mekki', 'medeni');
 
@@ -319,7 +332,7 @@ CREATE TABLE location (
   lng         double precision CHECK (lng BETWEEN -180 AND 180),
   -- Zorunlu (plan §8.3). Arayüzde pin biçimini belirler: dolu / kesikli halkalı
   -- / şeffaf (plan §7).
-  confidence  confidence_level NOT NULL,
+  confidence  location_confidence NOT NULL,
   source_note text NOT NULL,
   -- Farklı görüşler burada saklanır; ihtilaf gizlenmez (plan §1.5, §8.3)
   alternatives jsonb NOT NULL DEFAULT '[]'::jsonb,

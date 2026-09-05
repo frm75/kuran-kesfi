@@ -73,7 +73,14 @@ docs/                PROJE_PLANI.md, DESIGN.md, DEPLOY_REPORT.md, BACKLOG.md
 - Öncelikli mealler: Diyanet İşleri, Mehmet Okuyan, Mustafa İslamoğlu, Muhammed Esed (`author.priority` 1-4)
 - Diyanet tefsiri: özet + ≤200 karakter alıntı + link; toplu kopya yok
 - Her kaynaklı kayıt `source_id` taşır; `<SourceBadge>` bileşeni olmadan kaynaklı içerik render edilmez
-- Güven dereceleri: `kesin | muhtemel | rivayet` (konum, kronoloji, ilişki); ihtilaf saklanmaz
+- **Güven dereceleri İKİ AYRI enum** (2026-09-06); ihtilaf saklanmaz, gösterilir
+  - Konum: `kesin | muhtemel | gelenek | tartismali` (`locationConfidence`)
+  - Kronoloji ve ayet ilişkisi: `kesin | muhtemel | rivayet` (`confidence`)
+  - Birleştirilmez: bir olayın tarihi "tartışmalı" olabilir ama "gelenek" olamaz — gelenek bir YER
+    TESPİTİ türüdür. `rivayet` konumda kalktı çünkü iki ayrı durumu aynı kefeye koyuyordu:
+    "kaynaklar tek yer söylüyor, teyit yok" (Cûdî, Nînevâ) ile "kaynaklar dört ayrı aday sayıyor"
+    (Kehf mağarası, Zülkarneyn seddi). `packages/schema/src/common.ts` ve `infra/db/schema.sql`'de
+    ayrı tür (`location_confidence`); `scholar-notes.ts`'in "ASLA birleştirilmez" kuralıyla aynı gerekçe
 
 ## Yerel Proje (kuran-extract) ile Uyum
 Hoca notları ayrı bir yerel projede çıkarılır ve JSON paketiyle bu projeye aktarılır.

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { confidence, dbId, nonEmptyText, slug } from "./common.js";
+import { dbId, locationConfidence, nonEmptyText, slug } from "./common.js";
 
 /** Kissa katmani — plan 4.3. */
 
@@ -85,7 +85,7 @@ export const location = z.object({
   country: z.string().nullable(),
   lat: z.number().min(-90).max(90).nullable(),
   lng: z.number().min(-180).max(180).nullable(),
-  confidence,
+  confidence: locationConfidence,
   sourceNote: nonEmptyText,
   alternatives: z.array(locationAlternative),
   sourceIds: z.array(dbId).min(1, "konum en az bir kaynak tasimali (plan 8.3)"),

@@ -113,7 +113,8 @@ const pins = withCoords
 const byConfidence = {
   kesin: locations.filter((l) => l.confidence === "kesin").length,
   muhtemel: locations.filter((l) => l.confidence === "muhtemel").length,
-  rivayet: locations.filter((l) => l.confidence === "rivayet").length,
+  gelenek: locations.filter((l) => l.confidence === "gelenek").length,
+  tartismali: locations.filter((l) => l.confidence === "tartismali").length,
 };
 const withAlternatives = locations.filter((l) => l.alternatives.length > 0);
 ---
@@ -139,7 +140,8 @@ const withAlternatives = locations.filter((l) => l.alternatives.length > 0);
         <li><b>{locations.length}</b><span>konum</span></li>
         <li><b>{byConfidence.kesin}</b><span>kesin</span></li>
         <li><b>{byConfidence.muhtemel}</b><span>muhtemel</span></li>
-        <li><b>{byConfidence.rivayet}</b><span>rivayet</span></li>
+        <li><b>{byConfidence.gelenek}</b><span>gelenek</span></li>
+        <li><b>{byConfidence.tartismali}</b><span>tartışmalı</span></li>
       </ul>
     </header>
 
@@ -172,6 +174,14 @@ const withAlternatives = locations.filter((l) => l.alternatives.length > 0);
               pins.map((pin) => (
                 <g class:list={["pin", `is-${pin.confidence}`]}>
                   <circle cx={pin.x} cy={pin.y} r="6" />
+                  {/* gelenek: halka + merkez nokta. tartışmalı: iç içe iki halka.
+                      Biçim MapLibre pinleriyle birebir aynı (DESIGN.md §1). */}
+                  {pin.confidence === "gelenek" && (
+                    <circle class="pin-dot" cx={pin.x} cy={pin.y} r="2.4" />
+                  )}
+                  {pin.confidence === "tartismali" && (
+                    <circle cx={pin.x} cy={pin.y} r="2.8" />
+                  )}
                   <text x={pin.x + 10} y={pin.y + 4}>
                     {pin.name}
                   </text>
@@ -188,8 +198,9 @@ const withAlternatives = locations.filter((l) => l.alternatives.length > 0);
 
       <ul class="map-legend">
         <li class="pin is-kesin"><span class="lg-mark" aria-hidden="true"></span> kesin — tartışmasız yer</li>
-        <li class="pin is-muhtemel"><span class="lg-mark" aria-hidden="true"></span> muhtemel — çoğunluk görüşü</li>
-        <li class="pin is-rivayet"><span class="lg-mark" aria-hidden="true"></span> rivayet — coğrafi teyit yok</li>
+        <li class="pin is-muhtemel"><span class="lg-mark" aria-hidden="true"></span> muhtemel — bölge kabul, nokta kesin değil</li>
+        <li class="pin is-gelenek"><span class="lg-mark" aria-hidden="true"></span> gelenek — geleneğin gösterdiği yer, teyit yok</li>
+        <li class="pin is-tartismali"><span class="lg-mark" aria-hidden="true"></span> tartışmalı — birden fazla ciddi aday</li>
       </ul>
     </section>
 

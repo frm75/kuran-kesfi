@@ -1,17 +1,22 @@
 ---
-import type { Confidence } from "@kuran/schema";
+import type { Confidence, LocationConfidence } from "@kuran/schema";
 
 /**
  * Güven derecesi rozeti — plan §12.9, DESIGN.md §1 ve §6.
  *
- * Konum, nüzul sırası, tarihsel olay, kıssa kronolojisi ve ayet ilişkilerinde
- * aynı üç değerli sistem kullanılır. Belirsizlik saklanmaz, gösterilir
- * (CLAUDE.md kural 5 / plan §1.5).
+ * Belirsizlik saklanmaz, gösterilir (CLAUDE.md kural 4 / plan §1.5).
+ *
+ * BEŞ DEĞER TANIR, ama hiçbir sayfa beşini birden üretmez:
+ *   konum      kesin · muhtemel · gelenek · tartismali   (LocationConfidence)
+ *   kronoloji  kesin · muhtemel · rivayet                (Confidence)
+ * İki enum bilerek ayrıdır: bir olayın tarihi "tartışmalı" olabilir ama
+ * "gelenek" olamaz (packages/schema/src/common.ts).
  *
  * Ayrışma üç kanaldan — renk tek başına anlam taşımaz (DESIGN.md §1):
- *   renk:      yeşil / altın / gri   (--confidence-* token'ları)
- *   işaret:    dolu / kesikli halka / şeffaf daire — harita pini diliyle aynı
- *   metin:     "kesin" / "muhtemel" / "rivayet"
+ *   renk:      yeşil / altın / firuze / kırmızı / gri
+ *   işaret:    dolu · kalın halka · halka+nokta · iki halka · ince halka
+ *              — harita pini diliyle BİREBİR aynı
+ *   metin:     derecenin kendisi yazılır
  *
  * Gri baskıda ve renk körlüğünde ilk kanal düşer, diğer ikisi kalır.
  *
@@ -20,7 +25,7 @@ import type { Confidence } from "@kuran/schema";
  */
 
 interface Props {
-  confidence: Confidence;
+  confidence: Confidence | LocationConfidence;
   /** Neyin güven derecesi — ekran okuyucu için: "Nüzul sırası" */
   label?: string;
   class?: string;
@@ -34,18 +39,30 @@ const { confidence, label, class: className } = Astro.props;
     {confidence === "kesin" && <circle cx="4" cy="4" r="3.2" fill="currentColor" />}
     {
       confidence === "muhtemel" && (
-        <circle
-          cx="4"
-          cy="4"
-          r="3"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.6"
-          stroke-dasharray="2 1.6"
-        />
+        <circle cx="4" cy="4" r="2.9" fill="none" stroke="currentColor" stroke-width="1.6" />
       )
     }
     {
+      /* gelenek: halka + merkez nokta — gelenek bir noktayı işaret ediyor,
+         halka teyit olmadığını söylüyor */
+      confidence === "gelenek" && (
+        <>
+          <circle cx="4" cy="4" r="3" fill="none" stroke="currentColor" stroke-width="1" />
+          <circle cx="4" cy="4" r="1.1" fill="currentColor" />
+        </>
+      )
+    }
+    {
+      /* tartışmalı: iç içe iki ince halka — birden fazla aday, tek merkez yok */
+      confidence === "tartismali" && (
+        <>
+          <circle cx="4" cy="4" r="3.3" fill="none" stroke="currentColor" stroke-width="0.9" />
+          <circle cx="4" cy="4" r="1.6" fill="none" stroke="currentColor" stroke-width="0.9" />
+        </>
+      )
+    }
+    {
+      /* rivayet yalnızca KRONOLOJİDE yaşar; konumda gelenek + tartışmalı oldu */
       confidence === "rivayet" && (
         <circle cx="4" cy="4" r="3" fill="none" stroke="currentColor" stroke-width="1" />
       )

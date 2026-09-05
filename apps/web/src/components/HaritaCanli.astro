@@ -29,12 +29,18 @@
  * GUVEN DERECESI: RENK TEK BASINA ANLAM TASIMAZ
  * ============================================================================
  *
- * DESIGN.md 1. Statik SVG'deki kural birebir korunuyor:
- *   kesin    dolu daire        yesil
- *   muhtemel halkali (ic bos)  altin
- *   rivayet  kesikli halka     gri
- * Uc sinif renk + BICIM + metin ile ayrisir; renk korlugunde ve gri baskida
+ * DESIGN.md 1. Statik SVG'deki kural birebir korunuyor (2026-09-06'da dorde
+ * cikti; `rivayet` ikiye bolundu):
+ *   kesin      ● dolu daire             yesil    --success
+ *   muhtemel   ○ kalin halka            altin    --warning
+ *   gelenek    ◉ halka + merkez nokta   firuze   --teal
+ *   tartismali ◎ ic ice iki ince halka  kirmizi  --danger
+ * Dort sinif renk + BICIM + metin ile ayrisir; renk korlugunde ve gri baskida
  * da okunur. Tiklaninca acilan panelde derece ayrica YAZIYLA gecer.
+ *
+ * Bicimler MapLibre'de de SVG'de de cizilebilenlerden secildi: MapLibre daire
+ * hattinda kesikli cizgi desteklemiyor, eski "noktali kenarlik" iki haritada
+ * tutmuyordu.
  */
 /**
  * Yapisal tip — `StaticLocation` DEGIL.
@@ -51,7 +57,7 @@ interface MapLocation {
   modernName: string | null;
   lat: number | null;
   lng: number | null;
-  confidence: "kesin" | "muhtemel" | "rivayet";
+  confidence: "kesin" | "muhtemel" | "gelenek" | "tartismali";
 }
 
 interface RouteStop {
@@ -173,7 +179,7 @@ const mapData = {
     name: string;
     lat: number;
     lng: number;
-    confidence: "kesin" | "muhtemel" | "rivayet";
+    confidence: "kesin" | "muhtemel" | "gelenek" | "tartismali";
     modernName: string | null;
   }
   interface RouteStop {
@@ -442,13 +448,31 @@ const mapData = {
       // DESIGN.md 1: renk TEK BASINA anlam tasimaz. Uc derece uc AYRI
       // bicimle de ayrisir; asagida ucu de ayri katman, cunku
       // stroke-dasharray'in daire karsiligi katman basina degisiyor.
+      /**
+       * DORT DERECE, DORT BICIM — DESIGN.md §1.
+       *
+       * Renk tek basina anlam tasimaz; bicim de ayrisir ve statik SVG
+       * haritayla BIREBIR ayni:
+       *   kesin      ● dolu daire             merkez belli, bosluk yok
+       *   muhtemel   ○ kalin halka            merkez belirsiz
+       *   gelenek    ◉ halka + merkez nokta   gelenek bir nokta gosteriyor,
+       *                                       halka teyit olmadigini soyluyor
+       *   tartismali ◎ ic ice iki ince halka  birden fazla aday, tek merkez yok
+       *
+       * MapLibre daire hattinda KESIKLI CIZGI desteklemiyor; eski "noktali
+       * kenarlik" iki haritada tutmuyordu. Bicimler bilerek ikisinde de
+       * cizilebilenlerden secildi.
+       */
+      const R = (kucuk: number, buyuk: number) =>
+        ["interpolate", ["linear"], ["zoom"], 4, kucuk, 10, buyuk] as unknown as number;
+
       map.addLayer({
         id: "konum-kesin",
         type: "circle",
         source: "konumlar",
         filter: ["==", ["get", "confidence"], "kesin"],
         paint: {
-          "circle-radius": ["interpolate", ["linear"], ["zoom"], 4, 5, 10, 9],
+          "circle-radius": R(5, 9),
           "circle-color": p.success,
           "circle-stroke-color": p.mapLand,
           "circle-stroke-width": 1.5,
@@ -460,28 +484,65 @@ const mapData = {
         source: "konumlar",
         filter: ["==", ["get", "confidence"], "muhtemel"],
         paint: {
-          // Ici bos halka — "dolu" degil, cunku yer de kesin degil.
-          "circle-radius": ["interpolate", ["linear"], ["zoom"], 4, 5, 10, 9],
+          "circle-radius": R(5, 9),
           "circle-color": p.mapLand,
           "circle-opacity": 0.55,
           "circle-stroke-color": p.warning,
+          "circle-stroke-width": 2.5,
+        },
+      });
+      // gelenek: dis halka
+      map.addLayer({
+        id: "konum-gelenek",
+        type: "circle",
+        source: "konumlar",
+        filter: ["==", ["get", "confidence"], "gelenek"],
+        paint: {
+          "circle-radius": R(5, 9),
+          "circle-color": p.mapLand,
+          "circle-opacity": 0.55,
+          "circle-stroke-color": p.teal,
           "circle-stroke-width": 2,
         },
       });
+      // gelenek: merkez nokta (ayri katman — bir daire iki halka cizemez)
       map.addLayer({
-        id: "konum-rivayet",
+        id: "konum-gelenek-nokta",
         type: "circle",
         source: "konumlar",
-        filter: ["==", ["get", "confidence"], "rivayet"],
+        filter: ["==", ["get", "confidence"], "gelenek"],
         paint: {
-          // En silik: kaynakta gecer ama cografi teyidi yok.
-          "circle-radius": ["interpolate", ["linear"], ["zoom"], 4, 4, 10, 7],
-          "circle-color": "rgba(0,0,0,0)",
-          "circle-stroke-color": p.textMuted,
-          "circle-stroke-width": 1.5,
-          "circle-stroke-opacity": 0.8,
+          "circle-radius": R(1.8, 3.2),
+          "circle-color": p.teal,
         },
       });
+      // tartismali: dis halka
+      map.addLayer({
+        id: "konum-tartismali",
+        type: "circle",
+        source: "konumlar",
+        filter: ["==", ["get", "confidence"], "tartismali"],
+        paint: {
+          "circle-radius": R(5.5, 10),
+          "circle-color": "rgba(0,0,0,0)",
+          "circle-stroke-color": p.danger,
+          "circle-stroke-width": 1.4,
+        },
+      });
+      // tartismali: ic halka
+      map.addLayer({
+        id: "konum-tartismali-ic",
+        type: "circle",
+        source: "konumlar",
+        filter: ["==", ["get", "confidence"], "tartismali"],
+        paint: {
+          "circle-radius": R(2.4, 4.4),
+          "circle-color": "rgba(0,0,0,0)",
+          "circle-stroke-color": p.danger,
+          "circle-stroke-width": 1.4,
+        },
+      });
+
       /**
        * Konum etiketi EN SONA ekleniyor.
        *
@@ -539,7 +600,7 @@ const mapData = {
 
       // --- etkilesim ------------------------------------------------------
       const duraklar = new Map(data.route.map((r) => [r.slug, r]));
-      const hit = ["konum-kesin", "konum-muhtemel", "konum-rivayet"];
+      const hit = ["konum-kesin", "konum-muhtemel", "konum-gelenek", "konum-tartismali"];
       for (const layer of hit) {
         map.on("mouseenter", layer, () => {
           map.getCanvas().style.cursor = "pointer";
@@ -721,12 +782,12 @@ const mapData = {
             uydu ? "rgba(0,0,0,0.55)" : p.mapLand,
           );
         }
-        if (map.getLayer("konum-rivayet")) {
-          map.setPaintProperty(
-            "konum-rivayet",
-            "circle-stroke-color",
-            uydu ? "#ffffff" : p.textMuted,
-          );
+        // gelenek ve tartismali kendi renklerini KORUR (firuze / kirmizi):
+        // ikisi de fotograf uzerinde okunuyor, olculdu. Yalniz ici bos
+        // olanlarin dolgusu koyulasir ki uydu deseni halkanin icinden
+        // okunup bicimi bozmasin.
+        if (map.getLayer("konum-gelenek")) {
+          map.setPaintProperty("konum-gelenek", "circle-color", uydu ? "rgba(0,0,0,0.55)" : p.mapLand);
         }
       }
 

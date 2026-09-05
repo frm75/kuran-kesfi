@@ -40,6 +40,32 @@ export const confidence = z.enum(["kesin", "muhtemel", "rivayet"]);
 export type Confidence = z.infer<typeof confidence>;
 
 /**
+ * KONUM guven derecesi (plan 12.9, 2026-09-06'da dorde cikarildi).
+ *
+ * NEDEN AYRI ENUM: scholar-notes.ts'in bastaki notu "UC AYRI confidence
+ * enum'u vardir, ASLA birlestirilmez" diyor ve gerekcesi burada da gecerli.
+ * Paylasilan `confidence` konumun YANINDA kronolojiyi de (nuzul sirasi,
+ * siyer olayi) etiketliyor. Bir olayin tarihi "tartismali" olabilir ama
+ * "gelenek" olamaz — gelenek bir YER TESPITI turudur, tarih turu degil.
+ * Dorduncu degeri paylasilan enum'a eklemek zaman cizelgesine anlamsiz bir
+ * secenek acardi.
+ *
+ *   kesin       tartismasiz yer (Kabe, Medine, Kudus, Babil)
+ *   muhtemel    bolge genel kabul, nokta kesin degil (Medyen, Ahkaf, Kenan)
+ *   gelenek     GELENEGIN gosterdigi yer; rakip tez yok ya da zayif, cografi
+ *               teyit de yok (Cebel-i Musa, Cudi, Ninova, Eyke)
+ *   tartismali  kaynaklar BIRDEN FAZLA ciddi aday sayiyor, hicbiri teyitli
+ *               degil (Ur/Harran, Kizildeniz gecisi, Kehf magarasi, Sedd)
+ *
+ * `gelenek` ile `tartismali` birlikte eski `rivayet` derecesinin yerini alir:
+ * o tek etiket iki ayri durumu ayni kefeye koyuyordu — "kaynaklar tek bir yer
+ * soyluyor ama teyit yok" ile "kaynaklar dort ayri yer soyluyor" arasindaki
+ * fark kullanicidan gizleniyordu.
+ */
+export const locationConfidence = z.enum(["kesin", "muhtemel", "gelenek", "tartismali"]);
+export type LocationConfidence = z.infer<typeof locationConfidence>;
+
+/**
  * Ayet referansi — elle hazirlanan JSON dosyalarinda kullanilir.
  *
  * Veritabaninda hicbir tablo ayet numarasini metin olarak saklamaz; her sey

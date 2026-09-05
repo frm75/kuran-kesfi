@@ -1443,17 +1443,29 @@
   letter-spacing: 0.04em;
   white-space: nowrap;
 }
+/* Dört derece: renk + KENARLIK BİÇİMİ + metin. Renk tek başına anlam taşımaz
+   (DESIGN.md §1). `rivayet` yalnızca kronolojide yaşar. */
 .conf.is-kesin {
   border-style: solid;
-  color: var(--confidence-kesin, var(--success));
+  color: var(--success);
 }
 .conf.is-muhtemel {
   border-style: dashed;
-  color: var(--confidence-muhtemel, var(--accent-text));
+  color: var(--warning);
+}
+.conf.is-gelenek {
+  border-style: double;
+  border-width: 3px;
+  padding-block: 0;
+  color: var(--teal);
+}
+.conf.is-tartismali {
+  border-style: dotted;
+  color: var(--danger);
 }
 .conf.is-rivayet {
   border-style: dotted;
-  color: var(--confidence-rivayet, var(--text-muted));
+  color: var(--text-muted);
 }
 
 /* --- Etiket listesi (bağlantı grupları) ---------------------------------- */
@@ -2372,21 +2384,33 @@ a.ctx-num:hover {
   stroke: var(--accent);
   stroke-width: 2.5;
 }
-/* Biçim de ayrışır (DESIGN.md §1): dolu / halkalı / kesikli halka.
-   Renk de DESIGN.md §1'e göre: kesin --success, muhtemel --warning,
-   rivayet --text-muted. 2026-09-05'te düzeltildi — `kesin` altın çiziliyordu,
-   yani muhtemel ile aynı renkteydi ve ayrımı yalnızca dolgu taşıyordu.
-   Etkileşimli harita da aynı üçlüyü kullanır (components/HaritaCanli.astro). */
+/* DÖRT DERECE — biçim + renk (DESIGN.md §1). Biçimler MapLibre'de de
+   çizilebilenlerden seçildi; etkileşimli harita birebir aynısını kullanır
+   (components/HaritaCanli.astro). İkisinin farklı görünmesi kabul edilemez,
+   biri diğerinin JavaScript'siz karşılığı.
+     kesin      ● dolu daire
+     muhtemel   ○ kalın halka
+     gelenek    ◉ halka + merkez nokta
+     tartışmalı ◎ iç içe iki ince halka  */
 .map-svg .pin.is-kesin circle {
   fill: var(--success);
   stroke: var(--success);
 }
 .map-svg .pin.is-muhtemel circle {
   stroke: var(--warning);
+  stroke-width: 2.5;
 }
-.map-svg .pin.is-rivayet circle {
-  stroke-dasharray: 3 3;
-  stroke: var(--text-muted);
+.map-svg .pin.is-gelenek circle {
+  stroke: var(--teal);
+  stroke-width: 2;
+}
+.map-svg .pin.is-gelenek .pin-dot {
+  fill: var(--teal);
+  stroke: none;
+}
+.map-svg .pin.is-tartismali circle {
+  stroke: var(--danger);
+  stroke-width: 1.6;
 }
 .map-svg .pin text {
   fill: var(--text-secondary);
@@ -2423,11 +2447,33 @@ a.ctx-num:hover {
   border-color: var(--success);
 }
 .map-legend .is-muhtemel .lg-mark {
+  border-width: 3px;
   border-color: var(--warning);
 }
-.map-legend .is-rivayet .lg-mark {
-  border-style: dashed;
-  border-color: var(--text-muted);
+/* gelenek: halka + merkez nokta — nokta ::after ile, ek düğüm gerekmesin */
+.map-legend .is-gelenek .lg-mark {
+  position: relative;
+  border-color: var(--teal);
+}
+.map-legend .is-gelenek .lg-mark::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: 9999px;
+  background-color: var(--teal);
+}
+/* tartışmalı: iç içe iki ince halka */
+.map-legend .is-tartismali .lg-mark {
+  position: relative;
+  border-width: 1px;
+  border-color: var(--danger);
+}
+.map-legend .is-tartismali .lg-mark::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border: 1px solid var(--danger);
+  border-radius: 9999px;
 }
 
 /* --- Etkileşimli harita (MapLibre) ---------------------------------------
