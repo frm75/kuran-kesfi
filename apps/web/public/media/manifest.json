@@ -7,50 +7,47 @@
   ],
   "sourceSha256": "f80a0d18372386aef4433944469846b72b532476c945bf44d014ddb9a8f8744a",
   "sourceBytes": 9716013,
-  "durationSeconds": 11.3,
-  "segments": [
+  "durationSeconds": 13.9,
+  "speed": 0.5,
+  "eq": "eq=gamma=1.55:saturation=1.30:contrast=1.06",
+  "windows": [
     {
-      "start": 0,
-      "duration": 3.2,
-      "note": "dunya uzaydan, atmosfere inis"
+      "start": 1.8,
+      "end": 3.1,
+      "note": "dunya uzaydan, atmosfere inis, nehir vadisi"
     },
     {
-      "start": 7.2,
-      "duration": 1.8,
-      "note": "gemi yakin plan, yagmur duvari"
+      "start": 7.3,
+      "end": 8.45,
+      "note": "gemi tufanda, yagmur duvari"
     },
     {
-      "start": 10.4,
-      "duration": 1.6,
-      "note": "yarilan deniz — ustten, figursuz"
+      "start": 10.3,
+      "end": 11.3,
+      "note": "yarilan deniz, icinden gunes"
     },
     {
-      "start": 13.5,
-      "duration": 1.5,
-      "note": "su altinda isik, col kumulu"
-    },
-    {
-      "start": 15.2,
-      "duration": 4.8,
-      "note": "sehir, vahiy isigi, dunya, baglanan dunya"
+      "start": 13.9,
+      "end": 18.3,
+      "note": "col safagi, kervan, sehir, vahiy isigi, dunya"
     }
   ],
-  "crf": 36,
+  "crf": 30,
   "files": [
     {
       "file": "hero.mp4",
-      "bytes": 781538,
-      "sha256": "23431a1affe6ebe870e124bbfaa92e0b0bfb91ed759fe6c874806983419816c5"
+      "bytes": 1364965,
+      "sha256": "af06fc33031cc4d940ff64d6ef9688414fb5e24deb1477beda677896a98fb4dc"
     },
     {
       "file": "hero-poster.webp",
-      "bytes": 12362,
-      "sha256": "4e2a56fb9171dcbaea321dabccf4d2335060734e0afa8b633c38d6b758f6c401"
+      "bytes": 12658,
+      "sha256": "21fc2dc6a5788240a3c0074d59d6a31d71c0286fc8325abc0c7ad2a4bea5ea24"
     },
     {
       "file": "hero-poster.jpg",
-      "bytes": 18748,
-      "sha256": "a0957c8d8d1bbbda4b79b4ba2270370238bf870a2680b4e91218c33c7bd9a54e"
+      "bytes": 20722,
+      "sha256": "ca8095dc3154e2525ca9a67617f22b6272f2e7a1be1e618ee09ebf5869d15d59"
     }
   ]
 }

@@ -14,25 +14,51 @@ import sharp from "sharp";
  * NEDEN KESILIYOR — bu dosyanin varlik sebebi
  * ============================================================================
  *
- * Kaynak videoda BES peygamber insan figuru olarak gorunuyor. Plan 20.3:
+ * Kaynak videoda peygamberler INSAN FIGURU olarak gorunuyor. Plan 20.3:
  * "Peygamber, sahabe, melek ve insan figuru tasvir edilmez." Yasak yuze degil
- * FIGURE. Kare kare tarandi, figurlu araliklar cikarildi:
+ * FIGURE — silueti, uzaktan gorunmesi, yuzunun secilmemesi fark etmiyor.
  *
- *   sure        sahne                        figur
- *   ---------   --------------------------   ------------------------------
- *   3,4-5,0 s   nehir vadisi                 Hz. Adem — ayakta, cubbeli
- *   5,0-7,2 s   gemi ve tufan                Hz. Nuh  — geminin onunde
- *   9,0-10,4 s  kiyi, gunes                  Hz. Musa — kiyida
- *  10,4-11,0 s  yarilan deniz (goz hizasi)   Hz. Musa — merkezde, buyuk
- *  12,0-13,5 s  balina                       Hz. Yunus — suya batarken
+ * 2026-09-05 taramasi: kaynak 0,05 sn adimlarla kare kare tarandi ve ONCEKI
+ * KESIM UC YERDE FIGUR GECIRIYORDU. Bu bir yorum hatasi degildi, yayindaki
+ * videoda gercekten vardi:
  *
- * Geriye kalan alti parca birlestirildi. Anlati KORUNDU: her donem kendi
- * yeri ve dogasiyla temsil ediliyor — yaratilis (dunya), tufan (gemi),
- * yarilan deniz (ustten, figursuz), col safagi, sehir ve vahiy isigi,
- * baglanan dunya.
+ *   eski parca        icinde kalan figur
+ *   ---------------   --------------------------------------------------
+ *   [7.2, 1.8]        7,20-7,25: gemi onunde kucuk figur (sol alt)
+ *                     8,50-9,00: kiyida ayakta duran figur
+ *   [10.4, 1.6]       11,45-12,00: Hz. Yunus, suya batarken (merkez)
+ *   [13.5, 1.5]       13,50-13,80: ayni figur, balinanin ustunde
  *
- * Uzak kervan (15-17 sn) birakildi: o olcekte hayvan surusu okunuyor, insan
- * tasviri degil.
+ * Bu yuzden araliklar artik "sahne" degil DOGRULANMIS FIGURSUZ PENCERE
+ * olarak tanimlaniyor; her birinin iki ucu ayri ayri kare kare kontrol
+ * edildi. Pencere sinirlari daraltildi, genisletilmedi.
+ *
+ * Uzak kervan (15,9-18,3 sn) birakildi: o olcekte hayvan surusu okunuyor,
+ * insan tasviri degil.
+ *
+ * ============================================================================
+ * NEDEN PARLATILIYOR VE YAVASLATILIYOR
+ * ============================================================================
+ *
+ * Kaynak koyu derecelenmis. Olculdu (signalstats YAVG, 0,5 sn adim):
+ *
+ *   0-2,0 sn   31 34 38 46      neredeyse siyah (uzay)
+ *   18,5-20 sn 50 36 39         fade-to-black
+ *
+ * Eski kesim bu iki ucu iceri aliyordu: 11,4 sn'lik dongunun 3,5 sn'si
+ * (%31) siyah geciyordu ve poster 0. kareydi (YAVG 31) — yani video
+ * baslamadan once ekranda siyah duruyordu. Kullanici "video gorunmuyor"
+ * dedi; perde degil, KAYNAGIN KENDISI karanlikti.
+ *
+ * Iki onlem:
+ *   1. Siyah bas ve son pencerelerin disinda birakildi (asagidaki WINDOWS).
+ *   2. eq=gamma ile golgeler kaldirildi. Gamma Y duzlemine dogrudan uygulanir,
+ *      curves gibi RGB'ye donusum gerektirmez ve renk kaymasi yapmaz.
+ *      0,20 -> 0,30 / 0,43 -> 0,54 / 0,57 -> 0,66 (normalize luma).
+ *
+ * Yavaslatma: pencereler daraldigi icin ham sure 7,9 sn'ye dustu. SPEED ile
+ * gerilir; hem sure geri gelir hem arka plan videosuna yakisan agir bir
+ * tempo olur. minterpolate=blend kare tekrarindan dogan takilmayi siler.
  *
  * ============================================================================
  *
@@ -48,25 +74,64 @@ const OUT_DIR = resolve(repoRoot, "apps/web/public/media");
 const MANIFEST_FILE = resolve(OUT_DIR, "manifest.json");
 const TMP = resolve(import.meta.dirname, ".tmp");
 
-/** Figursuz araliklar — [baslangic sn, sure sn, ne oldugu]. */
-const SEGMENTS: readonly [number, number, string][] = [
-  [0.0, 3.2, "dunya uzaydan, atmosfere inis"],
-  [7.2, 1.8, "gemi yakin plan, yagmur duvari"],
-  [10.4, 1.6, "yarilan deniz — ustten, figursuz"],
-  [13.5, 1.5, "su altinda isik, col kumulu"],
-  [15.2, 4.8, "sehir, vahiy isigi, dunya, baglanan dunya"],
+/**
+ * Dogrulanmis figursuz pencereler — [baslangic sn, bitis sn, ne oldugu].
+ *
+ * Her sinir kare kare kontrol edildi; yanindaki not neyin hemen disarida
+ * kaldigini soyluyor ki ilerde biri "biraz genisletelim" demesin.
+ */
+const WINDOWS: readonly [number, number, string][] = [
+  // 3,10'dan sonra vadide Hz. Adem beliriyor. 1,80'den once kare siyah.
+  [1.8, 3.1, "dunya uzaydan, atmosfere inis, nehir vadisi"],
+  // 7,25'te gemi onunde figur var; 8,50'de kiyidaki figur beliriyor.
+  [7.3, 8.45, "gemi tufanda, yagmur duvari"],
+  // 10,25'te kadrajda figur var; 11,45'te Hz. Yunus suya batmaya basliyor.
+  [10.3, 11.3, "yarilan deniz, icinden gunes"],
+  // 13,80'e kadar balinanin ustunde figur duruyor; 18,30'dan sonra fade.
+  [13.9, 18.3, "col safagi, kervan, sehir, vahiy isigi, dunya"],
 ];
 
 /** Parcalar arasi gecis suresi. */
-const XFADE = 0.4;
+const XFADE = 0.6;
 
 /**
- * Kalite. Video hero'da KOYU BIR PERDENIN ALTINDA duruyor ve uzerinde metin
- * var; ayrinti zaten kayboluyor. crf 34 ile 36 yan yana konuldu, uzay
- * gradyaninda bile fark ayirt edilemedi — 36 secildi (932 KB -> 768 KB).
- * aq-mode=3 karanlik gradyanlarda bantlanmayi onluyor.
+ * Oynatma hizi.
+ *
+ * 2026-09-05 ucuncu tur: kullanici "cok hizli akiyor" dedi. Pencereler
+ * figursuz araliklarla sinirli (1,3 + 1,15 + 1,0 + 4,4 sn ham); UZATILAMAZ,
+ * cunku hemen bitisiginde insan figuru var (plan 20.3). O yuzden hiz
+ * dusuruldu: 0,75 -> 0,5. Ham 7,85 sn -> ekranda ~14,5 sn; sahne basina
+ * ~2,3 sn'den ~3,6 sn'ye cikiyor. minterpolate ara kare urettigi icin
+ * yavaslatma takilma yapmiyor.
  */
-const CRF = 36;
+const SPEED = 0.5;
+
+/**
+ * Renk derecelendirme.
+ *
+ * 2026-09-05 ikinci tur: kullanici "hala cok koyu, tam canli olsun" dedi.
+ * Olculdu — kaynak degil PERDE karartiyordu (medyan 149/255 video, uzerinde
+ * %52 perde: ekranda ~70/255). Perde index.astro'da kesildi; video da
+ * perdesiz duracagi icin burada bir kademe daha acildi:
+ *
+ *   gamma      1.35 -> 1.55   golgeler; Y duzlemine uygulanir, renk kaydirmaz
+ *   saturation 1.10 -> 1.30   "canli" istegi; gamma'nin aldigi doygunlugu
+ *                             geri vermenin otesine gecer
+ *   contrast   ->   1.06      gamma yukselince duzlesen tonu toparlar
+ *
+ * Ust sinir gamma 1.55'te: 1.7 denendi, col safagi karesinde gokyuzu
+ * 246/255'e cikip kirpiliyordu (detay kaybi).
+ */
+const EQ = "eq=gamma=1.55:saturation=1.30:contrast=1.06";
+
+/**
+ * Kalite. crf 36 secilmisti cunku video kalin bir perdenin altindaydi ve
+ * ayrinti zaten kayboluyordu. Perde kesilince video dogrudan gorunur oldu;
+ * 36'da col ve deniz karelerinde blok gorunuyor. 30'a cekildi — dosya
+ * ~570 KB'dan ~1 MB'a cikiyor, tek varlik icin kabul edilebilir.
+ * aq-mode=3 karanlik gradyanlarda bantlanmayi onler.
+ */
+const CRF = 30;
 
 const sha256 = (buf: Buffer): string => createHash("sha256").update(buf).digest("hex");
 
@@ -82,18 +147,40 @@ function requireFfmpeg(): void {
   }
 }
 
+/**
+ * Kaynaktan cikan sure degil, EKRANDA gecen sure.
+ *
+ * Pencere ham suresi SPEED ile gerilir; xfade'te iki parca ust uste bindigi
+ * icin her gecis kadar geri alinir.
+ */
+const stretched = (w: readonly [number, number, string]): number => (w[1] - w[0]) / SPEED;
+const TOTAL = WINDOWS.reduce((a, w) => a + stretched(w), 0) - XFADE * (WINDOWS.length - 1);
+
 /** Parcalari xfade zinciriyle birlestirir; cikti sessizdir (-an). */
 function buildCut(target: string): void {
   const inputs: string[] = [];
-  for (const [start, dur] of SEGMENTS) {
-    inputs.push("-ss", String(start), "-t", String(dur), "-i", SOURCE);
+  for (const [start, end] of WINDOWS) {
+    inputs.push("-ss", String(start), "-to", String(end), "-i", SOURCE);
   }
 
-  const labels = SEGMENTS.map((_, i) => String.fromCharCode(97 + i));
-  const parts = labels.map((l, i) => `[${i}:v]setpts=PTS-STARTPTS,fps=24,format=yuv420p[${l}]`);
+  const labels = WINDOWS.map((_, i) => String.fromCharCode(97 + i));
+
+  /*
+   * Zincir sirasi onemli:
+   *   setpts       once zamani gerer (0,75 hiz = PTS / 0,75)
+   *   minterpolate gerilmeden dogan kare tekrarini harmanlayarak siler;
+   *                blend secildi, mci hareketli suda hayalet birakiyordu
+   *   eq           golgeleri kaldirir (bkz. dosya basi)
+   *   format       xfade yuv420p bekler
+   */
+  const parts = labels.map(
+    (l, i) =>
+      `[${String(i)}:v]setpts=(PTS-STARTPTS)/${String(SPEED)},` +
+      `minterpolate=fps=24:mi_mode=blend,${EQ},format=yuv420p[${l}]`,
+  );
 
   // Her xfade'te toplam sure kadar ilerlenir, gecis payi geri alinir.
-  let running = SEGMENTS[0]![1];
+  let running = stretched(WINDOWS[0]!);
   let prev = labels[0]!;
   for (let i = 1; i < labels.length; i += 1) {
     const offset = running - XFADE;
@@ -101,7 +188,7 @@ function buildCut(target: string): void {
     parts.push(
       `[${prev}][${labels[i]!}]xfade=transition=fade:duration=${String(XFADE)}:offset=${offset.toFixed(3)}[${out}]`,
     );
-    running = running + SEGMENTS[i]![1] - XFADE;
+    running = running + stretched(WINDOWS[i]!) - XFADE;
     prev = out;
   }
 
@@ -133,17 +220,47 @@ function buildCut(target: string): void {
   ]);
 }
 
+/**
+ * Ciktinin parlaklik profili — dogrulama icin, 0,5 sn adimlarla YAVG.
+ *
+ * Bu olcum rapor icin degil KURAL icin: eski surumde dongunun %31'i siyahti
+ * ve bunu kimse fark etmedi cunku olculmuyordu. Simdi her uretimde basiliyor
+ * ve en karanlik kare esigin altina duserse uretim durur.
+ */
+function luminance(path: string): { at: number; y: number }[] {
+  const out = execFileSync(
+    "ffmpeg",
+    [
+      "-v", "error", "-i", path,
+      "-vf", "fps=2,signalstats,metadata=print:key=lavfi.signalstats.YAVG:file=-",
+      "-f", "null", "-",
+    ],
+    { encoding: "utf8", stdio: ["ignore", "pipe", "inherit"] },
+  );
+  const values = [...out.matchAll(/lavfi\.signalstats\.YAVG=([\d.]+)/g)].map((m) => Number(m[1]));
+  return values.map((y, i) => ({ at: i / 2, y }));
+}
+
+/**
+ * Metnin arkasinda duracak kadar parlak olmayan kare kalmamali.
+ *
+ * 60/255 esigi: perde ~%42 karartiyor, altindan 60'in altinda bir kare
+ * gecerse ekranda siyah gorunur — dongunun o saniyesi "video yok" demektir.
+ */
+const MIN_Y = 60;
+
 async function main(): Promise<void> {
   const check = process.argv.includes("--check");
   if (!existsSync(SOURCE)) fail(`Kaynak video yok: ${SOURCE}`);
   requireFfmpeg();
 
   const src = readFileSync(SOURCE);
-  const total = SEGMENTS.reduce((a, [, d]) => a + d, 0) - XFADE * (SEGMENTS.length - 1);
   info(`kaynak: ${(src.length / 1048576).toFixed(1)} MB · ${sha256(src).slice(0, 12)}`);
-  info(`${String(SEGMENTS.length)} figursuz parca -> ${total.toFixed(2)} sn`);
-  for (const [start, dur, what] of SEGMENTS) {
-    info(`  ${start.toFixed(1).padStart(4)}s +${dur.toFixed(1)}s  ${what}`);
+  info(
+    `${String(WINDOWS.length)} figursuz pencere · hiz ${String(SPEED)}x -> ${TOTAL.toFixed(2)} sn`,
+  );
+  for (const [start, end, what] of WINDOWS) {
+    info(`  ${start.toFixed(2).padStart(5)}-${end.toFixed(2)}s  ${what}`);
   }
 
   mkdirSync(TMP, { recursive: true });
@@ -153,10 +270,29 @@ async function main(): Promise<void> {
   buildCut(videoPath);
   const video = readFileSync(videoPath);
 
-  // Poster: ilk parcanin icinden bir kare. Video inmeden once gorunen sey bu,
-  // bu yuzden LCP'yi o tasiyor — kucuk tutuluyor.
+  /*
+   * Parlaklik profili + esik kontrolu.
+   *
+   * Eski surumde poster 0. kareydi ve o kare siyahti; video inene kadar
+   * ekranda siyah bir dikdortgen duruyordu. Poster artik SABIT DEGIL, en
+   * parlak kareden aliniyor — hangi kare oldugu asagida basiliyor.
+   */
+  const profile = luminance(videoPath);
+  info(`parlaklik (YAVG, 0,5 sn): ${profile.map((p) => p.y.toFixed(0)).join(" ")}`);
+
+  const darkest = profile.reduce((a, b) => (b.y < a.y ? b : a));
+  if (darkest.y < MIN_Y) {
+    fail(
+      `${darkest.at.toFixed(1)}s karesi cok karanlik (YAVG ${darkest.y.toFixed(0)}, esik ${String(MIN_Y)}). ` +
+        "Pencere sinirlarini veya EQ gamma degerini gozden gecirin.",
+    );
+  }
+
+  const brightest = profile.reduce((a, b) => (b.y > a.y ? b : a));
+  info(`poster: ${brightest.at.toFixed(1)}s (YAVG ${brightest.y.toFixed(0)}, en karanlik ${darkest.y.toFixed(0)})`);
+
   const frame = resolve(TMP, "poster.png");
-  ffmpeg(["-ss", "0.6", "-i", videoPath, "-frames:v", "1", frame]);
+  ffmpeg(["-ss", String(brightest.at), "-i", videoPath, "-frames:v", "1", frame]);
   const frameBuf = readFileSync(frame);
   const posterWebp = await sharp(frameBuf).resize(1280).webp({ quality: 72 }).toBuffer();
   const posterJpg = await sharp(frameBuf).resize(1280).jpeg({ quality: 70, mozjpeg: true }).toBuffer();
@@ -180,8 +316,10 @@ async function main(): Promise<void> {
         ],
         sourceSha256: sha256(src),
         sourceBytes: src.length,
-        durationSeconds: Number(total.toFixed(2)),
-        segments: SEGMENTS.map(([start, duration, note]) => ({ start, duration, note })),
+        durationSeconds: Number(TOTAL.toFixed(2)),
+        speed: SPEED,
+        eq: EQ,
+        windows: WINDOWS.map(([start, end, note]) => ({ start, end, note })),
         crf: CRF,
         files: [...produced].map(([file, buf]) => ({
           file,
