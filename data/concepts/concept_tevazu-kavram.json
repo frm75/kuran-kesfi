@@ -1,0 +1,40 @@
+{
+  "slug": "tevazu-kavram",
+  "nameTr": "Tevazu",
+  "nameAr": "التواضع",
+  "definition": "Kendini üstün görmemek; yürüyüşte, konuşmada ve ilişkilerde ölçülü olmak.",
+  "parentSlug": null,
+  "roots": [],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "kibir",
+      "type": "contrast",
+      "weight": 3
+    }
+  ],
+  "verses": [
+    {
+      "ref": "25:63",
+      "weight": 3
+    },
+    {
+      "ref": "31:18-19",
+      "weight": 3
+    },
+    {
+      "ref": "17:37",
+      "weight": 3
+    },
+    {
+      "ref": "26:215",
+      "weight": 2
+    },
+    {
+      "ref": "15:88",
+      "weight": 2
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "slug": "zandan-kacinma",
+  "nameTr": "Zandan Kaçınma",
+  "nameAr": "اجتناب سوء الظن",
+  "rootLatin": null,
+  "definition": "Bilgisizce hüküm vermemek, insanlar hakkında kötü zanda bulunmamak, duyduğunu araştırmadan doğru saymamak.",
+  "explanation": "Hucurât 49:12 'zandan çokça kaçının, çünkü zannın bir kısmı günahtır' der; İsrâ 17:36 'bilmediğin şeyin ardına düşme' emri bilgi disiplinini kurar. Nûr 24:12 İfk olayında müminlerin hayra yormamasını kınar; Necm 53:28 ve Yûnus 10:36 zannın hakikat yerine geçmeyeceğini söyler.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 21,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "49:12",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "17:36",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "24:12",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "53:28",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "10:36",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "49:6",
+      "role": "secondary",
+      "note": "Haberi araştırma"
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "ilim",
+    "yalan",
+    "adalet"
+  ]
+}

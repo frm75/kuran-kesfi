@@ -1,0 +1,21 @@
+{
+  "slug": "ser",
+  "nameTr": "Şer",
+  "nameAr": "الشر",
+  "definition": "Kötü, zararlı olan. Kur'an iyilik ve kötülüğün her ikisinin de imtihan olduğunu bildirir (21:35).",
+  "parentSlug": null,
+  "roots": [
+    "$rr"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "hayir",
+      "type": "contrast",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

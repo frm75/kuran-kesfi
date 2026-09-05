@@ -1,0 +1,26 @@
+{
+  "slug": "azap",
+  "nameTr": "Azap",
+  "nameAr": "العذاب",
+  "definition": "Suçun karşılığı olan acı verici ceza. Kur'an'da hem dünyada helâk edilen kavimlerin başına gelen, hem de ahirette süregelen ceza için kullanılır.",
+  "parentSlug": null,
+  "roots": [
+    "Epb"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "cennet",
+      "type": "contrast",
+      "weight": 3
+    },
+    {
+      "target": "zulum",
+      "type": "cause",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

@@ -1,0 +1,90 @@
+{
+  "slug": "hz-yakub",
+  "title": "Hz. Ya'kūb",
+  "type": "prophet",
+  "chronologicalOrder": 10,
+  "eraStart": "M.Ö. 1800 civarı (yaklaşık)",
+  "eraEnd": null,
+  "summary": "İshak'ın oğlu, on iki oğulun babası. Yusuf kıssasında sabrın ve Allah'a şikâyetin sembolü: oğlunun kaybına 'güzel sabır' der, üzüntüsünü yalnızca Allah'a arz eder, gözleri kapanır ve Yusuf'un gömleğiyle açılır. Vefatında oğullarına tevhidi vasiyet eder.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-yusuf",
+    "hz-ishak"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Yusuf'un rüyası ve babasının öğüdü",
+      "ref": "12:4-6",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Oğullarının hilesi ve güzel sabır",
+      "ref": "12:11-18",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Bünyamin'i gönderme kararı",
+      "ref": "12:63-68",
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Hüznünü Allah'a arz etmesi",
+      "ref": "12:83-87",
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Gömlek ve gözlerinin açılması",
+      "ref": "12:93-100",
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Oğullarına vasiyet",
+      "ref": "2:132-133",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Ya'kūb'un 'ben üzüntümü yalnızca Allah'a arz ederim' sözü, sabrın şikâyeti dışlamadığını, yönünü değiştirdiğini gösteren bir örnek olarak ele alınır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "YA'KŪB maddesi — islamansiklopedisi.org.tr/yakub",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "kenan",
+      "order": 1,
+      "eventDescription": "Ailesiyle yaşadığı yurt.",
+      "passageOrders": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "locationSlug": "misir",
+      "order": 2,
+      "eventDescription": "Yusuf'a kavuşmak için gidilen ülke.",
+      "passageOrders": [
+        5
+      ]
+    }
+  ],
+  "concepts": [
+    "sabir",
+    "tevekkul",
+    "dua",
+    "tevhid"
+  ]
+}

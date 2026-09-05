@@ -1,0 +1,111 @@
+{
+  "surahId": 12,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Kıssaların en güzeli ve Yûsuf'un rüyası",
+      "verseStart": 1,
+      "verseEnd": 6,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Kardeşlerin tuzağı ve kuyu",
+      "verseStart": 7,
+      "verseEnd": 20,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Aziz'in evi ve yırtılan gömlek",
+      "verseStart": 21,
+      "verseEnd": 29,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Şehirdeki kadınlar",
+      "verseStart": 30,
+      "verseEnd": 35,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Zindan arkadaşları",
+      "verseStart": 36,
+      "verseEnd": 42,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Kralın rüyası ve yorumu",
+      "verseStart": 43,
+      "verseEnd": 49,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Suçsuzluğun ortaya çıkması ve hazinelerin başına geçiş",
+      "verseStart": 50,
+      "verseEnd": 57,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Kardeşlerin gelişi ve Bünyâmin şartı",
+      "verseStart": 58,
+      "verseEnd": 68,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 9,
+      "title": "Su kabı ve hırsızlık iddiası",
+      "verseStart": 69,
+      "verseEnd": 79,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 10,
+      "title": "Kardeşlerin dönüşü ve Ya'kūb'un hüznü",
+      "verseStart": 80,
+      "verseEnd": 87,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 11,
+      "title": "Tanışma ve gömleğin götürülüşü",
+      "verseStart": 88,
+      "verseEnd": 98,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 12,
+      "title": "Kavuşma ve Yûsuf'un duası",
+      "verseStart": 99,
+      "verseEnd": 101,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 13,
+      "title": "\"Bu kıssa gayb haberidir\"; akıl sahipleri için ibret",
+      "verseStart": 102,
+      "verseEnd": 111,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

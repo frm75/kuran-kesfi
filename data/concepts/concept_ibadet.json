@@ -1,0 +1,22 @@
+{
+  "slug": "ibadet",
+  "nameTr": "İbadet",
+  "nameAr": "العبادة",
+  "definition": "Allah'a kulluk; itaat ve boyun eğme.",
+  "parentSlug": null,
+  "roots": [
+    "Ebd",
+    "sjd"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "tevhid",
+      "type": "co_occurrence",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

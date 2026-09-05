@@ -1,0 +1,98 @@
+{
+  "slug": "hz-suleyman",
+  "title": "Hz. Süleyman",
+  "type": "prophet",
+  "chronologicalOrder": 19,
+  "eraStart": "M.Ö. 10. yüzyıl (yaklaşık)",
+  "eraEnd": null,
+  "summary": "Dâvûd'un oğlu; rüzgâr, cinler ve kuşların dili emrine verilen hükümdar peygamber. Karınca vadisinde şükür duası eder, Hüdhüd'ün haberiyle Sebe melikesine mektup gönderir, tahtı getirtir ve melike iman eder. Atlar sevgisi ve hastalıkla imtihan edilir; ölümü bir süre gizli kalır.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-davud",
+    "sebe"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Karınca vadisi ve şükür duası",
+      "ref": "27:15-19",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Hüdhüd ve Sebe'ye mektup",
+      "ref": "27:20-28",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Melike, taht ve köşk",
+      "ref": "27:29-44",
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Rüzgâr ve cinler",
+      "ref": "21:81-82",
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Bakır, cinler ve ölümü",
+      "ref": "34:12-14",
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Atlar, imtihan ve dua",
+      "ref": "38:30-40",
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Süleyman'a iftira ve sihir",
+      "ref": "2:102",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Süleyman kıssasında güç ve servetin şükür ve adaletle birleşmesi, tefsirlerde örnek yönetim modeli olarak ele alınır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "SÜLEYMAN maddesi — islamansiklopedisi.org.tr/suleyman",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "kudus",
+      "order": 1,
+      "eventDescription": "Hükümdarlık merkezi.",
+      "passageOrders": [
+        1,
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "locationSlug": "sebe-marib",
+      "order": 2,
+      "eventDescription": "Melikenin ülkesi.",
+      "passageOrders": [
+        2,
+        3
+      ]
+    }
+  ],
+  "concepts": [
+    "sukur",
+    "hikmet",
+    "nimet",
+    "adalet",
+    "ilim"
+  ]
+}

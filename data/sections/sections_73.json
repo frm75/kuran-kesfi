@@ -1,0 +1,39 @@
+{
+  "surahId": 73,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Gece ibadeti emri",
+      "verseStart": 1,
+      "verseEnd": 8,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Sabret; yalanlayanları bana bırak",
+      "verseStart": 9,
+      "verseEnd": 14,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Firavun'a gönderilen peygamber örneği",
+      "verseStart": 15,
+      "verseEnd": 19,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Hafifletme ve son hükümler",
+      "verseStart": 20,
+      "verseEnd": 20,
+      "alsoVerses": [],
+      "note": "Tek ayet; sure başındaki gece ibadeti emrini hafifleten uzun hüküm ayeti."
+    }
+  ]
+}

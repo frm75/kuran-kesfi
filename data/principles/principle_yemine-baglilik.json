@@ -1,0 +1,42 @@
+{
+  "slug": "yemine-baglilik",
+  "nameTr": "Yemine Bağlılık",
+  "nameAr": "حفظ الأيمان",
+  "rootLatin": null,
+  "definition": "Verilen sözü ve yemini korumak; yemini iyiliğe engel yapmamak.",
+  "explanation": "16:91 antlaşmayı pekiştirdikten sonra bozmayı yasaklar. 5:89 kasıtsız yeminden sorumlu tutulmadığını, kasıtlı yeminin bozulması hâlinde kefaret gerektiğini bildirir. 2:224 ise yemini iyilik yapmamak için siper etmeyi eleştirir. 68:10-14 'yemin edip duran' kişiyi olumsuz örnek olarak anlatır.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 37,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "16:91",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "5:89",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:224",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "68:10",
+      "role": "secondary",
+      "note": "Olumsuz örnek"
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "ahid",
+    "sidk"
+  ]
+}

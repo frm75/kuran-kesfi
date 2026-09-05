@@ -1,0 +1,43 @@
+{
+  "slug": "umit-kesmeme",
+  "nameTr": "Ümit Kesmeme",
+  "nameAr": "عدم القنوط",
+  "rootLatin": null,
+  "definition": "Allah'ın rahmetinden ve ferahlığından ümit kesmemek.",
+  "explanation": "39:53 aşırı gitmiş kullara bile rahmetten ümit kesmemeyi söyler ve bütün günahların bağışlanabileceğini bildirir. 12:87 Ya'kūb'un oğullarına öğüdüdür: 'Allah'ın rahmetinden ümit kesmeyin.' 15:56 ümit kesmeyi sapkınlığa bağlar; 94:5-6 ise güçlükle beraber kolaylığın bulunduğunu iki kez tekrarlar.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 56,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "39:53",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "12:87",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "15:56",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "94:5",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "umut",
+    "rahmet",
+    "tevekkul"
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "surahId": 25,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Furkān'ın indirilişi ve \"bu ne biçim peygamber\" itirazı",
+      "verseStart": 1,
+      "verseEnd": 9,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Kıyameti yalanlayanlar ve ilah edinilenlerin reddi",
+      "verseStart": 10,
+      "verseEnd": 20,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Melek isteği ve Kur'an'ın parça parça indirilişi",
+      "verseStart": 21,
+      "verseEnd": 34,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Mûsâ, Nûh, Âd ve Semûd; nefsini ilah edinen",
+      "verseStart": 35,
+      "verseEnd": 44,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Gölge, gece, rüzgârlar, iki deniz ve su",
+      "verseStart": 45,
+      "verseEnd": 54,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Fayda vermeyene kulluk; secde emri ve burçlar",
+      "verseStart": 55,
+      "verseEnd": 62,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Rahmân'ın kullarının vasıfları",
+      "verseStart": 63,
+      "verseEnd": 77,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

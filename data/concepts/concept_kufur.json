@@ -1,0 +1,21 @@
+{
+  "slug": "kufur",
+  "nameTr": "Küfür (İnkâr)",
+  "nameAr": "الكفر",
+  "definition": "Hakikati örtmek, Allah'ı ve vahyi inkâr etmek; nimeti tanımamak (nankörlük). Kök anlamı 'örtmek'tir.",
+  "parentSlug": null,
+  "roots": [
+    "kfr"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "iman",
+      "type": "contrast",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

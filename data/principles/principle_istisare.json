@@ -1,0 +1,51 @@
+{
+  "slug": "istisare",
+  "nameTr": "İstişare (Danışma)",
+  "nameAr": "الشورى",
+  "rootLatin": null,
+  "definition": "Karar verirken ilgili kişilerin görüşünü almak; yönetimde ve ortak işlerde danışmayı ilke edinmek.",
+  "explanation": "'İş konusunda onlarla istişare et' (3:159) Hz. Peygamber'e hitaptır; Şûrâ 42:38 'işleri aralarında danışmayla olan' müminleri över. Neml 27:32'de Sebe melikesinin 'siz görüşünüzü bildirmeden karar vermem' demesi, Kur'an'ın istişareyi bir yönetim tavrı olarak sunmasının örneğidir.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 10,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "3:159",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "42:38",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "27:32",
+      "role": "secondary",
+      "note": "Sebe melikesinin istişaresi"
+    },
+    {
+      "ref": "2:233",
+      "role": "secondary",
+      "note": "Aile içinde danışma"
+    }
+  ],
+  "stories": [
+    {
+      "slug": "sebe",
+      "note": "Melikenin kavmine danışması (27:32)"
+    },
+    {
+      "slug": "hz-suleyman",
+      "note": "Melikeyle yazışma"
+    }
+  ],
+  "concepts": [
+    "hikmet",
+    "adalet"
+  ]
+}

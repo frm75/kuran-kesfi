@@ -1,0 +1,112 @@
+{
+  "slug": "hz-isa",
+  "title": "Hz. Îsâ",
+  "type": "prophet",
+  "chronologicalOrder": 29,
+  "eraStart": "M.S. 1. yüzyıl",
+  "eraEnd": null,
+  "summary": "Meryem'in oğlu, Allah'ın kelimesi ve elçisi. Babasız doğar, beşikte konuşur, İncil verilir, izinle hastaları iyileştirir ve ölüleri diriltir; havarileri onu destekler. Kur'an öldürülmediğini, Allah katına yükseltildiğini bildirir; ilâhlık ve üçleme iddialarını reddeder, kıyamette kavmiyle ilgili sorguya çekileceğini anlatır.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-meryem",
+    "hz-yahya"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Müjde, doğum ve mucizeler",
+      "ref": "3:45-51",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Havariler ve Allah katına yükseliş",
+      "ref": "3:52-58",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Nimetlerin hatırlatılması ve sofra",
+      "ref": "5:110-115",
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Kıyamette sorgu",
+      "ref": "5:116-120",
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Öldürülmedi, yükseltildi",
+      "ref": "4:157-159",
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Üçleme reddi",
+      "ref": "4:171-172",
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "İlâhlık iddiasının reddi",
+      "ref": "5:72-75",
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Ahmed'i müjdelemesi ve havarilere yardım",
+      "ref": "61:6",
+      "note": null
+    },
+    {
+      "order": 9,
+      "title": "Havarilere yardım çağrısı",
+      "ref": "61:14",
+      "note": null
+    },
+    {
+      "order": 10,
+      "title": "Örnek ve kıyamet alameti",
+      "ref": "43:57-65",
+      "note": null
+    },
+    {
+      "order": 11,
+      "title": "Meryem oğlu Îsâ hakkında son söz",
+      "ref": "19:34-36",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Îsâ kıssası Kur'an'da tevhid ekseninde anlatılır; mucizeleri 'Allah'ın izniyle' kaydıyla verilir ve ilâhlık iddiası açıkça reddedilir.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "ÎSÂ maddesi — islamansiklopedisi.org.tr/isa",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "kudus",
+      "order": 1,
+      "eventDescription": "Doğup tebliğ ettiği bölge.",
+      "passageOrders": [
+        1,
+        2,
+        3
+      ]
+    }
+  ],
+  "concepts": [
+    "tevhid",
+    "sirk",
+    "nubuvvet",
+    "vahiy",
+    "rahmet"
+  ]
+}

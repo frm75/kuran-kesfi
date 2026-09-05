@@ -1,0 +1,15 @@
+{
+  "slug": "islam",
+  "nameTr": "İslâm",
+  "nameAr": "الإسلام",
+  "definition": "Allah'a teslim olmak ve esenliğe girmek. Kök anlamı barış, esenlik ve teslimiyeti birlikte taşır; selâmlaşma da aynı köktendir.",
+  "parentSlug": null,
+  "roots": [
+    "slm"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [],
+  "verses": []
+}

@@ -1,0 +1,47 @@
+{
+  "surahId": 59,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Kitap ehlinin sürgünü",
+      "verseStart": 1,
+      "verseEnd": 5,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Fey' malının paylaşımı: muhacirler, ensar ve sonrakiler",
+      "verseStart": 6,
+      "verseEnd": 10,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Münafıkların verdiği söz ve şeytan benzetmesi",
+      "verseStart": 11,
+      "verseEnd": 17,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Yarın için ne hazırladığına bak",
+      "verseStart": 18,
+      "verseEnd": 20,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Kur'an'ın ağırlığı ve Allah'ın güzel isimleri",
+      "verseStart": 21,
+      "verseEnd": 24,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

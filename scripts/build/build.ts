@@ -20,7 +20,14 @@
  * Tek dosyada sure + tum mealler tutulunca Bakara 1179 KB oluyordu; plan 20.4
  * ilk yukleme butcesi < 200 KB.
  *
- * Kok, kissa, kavram ve ilke ciktilari ilgili import'lar tamamlandikca eklenir.
+ *   stories_index.json · story/story_<slug>.json     KISSALAR (ayet metni tasimaz)
+ *   locations.json                                   KONUMLAR
+ *   timeline.json                                    SIYER OLAYLARI
+ *   principles_index.json · principle/principle_<slug>.json   ILKELER
+ *   concepts_index.json · concept/concept_<slug>.json         KAVRAMLAR
+ *   verse_links.json                                 ayet -> icerik ters dizini
+ *
+ * Icerik katmani lib/content.ts icinde; tablolar bossa hic dosya yazmaz.
  */
 
 import type {
@@ -47,6 +54,7 @@ import {
 } from "@kuran/schema";
 import { Report, closePool, fail, info, pool, stripSourceHtml } from "@kuran/pipeline";
 import { Emitter, dataRoot } from "./lib/emit.js";
+import { emitContent } from "./lib/content.js";
 
 interface SurahRow {
   id: number;
@@ -601,6 +609,9 @@ async function main(): Promise<void> {
     `kok: ${roots.length} dosya, ${rootsIndexPayload.totals.wordsWithRoot} kelime koke bagli ` +
       `(${words.length} kelimenin %${((rootsIndexPayload.totals.wordsWithRoot / words.length) * 100).toFixed(0)}'i)`,
   );
+
+  // --- icerik katmani: kissa, konum, kavram, ilke, zaman cizelgesi ---
+  await emitContent(emitter, metas, report);
 
   const sourcesPayload = {
     sources: sources.map((s) => ({

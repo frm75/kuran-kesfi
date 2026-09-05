@@ -1,0 +1,39 @@
+{
+  "surahId": 52,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Yemin; azabın gerçekleşmesi ve cehennem",
+      "verseStart": 1,
+      "verseEnd": 16,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Sakınanların cenneti ve oradaki konuşmaları",
+      "verseStart": 17,
+      "verseEnd": 28,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "\"Yoksa...\" soruları",
+      "verseStart": 29,
+      "verseEnd": 43,
+      "alsoVerses": [],
+      "note": "Ard arda gelen on beş soruluk tek bir yapı; bölünmesi zinciri kırardı."
+    },
+    {
+      "order": 4,
+      "title": "Bırak onları; Rabbinin hükmüne sabret",
+      "verseStart": 44,
+      "verseEnd": 49,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

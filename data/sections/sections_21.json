@@ -1,0 +1,63 @@
+{
+  "surahId": 21,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Hesap yaklaştı; helâk edilen memleketler",
+      "verseStart": 1,
+      "verseEnd": 15,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Gökler ve yer oyun için yaratılmadı; tevhid delilleri",
+      "verseStart": 16,
+      "verseEnd": 33,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Her nefis ölümü tadacak; adalet terazileri",
+      "verseStart": 34,
+      "verseEnd": 47,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "İbrâhim ve putlar; Lût ve Nûh",
+      "verseStart": 48,
+      "verseEnd": 77,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Dâvûd, Süleymân, Eyyûb, Zünnûn, Zekeriyyâ ve Meryem",
+      "verseStart": 78,
+      "verseEnd": 91,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Tek ümmet; Ye'cûc ve Me'cûc",
+      "verseStart": 92,
+      "verseEnd": 97,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Sâlih kullar yeryüzüne vâris; âlemlere rahmet",
+      "verseStart": 98,
+      "verseEnd": 112,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

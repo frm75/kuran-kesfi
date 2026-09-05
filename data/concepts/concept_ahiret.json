@@ -1,0 +1,21 @@
+{
+  "slug": "ahiret",
+  "nameTr": "Âhiret",
+  "nameAr": "الآخرة",
+  "definition": "Son yurt; dünya hayatının ardından gelen kalıcı hayat.",
+  "parentSlug": null,
+  "roots": [
+    "Axr"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "dunya",
+      "type": "contrast",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

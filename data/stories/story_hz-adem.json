@@ -1,0 +1,80 @@
+{
+  "slug": "hz-adem",
+  "title": "Hz. Âdem",
+  "type": "prophet",
+  "chronologicalOrder": 1,
+  "eraStart": null,
+  "eraEnd": null,
+  "summary": "İlk insan ve ilk peygamber. Kur'an, Âdem'in topraktan yaratılışını, meleklerin secdesini ve İblis'in itirazını, cennetteki yasak ağacı, unutup yaklaşmasını, tevbesinin kabulünü ve yeryüzüne indirilişini anlatır. Kıssa insanın halifeliği, sorumluluğu ve tevbe kapısının açıklığı etrafında kurulur; Kur'an tarih ve yer vermez.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-idris",
+    "hz-nuh"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Halife yaratılışı ve isimlerin öğretilmesi",
+      "ref": "2:30-39",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "İblis'in itirazı ve yasak ağaç",
+      "ref": "7:11-25",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Topraktan yaratılış, İblis'e verilen mühlet",
+      "ref": "15:26-44",
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Âdem'e verilen ahit, unutması ve tevbesi",
+      "ref": "20:115-123",
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Meleklerin secdesi, İblis'in kibri",
+      "ref": "38:71-85",
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Âdem'in iki oğlu",
+      "ref": "5:27-31",
+      "note": "Kur'an oğulların adını vermez; Kâbil ve Hâbil adları tefsir ve tarih kaynaklarındandır."
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Kıssa, İblis'in secde etmeyişini kibre bağlar; kibir ilk günahın kaynağı olarak gösterilir.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "ÂDEM maddesi — islamansiklopedisi.org.tr/adem",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    },
+    {
+      "text": "Âdem'in hatasından sonra tevbe etmesi ve kabul görmesi, tevbe kapısının insan için her zaman açık olduğuna örnek gösterilir.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "ÂDEM maddesi — islamansiklopedisi.org.tr/adem",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 2
+    }
+  ],
+  "locations": [],
+  "concepts": [
+    "yaratilis",
+    "tevbe",
+    "kibir",
+    "ilim",
+    "hidayet"
+  ]
+}

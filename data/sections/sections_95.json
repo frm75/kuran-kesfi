@@ -1,0 +1,31 @@
+{
+  "surahId": 95,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Üç yemin: Tîn ve zeytûn, Sînâ, güvenli şehir",
+      "verseStart": 1,
+      "verseEnd": 3,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "İnsanın en güzel biçimde yaratılışı ve düşüşü",
+      "verseStart": 4,
+      "verseEnd": 6,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Hesabı yalanlama ve Allah'ın hükmü",
+      "verseStart": 7,
+      "verseEnd": 8,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

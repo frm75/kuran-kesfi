@@ -1,0 +1,26 @@
+{
+  "slug": "tesbih",
+  "nameTr": "Tesbih",
+  "nameAr": "التسبيح",
+  "definition": "Allah'ı eksikliklerden uzak tutmak, yüceltmek. Kur'an göklerin, yerin ve içindekilerin tesbih hâlinde olduğunu bildirir.",
+  "parentSlug": null,
+  "roots": [
+    "sbH"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "zikir",
+      "type": "co_occurrence",
+      "weight": 3
+    },
+    {
+      "target": "hamd",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

@@ -1,0 +1,21 @@
+{
+  "slug": "umut",
+  "nameTr": "Umut (Recâ)",
+  "nameAr": "الرجاء",
+  "definition": "Allah'ın rahmetinden beklenti; korku ile birlikte anılır.",
+  "parentSlug": null,
+  "roots": [
+    "rjw"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "korku",
+      "type": "contrast",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

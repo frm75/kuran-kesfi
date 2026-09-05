@@ -1,0 +1,95 @@
+{
+  "slug": "hz-harun",
+  "title": "Hz. Hârûn",
+  "type": "prophet",
+  "chronologicalOrder": 15,
+  "eraStart": "M.Ö. 13. yüzyıl (yaklaşık)",
+  "eraEnd": null,
+  "summary": "Mûsâ'nın kardeşi ve yardımcısı; Mûsâ'nın duasıyla peygamberlik verilir, Firavun'a birlikte giderler. Mûsâ Tûr'dayken kavmin başında kalır, altın buzağıya karşı çıkar ama kavmi tutamaz; Mûsâ döndüğünde durumu açıklar.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-musa"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Mûsâ'nın kardeşini istemesi",
+      "ref": "20:29-36",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Yardımcı olarak gönderilmesi",
+      "ref": "28:34-35",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Firavun'a birlikte gidiş",
+      "ref": "26:12-17",
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Kavmin başında vekil",
+      "ref": "7:142",
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Buzağı karşısında tutumu",
+      "ref": "20:90-94",
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Mûsâ'nın dönüşü ve açıklaması",
+      "ref": "7:150-151",
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Salih peygamberlerden",
+      "ref": "37:114-122",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Hârûn'un buzağı olayında 'kavmi bölmemek' için beklemesi ile Mûsâ'nın sert tepkisi, tefsirlerde iki farklı sorumluluk anlayışı olarak ele alınır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "HÂRÛN maddesi — islamansiklopedisi.org.tr/harun",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "misir",
+      "order": 1,
+      "eventDescription": "Firavun'a gidiş.",
+      "passageOrders": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "locationSlug": "sina-tur",
+      "order": 2,
+      "eventDescription": "Kavmin başında kaldığı çöl dönemi.",
+      "passageOrders": [
+        4,
+        5,
+        6
+      ]
+    }
+  ],
+  "concepts": [
+    "nubuvvet",
+    "sabir",
+    "hikmet"
+  ]
+}

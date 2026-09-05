@@ -1,0 +1,71 @@
+{
+  "surahId": 41,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Ayrıntılı kılınmış Kur'an ve kalpleri örtülü olanlar",
+      "verseStart": 1,
+      "verseEnd": 8,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Yerin ve göklerin yaratılış evreleri",
+      "verseStart": 9,
+      "verseEnd": 12,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Âd ve Semûd",
+      "verseStart": 13,
+      "verseEnd": 18,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Derilerin şahitliği ve başa sarılan arkadaşlar",
+      "verseStart": 19,
+      "verseEnd": 25,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "\"Bu Kur'an'ı dinlemeyin\"; dosdoğru olanlar",
+      "verseStart": 26,
+      "verseEnd": 32,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "En güzel söz; kötülüğü en güzel şekilde savmak",
+      "verseStart": 33,
+      "verseEnd": 36,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Gece, gündüz, güneş, ay ve Arapça Kur'an",
+      "verseStart": 37,
+      "verseEnd": 44,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Kıyametin bilgisi, insanın nankörlüğü ve ufuklardaki deliller",
+      "verseStart": 45,
+      "verseEnd": 54,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "slug": "ev-mahremiyeti",
+  "nameTr": "Ev Mahremiyeti",
+  "nameAr": "الاستئذان",
+  "rootLatin": null,
+  "definition": "Başkasının evine izinsiz girmemek; kendi evinde de mahremiyet vakitlerini gözetmek.",
+  "explanation": "24:27-28 başka evlere ancak izin alıp selam vererek girilmesini emreder; izin verilmezse dönmeyi ister. 24:58-59 ev içinde de üç vakitte izin istenmesini düzenler. 33:53 davetsiz girilmemesini ve yemekten sonra oyalanılmamasını söyler.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 48,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "24:27",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "24:58",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "33:53",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "ihsan",
+    "emanet"
+  ]
+}

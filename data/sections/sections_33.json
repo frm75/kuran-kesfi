@@ -1,0 +1,79 @@
+{
+  "surahId": 33,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Evlatlık meselesi ve peygamberlerden alınan söz",
+      "verseStart": 1,
+      "verseEnd": 8,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Hendek Savaşı",
+      "verseStart": 9,
+      "verseEnd": 27,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Peygamber hanımlarına hitap",
+      "verseStart": 28,
+      "verseEnd": 34,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Müslüman erkekler ve kadınlar; Zeyd; peygamberlerin sonuncusu",
+      "verseStart": 35,
+      "verseEnd": 40,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Allah'ı çokça zikredin; şahit, müjdeci ve uyarıcı",
+      "verseStart": 41,
+      "verseEnd": 48,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Nikâh ve boşama hükümleri",
+      "verseStart": 49,
+      "verseEnd": 52,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Ev âdâbı, salât ü selâm ve örtünme",
+      "verseStart": 53,
+      "verseEnd": 59,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Münafıklara uyarı ve kıyametin vakti",
+      "verseStart": 60,
+      "verseEnd": 68,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 9,
+      "title": "\"Mûsâ'ya eziyet edenler gibi olmayın\"; emanet",
+      "verseStart": 69,
+      "verseEnd": 73,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

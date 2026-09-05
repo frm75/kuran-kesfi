@@ -1,0 +1,17 @@
+{
+  "slug": "helal-haram",
+  "nameTr": "Helâl ve Haram",
+  "nameAr": "الحلال والحرام",
+  "definition": "Serbest ve yasak olan; Kur'an'ın hüküm dilinin iki kutbu.",
+  "parentSlug": null,
+  "roots": [
+    "Hll",
+    "Hrm",
+    "Tyb"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [],
+  "verses": []
+}

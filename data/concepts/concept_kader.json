@@ -1,0 +1,21 @@
+{
+  "slug": "kader",
+  "nameTr": "Kader",
+  "nameAr": "القدر",
+  "definition": "Allah'ın her şeyi bilgisi ve ölçüsüyle takdir etmesi. Kudretle aynı kökten gelir.",
+  "parentSlug": null,
+  "roots": [
+    "qdr"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "kudret",
+      "type": "part_of",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

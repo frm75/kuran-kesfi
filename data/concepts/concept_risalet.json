@@ -1,0 +1,21 @@
+{
+  "slug": "risalet",
+  "nameTr": "Risalet",
+  "nameAr": "الرسالة",
+  "definition": "Elçilik; 'resûl' gönderilen elçidir. Kur'an'da melekler için de kullanılır.",
+  "parentSlug": null,
+  "roots": [
+    "rsl"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "nubuvvet",
+      "type": "co_occurrence",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

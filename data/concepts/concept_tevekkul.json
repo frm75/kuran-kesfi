@@ -1,0 +1,15 @@
+{
+  "slug": "tevekkul",
+  "nameTr": "Tevekkül",
+  "nameAr": "التوكل",
+  "definition": "Gerekli çabayı gösterdikten sonra sonucu Allah'a bırakmak, O'na güvenip dayanmak. Kur'an'da tedbirle birlikte anılır: Ya'kūb oğullarına tedbiri söyler, ardından 'yine de Allah'a güvenmişim' der (12:67).",
+  "parentSlug": null,
+  "roots": ["wkl"],
+  "sourceSlugs": ["tdv-islam-ansiklopedisi"],
+  "relations": [
+    { "target": "iman", "type": "part_of", "weight": 2 },
+    { "target": "sabir", "type": "co_occurrence", "weight": 2 },
+    { "target": "dua", "type": "co_occurrence", "weight": 2 }
+  ],
+  "verses": []
+}

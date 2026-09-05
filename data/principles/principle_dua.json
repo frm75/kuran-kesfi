@@ -1,0 +1,75 @@
+{
+  "slug": "dua",
+  "nameTr": "Dua",
+  "nameAr": "الدعاء",
+  "rootLatin": "dEw",
+  "definition": "İhtiyacını ve şükrünü doğrudan Allah'a arz etmek; O'ndan istemeyi ibadet saymak.",
+  "explanation": "'Kullarım beni sorduğunda ben yakınım, dua edenin duasına karşılık veririm' (2:186) ve 'bana dua edin, size karşılık vereyim' (40:60) duayı doğrudan emreder; A'râf 7:55 'yalvararak ve gizlice' dua etmeyi ister; Furkān 25:77 duayı insanın Allah katındaki değeri sayar. Zekeriyyâ, Yûnus, İbrâhim ve Eyyûb'un duaları Kur'an'da metniyle yer alır.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 31,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "2:186",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "40:60",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "7:55",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "25:77",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "21:90",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "14:40",
+      "role": "secondary",
+      "note": "İbrâhim'in duası"
+    },
+    {
+      "ref": "19:4",
+      "role": "secondary",
+      "note": "Zekeriyyâ'nın duası"
+    }
+  ],
+  "stories": [
+    {
+      "slug": "hz-zekeriya",
+      "note": "Mihraptaki dua"
+    },
+    {
+      "slug": "hz-yunus",
+      "note": "Karanlıklar içinde"
+    },
+    {
+      "slug": "hz-ibrahim",
+      "note": "Mekke için dua (14:35-41)"
+    },
+    {
+      "slug": "hz-eyyub",
+      "note": "Yakarış ve şifa"
+    }
+  ],
+  "concepts": [
+    "dua",
+    "zikir",
+    "umut"
+  ]
+}

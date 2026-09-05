@@ -1,0 +1,26 @@
+{
+  "slug": "kurtulus",
+  "nameTr": "Kurtuluş",
+  "nameAr": "النجاة",
+  "definition": "Tehlikeden ve azaptan kurtarılmak. Peygamber kıssalarında inananların helâkten çıkarılması bu kelimeyle anlatılır.",
+  "parentSlug": null,
+  "roots": [
+    "njw"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "helak",
+      "type": "contrast",
+      "weight": 3
+    },
+    {
+      "target": "iman",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

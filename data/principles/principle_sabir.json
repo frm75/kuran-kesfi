@@ -1,0 +1,81 @@
+{
+  "slug": "sabir",
+  "nameTr": "Sabır",
+  "nameAr": "الصبر",
+  "rootLatin": "Sbr",
+  "definition": "Zorluk, kayıp ve bekleyiş karşısında dayanmak; hakikat üzere direnmek ve sonucu Allah'a bırakmak. Kur'an'da pasif bir katlanma değil, namazla birlikte anılan etkin bir tutumdur.",
+  "explanation": "'Sabır ve namazla yardım isteyin' (2:153) ve musibet karşısında 'biz Allah'a aidiz' diyenlerin övgüsü (2:155-157) sabrın çerçevesini kurar. Sabredenlere 'hesapsız karşılık' vaat edilir (39:10). Peygamber kıssalarında Eyyûb, Ya'kūb ve Yûsuf sabrın somut örnekleridir. DİA 'SABIR' maddesi sabrı imanın yarısı sayan rivayetleri ve tasavvufî yorumları da aktarır.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 2,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "2:153",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:155-157",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "3:200",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "103:3",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "11:115",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "31:17",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "39:10",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "12:18",
+      "role": "secondary",
+      "note": "Ya'kūb: güzel sabır"
+    },
+    {
+      "ref": "38:44",
+      "role": "secondary",
+      "note": "Eyyûb'a övgü"
+    }
+  ],
+  "stories": [
+    {
+      "slug": "hz-eyyub",
+      "note": "'Ne güzel kul' övgüsü"
+    },
+    {
+      "slug": "hz-yakub",
+      "note": "Güzel sabır"
+    },
+    {
+      "slug": "hz-yusuf",
+      "note": "Kuyu, zindan ve iftira karşısında"
+    }
+  ],
+  "concepts": [
+    "sabir",
+    "imtihan",
+    "tevekkul"
+  ]
+}

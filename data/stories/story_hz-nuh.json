@@ -1,0 +1,101 @@
+{
+  "slug": "hz-nuh",
+  "title": "Hz. Nûh",
+  "type": "prophet",
+  "chronologicalOrder": 3,
+  "eraStart": null,
+  "eraEnd": null,
+  "summary": "Uzun bir davet ve inkârın ardından tufan. Nûh kavmini tevhide çağırır, alaya alınır, Allah'ın emriyle gemiyi yapar; inananlar ve canlılardan çiftler gemiye biner. Sular her şeyi kaplar, iman etmeyen oğlu boğulur, gemi Cûdî'ye oturur. Kur'an tufanın kapsamı ve süresi hakkında ayrıntı vermez.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-hud",
+    "hz-adem"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Kavmine ilk çağrı",
+      "ref": "7:59-64",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Dokuz yüz elli yıl davet ve şikâyet",
+      "ref": "71:1-28",
+      "note": "Süre Ankebût 29:14'te verilir."
+    },
+    {
+      "order": 3,
+      "title": "Geminin yapımı, tufan, oğlu ve Cûdî",
+      "ref": "11:25-49",
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Gemiye binenler ve hamd",
+      "ref": "23:23-30",
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Kavminin itirazı ve dolu gemi",
+      "ref": "26:105-122",
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Nûh'un duası ve kurtuluş",
+      "ref": "37:75-82",
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Göklerin kapılarının açılması",
+      "ref": "54:9-17",
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Tufanın ibret olarak anılması",
+      "ref": "29:14-15",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Nûh kıssası, tebliğde sabrın ve sonucun Allah'a bırakılmasının örneği olarak ele alınır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "NÛH maddesi — islamansiklopedisi.org.tr/nuh",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    },
+    {
+      "text": "Oğlunun boğulması, kurtuluşun soy bağıyla değil imanla olduğunu gösteren bir örnek olarak yorumlanır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "NÛH maddesi — islamansiklopedisi.org.tr/nuh",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 2
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "cudi",
+      "order": 1,
+      "eventDescription": "Tufan sonunda gemi Cûdî'ye oturur (Hûd 11:44).",
+      "passageOrders": [
+        3
+      ]
+    }
+  ],
+  "concepts": [
+    "iman",
+    "kufur",
+    "sabir",
+    "dua",
+    "tevhid"
+  ]
+}

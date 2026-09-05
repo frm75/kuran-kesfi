@@ -1,0 +1,55 @@
+{
+  "surahId": 51,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Yeminler ve ceza günü",
+      "verseStart": 1,
+      "verseEnd": 14,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Sakınanların vasıfları ve yeryüzündeki deliller",
+      "verseStart": 15,
+      "verseEnd": 23,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "İbrâhim'in misafirleri ve Lût kavmi",
+      "verseStart": 24,
+      "verseEnd": 37,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Mûsâ, Âd, Semûd ve Nûh kavimleri",
+      "verseStart": 38,
+      "verseEnd": 46,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Göğün kurulması; \"Allah'a koşun\"",
+      "verseStart": 47,
+      "verseEnd": 51,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Her peygambere aynı söz; kulluk için yaratılış",
+      "verseStart": 52,
+      "verseEnd": 60,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

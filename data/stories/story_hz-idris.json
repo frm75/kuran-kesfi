@@ -1,0 +1,44 @@
+{
+  "slug": "hz-idris",
+  "title": "Hz. İdrîs",
+  "type": "prophet",
+  "chronologicalOrder": 2,
+  "eraStart": null,
+  "eraEnd": null,
+  "summary": "Kur'an'da iki yerde adı geçen peygamber; 'sıddîk bir nebî' olarak anılır ve yüce bir makama yükseltildiği bildirilir. Hakkında ayrıntı verilmez; yazının ve ilk ilimlerin ona bağlanması tefsir ve tarih rivayetlerine dayanır.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-adem",
+    "hz-nuh"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Sıddîk bir nebî",
+      "ref": "19:56-57",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Sabredenlerden",
+      "ref": "21:85-86",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "İdrîs, Kur'an'da sabreden ve salih kişiler arasında anılır; ayrıntılı kıssası yoktur, bilgiler İsrâiliyat ve tarih kaynaklarındandır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "İDRÎS maddesi — islamansiklopedisi.org.tr/idris",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [],
+  "concepts": [
+    "sidk",
+    "sabir"
+  ]
+}

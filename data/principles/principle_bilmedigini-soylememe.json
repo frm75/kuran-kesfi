@@ -1,0 +1,38 @@
+{
+  "slug": "bilmedigini-soylememe",
+  "nameTr": "Bilmediğinin Peşine Düşmeme",
+  "nameAr": "ترك القول بلا علم",
+  "rootLatin": null,
+  "definition": "Kesin bilgi olmadan konuşmamak; zannı bilgi yerine koymamak.",
+  "explanation": "17:36 hakkında bilgi olmayan şeyin peşine düşmeyi yasaklar ve kulak, göz, kalbin hepsinin sorumlu tutulacağını söyler. 10:36 ve 53:28 zannın haktan hiçbir şey ifade etmediğini tekrarlar.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 50,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "17:36",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "10:36",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "53:28",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "zan",
+    "ilim",
+    "sidk"
+  ]
+}

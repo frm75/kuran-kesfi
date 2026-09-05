@@ -1,0 +1,62 @@
+{
+  "slug": "emanete-sadakat",
+  "nameTr": "Emanete Sadakat",
+  "nameAr": "الأمانة",
+  "rootLatin": "Amn",
+  "definition": "Kendine bırakılan her şeyi — mal, söz, görev, sır — sahibine ait bilip korumak ve yerine ulaştırmak.",
+  "explanation": "'Allah emanetleri sahiplerine vermenizi emreder' (4:58) ile 'emanetlerine hıyanet etmeyin' (8:27) ilkenin çerçevesini çizer; Mü'minûn 23:8 emanete riayeti müminin vasfı sayar. Ahzâb 33:72 emaneti insanın yüklendiği sorumluluk olarak geniş anlamda kullanır. Yûsuf'un 'iyi koruyucu ve bilenim' (12:55) sözü emanetin liyakatle birlikte anılmasına örnektir.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 5,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "4:58",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "8:27",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "23:8",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "70:32",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "33:72",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "2:283",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "12:55",
+      "role": "secondary",
+      "note": "Yûsuf: hafîz ve alîm"
+    }
+  ],
+  "stories": [
+    {
+      "slug": "hz-yusuf",
+      "note": "Hazinelerin emanet edilmesi"
+    }
+  ],
+  "concepts": [
+    "emanet",
+    "sidk"
+  ]
+}

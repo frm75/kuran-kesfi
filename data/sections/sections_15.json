@@ -1,0 +1,79 @@
+{
+  "surahId": 15,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "\"Zikri biz indirdik, onu biz koruruz\"; alaya alanlar",
+      "verseStart": 1,
+      "verseEnd": 15,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Gökteki burçlar, yerin yayılması ve rüzgârlar",
+      "verseStart": 16,
+      "verseEnd": 25,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "İnsanın ve cinnin yaratılışı; İblîs",
+      "verseStart": 26,
+      "verseEnd": 44,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Sakınanların cenneti; \"ben çok bağışlayanım\"",
+      "verseStart": 45,
+      "verseEnd": 50,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "İbrâhim'in misafirleri",
+      "verseStart": 51,
+      "verseEnd": 60,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Lût kavminin helâki",
+      "verseStart": 61,
+      "verseEnd": 77,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Eyke halkı ve Hicr halkı",
+      "verseStart": 78,
+      "verseEnd": 84,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Hak ile yaratılış ve tekrarlanan yedi ayet",
+      "verseStart": 85,
+      "verseEnd": 91,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 9,
+      "title": "Emrolunanı açıkça ortaya koy; ölüm gelinceye kadar ibadet",
+      "verseStart": 92,
+      "verseEnd": 99,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "slug": "sirk",
+  "nameTr": "Şirk",
+  "nameAr": "الشرك",
+  "definition": "Allah'a ortak koşmak; O'na ait olan sıfat, hak ve ibadeti başkasına vermek. Kur'an'ın en ağır uyarısı bu kavram etrafındadır.",
+  "parentSlug": "kufur",
+  "roots": [
+    "$rk"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "tevhid",
+      "type": "contrast",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

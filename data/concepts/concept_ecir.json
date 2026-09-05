@@ -1,0 +1,21 @@
+{
+  "slug": "ecir",
+  "nameTr": "Ecir",
+  "nameAr": "الأجر",
+  "definition": "Yapılan işin karşılığı, ücret. Kur'an peygamberlerin tebliğ karşılığında ücret istemediğini tekrar tekrar vurgular; asıl ecrin Allah katında olduğunu bildirir.",
+  "parentSlug": null,
+  "roots": [
+    "Ajr"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "amel",
+      "type": "co_occurrence",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

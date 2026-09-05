@@ -1,0 +1,21 @@
+{
+  "slug": "kiraat",
+  "nameTr": "Kıraat (Okuma)",
+  "nameAr": "القراءة",
+  "definition": "Okumak; 'Kur'an' kelimesi de bu köktendir. İlk emir 'oku'dur (96:1).",
+  "parentSlug": null,
+  "roots": [
+    "qrA"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "kitap",
+      "type": "co_occurrence",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

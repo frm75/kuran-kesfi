@@ -1,0 +1,83 @@
+{
+  "slug": "hz-suayb",
+  "title": "Hz. Şuayb",
+  "type": "prophet",
+  "chronologicalOrder": 12,
+  "eraStart": null,
+  "eraEnd": null,
+  "summary": "Medyen ve Eyke halkına gönderilen peygamber. Kavmini ölçü ve tartıda hile yapmamaya, insanların hakkını yememeye çağırır; reddedilir ve kavmi şiddetli bir sarsıntıyla helâk olur. Musa'nın Medyen'de yanına sığındığı yaşlı kişinin Şuayb olduğu tefsirlerde yaygın görüştür.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-musa",
+    "hz-salih"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Medyen'e çağrı: ölçü ve tartı",
+      "ref": "7:85-93",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Namaz ve ticaret ahlâkı",
+      "ref": "11:84-95",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Eyke halkı",
+      "ref": "26:176-191",
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Sarsıntıyla helâk",
+      "ref": "29:36-37",
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Musa'nın Medyen'deki yaşlıya sığınması",
+      "ref": "28:22-28",
+      "note": "Kur'an bu kişiyi adlandırmaz; Şuayb olduğu görüşü tefsir kaynaklarındandır."
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Şuayb kıssası, ekonomik ahlâkın (ölçü, tartı, hakkı yememe) tevhid davetinin parçası olduğunu gösteren örnek olarak ele alınır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "ŞUAYB maddesi — islamansiklopedisi.org.tr/suayb",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "medyen",
+      "order": 1,
+      "eventDescription": "Şuayb kavminin yurdu.",
+      "passageOrders": [
+        1,
+        2,
+        4,
+        5
+      ]
+    },
+    {
+      "locationSlug": "eyke",
+      "order": 2,
+      "eventDescription": "Ashâb-ı Eyke; Medyen'e komşu.",
+      "passageOrders": [
+        3
+      ]
+    }
+  ],
+  "concepts": [
+    "adalet",
+    "zulum",
+    "kufur"
+  ]
+}

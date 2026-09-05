@@ -1,0 +1,55 @@
+{
+  "surahId": 50,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Dirilişe itiraz; gök, yer ve bitkilerdeki deliller",
+      "verseStart": 1,
+      "verseEnd": 11,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Helâk edilen kavimler ve ilk yaratmanın delili",
+      "verseStart": 12,
+      "verseEnd": 15,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Şah damarından yakınlık, iki melek ve ölüm sarhoşluğu",
+      "verseStart": 16,
+      "verseEnd": 19,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Sûr, hesap ve cehennem",
+      "verseStart": 20,
+      "verseEnd": 30,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Cennet ve altı günde yaratılış",
+      "verseStart": 31,
+      "verseEnd": 38,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Sabret, tespih et; çağırıcının sesi",
+      "verseStart": 39,
+      "verseEnd": 45,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

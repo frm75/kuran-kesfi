@@ -1,0 +1,48 @@
+{
+  "slug": "cimrilikten-kacinma",
+  "nameTr": "Cimrilikten Kaçınma",
+  "nameAr": "اجتناب البخل",
+  "rootLatin": null,
+  "definition": "Verilenden vermemek ve başkasını da vermemeye çağırmaktan uzak durmak.",
+  "explanation": "3:180 cimriliği hayır sanmayı reddeder ve cimrilik edilen malın kıyamette boyna dolanacağını söyler. 4:37 ve 57:24 aynı kişiyi tarif eder: hem cimrilik eden hem cimriliği emreden. 47:38 cimriliğin asıl zararının kişinin kendisine olduğunu bildirir; 92:8-11 cimrilik edenin yolunun zorlaştırıldığını söyler.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 59,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "3:180",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "47:38",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "4:37",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "57:24",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "92:8",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "infak",
+    "kibir",
+    "husran"
+  ]
+}

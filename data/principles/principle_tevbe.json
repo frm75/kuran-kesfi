@@ -1,0 +1,86 @@
+{
+  "slug": "tevbe",
+  "nameTr": "Tevbe (Hatadan Dönüş)",
+  "nameAr": "التوبة",
+  "rootLatin": "twb",
+  "definition": "Günahtan pişmanlıkla dönmek, Allah'tan bağışlanma dilemek ve aynı hataya dönmemeye karar vermek.",
+  "explanation": "Nûr 24:31 'hepiniz Allah'a tevbe edin', Tahrîm 66:8 'içten bir tevbeyle tevbe edin' ve Hûd 11:3 'Rabbinizden bağışlanma dileyin, sonra O'na tevbe edin' doğrudan emirlerdir. Zümer 39:53 umutsuzluğu yasaklar. Âdem (2:37), Yûnus (21:87) ve Dâvûd'un (38:24) tevbeleri kıssa düzeyindeki örneklerdir; Kur'an tevbeyi peygamberler için de anlatır.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 30,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "24:31",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "66:8",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "11:3",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "11:52",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "39:53",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "2:222",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "3:135",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "2:37",
+      "role": "secondary",
+      "note": "Âdem"
+    },
+    {
+      "ref": "21:87",
+      "role": "secondary",
+      "note": "Yûnus"
+    },
+    {
+      "ref": "38:24",
+      "role": "secondary",
+      "note": "Dâvûd"
+    }
+  ],
+  "stories": [
+    {
+      "slug": "hz-adem",
+      "note": "Cennetteki hatadan sonra"
+    },
+    {
+      "slug": "hz-yunus",
+      "note": "Balığın karnında"
+    },
+    {
+      "slug": "hz-davud",
+      "note": "İki davacı kıssası"
+    }
+  ],
+  "concepts": [
+    "tevbe",
+    "magfiret",
+    "rahmet"
+  ]
+}

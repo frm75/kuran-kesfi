@@ -1,0 +1,26 @@
+{
+  "slug": "hilafet",
+  "nameTr": "Halifelik",
+  "nameAr": "الخلافة",
+  "definition": "Ardından gelmek, yeryüzünde yetki ve sorumluluk taşımak. Âdem'in halife kılınması ve Dâvûd'a verilen hilâfet bu kavramın iki temel yeridir.",
+  "parentSlug": null,
+  "roots": [
+    "xlf"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "emanet",
+      "type": "co_occurrence",
+      "weight": 3
+    },
+    {
+      "target": "mulk",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

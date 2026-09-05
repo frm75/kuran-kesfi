@@ -1,0 +1,39 @@
+{
+  "slug": "ashab-i-karye",
+  "title": "Ashâb-ı Karye (Şehir Halkı)",
+  "type": "people",
+  "chronologicalOrder": 38,
+  "eraStart": null,
+  "eraEnd": null,
+  "summary": "Yâsîn suresinde adı verilmeden anlatılan şehir: üç elçiyi yalanlayan halk ve şehrin öbür ucundan koşarak gelip elçilere uymayı söyleyen adam.",
+  "coverImage": null,
+  "relatedStories": [],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Elçilerin gelişi ve yalanlanması",
+      "ref": "36:13-19",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Koşarak gelen adam",
+      "ref": "36:20-27",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Tek bir sesle sönüp gitmeleri",
+      "ref": "36:28-32",
+      "note": null
+    }
+  ],
+  "lessons": [],
+  "locations": [],
+  "concepts": [
+    "nubuvvet",
+    "uyari",
+    "sidk",
+    "helak"
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "surahId": 44,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Mübarek gece; dumanın gelişi ve azap",
+      "verseStart": 1,
+      "verseEnd": 16,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Firavun kavmi ve İsrâiloğullarının kurtuluşu",
+      "verseStart": 17,
+      "verseEnd": 33,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Dirilişe itiraz, Tübba' kavmi ve hüküm günü",
+      "verseStart": 34,
+      "verseEnd": 42,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Zakkum ağacı ve cehennem",
+      "verseStart": 43,
+      "verseEnd": 50,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Sakınanların güvenli yeri; Kur'an'ın kolaylaştırılması",
+      "verseStart": 51,
+      "verseEnd": 59,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

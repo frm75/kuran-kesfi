@@ -1,0 +1,54 @@
+{
+  "slug": "karun",
+  "title": "Kārûn",
+  "type": "person",
+  "chronologicalOrder": 16,
+  "eraStart": "M.Ö. 13. yüzyıl (yaklaşık)",
+  "eraEnd": null,
+  "summary": "Mûsâ'nın kavminden, hazineleri ağır yük olan zengin bir adam. Kavmi onu şımarmamaya, malla iyilik yapmaya ve yeryüzünde bozgunculuk çıkarmamaya çağırır; o servetini kendi bilgisine bağlar ve kavmin karşısına gösterişle çıkar. Sonunda kendisi ve evi yere geçirilir.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-musa"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Servet, uyarı ve yere geçiş",
+      "ref": "28:76-82",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Firavun ve Hâmân ile anılması",
+      "ref": "29:39-40",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Kārûn kıssası, serveti kişisel bilgi ve hakkın sonucu görmenin ve gösterişin uyarısı olarak ele alınır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "KĀRÛN maddesi — islamansiklopedisi.org.tr/karun",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "misir",
+      "order": 1,
+      "eventDescription": "Mûsâ döneminde Mısır.",
+      "passageOrders": [
+        1
+      ]
+    }
+  ],
+  "concepts": [
+    "kibir",
+    "nimet",
+    "zulum",
+    "fisk"
+  ]
+}

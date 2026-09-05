@@ -1,0 +1,21 @@
+{
+  "slug": "kudret",
+  "nameTr": "Kudret ve Ölçü",
+  "nameAr": "القدر",
+  "definition": "Allah'ın gücü ve her şeyi bir ölçüyle takdir etmesi.",
+  "parentSlug": null,
+  "roots": [
+    "qdr"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "kader",
+      "type": "part_of",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

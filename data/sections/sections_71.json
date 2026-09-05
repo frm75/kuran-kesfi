@@ -1,0 +1,39 @@
+{
+  "surahId": 71,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Nûh'un gönderilişi ve daveti",
+      "verseStart": 1,
+      "verseEnd": 4,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Nûh'un Rabbine şikâyeti ve saydığı deliller",
+      "verseStart": 5,
+      "verseEnd": 20,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Kavmin tuzağı ve putlar",
+      "verseStart": 21,
+      "verseEnd": 24,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Helâk ve Nûh'un duası",
+      "verseStart": 25,
+      "verseEnd": 28,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

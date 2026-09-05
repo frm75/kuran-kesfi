@@ -1,0 +1,68 @@
+{
+  "slug": "yetimi-gozetme",
+  "nameTr": "Yetimi Gözetme",
+  "nameAr": "رعاية اليتيم",
+  "rootLatin": null,
+  "definition": "Yetimi ezmemek, malını korumak ve yerine ulaştırmak, onu toplumdan dışlamamak.",
+  "explanation": "'Yetimi ezme' (93:9), yetimin malını en iyi biçimde yönetme emri (2:220, 4:2) ve yetim malı yiyenlere uyarı (4:10) ilkenin çerçevesidir. Mâûn 107:2 yetimi itmeyi dini yalanlamanın belirtisi sayar; Fecr 89:17 ve Beled 90:15 yetime ikramı iyilik ölçüsü yapar.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 17,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "93:9",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:220",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "4:2",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "6:152",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "4:10",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "107:2",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "89:17",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "90:15",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "76:8",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "ihsan",
+    "birr",
+    "adalet"
+  ]
+}

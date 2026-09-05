@@ -1,0 +1,43 @@
+{
+  "slug": "cocuklari-oldurmeme",
+  "nameTr": "Çocuğu Öldürmeme",
+  "nameAr": "تحريم قتل الأولاد",
+  "rootLatin": null,
+  "definition": "Yoksulluk korkusuyla ya da kız olduğu için çocuğu öldürmenin kesin yasağı.",
+  "explanation": "6:151 haramların sayımında çocukları öldürmeyi anar ve rızkın Allah'a ait olduğunu söyler. 17:31 aynı yasağı tekrarlar ve bunu 'büyük bir günah' sayar. 81:8-9 kıyamet gününde diri diri gömülen kız çocuğunun hangi suçtan öldürüldüğünün sorulacağını bildirir; 16:58-59 ise kız haberini alan babanın tepkisini eleştirir.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 41,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "6:151",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "17:31",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "81:8",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "16:58",
+      "role": "secondary",
+      "note": "Kız çocuğuna bakış"
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "zulum",
+    "rizik",
+    "curum"
+  ]
+}

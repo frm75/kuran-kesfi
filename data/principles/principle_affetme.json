@@ -1,0 +1,68 @@
+{
+  "slug": "affetme",
+  "nameTr": "Affetme",
+  "nameAr": "العفو",
+  "rootLatin": "Efw",
+  "definition": "Kendine yapılan haksızlığı karşılıksız bağışlamak; intikam hakkından vazgeçmek.",
+  "explanation": "Nûr 24:22 'affetsinler, hoş görsünler' der ve Allah'ın bağışlamasını buna bağlar; Şûrâ 42:40 kısası hak sayar ama 'kim affeder ve düzeltirse ecri Allah'a aittir' diye ekler. Yûsuf'un kardeşlerine 'bugün size kınama yok' (12:92) demesi affın en bilinen örneğidir. DİA 'AF' maddesi affı hukukî hakla ahlâkî fazilet arasında konumlandırır.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 9,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "24:22",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "42:40",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "3:134",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "7:199",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "42:43",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:237",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "64:14",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "12:92",
+      "role": "secondary",
+      "note": "Yûsuf'un kardeşlerini affı"
+    }
+  ],
+  "stories": [
+    {
+      "slug": "hz-yusuf",
+      "note": "'Bugün size kınama yok' (12:92)"
+    }
+  ],
+  "concepts": [
+    "af",
+    "magfiret",
+    "rahmet"
+  ]
+}

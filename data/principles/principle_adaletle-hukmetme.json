@@ -1,0 +1,48 @@
+{
+  "slug": "adaletle-hukmetme",
+  "nameTr": "Adaletle Hükmetme",
+  "nameAr": "الحكم بالعدل",
+  "rootLatin": null,
+  "definition": "İnsanlar arasında karar verirken hevaya değil hakka uymak.",
+  "explanation": "4:58 emanetleri ehline vermeyi ve hükmederken adaletle hükmetmeyi birlikte emreder. 5:8 düşmanlığın bile adaletten saptırmaması gerektiğini söyler. 5:42 heveslere uymamayı ister. 38:26 Dâvûd'a hilâfetle birlikte hakla hükmetmeyi emreder; 4:105 Kitabın indiriliş amacını Allah'ın gösterdiğiyle hükmetmeye bağlar.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 54,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "4:58",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "5:8",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "5:42",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "38:26",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "4:105",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "adalet",
+    "emanet",
+    "hak"
+  ]
+}

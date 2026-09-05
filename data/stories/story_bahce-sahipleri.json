@@ -1,0 +1,45 @@
+{
+  "slug": "bahce-sahipleri",
+  "title": "Bahçe Sahipleri",
+  "type": "people",
+  "chronologicalOrder": 32,
+  "eraStart": null,
+  "eraEnd": null,
+  "summary": "İki mesel: Kehf'te iki bahçesiyle övünüp 'bunun yok olacağını sanmıyorum' diyen adam ve bahçelerinin bir gecede yok olması; Kalem suresinde ürünü sabah erkenden toplayıp yoksula pay vermemeye yeminleşen sahipler ve bahçenin kararmış bulunması. Yer ve zaman verilmez.",
+  "coverImage": null,
+  "relatedStories": [
+    "karun"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "İki bahçe sahibi",
+      "ref": "18:32-44",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Yoksulu dışlamaya yeminleşenler",
+      "ref": "68:17-33",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Bahçe meselleri, nimeti kendinden bilmenin ve yoksulun hakkını kesmenin uyarısı olarak ele alınır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "BAHÇE SAHİPLERİ maddesi — islamansiklopedisi.org.tr/bahce-sahipleri",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [],
+  "concepts": [
+    "nimet",
+    "kibir",
+    "sukur",
+    "tevbe"
+  ]
+}

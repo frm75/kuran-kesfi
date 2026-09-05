@@ -1,0 +1,202 @@
+{
+  "slug": "asr-i-saadet",
+  "title": "Asr-ı Saâdet — Hz. Muhammed Dönemi",
+  "type": "event",
+  "chronologicalOrder": 34,
+  "eraStart": "M.S. 610",
+  "eraEnd": "M.S. 632",
+  "summary": "Vahyin başlangıcından Vedâ Haccı'na Hz. Peygamber dönemindeki olayların Kur'an'da anıldığı yerler: ilk vahiy, açık davet, Ebû Leheb, İsrâ, Hicret, Bedir, Uhud, Hendek, Hudeybiye, Mekke'nin fethi, Huneyn, Tebük ve Vedâ. Kur'an olayları tarih anlatısı olarak değil, ders ve hüküm bağlamında anar; kronoloji siyer kaynaklarındandır.",
+  "coverImage": null,
+  "relatedStories": [
+    "ashab-i-fil"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "İlk vahiy",
+      "ref": "96:1-5",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Kalk ve uyar",
+      "ref": "74:1-7",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Yakınlarını uyar",
+      "ref": "26:214-216",
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Ebû Leheb",
+      "ref": "111:1-5",
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "İsrâ",
+      "ref": "17:1",
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Hicret ve mağara",
+      "ref": "9:40",
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Bedir",
+      "ref": "8:5-19",
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Uhud",
+      "ref": "3:121-129",
+      "note": null
+    },
+    {
+      "order": 9,
+      "title": "Hendek",
+      "ref": "33:9-27",
+      "note": null
+    },
+    {
+      "order": 10,
+      "title": "Hudeybiye: apaçık fetih",
+      "ref": "48:1-3",
+      "note": null
+    },
+    {
+      "order": 11,
+      "title": "Fetih rüyası",
+      "ref": "48:27",
+      "note": null
+    },
+    {
+      "order": 12,
+      "title": "Mekke'nin fethi",
+      "ref": "110:1-3",
+      "note": null
+    },
+    {
+      "order": 13,
+      "title": "Huneyn",
+      "ref": "9:25-27",
+      "note": null
+    },
+    {
+      "order": 14,
+      "title": "Tebük",
+      "ref": "9:38-41",
+      "note": null
+    },
+    {
+      "order": 15,
+      "title": "Vedâ: din tamamlandı",
+      "ref": "5:3",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Kur'an'ın Hz. Peygamber dönemi olaylarını anış biçimi, olayın kendisinden çok ondan çıkarılacak ilkeye odaklanır; tefsirler bu yüzden nüzul sebeplerini ayrı bir ilim olarak inceler.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "MUHAMMED maddesi — islamansiklopedisi.org.tr/muhammed",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "mekke",
+      "order": 1,
+      "eventDescription": "Vahyin başlangıcı ve açık davet.",
+      "passageOrders": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "locationSlug": "kudus",
+      "order": 2,
+      "eventDescription": "İsrâ.",
+      "passageOrders": [
+        5
+      ]
+    },
+    {
+      "locationSlug": "medine",
+      "order": 3,
+      "eventDescription": "Hicret yurdu.",
+      "passageOrders": [
+        6
+      ]
+    },
+    {
+      "locationSlug": "bedir",
+      "order": 4,
+      "eventDescription": "Bedir Gazvesi.",
+      "passageOrders": [
+        7
+      ]
+    },
+    {
+      "locationSlug": "uhud",
+      "order": 5,
+      "eventDescription": "Uhud Gazvesi.",
+      "passageOrders": [
+        8
+      ]
+    },
+    {
+      "locationSlug": "hendek-medine",
+      "order": 6,
+      "eventDescription": "Hendek kuşatması.",
+      "passageOrders": [
+        9
+      ]
+    },
+    {
+      "locationSlug": "hudeybiye",
+      "order": 7,
+      "eventDescription": "Antlaşma.",
+      "passageOrders": [
+        10
+      ]
+    },
+    {
+      "locationSlug": "mekke",
+      "order": 8,
+      "eventDescription": "Fetih.",
+      "passageOrders": [
+        11,
+        12
+      ]
+    },
+    {
+      "locationSlug": "huneyn",
+      "order": 9,
+      "eventDescription": "Huneyn Gazvesi.",
+      "passageOrders": [
+        13
+      ]
+    }
+  ],
+  "concepts": [
+    "vahiy",
+    "risalet",
+    "iman",
+    "sabir",
+    "cihad",
+    "nimet"
+  ]
+}

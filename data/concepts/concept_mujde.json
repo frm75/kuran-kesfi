@@ -1,0 +1,21 @@
+{
+  "slug": "mujde",
+  "nameTr": "Müjde (Beşâret)",
+  "nameAr": "البشارة",
+  "definition": "Sevindirici haber; peygamberlerin iki görevinden biri (müjdeleyici ve uyarıcı).",
+  "parentSlug": null,
+  "roots": [
+    "b$r"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "uyari",
+      "type": "contrast",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

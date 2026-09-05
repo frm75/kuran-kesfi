@@ -1,0 +1,26 @@
+{
+  "slug": "namaz",
+  "nameTr": "Namaz (Salât)",
+  "nameAr": "الصلاة",
+  "definition": "Belirli vakitlerde yapılan temel ibadet; Kur'an'da genellikle zekâtla birlikte emredilir.",
+  "parentSlug": null,
+  "roots": [
+    "Slw"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "zekat",
+      "type": "co_occurrence",
+      "weight": 3
+    },
+    {
+      "target": "zikir",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

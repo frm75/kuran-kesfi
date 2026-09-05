@@ -1,0 +1,292 @@
+---
+import type { GetStaticPaths } from "astro";
+import Base from "~/layouts/Base.astro";
+import VerseArabic from "~/components/VerseArabic.astro";
+import HaritaCanli from "~/components/HaritaCanli.astro";
+import {
+  getDefaultAuthor,
+  getPassageVerses,
+  getStoriesIndex,
+  getStory,
+  verseLabel,
+} from "~/lib/data";
+
+/**
+ * Tek kıssa — plan §2.1 "anlatı modu".
+ *
+ * Dağınık ayetler kronolojik sırayla art arda: Mûsâ kıssası 30+ parça. Ayet
+ * metni kıssa dosyasında DEĞİL çekirdek katmanda; burada build zamanında
+ * birleştiriliyor (apps/web/src/lib/data.ts → getPassageVerses).
+ *
+ * Konumlar hem HARİTA hem LİSTE olarak veriliyor. Liste asıldır ve her zaman
+ * gelir (plan §12 alternatifi zorunlu kılıyor); harita ancak MapLibre gerçekten
+ * yüklenirse üstüne biner. Betik çalışmazsa sayfa aynen eski hâlindedir.
+ */
+
+export const getStaticPaths = (() =>
+  getStoriesIndex().map((story) => ({ params: { slug: story.slug } }))) satisfies GetStaticPaths;
+
+const { slug } = Astro.params;
+if (slug === undefined) throw new Error("kissa slug yok");
+const story = getStory(slug);
+const author = getDefaultAuthor();
+
+const typeLabel = {
+  prophet: "Peygamber kıssası",
+  people: "Kavim kıssası",
+  person: "Kişi kıssası",
+  event: "Olay",
+} as const;
+
+const confidenceLabel = {
+  kesin: "kesin",
+  muhtemel: "muhtemel",
+  rivayet: "rivayet",
+} as const;
+
+/** Parça sırasına göre konum durakları — rota okunabilsin. */
+const route = [...story.locations].sort((a, b) => a.order - b.order);
+
+/**
+ * Durak → o durakta geçen ayetlerin etiketi.
+ *
+ * `passageOrders` parça sıralarını taşıyor; parça da sure adını ve ayet
+ * aralığını biliyor. İkisi burada birleşiyor — harita paneli "Medyen'de
+ * ne oluyor" sorusuna "Kasas 22-28" diye cevap verebilsin diye.
+ * Ayet METNİ panele kopyalanmıyor; o zaten aşağıdaki "Anlatı" bölümünde.
+ */
+const passageByOrder = new Map(story.passages.map((pg) => [pg.order, pg]));
+const mapRoute = route.map((place) => ({
+  slug: place.slug,
+  order: place.order,
+  eventDescription: place.eventDescription,
+  verses: place.passageOrders
+    .map((o) => passageByOrder.get(o))
+    .filter((pg) => pg !== undefined)
+    .map((pg) => {
+      const range =
+        pg.verseStart === pg.verseEnd
+          ? String(pg.verseStart)
+          : `${String(pg.verseStart)}-${String(pg.verseEnd)}`;
+      return `${pg.surahNameTr} ${range}`;
+    }),
+}));
+
+/** Koordinatı olan durak yoksa harita çizilmez; liste yine gelir. */
+const mappable = route.filter((place) => place.lat !== null && place.lng !== null);
+
+/**
+ * Aynı yer kıssada iki kez geçebilir (Mûsâ: Sina, order 3 ve 5). `id` iki
+ * kez yazılırsa HTML geçersiz olur ve haritanın "bu duraktaki ayetlere git"
+ * bağlantısı hangisine gideceğini bilemez. Bu yüzden `id` yalnızca İLK
+ * geçişte konuyor.
+ */
+const idVerilen = new Set<string>();
+const anchorFor = (placeSlug: string): string | undefined => {
+  if (idVerilen.has(placeSlug)) return undefined;
+  idVerilen.add(placeSlug);
+  return `konum-${placeSlug}`;
+};
+---
+
+<Base
+  title={`${story.title} — Kur'an-ı Kerim Keşfi`}
+  description={story.summary.slice(0, 160)}
+  arabic
+  reading
+>
+  <main id="icerik" class="pg pg-normal">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <a href="/kissalar">Kıssalar</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">{story.title}</span>
+    </nav>
+
+    <header class="pg-head">
+      <p class="pg-kicker">{typeLabel[story.type]}</p>
+      <h1 class="pg-title">{story.title}</h1>
+      <p class="pg-lede">{story.summary}</p>
+      <ul class="chip-row">
+        <li class="chip is-accent"><b>{story.passages.length}</b> parça</li>
+        <li class="chip"><b>{story.verseCount}</b> ayet</li>
+        {story.eraStart !== null && <li class="chip">{story.eraStart}</li>}
+        {route.length > 0 && <li class="chip"><b>{route.length}</b> konum</li>}
+      </ul>
+    </header>
+
+    {
+      route.length > 0 && (
+        <section>
+          <div class="sec-head">
+            <h2>Kıssanın geçtiği yerler</h2>
+            <span class="sec-note">Sırayla; her konumun güven derecesi yazılı</span>
+          </div>
+          {
+            mappable.length > 0 && (
+              <HaritaCanli
+                locations={route}
+                route={mapRoute}
+                label={`${story.title} kıssasının geçtiği ${String(mappable.length)} yerin haritası`}
+              />
+            )
+          }
+
+          <ol class="route-list">
+            {route.map((place) => (
+              <li id={anchorFor(place.slug)}>
+                <span class="rt-order">{place.order}</span>
+                <span class="rt-body">
+                  <span class="rt-name">
+                    {place.name}
+                    <span class:list={["conf", `is-${place.confidence}`]}>
+                      {confidenceLabel[place.confidence]}
+                    </span>
+                  </span>
+                  {place.modernName !== null && <span class="rt-modern">{place.modernName}</span>}
+                  <span class="rt-desc">{place.eventDescription}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+          <p class="text-text-muted mt-3 text-sm">
+            Konum güven dereceleri ve kaynak notları <a href="/harita">harita sayfasında</a>.
+          </p>
+        </section>
+      )
+    }
+
+    <section>
+      <div class="sec-head">
+        <h2>Anlatı</h2>
+        <span class="sec-note">Ayetler kıssanın akışına göre sıralandı · meal: {author.name}</span>
+      </div>
+
+      <ol class="passage-list">
+        {
+          story.passages.map((passage) => {
+            const verses = getPassageVerses(
+              passage.surahId,
+              passage.verseStart,
+              passage.verseEnd,
+              author.slug,
+            );
+            const range =
+              passage.verseStart === passage.verseEnd
+                ? String(passage.verseStart)
+                : `${String(passage.verseStart)}-${String(passage.verseEnd)}`;
+            return (
+              <li>
+                <div class="ps-head">
+                  <span class="ps-order">{passage.order}</span>
+                  <h3>{passage.title}</h3>
+                  <a class="ps-ref" href={`/${passage.surahSlug}#ayet-${String(passage.verseStart)}`}>
+                    {passage.surahNameTr} {range}
+                  </a>
+                </div>
+                {passage.note !== null && <p class="ps-note">{passage.note}</p>}
+                <ol class="verse-list">
+                  {verses.map((verse) => (
+                    <li>
+                      <a
+                        class="v-num"
+                        href={`/${passage.surahSlug}/${String(verse.verseNumber)}`}
+                      >
+                        <span class="sr-only">
+                          {verseLabel(passage.surahNameTr, verse.verseNumber)} — tek başına aç
+                        </span>
+                        <span aria-hidden="true">{verse.verseNumber}</span>
+                      </a>
+                      <div class="v-body">
+                        <VerseArabic
+                          text={verse.textUthmani}
+                          verseNumber={verse.verseNumber}
+                          label={verseLabel(passage.surahNameTr, verse.verseNumber)}
+                        />
+                        {verse.translation !== null && (
+                          <p class="translation-text" lang="tr">
+                            {verse.translation}
+                          </p>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </li>
+            );
+          })
+        }
+      </ol>
+    </section>
+
+    {
+      story.lessons.length > 0 && (
+        <section>
+          <div class="sec-head">
+            <h2>Dersler</h2>
+            <span class="sec-note">Her madde bir kaynağa dayanır; platform yorumu eklenmez</span>
+          </div>
+          <ol class="lesson-list">
+            {story.lessons.map((lesson) => (
+              <li>
+                <p>{lesson.text}</p>
+                <p class="ls-source">
+                  {lesson.sourceName}
+                  <span aria-hidden="true"> · </span>
+                  {lesson.sourceReference}
+                </p>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )
+    }
+
+    {
+      (story.concepts.length > 0 || story.principles.length > 0 || story.relatedStories.length > 0) && (
+        <section>
+          <div class="sec-head">
+            <h2>Bağlantılar</h2>
+          </div>
+          <div class="link-groups">
+            {story.principles.length > 0 && (
+              <div>
+                <h3>İlkeler</h3>
+                <ul class="tag-list">
+                  {story.principles.map((p) => (
+                    <li>
+                      <a href={`/ilke/${p.slug}`}>{p.nameTr}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {story.concepts.length > 0 && (
+              <div>
+                <h3>Kavramlar</h3>
+                <ul class="tag-list">
+                  {story.concepts.map((c) => (
+                    <li>
+                      <a href={`/kavram/${c.slug}`}>{c.nameTr}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {story.relatedStories.length > 0 && (
+              <div>
+                <h3>İlgili kıssalar</h3>
+                <ul class="tag-list">
+                  {story.relatedStories.map((r) => (
+                    <li>
+                      <a href={`/kissa/${r.slug}`}>{r.title}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </section>
+      )
+    }
+  </main>
+</Base>

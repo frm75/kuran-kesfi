@@ -1,0 +1,26 @@
+{
+  "slug": "nuzul",
+  "nameTr": "Nüzul (indirilme)",
+  "nameAr": "النزول",
+  "definition": "Vahyin ve yağmurun indirilmesi. Kur'an aynı kelimeyle hem gökten inen suyu hem inen kitabı anlatır; ikisi de ölü olanı diriltir.",
+  "parentSlug": null,
+  "roots": [
+    "nzl"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "vahiy",
+      "type": "part_of",
+      "weight": 3
+    },
+    {
+      "target": "kitap",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

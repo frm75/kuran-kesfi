@@ -1,0 +1,36 @@
+{
+  "slug": "iki-bag-sahibi",
+  "title": "İki Bağ Sahibi",
+  "type": "people",
+  "chronologicalOrder": 40,
+  "eraStart": null,
+  "eraEnd": null,
+  "summary": "Kehf suresinde anlatılan iki adam: biri iki üzüm bağına sahip olup şımaran, öteki onu Rabbine yönelten arkadaşı. Bağın bir gecede harap olmasıyla biter.",
+  "coverImage": null,
+  "relatedStories": [
+    "bahce-sahipleri",
+    "ashab-i-kehf"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "İki bağ ve sahibinin böbürlenmesi",
+      "ref": "18:32-36",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Arkadaşın uyarısı ve bağın harap oluşu",
+      "ref": "18:37-44",
+      "note": null
+    }
+  ],
+  "lessons": [],
+  "locations": [],
+  "concepts": [
+    "kibir",
+    "dunya",
+    "imtihan",
+    "husran"
+  ]
+}

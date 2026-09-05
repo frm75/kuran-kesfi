@@ -1,0 +1,21 @@
+{
+  "slug": "tevbe",
+  "nameTr": "Tevbe",
+  "nameAr": "التوبة",
+  "definition": "Günahtan pişmanlıkla dönmek ve Allah'a yönelmek. Allah'ın kula dönüşü de aynı kökle ifade edilir (Tevvâb).",
+  "parentSlug": null,
+  "roots": [
+    "twb"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "magfiret",
+      "type": "cause",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "imtihan",
+  "nameTr": "İmtihan",
+  "nameAr": "الابتلاء",
+  "definition": "Deneme ve sınama. Kur'an iyilikle de kötülükle de imtihan edildiğimizi bildirir (21:35).",
+  "parentSlug": null,
+  "roots": [
+    "ftn",
+    "blw"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "sabir",
+      "type": "cause",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

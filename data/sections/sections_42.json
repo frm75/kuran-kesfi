@@ -1,0 +1,63 @@
+{
+  "surahId": 42,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Vahyin gelişi ve şehirlerin anası",
+      "verseStart": 1,
+      "verseEnd": 9,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Dini dosdoğru tutun, ayrılığa düşmeyin",
+      "verseStart": 10,
+      "verseEnd": 16,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Kitap ve mizan; dünya ve ahiret kazancı",
+      "verseStart": 17,
+      "verseEnd": 24,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Tövbenin kabulü, rızkın ölçüsü ve musibet",
+      "verseStart": 25,
+      "verseEnd": 31,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Gemiler; mü'minlerin vasıfları; kötülüğün karşılığı ve bağışlama",
+      "verseStart": 32,
+      "verseEnd": 43,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Saptırılanlar ve geri çevrilmeyen gün",
+      "verseStart": 44,
+      "verseEnd": 50,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Vahyin üç yolu ve dosdoğru yol",
+      "verseStart": 51,
+      "verseEnd": 53,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

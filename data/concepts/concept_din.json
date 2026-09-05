@@ -1,0 +1,26 @@
+{
+  "slug": "din",
+  "nameTr": "Din",
+  "nameAr": "الدين",
+  "definition": "Kulluk yolu ve karşılık günü. Kök hem 'borç ve karşılık' hem 'itaat edilen düzen' anlamını taşır; 'yevmü'd-dîn' (ceza günü) bu iki anlamı birleştirir.",
+  "parentSlug": null,
+  "roots": [
+    "dyn"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "islam",
+      "type": "part_of",
+      "weight": 3
+    },
+    {
+      "target": "hesap",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

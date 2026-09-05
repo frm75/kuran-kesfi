@@ -1,0 +1,69 @@
+{
+  "slug": "hizir",
+  "title": "Mûsâ ve Hızır",
+  "type": "person",
+  "chronologicalOrder": 17,
+  "eraStart": "M.Ö. 13. yüzyıl (yaklaşık)",
+  "eraEnd": null,
+  "summary": "Kehf suresinde Mûsâ'nın 'iki denizin birleştiği yer'de karşılaştığı, kendisine ilim verilmiş kul ile yolculuğu: delinen gemi, öldürülen çocuk, onarılan duvar. Her olayın ardındaki hikmet sonunda açıklanır. Kur'an bu kulun adını vermez; Hızır adı hadis ve tefsir kaynaklarındandır.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-musa"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "İki denizin birleştiği yer ve balık",
+      "ref": "18:60-64",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Karşılaşma ve sabır şartı",
+      "ref": "18:65-70",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Gemi",
+      "ref": "18:71-73",
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Çocuk",
+      "ref": "18:74-76",
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Duvar",
+      "ref": "18:77-78",
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Hikmetlerin açıklanması",
+      "ref": "18:79-82",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Kıssa, görünürdeki kötülüğün ardındaki hikmeti ve bilgiye ulaşmanın sabır gerektirdiğini işleyen örnek olarak ele alınır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "HIZIR maddesi — islamansiklopedisi.org.tr/hizir",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [],
+  "concepts": [
+    "ilim",
+    "hikmet",
+    "sabir",
+    "kader"
+  ]
+}

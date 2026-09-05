@@ -1,0 +1,26 @@
+{
+  "slug": "curum",
+  "nameTr": "Cürüm (suç)",
+  "nameAr": "الجرم",
+  "definition": "İşlenen suç ve onu işleyen. Kur'an 'mücrim' kelimesini çoğunlukla ayetleri yalanlayıp azgınlık edenler için kullanır.",
+  "parentSlug": null,
+  "roots": [
+    "jrm"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "zulum",
+      "type": "co_occurrence",
+      "weight": 3
+    },
+    {
+      "target": "karsilik",
+      "type": "cause",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

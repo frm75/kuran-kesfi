@@ -1,7 +1,6 @@
 ---
 import Base from "~/layouts/Base.astro";
-import SourceBadge from "~/components/SourceBadge.astro";
-import { getRootsIndex, getSources } from "~/lib/data";
+import { getRootsIndex } from "~/lib/data";
 
 /**
  * Kök listesi — plan §2 "Kelime" kapısı.
@@ -9,13 +8,12 @@ import { getRootsIndex, getSources } from "~/lib/data";
  * 1641 kök, geçiş sayısına göre sıralı. Kök adresleri Arapça harflerle
  * kurulur (/kok/قول): Latin çevriyazı büyük-küçük harf anlamlı (S=ص, s=س)
  * ve küçültüldüğünde 141 kök çakışıyor, adres olarak kullanılamaz.
+ *
+ * Kaynak rozeti 2026-09-05'te kaldırıldı; atıf <Attribution> ve /kaynaklar'da
+ * duruyor (data/LICENSE).
  */
 
 const { roots, totals } = getRootsIndex();
-const wordSource = getSources().sources.find((s) => s.slug === "acikkuran");
-if (wordSource === undefined) {
-  throw new Error("Kelime ve kok verisinin kaynagi (acikkuran) sources.json icinde yok.");
-}
 
 const withoutRoot = totals.words - totals.wordsWithRoot;
 const percent = Math.round((totals.wordsWithRoot / totals.words) * 100);
@@ -44,43 +42,36 @@ const letterGroups = [...byLetter.entries()].sort((a, b) => a[0].localeCompare(b
   description={`Kur'an'da geçen ${totals.roots} kök ve ${totals.wordsWithRoot} kelime bağlantısı.`}
   arabic
 >
-  <main id="icerik" class="mx-auto max-w-wide px-4 py-8">
-    <nav aria-label="Konum" class="text-text-secondary mb-6 text-sm">
+  <main id="icerik" class="pg pg-wide">
+    <nav aria-label="Konum" class="pg-crumb">
       <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
       <span aria-current="page">Kökler</span>
     </nav>
 
-    <h1 class="text-accent-text m-0 text-3xl">Kökler</h1>
-    <p class="text-text-secondary mt-2 text-md">
-      Arapça'da kelimeler üç harfli köklerden türer. Aynı kökten gelen kelimeler
-      anlamca akrabadır; kökü takip etmek Kur'an'ın kendi iç bağlarını gösterir.
-    </p>
+    <header class="pg-head">
+      <p class="pg-kicker">IV. Kapı — Kelime</p>
+      <h1 class="pg-title">Kökler</h1>
+      <p class="pg-lede">
+        Arapça'da kelimeler üç harfli köklerden türer. Aynı kökten gelen kelimeler
+        anlamca akrabadır; kökü takip etmek Kur'an'ın kendi iç bağlarını gösterir.
+      </p>
+      <ul class="fact-row">
+        <li><b>{totals.roots}</b><span>kök</span></li>
+        <li><b>{totals.words}</b><span>kelime</span></li>
+        <li><b>%{percent}</b><span>köke bağlı</span></li>
+      </ul>
+      <p class="text-text-muted mt-3 text-sm">
+        {withoutRoot} kelimeye kök atanmamış — harf-i cerler, zamirler ve özel
+        adların çoğu. Eksiklik gizlenmiyor: o kelimeler kelime kelime görünümde
+        bağlantısız gösteriliyor.
+      </p>
+    </header>
 
-    <dl class="text-text-secondary mt-6 flex flex-wrap gap-x-8 gap-y-2 text-sm">
-      <div><dt class="inline">Kök:</dt> <dd class="m-0 inline">{totals.roots}</dd></div>
-      <div><dt class="inline">Kelime:</dt> <dd class="m-0 inline">{totals.words}</dd></div>
-      <div>
-        <dt class="inline">Köke bağlı:</dt>
-        <dd class="m-0 inline">{totals.wordsWithRoot} (%{percent})</dd>
-      </div>
-    </dl>
-
-    <p class="text-text-muted mt-2 text-sm">
-      {withoutRoot} kelimeye kök atanmamış — harf-i cerler, zamirler ve özel
-      adların çoğu. Eksiklik gizlenmiyor: o kelimeler kelime kelime görünümde
-      bağlantısız gösteriliyor.
-    </p>
-
-    <div class="mt-4">
-      <SourceBadge
-        contentClass="kaynakli"
-        sources={[wordSource]}
-        label="Kelime ve kök verisi"
-      />
+    <div class="sec-head">
+      <h2>En çok geçen 50 kök</h2>
+      <span class="sec-note">Kur'an'ın omurgasını kuran kelimeler</span>
     </div>
-
-    <h2 class="mt-10 text-xl">En çok geçen 50 kök</h2>
-    <ol class="root-grid mt-4">
+    <ol class="root-grid">
       {
         mostFrequent.map((root) => (
           <li>
@@ -99,8 +90,11 @@ const letterGroups = [...byLetter.entries()].sort((a, b) => a[0].localeCompare(b
       }
     </ol>
 
-    <h2 class="mt-12 text-xl">Alfabetik</h2>
-    <nav aria-label="Harfe git" class="letter-bar mt-3">
+    <div class="sec-head">
+      <h2>Alfabetik</h2>
+      <span class="sec-note">{totals.roots} kök, ilk harfe göre</span>
+    </div>
+    <nav aria-label="Harfe git" class="letter-bar">
       {
         letterGroups.map(([letter]) => (
           <a href={`#harf-${encodeURIComponent(letter)}`} lang="ar" dir="rtl">

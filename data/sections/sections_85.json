@@ -1,0 +1,31 @@
+{
+  "surahId": 85,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Ashâb-ı Uhdûd: hendek sahipleri",
+      "verseStart": 1,
+      "verseEnd": 10,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Mü'minlerin mükâfatı ve Allah'ın sıfatları",
+      "verseStart": 11,
+      "verseEnd": 16,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Firavun ve Semûd; korunmuş Kur'an",
+      "verseStart": 17,
+      "verseEnd": 22,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

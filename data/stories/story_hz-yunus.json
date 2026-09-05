@@ -1,0 +1,75 @@
+{
+  "slug": "hz-yunus",
+  "title": "Hz. Yûnus",
+  "type": "prophet",
+  "chronologicalOrder": 23,
+  "eraStart": "M.Ö. 8. yüzyıl (yaklaşık)",
+  "eraEnd": null,
+  "summary": "Kavmini bırakıp giden, gemide kura ile denize atılan ve balığın karnında Allah'ı tesbih edip kurtarılan peygamber. Kavmi ise uyarıyı ciddiye alıp iman eden ve azaptan kurtulan tek kavim olarak anılır.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-ilyas"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Gemi, kura ve balık",
+      "ref": "37:139-148",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Karanlıklar içinde yakarış",
+      "ref": "21:87-88",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Kıyıya atılış ve Rabbin lütfu",
+      "ref": "68:48-50",
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "İman eden kavim",
+      "ref": "10:98",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Yûnus'un balığın karnındaki duası, tefsirlerde darlıkta tevhid ve itirafın örneği olarak ele alınır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "YÛNUS maddesi — islamansiklopedisi.org.tr/yunus",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    },
+    {
+      "text": "Kavminin iman edip azabın kaldırılması, uyarıya karşılık vermenin sonuç değiştirdiğine örnek gösterilir.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "YÛNUS maddesi — islamansiklopedisi.org.tr/yunus",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 2
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "ninova",
+      "order": 1,
+      "eventDescription": "Gönderildiği şehir; Kur'an ad vermez.",
+      "passageOrders": [
+        4
+      ]
+    }
+  ],
+  "concepts": [
+    "tevbe",
+    "dua",
+    "sabir",
+    "rahmet"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "slug": "ebedilik",
+  "nameTr": "Ebedîlik (huld)",
+  "nameAr": "الخلود",
+  "definition": "Sürekli kalmak. Kur'an ebedîliği hem cennet hem cehennem için kullanır; dünyada hiçbir beşere ebedîlik verilmediğini bildirir.",
+  "parentSlug": null,
+  "roots": [
+    "xld"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "ahiret",
+      "type": "part_of",
+      "weight": 3
+    },
+    {
+      "target": "olum",
+      "type": "contrast",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

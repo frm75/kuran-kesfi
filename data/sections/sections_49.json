@@ -1,0 +1,39 @@
+{
+  "surahId": 49,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Peygamber'in önüne geçmemek, sesi yükseltmemek",
+      "verseStart": 1,
+      "verseEnd": 5,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Fasıkın haberi ve mü'minlerin arasını düzeltmek",
+      "verseStart": 6,
+      "verseEnd": 10,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Alay, zan ve gıybet; üstünlük takvadadır",
+      "verseStart": 11,
+      "verseEnd": 13,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Bedevîlerin imanı ve Allah'ın bilmesi",
+      "verseStart": 14,
+      "verseEnd": 18,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

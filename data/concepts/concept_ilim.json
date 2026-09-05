@@ -1,0 +1,21 @@
+{
+  "slug": "ilim",
+  "nameTr": "İlim",
+  "nameAr": "العلم",
+  "definition": "Bilgi ve bilme. Kur'an'da en çok geçen köklerden biri; Allah'ın 'Alîm' sıfatı da buradandır.",
+  "parentSlug": null,
+  "roots": [
+    "Elm"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "hikmet",
+      "type": "co_occurrence",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

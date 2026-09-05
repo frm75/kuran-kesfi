@@ -1,0 +1,67 @@
+{
+  "slug": "olcude-durustluk",
+  "nameTr": "Ölçü ve Tartıda Dürüstlük",
+  "nameAr": "الوفاء بالكيل والميزان",
+  "rootLatin": null,
+  "definition": "Alışverişte ölçüyü ve tartıyı tam yapmak, insanların hakkını eksiltmemek; ekonomik ilişkilerde hile yapmamak.",
+  "explanation": "'Ölçtüğünüzde tam ölçün, doğru teraziyle tartın' (17:35), 'ölçüyü ve tartıyı adaletle yerine getirin' (6:152) ve Mutaffifîn suresinin girişi (83:1-3) ilkeyi doğrudan emreder. Şuayb'ın Medyen'e daveti bu ilkenin tevhidle birlikte tebliğ edildiğinin örneğidir (7:85, 11:85, 26:181-183).",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 6,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "17:35",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "6:152",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "11:85",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "26:181-183",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "55:9",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "83:1-3",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "7:85",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "11:84",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [
+    {
+      "slug": "hz-suayb",
+      "note": "Medyen'e ölçü-tartı daveti"
+    }
+  ],
+  "concepts": [
+    "adalet",
+    "zulum"
+  ]
+}

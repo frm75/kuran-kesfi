@@ -1,0 +1,21 @@
+{
+  "slug": "yalan",
+  "nameTr": "Yalan",
+  "nameAr": "الكذب",
+  "definition": "Gerçeğe aykırı söz; Kur'an'da en çok 'âyetleri yalanlama' anlamında geçer.",
+  "parentSlug": null,
+  "roots": [
+    "kpb"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "sidk",
+      "type": "contrast",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

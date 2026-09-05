@@ -1,0 +1,48 @@
+{
+  "slug": "hayirda-yarisma",
+  "nameTr": "Hayırda Yarışma",
+  "nameAr": "المسارعة في الخيرات",
+  "rootLatin": null,
+  "definition": "İyilikte öne geçmeye çalışmak; erteleyip durmamak.",
+  "explanation": "2:148 herkesin bir yönü olduğunu söyledikten sonra 'hayırlara koşun, yarışın' der. 5:48 farklı şeriatlar verilmesinin sebebini bu yarışa bağlar. 3:133 ve 57:21 bağışlanmaya ve genişliği gökle yer kadar olan cennete koşmayı emreder. 23:61 hayır işlerine koşuşanları över.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 55,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "2:148",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "5:48",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "3:133",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "57:21",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "23:61",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "amel",
+    "hayir",
+    "iman"
+  ]
+}

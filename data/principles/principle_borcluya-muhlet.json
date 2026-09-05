@@ -1,0 +1,28 @@
+{
+  "slug": "borcluya-muhlet",
+  "nameTr": "Borçluya Mühlet",
+  "nameAr": "إنظار المعسر",
+  "rootLatin": null,
+  "definition": "Darda olan borçluya süre tanımak, bağışlamayı daha hayırlı bilmek.",
+  "explanation": "2:280 borçlu darlıktaysa eli genişleyinceye kadar mühlet verilmesini emreder ve hemen ardından 'bağışlamanız sizin için daha hayırlıdır' der. Bu ayet faiz ayetlerinin hemen ardından gelir; borç ilişkisinin merhametle kapanmasını ister.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 53,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "2:280",
+      "role": "primary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "rahmet",
+    "ihsan",
+    "af"
+  ]
+}

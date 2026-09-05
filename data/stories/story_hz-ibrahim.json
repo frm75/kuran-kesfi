@@ -1,0 +1,151 @@
+{
+  "slug": "hz-ibrahim",
+  "title": "Hz. İbrâhim",
+  "type": "prophet",
+  "chronologicalOrder": 6,
+  "eraStart": "M.Ö. 2000 civarı (yaklaşık)",
+  "eraEnd": null,
+  "summary": "Tevhidin babası. Yıldızlara, aya ve güneşe bakarak Rabbini arar; babasını ve kavmini putlardan vazgeçirmeye çalışır, putları kırar, ateşe atılır ve korunur. Hicret eder, İsmail ve İshak'la müjdelenir, oğlunu kurban etme imtihanından geçer, Kâbe'yi inşa eder. Kur'an onu 'hanîf' ve 'Allah'ın dostu' diye anar.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-lut",
+    "hz-ismail",
+    "hz-ishak"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Yıldız, ay, güneş: Rabbini arayış",
+      "ref": "6:74-83",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Babasına yumuşak çağrı",
+      "ref": "19:41-50",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Putların kırılması ve ateş",
+      "ref": "21:51-73",
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Kavmiyle tartışma ve dua",
+      "ref": "26:69-89",
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Hicret kararı",
+      "ref": "29:16-27",
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Rüya, kurban ve İshak müjdesi",
+      "ref": "37:83-113",
+      "note": "Kurban edilmek istenen oğlun adı Kur'an'da verilmez; çoğunluk görüşü İsmail'dir, İshak diyenler de vardır."
+    },
+    {
+      "order": 7,
+      "title": "Misafirler ve İshak'ın müjdelenmesi",
+      "ref": "11:69-76",
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Misafirlerin Lût kavmine gidişi",
+      "ref": "51:24-37",
+      "note": null
+    },
+    {
+      "order": 9,
+      "title": "Kâbe'nin inşası ve duası",
+      "ref": "2:124-132",
+      "note": null
+    },
+    {
+      "order": 10,
+      "title": "Mekke için dua",
+      "ref": "14:35-41",
+      "note": null
+    },
+    {
+      "order": 11,
+      "title": "Hükümdarla tartışma ve ölülerin dirilişi",
+      "ref": "2:258-260",
+      "note": "Hükümdarın adı Kur'an'da geçmez; Nemrûd adı tefsirlerdendir."
+    }
+  ],
+  "lessons": [
+    {
+      "text": "İbrâhim'in yıldız, ay ve güneşi sırayla reddetmesi, tevhide akıl yürütmeyle ulaşmanın örneği olarak ele alınır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "İBRÂHİM maddesi — islamansiklopedisi.org.tr/ibrahim",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    },
+    {
+      "text": "Kurban imtihanında oğlunun 'emredildiğini yap' demesi, teslimiyetin örneği olarak yorumlanır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "İBRÂHİM maddesi — islamansiklopedisi.org.tr/ibrahim",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 2
+    },
+    {
+      "text": "Babasına 'ey babacığım' diye hitap etmesi, muhalif bile olsa anne babaya saygılı dilin örneği sayılır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "İBRÂHİM maddesi — islamansiklopedisi.org.tr/ibrahim",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 3
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "ur-harran",
+      "order": 1,
+      "eventDescription": "Doğduğu ve putları kırdığı ülke; Kur'an ad vermez.",
+      "passageOrders": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "locationSlug": "kenan",
+      "order": 2,
+      "eventDescription": "Hicret ettiği 'bereketli yer' (21:71).",
+      "passageOrders": [
+        5,
+        7
+      ]
+    },
+    {
+      "locationSlug": "mekke",
+      "order": 3,
+      "eventDescription": "İsmail ile Kâbe'yi inşa eder, Mekke için dua eder.",
+      "passageOrders": [
+        9,
+        10
+      ]
+    }
+  ],
+  "concepts": [
+    "tevhid",
+    "sirk",
+    "tevekkul",
+    "dua",
+    "imtihan",
+    "hidayet"
+  ]
+}

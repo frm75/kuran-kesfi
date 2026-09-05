@@ -1,0 +1,26 @@
+{
+  "slug": "vaad",
+  "nameTr": "Vaad",
+  "nameAr": "الوعد",
+  "definition": "Allah'ın verdiği söz. Kur'an vaadin mutlaka gerçekleşeceğini vurgular; iyilik için 'va'd', ceza için 'vaîd' kullanılır.",
+  "parentSlug": null,
+  "roots": [
+    "wEd"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "ahid",
+      "type": "co_occurrence",
+      "weight": 2
+    },
+    {
+      "target": "umut",
+      "type": "cause",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

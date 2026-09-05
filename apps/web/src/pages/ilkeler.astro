@@ -1,0 +1,64 @@
+---
+import Base from "~/layouts/Base.astro";
+import { getPrinciplesIndex } from "~/lib/data";
+
+/** İlke listesi — plan §18.5. Her ilke en az bir birincil ayet dayanağı taşır. */
+
+const principles = getPrinciplesIndex();
+const totals = {
+  primary: principles.reduce((a, p) => a + p.primaryCount, 0),
+  verses: principles.reduce((a, p) => a + p.verseCount, 0),
+};
+---
+
+<Base
+  title="İlkeler — Kur'an-ı Kerim Keşfi"
+  description={`Kur'an'ın doğrudan emrettiği ${principles.length} ilke; dayanak ayetleri ve kaynaklarıyla.`}
+>
+  <main id="icerik" class="pg pg-wide">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">İlkeler</span>
+    </nav>
+
+    <header class="pg-head">
+      <p class="pg-kicker">V. Kapı — İlkeler</p>
+      <h1 class="pg-title">İlkeler</h1>
+      <p class="pg-lede">
+        Kur'an'ın doğrudan emrettiği ya da tavsiye ettiği ahlâkî ilkeler. Her ilkenin
+        <strong>birincil</strong> dayanağı doğrudan emir içeren ayettir; <strong>ikincil</strong>
+        dayanaklar ilkeyi örnekleyen ayetlerdir. Platform kendi ilkesini icat etmez.
+      </p>
+      <ul class="fact-row">
+        <li><b>{principles.length}</b><span>ilke</span></li>
+        <li><b>{totals.primary}</b><span>birincil dayanak</span></li>
+        <li><b>{totals.verses}</b><span>ayet bağı</span></li>
+      </ul>
+    </header>
+
+    <ol class="principle-grid">
+      {
+        principles.map((principle) => (
+          <li>
+            <a href={`/ilke/${principle.slug}`}>
+              <span class="pn-head">
+                <span class="pn-name">{principle.nameTr}</span>
+                {principle.nameAr !== null && (
+                  <span class="pn-ar" lang="ar" dir="rtl">
+                    {principle.nameAr}
+                  </span>
+                )}
+              </span>
+              <span class="pn-def">{principle.definition}</span>
+              <span class="pn-meta">
+                {principle.primaryCount} birincil
+                <span aria-hidden="true"> · </span>
+                {principle.verseCount} ayet
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </main>
+</Base>

@@ -1,0 +1,38 @@
+{
+  "slug": "esire-iyilik",
+  "nameTr": "Esire İyilik",
+  "nameAr": "الإحسان إلى الأسير",
+  "rootLatin": null,
+  "definition": "Elde tutulan kimseye yiyecek vermek ve iyilikle davranmak.",
+  "explanation": "76:8 iyilerin vasfını sayarken 'yoksula, yetime ve esire' seve seve yedirmeyi anar. 47:4 savaş sonrası için ya karşılıksız salıverme ya fidye seçeneklerini koyar. 8:70 esirlere hitap ederek kalplerindeki hayra göre daha iyisinin verileceğini bildirir.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 39,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "76:8",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "47:4",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "8:70",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "ihsan",
+    "birr",
+    "rahmet"
+  ]
+}

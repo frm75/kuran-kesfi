@@ -1,0 +1,55 @@
+{
+  "surahId": 48,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Apaçık fetih ve kalplere inen huzur",
+      "verseStart": 1,
+      "verseEnd": 7,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Şahit, müjdeci ve uyarıcı; biat",
+      "verseStart": 8,
+      "verseEnd": 10,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Geri bırakılan bedevîler",
+      "verseStart": 11,
+      "verseEnd": 17,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Ağaç altındaki biat ve vaad edilen ganimetler",
+      "verseStart": 18,
+      "verseEnd": 21,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Allah'ın değişmeyen kanunu ve Mekke'de olanlar",
+      "verseStart": 22,
+      "verseEnd": 26,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Doğrulanan rüya ve Peygamberle beraber olanların vasfı",
+      "verseStart": 27,
+      "verseEnd": 29,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

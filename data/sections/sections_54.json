@@ -1,0 +1,63 @@
+{
+  "surahId": 54,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Ayın yarılması ve davetçinin günü",
+      "verseStart": 1,
+      "verseEnd": 8,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Nûh kavmi",
+      "verseStart": 9,
+      "verseEnd": 17,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Âd kavmi",
+      "verseStart": 18,
+      "verseEnd": 22,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Semûd kavmi",
+      "verseStart": 23,
+      "verseEnd": 32,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Lût kavmi",
+      "verseStart": 33,
+      "verseEnd": 40,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Firavun ailesi ve Mekkelilere hitap",
+      "verseStart": 41,
+      "verseEnd": 46,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Ölçüyle yaratılış; suçlular ve sakınanlar",
+      "verseStart": 47,
+      "verseEnd": 55,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

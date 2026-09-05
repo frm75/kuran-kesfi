@@ -1,0 +1,55 @@
+{
+  "surahId": 56,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Kıyametin kopuşu ve üç sınıf",
+      "verseStart": 1,
+      "verseEnd": 12,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Öne geçenlerin ve sağdakilerin nimetleri",
+      "verseStart": 13,
+      "verseEnd": 40,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Soldakilerin hâli",
+      "verseStart": 41,
+      "verseEnd": 56,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Yaratma, tohum, su ve ateş: siz mi, biz mi?",
+      "verseStart": 57,
+      "verseEnd": 74,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Kur'an'ın değeri",
+      "verseStart": 75,
+      "verseEnd": 82,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Can boğaza geldiğinde: üç sınıfın sonu",
+      "verseStart": 83,
+      "verseEnd": 96,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

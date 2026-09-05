@@ -1,0 +1,63 @@
+{
+  "slug": "iyiligi-emretme",
+  "nameTr": "İyiliği Emretme, Kötülükten Alıkoyma",
+  "nameAr": "الأمر بالمعروف والنهي عن المنكر",
+  "rootLatin": null,
+  "definition": "Toplumda iyiliğin yayılması ve kötülüğün önlenmesi için söz ve tavırla sorumluluk almak.",
+  "explanation": "Âl-i İmrân 3:104 bunu bir topluluğun görevi, 3:110 ümmetin ayırıcı vasfı sayar; Tevbe 9:71 müminleri bu vasıfla tanımlar. Lokmân 31:17 oğluna namazla birlikte bunu öğütler. Mâide 5:2 iyilik ve takvâda yardımlaşmayı emreder. DİA 'EMİR bi'l-MA'RÛF NEHİY ani'l-MÜNKER' maddesi kavramın fıkhî çerçevesini verir.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 26,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "3:104",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "3:110",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "9:71",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "31:17",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "5:2",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "7:199",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "22:41",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [
+    {
+      "slug": "lokman",
+      "note": "Oğluna öğüt (31:17)"
+    }
+  ],
+  "concepts": [
+    "hayir",
+    "ser",
+    "adalet"
+  ]
+}

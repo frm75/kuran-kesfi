@@ -1,0 +1,21 @@
+{
+  "slug": "dalalet",
+  "nameTr": "Dalâlet (Sapma)",
+  "nameAr": "الضلال",
+  "definition": "Doğru yoldan sapmak, şaşırmak.",
+  "parentSlug": null,
+  "roots": [
+    "Dll"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "hidayet",
+      "type": "contrast",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

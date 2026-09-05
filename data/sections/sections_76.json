@@ -1,0 +1,39 @@
+{
+  "surahId": 76,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "İnsanın yaratılışı ve iki yol",
+      "verseStart": 1,
+      "verseEnd": 4,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "İyilerin vasıfları: yoksula, yetime ve esire yedirmek",
+      "verseStart": 5,
+      "verseEnd": 12,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Cennet nimetleri",
+      "verseStart": 13,
+      "verseEnd": 22,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Sabret, Rabbini an; bu bir öğüttür",
+      "verseStart": 23,
+      "verseEnd": 31,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

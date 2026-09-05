@@ -1,0 +1,47 @@
+{
+  "surahId": 45,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Göklerdeki ve yerdeki deliller; günahkâr yalancı",
+      "verseStart": 1,
+      "verseEnd": 11,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Denizler ve gemiler; herkes kendi ameliyle",
+      "verseStart": 12,
+      "verseEnd": 15,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "İsrâiloğullarına verilenler ve sana konulan yol",
+      "verseStart": 16,
+      "verseEnd": 20,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Nefsini ilah edinen ve dirilişi inkâr edenler",
+      "verseStart": 21,
+      "verseEnd": 26,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Diz çökmüş ümmetler ve kitapların açılması",
+      "verseStart": 27,
+      "verseEnd": 37,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

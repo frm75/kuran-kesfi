@@ -1,0 +1,41 @@
+{
+  "slug": "uhud-gazvesi",
+  "title": "Uhud Gazvesi",
+  "type": "event",
+  "chronologicalOrder": 48,
+  "eraStart": "H. 3 / M. 625",
+  "eraEnd": null,
+  "summary": "Hicretin 3. yılında, okçuların yerini terk etmesiyle seyri değişen savaş. Kur'an olayı bir muhasebe olarak ele alır: yenilgi, iman edenlerin ayrıştırılması olarak okunur.",
+  "coverImage": null,
+  "relatedStories": [
+    "asr-i-saadet"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Savaş mevzileri ve iki grubun çözülmesi",
+      "ref": "3:121-129",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "\"Gevşemeyin, hüzünlenmeyin\"",
+      "ref": "3:139-148",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Bozgunun muhasebesi",
+      "ref": "3:152-158",
+      "note": null
+    }
+  ],
+  "lessons": [],
+  "locations": [],
+  "concepts": [
+    "sabir",
+    "imtihan",
+    "tevekkul",
+    "husran"
+  ]
+}

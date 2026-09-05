@@ -1,0 +1,23 @@
+{
+  "surahId": 101,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Kâria nedir: insanlar ve dağlar",
+      "verseStart": 1,
+      "verseEnd": 5,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Tartıları ağır ve hafif gelenler",
+      "verseStart": 6,
+      "verseEnd": 11,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

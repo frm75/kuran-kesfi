@@ -1,0 +1,55 @@
+{
+  "surahId": 35,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Melekler, rahmetin açılması ve şeytanın düşmanlığı",
+      "verseStart": 1,
+      "verseEnd": 8,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Rüzgârlar, şan ve şeref, iki deniz",
+      "verseStart": 9,
+      "verseEnd": 14,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "İnsanın muhtaçlığı; \"kör ile gören bir olmaz\"",
+      "verseStart": 15,
+      "verseEnd": 23,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Her ümmete bir uyarıcı ve renklerin çeşitliliği",
+      "verseStart": 24,
+      "verseEnd": 28,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Kitabı okuyanların ticareti ve iki âkıbet",
+      "verseStart": 29,
+      "verseEnd": 37,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Yeryüzünde halifeler; gökleri tutan; öncekilerin sonu",
+      "verseStart": 38,
+      "verseEnd": 45,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

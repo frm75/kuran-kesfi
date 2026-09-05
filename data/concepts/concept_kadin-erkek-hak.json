@@ -1,0 +1,27 @@
+{
+  "slug": "kadin-erkek-hak",
+  "nameTr": "Sema ve Arz",
+  "nameAr": "السماء والأرض",
+  "definition": "Gök ve yer; Kur'an'da yaratılışın, delillerin ve kudretin en sık anılan çifti.",
+  "parentSlug": null,
+  "roots": [
+    "smw",
+    "ArD"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "ayet",
+      "type": "co_occurrence",
+      "weight": 3
+    },
+    {
+      "target": "yaratilis",
+      "type": "co_occurrence",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

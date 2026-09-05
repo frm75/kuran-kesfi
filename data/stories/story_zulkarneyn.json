@@ -1,0 +1,65 @@
+{
+  "slug": "zulkarneyn",
+  "title": "Zülkarneyn",
+  "type": "person",
+  "chronologicalOrder": 25,
+  "eraStart": null,
+  "eraEnd": null,
+  "summary": "Kehf suresinde batıya ve doğuya ulaşan, iki dağ arasındaki halk için demir ve bakırla set yapan güçlü hükümdar. Seddin Ye'cûc ve Me'cûc'e karşı olduğu bildirilir. Kimliği (İskender, Kiros, Yemenli bir hükümdar vb.) tefsirlerde tartışmalıdır; Kur'an ad ve yer vermez.",
+  "coverImage": null,
+  "relatedStories": [
+    "ashab-i-kehf"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Batıya yolculuk",
+      "ref": "18:83-88",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Doğuya yolculuk",
+      "ref": "18:89-91",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "İki dağ arası ve sed",
+      "ref": "18:92-98",
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Kıyamet uyarısı",
+      "ref": "18:99-101",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Zülkarneyn kıssası, gücün adaletle kullanılması ve başarının Allah'a nispet edilmesi ('bu Rabbimden bir rahmettir') ekseninde ele alınır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "ZÜLKARNEYN maddesi — islamansiklopedisi.org.tr/zulkarneyn",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "zulkarneyn-seddi",
+      "order": 1,
+      "eventDescription": "İki dağ arasındaki set; yeri bilinmez.",
+      "passageOrders": [
+        3
+      ]
+    }
+  ],
+  "concepts": [
+    "adalet",
+    "rahmet",
+    "kader"
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "surahId": 68,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Kaleme yemin: sen deli değilsin, yüce ahlak üzeresin",
+      "verseStart": 1,
+      "verseEnd": 7,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Yalanlayanlara boyun eğme; kınanan kişi",
+      "verseStart": 8,
+      "verseEnd": 16,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Bahçe sahipleri kıssası",
+      "verseStart": 17,
+      "verseEnd": 33,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Sakınanların cenneti; \"nasıl hüküm veriyorsunuz?\"",
+      "verseStart": 34,
+      "verseEnd": 41,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Baldırların açılacağı gün ve verilen mühlet",
+      "verseStart": 42,
+      "verseEnd": 47,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Sabret, balık sahibi gibi olma",
+      "verseStart": 48,
+      "verseEnd": 52,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

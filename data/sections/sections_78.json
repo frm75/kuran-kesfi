@@ -1,0 +1,55 @@
+{
+  "surahId": 78,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Sordukları büyük haber",
+      "verseStart": 1,
+      "verseEnd": 5,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Yeryüzü, gökler ve yağmurdaki düzen",
+      "verseStart": 6,
+      "verseEnd": 16,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Hüküm ve ayırma günü",
+      "verseStart": 17,
+      "verseEnd": 20,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Azgınlar için cehennem",
+      "verseStart": 21,
+      "verseEnd": 30,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Sakınanlar için kurtuluş",
+      "verseStart": 31,
+      "verseEnd": 36,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Rabbin hükmü ve o günün gerçeği",
+      "verseStart": 37,
+      "verseEnd": 40,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

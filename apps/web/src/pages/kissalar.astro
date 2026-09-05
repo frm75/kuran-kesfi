@@ -1,0 +1,83 @@
+---
+import Base from "~/layouts/Base.astro";
+import { getStoriesIndex } from "~/lib/data";
+
+/**
+ * Kıssa listesi — plan §2.1.
+ *
+ * Harita modülü JavaScript ister (MapLibre) ve CSP `script-src` kapalı;
+ * plan §12 zaten harita için "zorunlu liste alternatifi" istiyor. Bu sayfa
+ * o alternatiftir: kıssalar kronolojik sırada, türüne ve konumuna göre.
+ */
+
+const stories = getStoriesIndex();
+const typeLabel = {
+  prophet: "Peygamber",
+  people: "Kavim",
+  person: "Kişi",
+  event: "Olay",
+} as const;
+
+const totals = {
+  passages: stories.reduce((a, s) => a + s.passageCount, 0),
+  verses: stories.reduce((a, s) => a + s.verseCount, 0),
+  locations: stories.reduce((a, s) => a + s.locationCount, 0),
+};
+---
+
+<Base
+  title="Kıssalar — Kur'an-ı Kerim Keşfi"
+  description={`Kur'an'da anlatılan ${stories.length} kıssa; ayet aralıkları, konumları ve kaynaklı dersleriyle.`}
+>
+  <main id="icerik" class="pg pg-wide">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">Kıssalar</span>
+    </nav>
+
+    <header class="pg-head">
+      <p class="pg-kicker">I. Kapı — Kıssa</p>
+      <h1 class="pg-title">Kıssalar</h1>
+      <p class="pg-lede">
+        Kur'an kıssaları sureler boyunca dağınık anlatılır: Mûsâ kıssası otuzdan fazla
+        parçaya yayılır. Burada her kıssa kronolojik sırasıyla bir arada; parçalara
+        tıklayınca ayetin kendisi açılır.
+      </p>
+      <ul class="fact-row">
+        <li><b>{stories.length}</b><span>kıssa</span></li>
+        <li><b>{totals.passages}</b><span>parça</span></li>
+        <li><b>{totals.verses}</b><span>ayet</span></li>
+        <li><b>{totals.locations}</b><span>konum bağı</span></li>
+      </ul>
+    </header>
+
+    <ol class="story-grid">
+      {
+        stories.map((story) => (
+          <li>
+            <a href={`/kissa/${story.slug}`}>
+              <span class="st-head">
+                <span class="st-order">{story.chronologicalOrder}</span>
+                <span class="st-title">{story.title}</span>
+                <span class="st-type">{typeLabel[story.type]}</span>
+              </span>
+              {story.eraStart !== null && <span class="st-era">{story.eraStart}</span>}
+              <span class="st-summary">{story.summary}</span>
+              <span class="st-meta">
+                {story.passageCount} parça
+                <span aria-hidden="true"> · </span>
+                {story.verseCount} ayet
+                {story.locationCount > 0 && (
+                  <>
+                    <span aria-hidden="true"> · </span>
+                    {story.locationCount} konum
+                  </>
+                )}
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </main>
+</Base>

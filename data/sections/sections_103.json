@@ -1,0 +1,23 @@
+{
+  "surahId": 103,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Zamana yemin: insan ziyanda",
+      "verseStart": 1,
+      "verseEnd": 2,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "İstisna: iman, salih amel, hakkı ve sabrı tavsiye",
+      "verseStart": 3,
+      "verseEnd": 3,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

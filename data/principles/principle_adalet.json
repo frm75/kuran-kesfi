@@ -1,0 +1,71 @@
+{
+  "slug": "adalet",
+  "nameTr": "Adalet",
+  "nameAr": "العدل",
+  "rootLatin": "Edl",
+  "definition": "Herkese hakkını vermek, hükümde ve davranışta dengeyi gözetmek; yakınlık, düşmanlık ya da çıkarın ölçüyü bozmasına izin vermemek.",
+  "explanation": "Kur'an adaleti hem yöneticiye hem bireye emreder: 'İnsanlar arasında hükmettiğinizde adaletle hükmedin' (4:58), 'kendiniz, ana babanız ve yakınlarınız aleyhine de olsa adaleti ayakta tutun' (4:135). Bir topluluğa duyulan öfkenin adaleti bozmaması istenir (5:8). Tefsirler adaleti tevhidin toplumsal karşılığı olarak okur; DİA 'ADÂLET' maddesi kavramın hukukî ve ahlâkî boyutlarını birlikte ele alır.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 1,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "4:58",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "4:135",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "5:8",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "16:90",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "6:152",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "42:15",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "57:25",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "38:26",
+      "role": "secondary",
+      "note": "Dâvûd'a hitap"
+    }
+  ],
+  "stories": [
+    {
+      "slug": "hz-davud",
+      "note": "İki davacı kıssası (38:21-26)"
+    },
+    {
+      "slug": "hz-suleyman",
+      "note": "Melikeyle ilişkide ölçü"
+    }
+  ],
+  "concepts": [
+    "adalet",
+    "zulum"
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "slug": "hz-lut",
+  "title": "Hz. Lût",
+  "type": "prophet",
+  "chronologicalOrder": 7,
+  "eraStart": "M.Ö. 2000 civarı (yaklaşık)",
+  "eraEnd": null,
+  "summary": "İbrâhim'in yakını; ahlâksızlığa saplanmış bir şehre gönderilir. Uyarıları reddedilir, melek misafirlerine saldırılmak istenir; Lût ve ailesi gece şehirden çıkarılır, eşi geride kalır ve şehir alt üst edilip taş yağmuruna tutulur.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-ibrahim"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Kavmine uyarı",
+      "ref": "7:80-84",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Misafirler ve gece yürüyüşü",
+      "ref": "11:77-83",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Elçilerin gelişi ve helâk",
+      "ref": "15:57-77",
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Kavminin tehdidi",
+      "ref": "26:160-175",
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Eşinin geride kalması",
+      "ref": "27:54-58",
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Lût'un duası",
+      "ref": "29:28-35",
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Taş yağmuru",
+      "ref": "54:33-39",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Lût kıssası, toplumsal ahlâk çöküşünün uyarıya rağmen sürdürülmesinin sonucu olarak ele alınır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "LÛT maddesi — islamansiklopedisi.org.tr/lut",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "lut-golu",
+      "order": 1,
+      "eventDescription": "Helâk edilen şehir; 'yolun üstünde' (15:76).",
+      "passageOrders": [
+        2,
+        3,
+        7
+      ]
+    }
+  ],
+  "concepts": [
+    "zulum",
+    "fisk",
+    "kufur"
+  ]
+}

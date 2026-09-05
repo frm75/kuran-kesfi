@@ -1,0 +1,28 @@
+{
+  "slug": "tecessusten-kacinma",
+  "nameTr": "Ayıp Araştırmama",
+  "nameAr": "ترك التجسس",
+  "rootLatin": null,
+  "definition": "Başkasının kusurunu araştırmamak, arkasından konuşmamak.",
+  "explanation": "49:12 üç şeyi arka arkaya yasaklar: zannın çoğundan sakınmak, birbirinin kusurunu araştırmamak, gıybet etmemek. Gıybeti ölmüş kardeşinin etini yemeye benzetir ve hemen ardından Allah'a karşı sorumluluğu hatırlatır.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 47,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "49:12",
+      "role": "primary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "zan",
+    "yalan",
+    "takva"
+  ]
+}

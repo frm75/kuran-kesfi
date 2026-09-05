@@ -1,0 +1,71 @@
+{
+  "surahId": 30,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Rumların yenilgisi ve gelecek zaferi",
+      "verseStart": 1,
+      "verseEnd": 10,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Kıyamette iki grubun ayrılması ve tespih vakitleri",
+      "verseStart": 11,
+      "verseEnd": 19,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Allah'ın varlığının delilleri",
+      "verseStart": 20,
+      "verseEnd": 27,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Köle örneği; fıtrat ve hak dine yöneliş",
+      "verseStart": 28,
+      "verseEnd": 32,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "İnsanın nankörlüğü; akrabaya hak, faiz ve zekât",
+      "verseStart": 33,
+      "verseEnd": 40,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Karada ve denizde bozulma; geri çevrilmeyen gün",
+      "verseStart": 41,
+      "verseEnd": 45,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Rüzgârlar ve yağmur; \"sen ölülere işittiremezsin\"",
+      "verseStart": 46,
+      "verseEnd": 53,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Güçsüzlükten güce; mazeretlerin fayda vermediği gün",
+      "verseStart": 54,
+      "verseEnd": 60,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

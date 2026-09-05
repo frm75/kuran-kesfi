@@ -1,0 +1,63 @@
+{
+  "surahId": 47,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "İki grup: inkâr edenler ve inananlar",
+      "verseStart": 1,
+      "verseEnd": 3,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Savaş hükmü ve Allah'a yardım",
+      "verseStart": 4,
+      "verseEnd": 11,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Cennetin durumu ve inkârcıların hâli",
+      "verseStart": 12,
+      "verseEnd": 15,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Seni dinleyip anlamayanlar; hidayetin artması",
+      "verseStart": 16,
+      "verseEnd": 19,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Sure indiğinde münafıkların hâli",
+      "verseStart": 20,
+      "verseEnd": 28,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Kalplerdeki hastalığın ortaya çıkması; barışa çağırmayın",
+      "verseStart": 29,
+      "verseEnd": 35,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Dünya hayatı, infaka çağrı ve cimrilik",
+      "verseStart": 36,
+      "verseEnd": 38,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

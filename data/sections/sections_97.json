@@ -1,0 +1,23 @@
+{
+  "surahId": 97,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Kur'an'ın indirildiği gece ve değeri",
+      "verseStart": 1,
+      "verseEnd": 3,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "O gece: meleklerin inişi ve esenlik",
+      "verseStart": 4,
+      "verseEnd": 5,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

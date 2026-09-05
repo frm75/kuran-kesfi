@@ -1,0 +1,60 @@
+{
+  "slug": "hz-yahya",
+  "title": "Hz. Yahyâ",
+  "type": "prophet",
+  "chronologicalOrder": 27,
+  "eraStart": "M.S. 1. yüzyıl başı",
+  "eraEnd": null,
+  "summary": "Zekeriyyâ'ya müjdelenen oğul; daha önce kimseye verilmemiş bir adla anılır. Kur'an onu küçük yaşta hikmet verilmiş, anne babasına iyi davranan, kibirsiz ve isyansız bir peygamber olarak tanıtır.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-zekeriya",
+    "hz-isa"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Müjde",
+      "ref": "3:38-41",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Çocuklukta hikmet ve şefkat",
+      "ref": "19:7-15",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Salihlerden",
+      "ref": "6:85",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Yahyâ'nın 'anne babasına iyi davranan, zorba olmayan' diye anılması, peygamber ahlâkının aile içinde başladığına örnek gösterilir.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "YAHYÂ maddesi — islamansiklopedisi.org.tr/yahya",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "kudus",
+      "order": 1,
+      "eventDescription": "Doğup yaşadığı bölge.",
+      "passageOrders": [
+        2
+      ]
+    }
+  ],
+  "concepts": [
+    "hikmet",
+    "rahmet",
+    "takva"
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "slug": "yolcuya-hak",
+  "nameTr": "Yolda Kalmışın Hakkı",
+  "nameAr": "حق ابن السبيل",
+  "rootLatin": null,
+  "definition": "Yolcunun, yoksulun ve akrabanın malda payı bulunduğunu kabul etmek.",
+  "explanation": "17:26 ve 30:38 aynı üçlüyü sayar: akraba, yoksul, yolda kalmış. Bu bir lütuf değil 'hak' olarak adlandırılır. 2:177 iyiliğin tanımına yolcuyu da katar; 9:60 zekâtın sarf yerleri arasında 'ibnü's-sebîl'i sayar.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 35,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "17:26",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "30:38",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:177",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "9:60",
+      "role": "secondary",
+      "note": "Zekâtın sarf yerleri"
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "infak",
+    "birr",
+    "zekat"
+  ]
+}

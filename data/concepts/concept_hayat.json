@@ -1,0 +1,21 @@
+{
+  "slug": "hayat",
+  "nameTr": "Hayat",
+  "nameAr": "الحياة",
+  "definition": "Canlılık ve yaşam; Allah'ın 'Hayy' sıfatı da bu köktendir.",
+  "parentSlug": null,
+  "roots": [
+    "Hyy"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "olum",
+      "type": "contrast",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

@@ -1,0 +1,63 @@
+{
+  "surahId": 34,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Kıyamet gelecektir; inkâr edenlerin iddiaları",
+      "verseStart": 1,
+      "verseEnd": 9,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Dâvûd ve Süleymân",
+      "verseStart": 10,
+      "verseEnd": 14,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Sebe' halkı ve Arim seli",
+      "verseStart": 15,
+      "verseEnd": 21,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Şefaat, rızık ve bütün insanlara gönderilen peygamber",
+      "verseStart": 22,
+      "verseEnd": 30,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Büyüklük taslayanlarla zayıf görülenlerin çekişmesi",
+      "verseStart": 31,
+      "verseEnd": 38,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Rızkın ölçüsü ve meleklerin şahitliği",
+      "verseStart": 39,
+      "verseEnd": 45,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "\"Size tek bir şeyi öğütlüyorum\"; hak geldi",
+      "verseStart": 46,
+      "verseEnd": 54,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

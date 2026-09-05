@@ -1,0 +1,21 @@
+{
+  "slug": "infak",
+  "nameTr": "İnfak",
+  "nameAr": "الإنفاق",
+  "definition": "Allah yolunda harcamak. NOT: نفق kökü Kur'an'da hem 'harcama' hem 'nifak' anlamı taşır; kök temelli eşleştirmede münafık ayetleri de görünür.",
+  "parentSlug": null,
+  "roots": [
+    "nfq"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "zekat",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

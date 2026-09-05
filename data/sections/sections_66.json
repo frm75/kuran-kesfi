@@ -1,0 +1,31 @@
+{
+  "surahId": 66,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Helâli haram kılma ve peygamber eşleri",
+      "verseStart": 1,
+      "verseEnd": 5,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Kendinizi ve ailenizi koruyun; içten tövbe",
+      "verseStart": 6,
+      "verseEnd": 9,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Dört kadın örneği",
+      "verseStart": 10,
+      "verseEnd": 12,
+      "alsoVerses": [],
+      "note": "Nûh ve Lût'un karıları, Firavun'un karısı ve Hz. Meryem."
+    }
+  ]
+}

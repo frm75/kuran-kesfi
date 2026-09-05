@@ -1,0 +1,39 @@
+{
+  "surahId": 93,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Yemin ve teselli: Rabbin seni terk etmedi",
+      "verseStart": 1,
+      "verseEnd": 3,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Ahiretin ve gelecek lütfun müjdesi",
+      "verseStart": 4,
+      "verseEnd": 5,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Geçmişteki üç nimetin hatırlatılması",
+      "verseStart": 6,
+      "verseEnd": 8,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Nimetin karşılığı: yetim, isteyen, şükür",
+      "verseStart": 9,
+      "verseEnd": 11,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

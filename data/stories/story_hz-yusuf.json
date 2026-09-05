@@ -1,0 +1,139 @@
+{
+  "slug": "hz-yusuf",
+  "title": "Hz. Yûsuf",
+  "type": "prophet",
+  "chronologicalOrder": 11,
+  "eraStart": "M.Ö. 1700 civarı (yaklaşık)",
+  "eraEnd": null,
+  "summary": "Kur'an'ın tek surede baştan sona anlattığı kıssa ve 'kıssaların en güzeli'. Çocukken gördüğü rüya, kardeşlerinin onu kuyuya atması, Mısır'a satılması, iftira ve zindan, rüya yorumlarıyla saraya çıkışı, kıtlık yıllarında hazineyi yönetmesi, kardeşleriyle karşılaşması ve ailesine kavuşması. Rüya sonunda gerçekleşir.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-yakub",
+    "hz-musa"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Rüya ve babanın uyarısı",
+      "ref": "12:4-6",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Kardeşlerin hilesi ve kuyu",
+      "ref": "12:7-18",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Kervan ve Mısır'a satılış",
+      "ref": "12:19-22",
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "İftira ve zindan kararı",
+      "ref": "12:23-35",
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Zindanda rüya yorumu ve tevhid daveti",
+      "ref": "12:36-42",
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Kralın rüyası, beraat ve hazineye tayin",
+      "ref": "12:43-57",
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Kardeşlerin gelişi ve Bünyamin",
+      "ref": "12:58-82",
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Ya'kūb'un hüznü ve gömlek",
+      "ref": "12:83-93",
+      "note": null
+    },
+    {
+      "order": 9,
+      "title": "Kavuşma, af ve rüyanın gerçekleşmesi",
+      "ref": "12:94-101",
+      "note": null
+    },
+    {
+      "order": 10,
+      "title": "Kıssanın sonucu",
+      "ref": "12:102-111",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Yûsuf kıssası iffet, sabır ve affetmenin bir arada işlendiği kıssa olarak ele alınır; zindandaki daveti tebliğin her ortamda mümkün olduğuna örnek gösterilir.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "YÛSUF maddesi — islamansiklopedisi.org.tr/yusuf",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    },
+    {
+      "text": "Kardeşlerini affederken 'bugün size kınama yok' demesi, güç eline geçince intikam yerine affı seçmenin örneği sayılır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "YÛSUF maddesi — islamansiklopedisi.org.tr/yusuf",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 2
+    },
+    {
+      "text": "Yûsuf'un 'beni hazinelerin başına getir, ben iyi koruyucu ve bilenim' demesi, emanet ve liyakatin birlikte anılmasına örnek gösterilir.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "YÛSUF maddesi — islamansiklopedisi.org.tr/yusuf",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 3
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "kenan",
+      "order": 1,
+      "eventDescription": "Ailesinin yurdu, rüya ve kuyu.",
+      "passageOrders": [
+        1,
+        2
+      ]
+    },
+    {
+      "locationSlug": "misir",
+      "order": 2,
+      "eventDescription": "Satılış, zindan, saray ve kavuşma.",
+      "passageOrders": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    }
+  ],
+  "concepts": [
+    "sabir",
+    "af",
+    "sidk",
+    "ilim",
+    "tevekkul",
+    "ihsan",
+    "emanet"
+  ]
+}

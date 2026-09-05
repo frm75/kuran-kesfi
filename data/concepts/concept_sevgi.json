@@ -1,0 +1,26 @@
+{
+  "slug": "sevgi",
+  "nameTr": "Sevgi (muhabbet)",
+  "nameAr": "المحبة",
+  "definition": "Kur'an'da Allah'ın kullarını sevmesi ve kulların Allah'ı sevmesi karşılıklı anlatılır; sevginin ölçütü uymaktır ('Allah'ı seviyorsanız bana uyun').",
+  "parentSlug": null,
+  "roots": [
+    "Hbb"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "ittiba",
+      "type": "cause",
+      "weight": 3
+    },
+    {
+      "target": "iman",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

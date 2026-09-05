@@ -1,0 +1,23 @@
+{
+  "surahId": 98,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Apaçık delil ve emredilen din",
+      "verseStart": 1,
+      "verseEnd": 5,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "İnkâr edenler ve yaratıkların en hayırlısı",
+      "verseStart": 6,
+      "verseEnd": 8,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

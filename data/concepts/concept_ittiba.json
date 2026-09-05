@@ -1,0 +1,26 @@
+{
+  "slug": "ittiba",
+  "nameTr": "Uyma (ittibâ)",
+  "nameAr": "الاتباع",
+  "definition": "Bir yolun ardından gitmek. Kur'an atalara körü körüne uymayı eleştirir; uyulacak olanın vahiy ve peygamber olduğunu bildirir.",
+  "parentSlug": null,
+  "roots": [
+    "tbE"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "hidayet",
+      "type": "co_occurrence",
+      "weight": 2
+    },
+    {
+      "target": "dalalet",
+      "type": "cause",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

@@ -1,7 +1,6 @@
 ---
 import Base from "~/layouts/Base.astro";
-import SourceBadge from "~/components/SourceBadge.astro";
-import { getArabicSource, getSurahsIndex } from "~/lib/data";
+import { getSurahsIndex } from "~/lib/data";
 
 /**
  * Sure listesi.
@@ -9,45 +8,58 @@ import { getArabicSource, getSurahsIndex } from "~/lib/data";
  * Ana sayfa DEĞİLDİR: plan §14 ana sayfanın beş keşif kapısıyla başlamasını,
  * sure listesiyle başlamamasını istiyor. Klasik okuyucunun ihtiyacı olan liste
  * de bir yerde durmalı; burası orası.
+ *
+ * Kaynak rozeti 2026-09-05'te kaldırıldı. Yasal atıf kaybolmadı: her sayfanın
+ * altındaki <Attribution> ve /kaynaklar yerinde (data/LICENSE).
  */
 
 const { surahs, totals } = getSurahsIndex();
-const arabicSource = getArabicSource();
+
+/** Onarlı sıçrama: 114 kartlık ızgarada göz kaybolmasın, JavaScript de yok. */
+const jumps = Array.from({ length: Math.ceil(surahs.length / 10) }, (_unused, i) => i * 10 + 1);
 ---
 
 <Base title="Sureler — Kur'an-ı Kerim" description="114 surenin listesi.">
-  <main id="icerik" class="mx-auto max-w-narrow px-4 py-8">
-    <nav aria-label="Konum" class="text-text-secondary mb-6 text-sm">
+  <main id="icerik" class="pg pg-wide">
+    <nav aria-label="Konum" class="pg-crumb">
       <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
       <span aria-current="page">Sureler</span>
     </nav>
 
-    <h1 class="m-0 text-3xl">Sureler</h1>
-    <p class="text-text-secondary mt-1 mb-4">
-      {totals.surahs} sure, {totals.verses} ayet, {totals.pages} sayfa, {totals.juzs} cüz.
-    </p>
-    <SourceBadge
-      contentClass="kaynakli"
-      sources={[arabicSource]}
-      label="Sure listesi ve sayfa/cüz bilgileri"
-    />
+    <header class="pg-head">
+      <p class="pg-kicker">Klasik okuma</p>
+      <h1 class="pg-title">Sureler</h1>
+      <p class="pg-lede">
+        Mushaf sırasıyla {totals.surahs} sure. Bir sureye girin; Arapça metin,
+        okunuşu ve meali alt alta gelir.
+      </p>
+      <ul class="fact-row">
+        <li><b>{totals.surahs}</b><span>sure</span></li>
+        <li><b>{totals.verses}</b><span>ayet</span></li>
+        <li><b>{totals.pages}</b><span>sayfa</span></li>
+        <li><b>{totals.juzs}</b><span>cüz</span></li>
+      </ul>
+    </header>
 
-    <ol class="mt-8 grid list-none grid-cols-1 gap-px p-0 sm:grid-cols-2">
+    <nav aria-label="Sure numarasına git" class="jump-bar">
+      {jumps.map((number) => <a href={`#sure-${String(number)}`}>{number}</a>)}
+    </nav>
+
+    <ol class="surah-grid">
       {
         surahs.map((surah) => (
-          <li class="bg-bg-elevated border-border border">
-            <a href={`/${surah.slug}`} class="flex items-baseline gap-3 px-3 py-2 no-underline">
-              <span class="text-text-muted w-8 shrink-0 text-end text-sm tabular-nums">
-                {surah.id}
-              </span>
-              <span class="flex-1">
-                <span class="text-text-primary block">{surah.nameTr}</span>
-                <span class="text-text-secondary block text-xs">
-                  {surah.verseCount} ayet ·{" "}
+          <li id={`sure-${String(surah.id)}`}>
+            <a href={`/${surah.slug}`}>
+              <span class="sc-num">{surah.id}</span>
+              <span>
+                <span class="sc-name">{surah.nameTr}</span>
+                <span class="sc-meta">
+                  {surah.verseCount} ayet
+                  <span aria-hidden="true"> · </span>
                   {surah.revelationType === "mekki" ? "Mekkî" : "Medenî"}
                 </span>
               </span>
-              <span lang="ar" dir="rtl" class="text-base">
+              <span lang="ar" dir="rtl" class="sc-ar">
                 {surah.nameAr}
               </span>
             </a>

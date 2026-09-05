@@ -1,0 +1,76 @@
+{
+  "slug": "tevekkul",
+  "nameTr": "Tevekkül",
+  "nameAr": "التوكل",
+  "rootLatin": "wkl",
+  "definition": "Gerekli çabayı gösterdikten sonra sonucu Allah'a bırakmak; O'na güvenip dayanmak.",
+  "explanation": "'Karar verdiğinde Allah'a tevekkül et' (3:159) tevekkülü kararın ardına yerleştirir; Talâk 65:3 'Allah'a tevekkül edene O yeter' der. Ya'kūb'un oğullarına 'yine de Allah'a güvenmişim' (12:67) sözü tedbirle tevekkülün birlikte anlatıldığı örnektir. Mûsâ'nın 'Rabbim benimledir' (26:62) demesi çıkmazda tevekkülün ifadesidir.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 11,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "3:159",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "65:3",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "33:3",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "11:123",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "14:12",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "8:2",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "12:67",
+      "role": "secondary",
+      "note": "Ya'kūb: tedbir ve tevekkül"
+    },
+    {
+      "ref": "26:62",
+      "role": "secondary",
+      "note": "Mûsâ: Rabbim benimledir"
+    }
+  ],
+  "stories": [
+    {
+      "slug": "hz-ibrahim",
+      "note": "Ateşe atılırken"
+    },
+    {
+      "slug": "hz-musa",
+      "note": "Deniz kenarında (26:62)"
+    },
+    {
+      "slug": "hz-yakub",
+      "note": "Oğullarını gönderirken (12:67)"
+    }
+  ],
+  "concepts": [
+    "tevekkul",
+    "iman",
+    "sabir"
+  ]
+}

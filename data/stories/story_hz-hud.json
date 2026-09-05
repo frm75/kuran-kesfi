@@ -1,0 +1,78 @@
+{
+  "slug": "hz-hud",
+  "title": "Hz. Hûd",
+  "type": "prophet",
+  "chronologicalOrder": 4,
+  "eraStart": null,
+  "eraEnd": null,
+  "summary": "Âd kavmine gönderilen peygamber. Kavmi yüksek yapılarıyla ve gücüyle övünür, tevhid çağrısını reddeder; şiddetli bir rüzgârla helâk edilir. Yurtları Ahkāf bölgesidir.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-nuh",
+    "hz-salih"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Âd kavmine çağrı",
+      "ref": "7:65-72",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "İnkâr ve rüzgârla helâk",
+      "ref": "11:50-60",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Yüksek yapılar ve güç iddiası",
+      "ref": "26:123-140",
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Ahkāf'taki uyarı",
+      "ref": "46:21-26",
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Kasırga ve sonuç",
+      "ref": "54:18-21",
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "İrem ve sütunlar",
+      "ref": "89:6-8",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Âd kıssası, güce ve kalıcılığa güvenmenin boşluğunu gösteren bir örnek olarak ele alınır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "ÂD maddesi — islamansiklopedisi.org.tr/ad",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "ahkaf",
+      "order": 1,
+      "eventDescription": "Âd kavminin yurdu Ahkāf (46:21).",
+      "passageOrders": [
+        4
+      ]
+    }
+  ],
+  "concepts": [
+    "kufur",
+    "kibir",
+    "nimet"
+  ]
+}

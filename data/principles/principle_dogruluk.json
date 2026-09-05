@@ -1,0 +1,66 @@
+{
+  "slug": "dogruluk",
+  "nameTr": "Doğruluk (Sıdk)",
+  "nameAr": "الصدق",
+  "rootLatin": "Sdq",
+  "definition": "Sözde, niyette ve davranışta gerçeğe uygun olmak; söylediğiyle yaptığı örtüşmek.",
+  "explanation": "'Ey iman edenler, Allah'tan korkun ve doğrularla beraber olun' (9:119), 'doğru söz söyleyin' (33:70) doğrudan emirlerdir. Saf 61:2-3 söylediğini yapmamayı kınar. Kur'an sıddîk sıfatını İbrâhim, İdrîs ve Meryem için kullanır. DİA 'SIDK' maddesi kavramı iman-amel bütünlüğü içinde ele alır.",
+  "dailyNote": null,
+  "oppositeSlug": "yalandan-kacinma",
+  "order": 4,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "9:119",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "33:70",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "39:33",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "61:2-3",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "2:177",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "19:41",
+      "role": "secondary",
+      "note": "İbrâhim: sıddîk nebî"
+    },
+    {
+      "ref": "19:56",
+      "role": "secondary",
+      "note": "İdrîs: sıddîk nebî"
+    }
+  ],
+  "stories": [
+    {
+      "slug": "hz-yusuf",
+      "note": "Zindandaki tanıklığı ve 'sıddîk' hitabı (12:46)"
+    },
+    {
+      "slug": "hz-idris",
+      "note": "'Sıddîk bir nebî'"
+    }
+  ],
+  "concepts": [
+    "sidk",
+    "yalan"
+  ]
+}

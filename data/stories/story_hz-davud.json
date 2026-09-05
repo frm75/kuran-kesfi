@@ -1,0 +1,75 @@
+{
+  "slug": "hz-davud",
+  "title": "Hz. Dâvûd",
+  "type": "prophet",
+  "chronologicalOrder": 18,
+  "eraStart": "M.Ö. 10. yüzyıl (yaklaşık)",
+  "eraEnd": null,
+  "summary": "Tâlût'un ordusunda Câlût'u öldüren genç; sonra hükümdar ve peygamber. Kendisine Zebur, hikmet ve adaletle hüküm verme yetkisi verilir; dağlar ve kuşlar onunla tesbih eder, demir yumuşatılır ve zırh yapar. İki davacı kıssasında hatasını anlayıp tevbe eder.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-suleyman"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Tâlût'un ordusu ve Câlût",
+      "ref": "2:246-251",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Hüküm ve zırh sanatı",
+      "ref": "21:78-80",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Dağlar, kuşlar ve demir",
+      "ref": "34:10-11",
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "İki davacı ve tevbe",
+      "ref": "38:17-26",
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "İlim ve şükür",
+      "ref": "27:15-16",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Dâvûd'a 'insanlar arasında hak ile hükmet, heveslere uyma' emri, adaletin yönetici için ilk görev sayılmasına örnek gösterilir.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "DÂVÛD maddesi — islamansiklopedisi.org.tr/davud",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "kudus",
+      "order": 1,
+      "eventDescription": "Hükümdarlık merkezi.",
+      "passageOrders": [
+        2,
+        3,
+        4
+      ]
+    }
+  ],
+  "concepts": [
+    "adalet",
+    "hikmet",
+    "tevbe",
+    "sukur",
+    "zikir"
+  ]
+}

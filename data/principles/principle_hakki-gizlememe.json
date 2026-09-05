@@ -1,0 +1,63 @@
+{
+  "slug": "hakki-gizlememe",
+  "nameTr": "Hakkı Gizlememe ve Doğru Şahitlik",
+  "nameAr": "الشهادة بالحق",
+  "rootLatin": null,
+  "definition": "Bildiği gerçeği gizlememek, şahitlikten kaçmamak, tanıklığı kimse lehine ya da aleyhine eğip bükmemek.",
+  "explanation": "Bakara 2:42 hakkı bile bile gizlemeyi yasaklar; 2:283 'şahitliği gizlemeyin' der; Nisâ 4:135 kendi aleyhinize de olsa adaletle şahitlik etmeyi emreder; Mâide 5:8 şahitliğin adaletle olmasını ister. Meâric 70:33 şahitliğini yerine getireni müminlerden sayar. Bakara 2:140 elindeki tanıklığı gizleyeni 'en zalim' diye niteler.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 29,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "2:42",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:283",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "4:135",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "5:8",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "70:33",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:140",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "65:2",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "25:72",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "sidk",
+    "adalet",
+    "yalan"
+  ]
+}

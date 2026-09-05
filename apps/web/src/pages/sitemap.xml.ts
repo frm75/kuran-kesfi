@@ -1,5 +1,11 @@
 import type { APIRoute } from "astro";
-import { getRootsIndex, getSurahsIndex } from "~/lib/data";
+import {
+  getConceptsIndex,
+  getPrinciplesIndex,
+  getRootsIndex,
+  getStoriesIndex,
+  getSurahsIndex,
+} from "~/lib/data";
 import { SITE } from "~/lib/site";
 
 /**
@@ -9,7 +15,7 @@ import { SITE } from "~/lib/site";
  * değişince sitemap de değişir. Astro entegrasyonu kullanılmadı; tek dosya
  * için bir bağımlılık eklemenin anlamı yok.
  *
- * 6354 adres tek dosyada. Sitemap sınırı 50.000 adres / 50 MB, rahat sığıyor.
+ * ~6500 adres tek dosyada. Sitemap sınırı 50.000 adres / 50 MB, rahat sığıyor.
  *
  * `lastmod` YAZILMIYOR: doğru değeri metnin gerçekten değiştiği tarihtir,
  * build tarihi değil. Her build'de bugünün tarihini yazmak arama motoruna
@@ -24,9 +30,23 @@ export const GET: APIRoute = () => {
   const urls: { loc: string; priority: string }[] = [
     { loc: "/", priority: "1.0" },
     { loc: "/sureler", priority: "0.9" },
-    { loc: "/kaynaklar", priority: "0.7" },
+    { loc: "/kissalar", priority: "0.9" },
+    { loc: "/zaman", priority: "0.8" },
+    { loc: "/kavramlar", priority: "0.8" },
+    { loc: "/ilkeler", priority: "0.8" },
+    { loc: "/harita", priority: "0.8" },
     { loc: "/kok", priority: "0.8" },
+    { loc: "/kaynaklar", priority: "0.7" },
   ];
+
+  // Icerik katmani — tablolar bossa bu listeler bos doner, sitemap kucululur.
+  for (const story of getStoriesIndex()) urls.push({ loc: `/kissa/${story.slug}`, priority: "0.7" });
+  for (const principle of getPrinciplesIndex()) {
+    urls.push({ loc: `/ilke/${principle.slug}`, priority: "0.7" });
+  }
+  for (const concept of getConceptsIndex()) {
+    urls.push({ loc: `/kavram/${concept.slug}`, priority: "0.6" });
+  }
 
   // Kok adresleri Arapca harf tasiyor; sitemap'te yuzde kodlu olmalari gerekir.
   for (const root of roots) {

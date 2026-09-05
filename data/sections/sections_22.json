@@ -1,0 +1,71 @@
+{
+  "surahId": 22,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Kıyamet sarsıntısı ve dirilişin delili",
+      "verseStart": 1,
+      "verseEnd": 10,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Kıyıdan kulluk edenler ve iki hasım taraf",
+      "verseStart": 11,
+      "verseEnd": 24,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Kâbe, haccın ilanı ve kurban",
+      "verseStart": 25,
+      "verseEnd": 37,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Savaş izni ve helâk edilen memleketler",
+      "verseStart": 38,
+      "verseEnd": 48,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Şeytanın vesvesesi; o gün mülk Allah'ındır",
+      "verseStart": 49,
+      "verseEnd": 57,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Hicret edip öldürülenler ve Allah'ın kudreti",
+      "verseStart": 58,
+      "verseEnd": 66,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Her ümmete bir ibadet yolu",
+      "verseStart": 67,
+      "verseEnd": 72,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Sinek meseli; rükû, secde ve cihad",
+      "verseStart": 73,
+      "verseEnd": 78,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

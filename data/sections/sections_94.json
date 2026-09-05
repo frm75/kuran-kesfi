@@ -1,0 +1,31 @@
+{
+  "surahId": 94,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Verilen üç nimet",
+      "verseStart": 1,
+      "verseEnd": 4,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Güçlükle beraber kolaylık",
+      "verseStart": 5,
+      "verseEnd": 6,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Bitirince diğerine koyul, Rabbine yönel",
+      "verseStart": 7,
+      "verseEnd": 8,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

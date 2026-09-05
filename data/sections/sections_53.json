@@ -1,0 +1,47 @@
+{
+  "surahId": 53,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Vahyin geliş biçimi ve Sidretü'l-Müntehâ",
+      "verseStart": 1,
+      "verseEnd": 18,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Lât, Uzzâ ve Menât; meleklere dişi isim vermek",
+      "verseStart": 19,
+      "verseEnd": 30,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Herkes çalıştığının karşılığını görür",
+      "verseStart": 31,
+      "verseEnd": 41,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Rabbin fiilleri ve helâk edilen kavimler",
+      "verseStart": 42,
+      "verseEnd": 55,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Yaklaşan kıyamet ve secde emri",
+      "verseStart": 56,
+      "verseEnd": 62,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "surahId": 1,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Besmele",
+      "verseStart": 1,
+      "verseEnd": 1,
+      "alsoVerses": [],
+      "note": "Fâtiha'da besmele ayrı bir ayet sayılır; bu yüzden kendi başına bölüm."
+    },
+    {
+      "order": 2,
+      "title": "Hamd ve Allah'ın nitelikleri",
+      "verseStart": 2,
+      "verseEnd": 4,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Kulluk ve yardım dileme",
+      "verseStart": 5,
+      "verseEnd": 5,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Doğru yola iletilme duası",
+      "verseStart": 6,
+      "verseEnd": 7,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

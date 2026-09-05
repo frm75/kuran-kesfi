@@ -1,0 +1,31 @@
+{
+  "surahId": 65,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Boşanma, iddet, nafaka ve süt hakkı",
+      "verseStart": 1,
+      "verseEnd": 7,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Emirden çıkan kentlerin sonu ve akıl sahiplerine uyarı",
+      "verseStart": 8,
+      "verseEnd": 10,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Karanlıktan aydınlığa çıkaran elçi; yedi gök",
+      "verseStart": 11,
+      "verseEnd": 12,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

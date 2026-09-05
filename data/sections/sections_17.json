@@ -1,0 +1,95 @@
+{
+  "surahId": 17,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "İsrâ ve İsrâiloğullarının iki bozgunculuğu",
+      "verseStart": 1,
+      "verseEnd": 8,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Kur'an en doğru yola iletir; herkesin ameli boynundadır",
+      "verseStart": 9,
+      "verseEnd": 22,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Ana babaya iyilik ve sayılan ahlâk ilkeleri",
+      "verseStart": 23,
+      "verseEnd": 39,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Meleklere kız isnadı ve dirilişe itiraz",
+      "verseStart": 40,
+      "verseEnd": 52,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "\"En güzel sözü söyleyin\"; mucize göndermemenin sebebi",
+      "verseStart": 53,
+      "verseEnd": 60,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "İblîs ve Âdemoğulları",
+      "verseStart": 61,
+      "verseEnd": 65,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Denizdeki kurtuluş; insanoğlunun şerefli kılınışı",
+      "verseStart": 66,
+      "verseEnd": 72,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Sebat verilmesi, namaz vakitleri ve \"hak geldi\"",
+      "verseStart": 73,
+      "verseEnd": 81,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 9,
+      "title": "Kur'an şifadır; ruh sorusu ve meydan okuma",
+      "verseStart": 82,
+      "verseEnd": 89,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 10,
+      "title": "İstenen mucizeler ve verilen cevap",
+      "verseStart": 90,
+      "verseEnd": 100,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 11,
+      "title": "Mûsâ'ya verilen dokuz mucize ve kapanış",
+      "verseStart": 101,
+      "verseEnd": 111,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

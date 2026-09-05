@@ -1,0 +1,41 @@
+{
+  "slug": "bedir-gazvesi",
+  "title": "Bedir Gazvesi",
+  "type": "event",
+  "chronologicalOrder": 47,
+  "eraStart": "H. 2 / M. 624",
+  "eraEnd": null,
+  "summary": "Hicretin 2. yılında, sayıca az bir toplulukla kazanılan ilk büyük savaş. Kur'an bunu 'furkan günü' olarak anar ve meleklerle yardım edildiğini bildirir.",
+  "coverImage": null,
+  "relatedStories": [
+    "asr-i-saadet"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Evden çıkış ve meleklerle yardım",
+      "ref": "8:5-14",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Ganimet hükmü ve iki ordunun karşılaşması",
+      "ref": "8:41-48",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "\"Siz güçsüz iken Allah size yardım etti\"",
+      "ref": "3:123-127",
+      "note": null
+    }
+  ],
+  "lessons": [],
+  "locations": [],
+  "concepts": [
+    "nusret",
+    "sabir",
+    "tevekkul",
+    "imtihan"
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "//": [
+    "Elle hazirlanan icerigin (kissa, konum, kavram, ilke, zaman cizelgesi) dayandigi kaynaklar.",
+    "source tablosuna slug ile upsert edilir; her icerik kaydi bunlardan en az birine baglanir (plan 8.1, 8.3, 18.3).",
+    "Lisansi belirsiz kaynak eklenmez. Alinti yapilmaz, ozetlenir ve madde/adres referansi verilir."
+  ],
+  "sources": [
+    {
+      "slug": "tdv-islam-ansiklopedisi",
+      "name": "TDV İslâm Ansiklopedisi",
+      "workTitle": "Türkiye Diyanet Vakfı İslâm Ansiklopedisi (DİA)",
+      "author": "Türkiye Diyanet Vakfı İslâm Araştırmaları Merkezi",
+      "reference": "Madde adı her kayıtta sourceReference alanında verilir; adres islamansiklopedisi.org.tr/<madde>",
+      "url": "https://islamansiklopedisi.org.tr",
+      "license": "Telifli — açık erişim; burada yalnızca özet ve madde referansı kullanılır, metin kopyalanmaz",
+      "note": "Kıssa özetleri, ilke ve kavram tanımları bu ansiklopedinin ilgili maddelerine dayanarak platform tarafından yeniden ifade edilmiştir. Yorum ve hüküm eklenmemiştir (plan §8.2, §8.5)."
+    },
+    {
+      "slug": "elmalili-hak-dini",
+      "name": "Elmalılı M. Hamdi Yazır — Hak Dini Kur'an Dili",
+      "workTitle": "Hak Dini Kur'an Dili (tefsir, 1935–1938)",
+      "author": "Elmalılı Muhammed Hamdi Yazır",
+      "reference": "Sure ve ayet numarasıyla; ilgili ayetin tefsiri",
+      "url": null,
+      "license": "Kamu malı (yazarın vefatı 1942; koruma süresi dolmuştur)",
+      "note": "Kıssa dersleri ve ilke açıklamalarında tefsirin ilgili ayet yorumu özetlenir."
+    },
+    {
+      "slug": "noldeke-geschichte",
+      "name": "Theodor Nöldeke — Geschichte des Qorâns",
+      "workTitle": "Geschichte des Qorâns (1860; F. Schwally 2. baskı 1909)",
+      "author": "Theodor Nöldeke",
+      "reference": "Sure kronolojisi tablosu; aktarım Wikipedia 'List of chapters in the Quran' (2026-09-05)",
+      "url": "https://en.wikipedia.org/wiki/List_of_chapters_in_the_Quran",
+      "license": "Kamu malı (1860); Wikipedia tablosu CC BY-SA 4.0 — yalnızca sıra numaraları kullanıldı",
+      "note": "Mısır/Ezher sıralamasına alternatif olarak gösterilir; iki sıra farklıysa arayüz farkı işaretler (plan §2.2)."
+    },
+    {
+      "slug": "natural-earth",
+      "name": "Natural Earth — 1:110m kara verisi",
+      "workTitle": "ne_110m_land (vektör, GeoJSON)",
+      "author": "Natural Earth (naturalearthdata.com)",
+      "reference": "data/geo/ne_110m_land.geojson; nvkelso/natural-earth-vector deposundan (2026-09-05)",
+      "url": "https://www.naturalearthdata.com",
+      "license": "Kamu malı (public domain)",
+      "note": "Harita sayfasındaki statik SVG kıyı çizgisi bu veriden build zamanında üretilir. Konum koordinatları bu kaynaktan DEĞİL, konum kayıtlarının kendi kaynaklarındandır."
+    },
+    {
+      "slug": "kuran-metni",
+      "name": "Kur'an metninin kendisi",
+      "workTitle": "İlgili ayet aralığı",
+      "author": null,
+      "reference": "Kaydın verseRefs / passages alanındaki ayetler",
+      "url": null,
+      "license": "Metin Tanzil'den (bkz. tanzil kaynağı); burada yalnızca 'bu bilgi doğrudan ayetlerde geçiyor' anlamında referans",
+      "note": "Kıssa parçalarının hangi ayetlerde geçtiği, olayların hangi surelerle ilişkilendirildiği gibi doğrudan metinden okunan olgular için."
+    }
+  ]
+}

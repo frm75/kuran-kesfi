@@ -1,0 +1,95 @@
+{
+  "surahId": 10,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Kitabın ayetleri; yaratılış ve iki grup",
+      "verseStart": 1,
+      "verseEnd": 10,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "İnsanın acelesi; yalanlayanlar ve mucize isteği",
+      "verseStart": 11,
+      "verseEnd": 20,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Denizdeki kurtuluş, dünya hayatı meseli ve ortaklar",
+      "verseStart": 21,
+      "verseEnd": 33,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Ortakların âcizliği; \"Kur'an uydurma değildir\"",
+      "verseStart": 34,
+      "verseEnd": 40,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Her ümmete bir peygamber ve azabın vakti",
+      "verseStart": 41,
+      "verseEnd": 53,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Rabbinizden öğüt; helâl ve haramı uydurmak",
+      "verseStart": 54,
+      "verseEnd": 60,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Allah'ın dostları ve \"Allah çocuk edindi\" iddiası",
+      "verseStart": 61,
+      "verseEnd": 70,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Nûh",
+      "verseStart": 71,
+      "verseEnd": 74,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 9,
+      "title": "Mûsâ, Firavun, sihirbazlar ve denizden geçiş",
+      "verseStart": 75,
+      "verseEnd": 93,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 10,
+      "title": "Şüpheye düşme; iman eden tek kavim: Yûnus kavmi",
+      "verseStart": 94,
+      "verseEnd": 103,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 11,
+      "title": "\"İşte benim dinim\"; vahye uy ve sabret",
+      "verseStart": 104,
+      "verseEnd": 109,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

@@ -1,6 +1,4 @@
 ---
-import SourceBadge from "~/components/SourceBadge.astro";
-import type { SourceRef } from "~/components/types";
 import { splitFootnoteMarkers } from "~/lib/data";
 
 /**
@@ -11,16 +9,21 @@ import { splitFootnoteMarkers } from "~/lib/data";
  *
  * ## Kaynak zorunluluğu (plan §12.10)
  *
- * Kaynaksız meal gösterilmez. Ama kaynağı HER blokta tekrarlamak da doğru
- * değil: Bakara sayfasında 286 ayetin meali aynı kaynaktan geliyor, aynı
- * satırı 286 kez yazmak şeffaflık değil gürültü (ve ölçüldü: ~60 KB).
+ * Kaynaksız meal gösterilmez — ama kaynağın NEREDE gösterildiği 2026-09-05'te
+ * değişti. Önce her blok (ya da bölüm başı) kendi `<SourceBadge>` rozetini
+ * taşıyordu; kullanıcı kararıyla o kutular içerik sayfalarından kaldırıldı:
+ * "sadece meal veya tefsirlerin kime ait olduğunu yazacağız".
  *
- * Bu yüzden iki yol var ve BİRİ ZORUNLU:
- *   `source`            — bu blok kendi rozetini gösterir
- *   `sourceDeclaredBy`  — kaynak sayfada bir kez bildirildi; değer nerede
- *                         bildirildiğini söyler, boş geçilemez
+ * Kaldırılan şey KUTU, atıf değil. Atıf üç yerde duruyor ve üçü de zorunlu:
+ *   1. mealin sahibinin adı — bu bloğun başlığı (aşağıda)
+ *   2. <Attribution> — Base.astro içinde, yani istisnasız her sayfanın altında
+ *   3. /kaynaklar — eser, hazırlayan ve lisans dökümü
+ * data/LICENSE (CC BY-NC-SA 4.0) bu üçüyle karşılanıyor.
  *
- * İkisi de verilmezse ya da ikisi birden verilirse build durur.
+ * `sourceDeclaredBy` bu yüzden ARTIK ZORUNLU: kaynağın nerede bildirildiğini
+ * yazmadan bir meal render edilemez. Boş geçilirse build durur. Değer HTML'e
+ * yazılmaz — 7996 sayfa × ~20 meal, ölçülebilir bayt; kural build zamanında
+ * uygulanıyor, çıktıda tekrarlanmasına gerek yok.
  */
 
 interface Footnote {
@@ -33,20 +36,25 @@ interface Props {
   authorSlug: string;
   text: string;
   footnotes: readonly Footnote[];
-  /** Bu bloğun kendi kaynak rozeti. `sourceDeclaredBy` ile birlikte verilemez. */
-  source?: SourceRef;
   /**
-   * Kaynak sayfanın başında bildirildiyse, nerede bildirildiğini söyleyen kısa
-   * metin: "sayfa başındaki kaynak rozeti". Belge amaçlı — okuyan biri iddiayı
-   * görüp doğrulayabilsin diye.
+   * Kaynağın sayfada nerede bildirildiğini söyleyen kısa metin:
+   * "sayfa altındaki kaynak listesi". Belge amaçlı — okuyan biri iddiayı
+   * görüp doğrulayabilsin diye. Boş geçilemez.
    */
-  sourceDeclaredBy?: string;
+  sourceDeclaredBy: string;
   /** Dipnot çapaları sayfada benzersiz olmalı: "2-153-diyanet-isleri" */
   anchorPrefix: string;
   /** Dilin doğru sesle okunması için: "tr" veya "en" */
   lang?: string;
-  /** Kendi rozetini gösterirken açılır panel yerine tek satır kullan. */
-  compactSource?: boolean;
+  /**
+   * Yazar adını gizle.
+   *
+   * Sure sayfasında 286 ayetin meali de aynı kişiye ait; adı her blokta
+   * tekrarlamak bilgi değil gürültü. Orada ad sayfa başlığındaki çipte
+   * bir kez yazıyor. Ekran okuyucudan GİZLENMEZ: görsel olarak kaldırılan
+   * başlık `sr-only` olarak yerinde kalır.
+   */
+  hideAuthor?: boolean;
 }
 
 const {
@@ -54,24 +62,17 @@ const {
   authorSlug,
   text,
   footnotes,
-  source,
   sourceDeclaredBy,
   anchorPrefix,
   lang = "tr",
-  compactSource = false,
+  hideAuthor = false,
 } = Astro.props;
 
-if (source === undefined && sourceDeclaredBy === undefined) {
+if (sourceDeclaredBy.trim() === "") {
   throw new Error(
     `<Translation> kaynaksiz render edilemez: authorSlug="${authorSlug}", ` +
-      `anchorPrefix="${anchorPrefix}". Ya 'source' verin ya da kaynagin sayfada ` +
-      "nerede bildirildigini 'sourceDeclaredBy' ile yazin (plan 12.10).",
-  );
-}
-if (source !== undefined && sourceDeclaredBy !== undefined) {
-  throw new Error(
-    `<Translation> hem 'source' hem 'sourceDeclaredBy' aldi (${authorSlug}). ` +
-      "Kaynak ya blokta ya sayfada bildirilir, ikisi birden degil.",
+      `anchorPrefix="${anchorPrefix}". Kaynagin sayfada nerede bildirildigini ` +
+      "'sourceDeclaredBy' ile yazin (plan 12.10).",
   );
 }
 
@@ -86,17 +87,7 @@ const markerId = (number: number): string => `dnr-${anchorPrefix}-${number}`;
 
 <article class="translation" data-author={authorSlug}>
   <header>
-    <h3>{authorName}</h3>
-    {
-      source !== undefined && (
-        <SourceBadge
-          contentClass="kaynakli"
-          sources={[source]}
-          label={`${authorName} meali`}
-          compact={compactSource}
-        />
-      )
-    }
+    <h3 class:list={[hideAuthor && "sr-only"]}>{authorName}</h3>
   </header>
 
   <p lang={lang} class="translation-text">

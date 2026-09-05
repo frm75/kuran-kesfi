@@ -1,0 +1,21 @@
+{
+  "slug": "hidayet",
+  "nameTr": "Hidayet",
+  "nameAr": "الهداية",
+  "definition": "Doğru yolu göstermek ve o yolda olmak.",
+  "parentSlug": null,
+  "roots": [
+    "hdy"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "dalalet",
+      "type": "contrast",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

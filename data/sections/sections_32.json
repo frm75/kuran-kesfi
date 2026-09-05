@@ -1,0 +1,39 @@
+{
+  "surahId": 32,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Kitabın indirilişi ve yaratılış",
+      "verseStart": 1,
+      "verseEnd": 9,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Dirilişe itiraz, ölüm meleği ve suçluların boyun bükmesi",
+      "verseStart": 10,
+      "verseEnd": 14,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Yanları yataklardan uzaklaşanlar; mü'min ile fâsık",
+      "verseStart": 15,
+      "verseEnd": 22,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Mûsâ'ya verilen Kitap, helâk edilen nesiller ve fetih sorusu",
+      "verseStart": 23,
+      "verseEnd": 30,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

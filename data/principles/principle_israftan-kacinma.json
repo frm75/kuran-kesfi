@@ -1,0 +1,57 @@
+{
+  "slug": "israftan-kacinma",
+  "nameTr": "İsraftan Kaçınma",
+  "nameAr": "اجتناب الإسراف",
+  "rootLatin": null,
+  "definition": "Yeme, içme, harcama ve kullanmada ölçüyü aşmamak; hem cimrilikten hem saçıp savurmadan uzak durmak.",
+  "explanation": "'Yiyin, için, israf etmeyin' (7:31), 'saçıp savurma; saçıp savuranlar şeytanın kardeşleridir' (17:26-27) ve harcamada orta yolu tarif eden Furkān 25:67 ilkenin ana ayetleridir. En'âm 6:141 ürün israfını da yasaklar. Kārûn'un serveti ve akıbeti (28:76-82) israfın kıssadaki karşılığıdır.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 15,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "7:31",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "17:26-27",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "25:67",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "6:141",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "17:29",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "28:76-82",
+      "role": "secondary",
+      "note": "Kārûn"
+    }
+  ],
+  "stories": [
+    {
+      "slug": "karun",
+      "note": "Servetle şımarma ve akıbeti"
+    }
+  ],
+  "concepts": [
+    "nimet",
+    "kibir"
+  ]
+}

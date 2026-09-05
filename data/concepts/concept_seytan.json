@@ -1,0 +1,26 @@
+{
+  "slug": "seytan",
+  "nameTr": "Şeytan",
+  "nameAr": "الشيطان",
+  "definition": "Hakktan uzaklaşan, vesvese veren ve düşmanlığı açıkça bildirilen varlık. Kur'an onu insanın apaçık düşmanı olarak niteler ve adımlarına uymamayı emreder.",
+  "parentSlug": null,
+  "roots": [
+    "$Tn"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "dalalet",
+      "type": "cause",
+      "weight": 3
+    },
+    {
+      "target": "takva",
+      "type": "contrast",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

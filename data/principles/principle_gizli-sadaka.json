@@ -1,0 +1,33 @@
+{
+  "slug": "gizli-sadaka",
+  "nameTr": "Gizli Sadaka",
+  "nameAr": "صدقة السر",
+  "rootLatin": null,
+  "definition": "Vermeyi gizlemek; alanın onurunu korumak.",
+  "explanation": "2:271 açıktan vermenin güzel olduğunu söyler ama gizleyip fakirlere vermenin daha hayırlı olduğunu ve günahlardan bir kısmını örteceğini bildirir. 2:274 gece gündüz, gizli ve açık harcayanların karşılığını Rableri katında bulacağını söyler.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 52,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "2:271",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:274",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "infak",
+    "ihsan",
+    "tevazu-kavram"
+  ]
+}

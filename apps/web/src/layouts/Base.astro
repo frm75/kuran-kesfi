@@ -120,12 +120,12 @@ const canonical = absoluteUrl(path);
     {
       !bareHeader && (
         <div class="site-header">
-          <div class="mx-auto flex max-w-wide flex-wrap items-baseline gap-x-6 gap-y-2 px-4">
+          <div class="site-header-in">
             <a href="/" class="site-name">
               <img
                 src="/brand/logo-48.webp"
-                width="30"
-                height="30"
+                width="34"
+                height="34"
                 alt=""
                 aria-hidden="true"
                 class="site-mark"
@@ -136,8 +136,23 @@ const canonical = absoluteUrl(path);
               <a href="/sureler" aria-current={isCurrent("/sureler") ? "page" : undefined}>
                 Sureler
               </a>
+              <a href="/kissalar" aria-current={isCurrent("/kissalar") ? "page" : undefined}>
+                Kıssalar
+              </a>
+              <a href="/zaman" aria-current={isCurrent("/zaman") ? "page" : undefined}>
+                Zaman
+              </a>
+              <a href="/kavramlar" aria-current={isCurrent("/kavramlar") ? "page" : undefined}>
+                Kavramlar
+              </a>
               <a href="/kok" aria-current={isCurrent("/kok") ? "page" : undefined}>
                 Kökler
+              </a>
+              <a href="/ilkeler" aria-current={isCurrent("/ilkeler") ? "page" : undefined}>
+                İlkeler
+              </a>
+              <a href="/harita" aria-current={isCurrent("/harita") ? "page" : undefined}>
+                Harita
               </a>
               <a href="/kaynaklar" aria-current={isCurrent("/kaynaklar") ? "page" : undefined}>
                 Kaynaklar

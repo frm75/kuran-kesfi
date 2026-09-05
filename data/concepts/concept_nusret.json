@@ -1,0 +1,26 @@
+{
+  "slug": "nusret",
+  "nameTr": "Yardım (nusret)",
+  "nameAr": "النصر",
+  "definition": "Zafer ve destek. Kur'an yardımın yalnız Allah'tan olduğunu, ancak insanın da 'Allah'a yardım etmesi' istendiğini bildirir.",
+  "parentSlug": null,
+  "roots": [
+    "nSr"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "tevekkul",
+      "type": "co_occurrence",
+      "weight": 2
+    },
+    {
+      "target": "sabir",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

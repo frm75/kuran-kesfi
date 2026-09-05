@@ -1,0 +1,26 @@
+{
+  "slug": "mesel",
+  "nameTr": "Mesel (örnek)",
+  "nameAr": "المثل",
+  "definition": "Soyut olanı somutla anlatan benzetme. Kur'an örümcek ağından ışığa, ölü topraktan iki bahçe sahibine kadar meselleri düşünmek için verdiğini söyler.",
+  "parentSlug": null,
+  "roots": [
+    "mvl"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "hikmet",
+      "type": "co_occurrence",
+      "weight": 2
+    },
+    {
+      "target": "ayet",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

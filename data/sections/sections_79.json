@@ -1,0 +1,55 @@
+{
+  "surahId": 79,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Yeminler",
+      "verseStart": 1,
+      "verseEnd": 5,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Sarsıntı günü ve dirilişe itiraz",
+      "verseStart": 6,
+      "verseEnd": 14,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Mûsâ ve Firavun",
+      "verseStart": 15,
+      "verseEnd": 26,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Göğün ve yerin düzenlenişi",
+      "verseStart": 27,
+      "verseEnd": 33,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "En büyük felaket: iki yol",
+      "verseStart": 34,
+      "verseEnd": 41,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Kıyametin vakti",
+      "verseStart": 42,
+      "verseEnd": 46,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

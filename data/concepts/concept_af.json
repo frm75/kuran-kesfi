@@ -1,0 +1,26 @@
+{
+  "slug": "af",
+  "nameTr": "Af",
+  "nameAr": "العفو",
+  "definition": "Kendine yapılan haksızlığı karşılıksız bağışlamak; cezalandırma hakkından vazgeçmek.",
+  "parentSlug": null,
+  "roots": [
+    "Efw"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "magfiret",
+      "type": "co_occurrence",
+      "weight": 2
+    },
+    {
+      "target": "rahmet",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

@@ -1,0 +1,21 @@
+{
+  "slug": "hamd",
+  "nameTr": "Hamd",
+  "nameAr": "الحمد",
+  "definition": "Övgü ve şükrü birlikte içeren yüceltme; Fâtiha bu kelimeyle başlar.",
+  "parentSlug": null,
+  "roots": [
+    "Hmd"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "sukur",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

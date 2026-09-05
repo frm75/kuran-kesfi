@@ -1,0 +1,45 @@
+{
+  "slug": "hz-eyyub",
+  "title": "Hz. Eyyûb",
+  "type": "prophet",
+  "chronologicalOrder": 13,
+  "eraStart": null,
+  "eraEnd": null,
+  "summary": "Sabrın sembolü peygamber. Ağır hastalık ve kayıplar karşısında Rabbine 'şeytan bana bir yorgunluk ve azap dokundurdu' diye yakarır; ayağını yere vurarak çıkardığı suyla şifa bulur, ailesi ve nimetleri kendisine geri verilir. Kur'an hastalığının ayrıntısını vermez.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-yakub"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Yakarış ve şifa",
+      "ref": "21:83-84",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Ayağını yere vurması ve yemini",
+      "ref": "38:41-44",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Eyyûb, Kur'an'da 'sabırlı bulduk, ne güzel kul' övgüsüyle anılır; sabrın ölçüsü olarak gösterilir.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "EYYÛB maddesi — islamansiklopedisi.org.tr/eyyub",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [],
+  "concepts": [
+    "sabir",
+    "imtihan",
+    "dua",
+    "rahmet"
+  ]
+}

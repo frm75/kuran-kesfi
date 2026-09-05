@@ -1,0 +1,47 @@
+{
+  "surahId": 31,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Hikmetli kitap; boş sözle saptıranlar ve yaratılış",
+      "verseStart": 1,
+      "verseEnd": 11,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Lokmân'ın oğluna öğütleri",
+      "verseStart": 12,
+      "verseEnd": 19,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Hizmete verilenler ve atalara uyma",
+      "verseStart": 20,
+      "verseEnd": 24,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Allah'ın kelimeleri tükenmez; gece ve gündüz",
+      "verseStart": 25,
+      "verseEnd": 30,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Gemiler ve kıyametin bilgisi",
+      "verseStart": 31,
+      "verseEnd": 34,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

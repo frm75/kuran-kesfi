@@ -1,0 +1,26 @@
+{
+  "slug": "husran",
+  "nameTr": "Hüsran",
+  "nameAr": "الخسران",
+  "definition": "Ziyana uğramak, sermayeyi kaybetmek. Asr suresinde insanın asıl kaybının iman ve salih amelsizlik olduğu bildirilir.",
+  "parentSlug": null,
+  "roots": [
+    "xsr"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "kurtulus",
+      "type": "contrast",
+      "weight": 3
+    },
+    {
+      "target": "amel",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

@@ -1,0 +1,183 @@
+{
+  "surahId": 4,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Tek nefisten yaratılış ve yetim malları",
+      "verseStart": 1,
+      "verseEnd": 10,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Miras payları",
+      "verseStart": 11,
+      "verseEnd": 14,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Fuhuş cezası, tövbe ve kadın hakları",
+      "verseStart": 15,
+      "verseEnd": 22,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Evlenilmesi haram olanlar",
+      "verseStart": 23,
+      "verseEnd": 28,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Malı batılla yemeyin; erkek ve kadın; aranın açılması",
+      "verseStart": 29,
+      "verseEnd": 35,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Ana babaya iyilik; cimrilik, gösteriş ve şahitlik günü",
+      "verseStart": 36,
+      "verseEnd": 42,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Namaz ve temizlik; kelimeleri yerinden oynatanlar",
+      "verseStart": 43,
+      "verseEnd": 46,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Kitap ehline uyarı; şirkin bağışlanmaması",
+      "verseStart": 47,
+      "verseEnd": 57,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 9,
+      "title": "Emanetleri ehline verin; itaat ve hakemliğe razı olmak",
+      "verseStart": 58,
+      "verseEnd": 70,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 10,
+      "title": "Savaş, münafıkların tutumu; iyilik ve kötülük",
+      "verseStart": 71,
+      "verseEnd": 84,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 11,
+      "title": "Selamı almak; münafıklar hakkında ikiye ayrılmak",
+      "verseStart": 85,
+      "verseEnd": 91,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 12,
+      "title": "Bir mü'minin öldürülmesi",
+      "verseStart": 92,
+      "verseEnd": 94,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 13,
+      "title": "Oturanlar ve cihad edenler; hicret",
+      "verseStart": 95,
+      "verseEnd": 100,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 14,
+      "title": "Sefer ve korku namazı",
+      "verseStart": 101,
+      "verseEnd": 104,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 15,
+      "title": "Hainleri savunma; gizli fısıldaşmalar",
+      "verseStart": 105,
+      "verseEnd": 115,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 16,
+      "title": "Şirkin bağışlanmaması; şeytanın vaadi ve kuruntular",
+      "verseStart": 116,
+      "verseEnd": 126,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 17,
+      "title": "Kadınlar hakkında fetva ve adalet",
+      "verseStart": 127,
+      "verseEnd": 134,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 18,
+      "title": "Adaletle şahitlik; kâfirleri dost edinenler",
+      "verseStart": 135,
+      "verseEnd": 141,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 19,
+      "title": "Münafıkların bocalaması ve en aşağı tabaka",
+      "verseStart": 142,
+      "verseEnd": 152,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 20,
+      "title": "Kitap ehlinin istekleri ve yaptıkları",
+      "verseStart": 153,
+      "verseEnd": 162,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 21,
+      "title": "Peygamberlere vahiy ve şahitlik",
+      "verseStart": 163,
+      "verseEnd": 170,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 22,
+      "title": "\"Dininizde sınırları aşmayın\"; kelâle hükmü",
+      "verseStart": 171,
+      "verseEnd": 176,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

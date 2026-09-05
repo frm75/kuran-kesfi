@@ -1,0 +1,26 @@
+{
+  "slug": "zekat",
+  "nameTr": "Zekât",
+  "nameAr": "الزكاة",
+  "definition": "Maldan belirli oranda verilen zorunlu pay; kök anlamı 'arınma ve artma'dır.",
+  "parentSlug": null,
+  "roots": [
+    "zkw"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "namaz",
+      "type": "co_occurrence",
+      "weight": 3
+    },
+    {
+      "target": "infak",
+      "type": "part_of",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

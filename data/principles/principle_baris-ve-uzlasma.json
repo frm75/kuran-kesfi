@@ -1,0 +1,63 @@
+{
+  "slug": "baris-ve-uzlasma",
+  "nameTr": "Barış ve Uzlaşma (Sulh)",
+  "nameAr": "الصلح",
+  "rootLatin": null,
+  "definition": "Anlaşmazlıkta adil bir çözüme yönelmek, çatışan tarafların arasını düzeltmek, barış teklifini geri çevirmemek.",
+  "explanation": "Hucurât 49:9-10 çatışan müminlerin arasını adaletle düzeltmeyi emreder ve müminleri kardeş ilan eder; Enfâl 8:61 'barışa yanaşırlarsa sen de yanaş' der; Nisâ 4:128 eşler arasında sulhu 'daha hayırlı' sayar; 4:114 insanların arasını düzeltmeyi hayırlı söz sayar. Hudeybiye barışı (48:1) Kur'an'ın barışı 'fetih' saymasının örneğidir.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 27,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "49:9-10",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "8:61",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "4:114",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "4:128",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "2:224",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "42:40",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "48:1",
+      "role": "secondary",
+      "note": "Hudeybiye: apaçık fetih"
+    }
+  ],
+  "stories": [
+    {
+      "slug": "asr-i-saadet",
+      "note": "Hudeybiye antlaşması"
+    }
+  ],
+  "concepts": [
+    "islam",
+    "adalet",
+    "af"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "slug": "hz-elyesa",
+  "title": "Hz. Elyesa'",
+  "type": "prophet",
+  "chronologicalOrder": 22,
+  "eraStart": "M.Ö. 9. yüzyıl (yaklaşık)",
+  "eraEnd": null,
+  "summary": "Kur'an'da iki yerde adı geçen peygamber; 'hayırlılardan' olarak anılır. Kıssası yoktur; İlyâs'ın ardından İsrailoğulları'na gönderildiği bilgisi tarih kaynaklarındandır.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-ilyas"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Peygamberler arasında",
+      "ref": "6:83-87",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Hayırlılardan",
+      "ref": "38:45-48",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Elyesa' hakkında Kur'an ayrıntı vermez; Kitâb-ı Mukaddes'teki Elişa ile aynı kişi olduğu görüşü yaygındır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "ELYESA' maddesi — islamansiklopedisi.org.tr/elyesa",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [],
+  "concepts": [
+    "nubuvvet"
+  ]
+}

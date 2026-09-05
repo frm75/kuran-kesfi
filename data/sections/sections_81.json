@@ -1,0 +1,31 @@
+{
+  "surahId": 81,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Kıyamet sahneleri",
+      "verseStart": 1,
+      "verseEnd": 14,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Yemin ve vahyin değeri",
+      "verseStart": 15,
+      "verseEnd": 21,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Peygamber deli değildir; Kur'an bir öğüttür",
+      "verseStart": 22,
+      "verseEnd": 29,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

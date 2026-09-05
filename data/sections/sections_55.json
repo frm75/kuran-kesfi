@@ -1,0 +1,55 @@
+{
+  "surahId": 55,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Rahmân'ın öğretmesi, ölçü ve yeryüzü nimetleri",
+      "verseStart": 1,
+      "verseEnd": 13,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "İnsan ve cinnin yaratılışı; iki deniz ve gemiler",
+      "verseStart": 14,
+      "verseEnd": 25,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Her şey yok olur, Rabbin bâki kalır",
+      "verseStart": 26,
+      "verseEnd": 32,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Cin ve insana meydan okuma; suçluların hâli",
+      "verseStart": 33,
+      "verseEnd": 45,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "İlk iki cennet",
+      "verseStart": 46,
+      "verseEnd": 61,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Diğer iki cennet ve kapanış",
+      "verseStart": 62,
+      "verseEnd": 78,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

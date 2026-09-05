@@ -1,0 +1,47 @@
+{
+  "slug": "ilim-ogrenme",
+  "nameTr": "İlim Öğrenme",
+  "nameAr": "طلب العلم",
+  "rootLatin": null,
+  "definition": "Bilgiyi aramak ve öğrendiğiyle amel etmek; bilmediğini bilmek.",
+  "explanation": "İlk vahiy 'Oku!' emriyle başlar (96:1-5). Peygambere emredilen tek artırma duası ilimledir: 'Rabbim, ilmimi artır' (20:114). 'Hiç bilenlerle bilmeyenler bir olur mu?' (39:9) sorusu ölçüyü koyar; 58:11 ilim verilenlerin derecelerinin yükseltildiğini bildirir. 35:28 ise korkunun bilgiyle derinleştiğini söyler.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 33,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "96:1-5",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "20:114",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "39:9",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "58:11",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "35:28",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "ilim",
+    "hikmet"
+  ]
+}

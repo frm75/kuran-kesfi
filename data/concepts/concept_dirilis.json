@@ -1,0 +1,22 @@
+{
+  "slug": "dirilis",
+  "nameTr": "Diriliş",
+  "nameAr": "البعث",
+  "definition": "Öldükten sonra tekrar diriltilme; kıyametin ana konusu.",
+  "parentSlug": null,
+  "roots": [
+    "bEv",
+    "H$r"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "ahiret",
+      "type": "part_of",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

@@ -1,0 +1,42 @@
+{
+  "slug": "belkis",
+  "title": "Belkıs — Sebe Melikesi",
+  "type": "person",
+  "chronologicalOrder": 39,
+  "eraStart": null,
+  "eraEnd": null,
+  "summary": "Hüdhüd'ün haber getirdiği, Süleyman'ın mektubunu alan ve danışarak karar veren melike. Kıssa, hediyeyle sınama ve köşkte teslim oluşla biter.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-suleyman",
+    "sebe"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Hüdhüd'ün haberi ve mektup",
+      "ref": "27:22-28",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Melikenin istişaresi ve hediye",
+      "ref": "27:29-37",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Tahtın getirilişi ve teslimiyet",
+      "ref": "27:38-44",
+      "note": null
+    }
+  ],
+  "lessons": [],
+  "locations": [],
+  "concepts": [
+    "mulk",
+    "hikmet",
+    "tevhid",
+    "ilim"
+  ]
+}

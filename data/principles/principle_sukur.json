@@ -1,0 +1,66 @@
+{
+  "slug": "sukur",
+  "nameTr": "Şükür",
+  "nameAr": "الشكر",
+  "rootLatin": "$kr",
+  "definition": "Nimeti verenin Allah olduğunu bilmek, dille ikrar etmek ve nimeti yerinde kullanmak. Nankörlüğün (küfrân) karşıtıdır.",
+  "explanation": "'Bana şükredin, nankörlük etmeyin' (2:152) ve 'şükrederseniz artırırım' (14:7) ilkenin merkezidir. Süleyman'ın karınca vadisindeki duası (27:19) ve Lokmân'a verilen hikmetin şükürle başlaması (31:12) şükrü davranışa bağlar. Tefsirler şükrü kalp, dil ve organ olmak üzere üç düzeyde işler.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 3,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "2:152",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "31:12",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "16:114",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "14:7",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "27:40",
+      "role": "secondary",
+      "note": "Süleyman: şükür-nankörlük imtihanı"
+    },
+    {
+      "ref": "34:13",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "39:66",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [
+    {
+      "slug": "hz-suleyman",
+      "note": "Karınca vadisinde şükür duası (27:19)"
+    },
+    {
+      "slug": "sebe",
+      "note": "Nankörlüğün sonucu (34:17)"
+    }
+  ],
+  "concepts": [
+    "sukur",
+    "nimet"
+  ]
+}

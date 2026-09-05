@@ -1,0 +1,39 @@
+{
+  "surahId": 58,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Zıhâr ve kefareti",
+      "verseStart": 1,
+      "verseEnd": 4,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Allah'a düşmanlık ve O'nun her yerdeki bilgisi",
+      "verseStart": 5,
+      "verseEnd": 7,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Gizli konuşma âdâbı ve meclislerde yer açmak",
+      "verseStart": 8,
+      "verseEnd": 13,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Gazaba uğrayanları dost edinenler; Allah'ın topluluğu",
+      "verseStart": 14,
+      "verseEnd": 22,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

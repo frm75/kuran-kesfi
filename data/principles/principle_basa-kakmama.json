@@ -1,0 +1,43 @@
+{
+  "slug": "basa-kakmama",
+  "nameTr": "Verdiğini Başa Kakmama",
+  "nameAr": "ترك المن والأذى",
+  "rootLatin": null,
+  "definition": "Yardımın ardından minnet ve incitme getirmemek.",
+  "explanation": "2:262 infakın peşinden başa kakma ve eziyet gelmemesini şart koşar. 2:263 güzel bir sözün, ardından gönül kırma gelen sadakadan hayırlı olduğunu söyler. 2:264 gösteriş için verilen malı üzerindeki toprak yağmurla giden kayaya benzetir. 4:38 gösteriş için harcayanları eleştirir.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 51,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "2:262",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:264",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:263",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "4:38",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "infak",
+    "ihsan",
+    "kibir"
+  ]
+}

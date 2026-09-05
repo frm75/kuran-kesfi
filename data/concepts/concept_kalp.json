@@ -1,0 +1,21 @@
+{
+  "slug": "kalp",
+  "nameTr": "Kalp",
+  "nameAr": "القلب",
+  "definition": "Kur'an'da anlama, inanma ve yönelmenin merkezi; mühürlenmesi, katılaşması ve huzur bulması hep kalbe nispet edilir.",
+  "parentSlug": null,
+  "roots": [
+    "qlb"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "iman",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

@@ -1,0 +1,47 @@
+{
+  "surahId": 67,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Hükümranlık, ölüm-hayat imtihanı ve kusursuz gökler",
+      "verseStart": 1,
+      "verseEnd": 5,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Cehennem ve uyarıcıyı yalanlayanların itirafı",
+      "verseStart": 6,
+      "verseEnd": 12,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Allah gizliyi bilir; yeryüzünde yürüyün",
+      "verseStart": 13,
+      "verseEnd": 15,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Göktekinden emin misiniz? Kuşlar, ordu ve rızık",
+      "verseStart": 16,
+      "verseEnd": 21,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "De ki: sorular ve son uyarı",
+      "verseStart": 22,
+      "verseEnd": 30,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

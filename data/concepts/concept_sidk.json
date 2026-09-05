@@ -1,0 +1,21 @@
+{
+  "slug": "sidk",
+  "nameTr": "Sıdk (Doğruluk)",
+  "nameAr": "الصدق",
+  "definition": "Sözde, niyette ve davranışta gerçeğe uygun olmak.",
+  "parentSlug": null,
+  "roots": [
+    "Sdq"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "yalan",
+      "type": "contrast",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

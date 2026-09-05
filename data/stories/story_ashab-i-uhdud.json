@@ -1,0 +1,44 @@
+{
+  "slug": "ashab-i-uhdud",
+  "title": "Ashâb-ı Uhdûd",
+  "type": "event",
+  "chronologicalOrder": 31,
+  "eraStart": "M.S. 6. yüzyıl (rivayet)",
+  "eraEnd": null,
+  "summary": "Bürûc suresinde, ateş dolu hendekler kazıp müminleri içine atan ve başında oturup seyreden zorbalar. Müminlerin tek 'suçu' Allah'a inanmalarıdır. Kur'an yer vermez; tefsirler Yemen'deki Necran Hristiyanlarının Zû Nüvâs tarafından yakılmasına bağlar.",
+  "coverImage": null,
+  "relatedStories": [
+    "ashab-i-kehf"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Hendek ve ateş",
+      "ref": "85:1-9",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Zulmün karşılığı",
+      "ref": "85:10-11",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Ashâb-ı Uhdûd, imanı uğruna işkenceye katlananların örneği olarak ele alınır; olayın yeri ve failleri hakkında rivayetler farklıdır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "ASHÂB-ı UHDÛD maddesi — islamansiklopedisi.org.tr/ashab-i-uhdud",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [],
+  "concepts": [
+    "iman",
+    "zulum",
+    "sabir"
+  ]
+}

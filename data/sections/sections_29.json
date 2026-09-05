@@ -1,0 +1,79 @@
+{
+  "surahId": 29,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "İmtihan; ana babaya iyilik; yüklerini taşıyanlar",
+      "verseStart": 1,
+      "verseEnd": 13,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Nûh, İbrâhim ve Lût",
+      "verseStart": 14,
+      "verseEnd": 27,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Lût kavminin helâki",
+      "verseStart": 28,
+      "verseEnd": 35,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Şu'ayb, Âd, Semûd, Kārûn, Firavun ve Hâmân",
+      "verseStart": 36,
+      "verseEnd": 40,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Örümcek ağı meseli",
+      "verseStart": 41,
+      "verseEnd": 44,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Kitabı oku, namazı kıl; Kitap ehliyle en güzel tartışma",
+      "verseStart": 45,
+      "verseEnd": 49,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Mucize isteği ve azabın acele istenmesi",
+      "verseStart": 50,
+      "verseEnd": 55,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "\"Arzım geniştir\"; her can ölümü tadacak; rızık",
+      "verseStart": 56,
+      "verseEnd": 63,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 9,
+      "title": "Dünya hayatı oyun ve eğlencedir; cihad edenler",
+      "verseStart": 64,
+      "verseEnd": 69,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

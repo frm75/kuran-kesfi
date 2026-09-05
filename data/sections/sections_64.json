@@ -1,0 +1,39 @@
+{
+  "surahId": 64,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Yaratılış, Allah'ın bilgisi ve geçmiş kavimler",
+      "verseStart": 1,
+      "verseEnd": 6,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Diriltilme ve aldanışın ortaya çıkacağı gün",
+      "verseStart": 7,
+      "verseEnd": 10,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Musibet Allah'ın izniyledir; itaat",
+      "verseStart": 11,
+      "verseEnd": 13,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Eş ve çocuklar imtihandır; Allah'a güzel borç",
+      "verseStart": 14,
+      "verseEnd": 18,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

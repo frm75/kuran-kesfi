@@ -1,6 +1,5 @@
 ---
 import Base from "~/layouts/Base.astro";
-import SourceBadge from "~/components/SourceBadge.astro";
 import { getAuthorsIndex, getSources, getSurahsIndex } from "~/lib/data";
 
 /**
@@ -28,10 +27,7 @@ const incomplete = authors.filter((a) => a.missingSurahs.length > 0 || a.missing
 
 const sourceBySlug = new Map(sources.map((s) => [s.slug, s]));
 
-// Rozet örnekleri için gerçek bir kaynak; sources.json boşsa build durur
-// (kaynaksız rozet zaten <SourceBadge> tarafından reddedilir).
-const sampleSource = sources[0];
-if (sampleSource === undefined) {
+if (sources.length === 0) {
   throw new Error("sources.json bos: Kaynak Seffafligi sayfasi uretilmez.");
 }
 ---
@@ -40,17 +36,25 @@ if (sampleSource === undefined) {
   title="Kaynak Şeffaflığı — Kur'an-ı Kerim Keşfi"
   description="Sitedeki her metnin kaynağı, hazırlayanı ve lisansı. Kaynak taraflı eksikler dahil."
 >
-  <main id="icerik" class="mx-auto max-w-normal px-4 py-8">
-    <nav aria-label="Konum" class="text-text-secondary mb-6 text-sm">
+  <main id="icerik" class="pg pg-normal">
+    <nav aria-label="Konum" class="pg-crumb">
       <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
       <span aria-current="page">Kaynak Şeffaflığı</span>
     </nav>
 
-    <h1 class="text-accent-text m-0 text-3xl">Kaynak Şeffaflığı</h1>
-    <p class="text-text-secondary mt-2 text-md">
-      Platform kendi editoryal yorumunu üretmez. Buradaki her metin bir kaynaktan
-      gelir; hangisinden geldiği ve hangi lisansla kullanıldığı aşağıdadır.
-    </p>
+    <header class="pg-head">
+      <p class="pg-kicker">Yasal atıf</p>
+      <h1 class="pg-title">Kaynak Şeffaflığı</h1>
+      <p class="pg-lede">
+        Platform kendi editoryal yorumunu üretmez. Buradaki her metin bir kaynaktan
+        gelir; hangisinden geldiği ve hangi lisansla kullanıldığı aşağıdadır.
+      </p>
+      <ul class="fact-row">
+        <li><b>{sources.length}</b><span>kaynak</span></li>
+        <li><b>{turkish.length}</b><span>Türkçe meal</span></li>
+        <li><b>{english.length}</b><span>İngilizce çeviri</span></li>
+      </ul>
+    </header>
 
     <section class="mt-10">
       <h2 class="text-xl">Kaynaklar</h2>
@@ -78,27 +82,6 @@ if (sampleSource === undefined) {
           ))
         }
       </ul>
-    </section>
-
-    <section class="mt-12">
-      <h2 class="text-xl">İçerik sınıfları</h2>
-      <p class="text-text-secondary mt-2 text-sm">
-        Kaynaklı hiçbir içerik bu rozetler olmadan gösterilmez. Renk körlüğünde ve
-        gri baskıda ayrışsınlar diye kenarlık biçimi ve metin de değişir.
-      </p>
-      <div class="mt-4 flex flex-wrap gap-3">
-        <SourceBadge
-          contentClass="kaynakli"
-          sources={[sampleSource]}
-          label="Kaynaklı bilgi örneği"
-        />
-        <SourceBadge
-          contentClass="alternatif"
-          sources={[sampleSource]}
-          label="Alternatif görüş örneği"
-        />
-        <SourceBadge contentClass="platform" label="Platform verisi örneği" />
-      </div>
     </section>
 
     <section class="mt-12">

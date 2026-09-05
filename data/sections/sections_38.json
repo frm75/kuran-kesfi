@@ -1,0 +1,87 @@
+{
+  "surahId": 38,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Kur'an'a yemin; inkâr edenlerin büyüklenmesi",
+      "verseStart": 1,
+      "verseEnd": 11,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Helâk edilen topluluklar ve acele istenen azap",
+      "verseStart": 12,
+      "verseEnd": 16,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Dâvûd: dağların tesbihi ve iki davacı",
+      "verseStart": 17,
+      "verseEnd": 29,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Süleymân",
+      "verseStart": 30,
+      "verseEnd": 40,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Eyyûb",
+      "verseStart": 41,
+      "verseEnd": 44,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "İbrâhim, İshâk, Ya'kūb; İsmâil, el-Yesa' ve Zülkifl",
+      "verseStart": 45,
+      "verseEnd": 49,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Sakınanların cenneti ve azgınların çekişmesi",
+      "verseStart": 50,
+      "verseEnd": 64,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "De ki: ben ancak bir uyarıcıyım",
+      "verseStart": 65,
+      "verseEnd": 70,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 9,
+      "title": "Âdem'in yaratılışı ve İblîs",
+      "verseStart": 71,
+      "verseEnd": 85,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 10,
+      "title": "Kapanış: bundan dolayı sizden bir ücret istemiyorum",
+      "verseStart": 86,
+      "verseEnd": 88,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

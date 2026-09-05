@@ -1,0 +1,31 @@
+{
+  "surahId": 100,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Koşan atlara yemin",
+      "verseStart": 1,
+      "verseEnd": 6,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "İnsanın nankörlüğü ve mal sevgisi",
+      "verseStart": 7,
+      "verseEnd": 8,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Kabirdekilerin çıkarılması ve o günkü haber",
+      "verseStart": 9,
+      "verseEnd": 11,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

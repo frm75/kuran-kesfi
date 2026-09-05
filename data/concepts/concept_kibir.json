@@ -1,0 +1,21 @@
+{
+  "slug": "kibir",
+  "nameTr": "Kibir",
+  "nameAr": "الكبر",
+  "definition": "Kendini büyük görmek, gerçeği kabulden büyüklenerek kaçınmak. İblis'in secde etmeyişi Kur'an'da kibrin ilk örneğidir.",
+  "parentSlug": null,
+  "roots": [
+    "kbr"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "tevazu-kavram",
+      "type": "contrast",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

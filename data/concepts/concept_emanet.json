@@ -1,0 +1,26 @@
+{
+  "slug": "emanet",
+  "nameTr": "Emanet",
+  "nameAr": "الأمانة",
+  "definition": "Kendine bırakılanı koruyup sahibine ulaştırmak. Kökü imanla ortaktır: güven vermek ve güvenilir olmak.",
+  "parentSlug": null,
+  "roots": [
+    "Amn"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "iman",
+      "type": "part_of",
+      "weight": 2
+    },
+    {
+      "target": "sidk",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

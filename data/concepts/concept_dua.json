@@ -1,0 +1,26 @@
+{
+  "slug": "dua",
+  "nameTr": "Dua",
+  "nameAr": "الدعاء",
+  "definition": "Allah'a yakarmak, O'ndan istemek; aynı kök 'çağırmak, davet etmek' anlamını da taşır.",
+  "parentSlug": null,
+  "roots": [
+    "dEw"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "zikir",
+      "type": "co_occurrence",
+      "weight": 2
+    },
+    {
+      "target": "umut",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

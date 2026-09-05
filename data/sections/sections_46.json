@@ -1,0 +1,47 @@
+{
+  "surahId": 46,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Yaratılış hak iledir; \"taptıklarınızı gördünüz mü?\"",
+      "verseStart": 1,
+      "verseEnd": 11,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Mûsâ'nın kitabı ve dosdoğru olanlar",
+      "verseStart": 12,
+      "verseEnd": 14,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Anne babaya iyilik ve iki tip evlat",
+      "verseStart": 15,
+      "verseEnd": 20,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Âd kavmi ve Ahkāf",
+      "verseStart": 21,
+      "verseEnd": 28,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Cinlerin Kur'an'ı dinlemesi; azim sahipleri gibi sabret",
+      "verseStart": 29,
+      "verseEnd": 35,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

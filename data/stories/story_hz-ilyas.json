@@ -1,0 +1,43 @@
+{
+  "slug": "hz-ilyas",
+  "title": "Hz. İlyâs",
+  "type": "prophet",
+  "chronologicalOrder": 21,
+  "eraStart": "M.Ö. 9. yüzyıl (yaklaşık)",
+  "eraEnd": null,
+  "summary": "Kavmini Ba'l putuna tapmaktan vazgeçirmeye çağıran peygamber; kavmi onu yalanlar. Kur'an onu salihler arasında anar ve selâmla yâd eder.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-elyesa"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Ba'l'e çağrı ve kavminin tutumu",
+      "ref": "37:123-132",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Salihlerden",
+      "ref": "6:85",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "İlyâs kıssası Kur'an'da kısa tutulur; İsrailoğulları peygamberlerinin tevhid davetinin sürekliliğine örnek gösterilir.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "İLYÂS maddesi — islamansiklopedisi.org.tr/ilyas",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [],
+  "concepts": [
+    "tevhid",
+    "sirk"
+  ]
+}

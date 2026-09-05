@@ -1,0 +1,42 @@
+{
+  "slug": "giybetten-kacinma",
+  "nameTr": "Gıybetten Kaçınma",
+  "nameAr": "اجتناب الغيبة",
+  "rootLatin": null,
+  "definition": "Bir kimseyi arkasından, hoşlanmayacağı şekilde anmamak; kusurlarını yaymamak.",
+  "explanation": "Hucurât 49:12 'birbirinizin gıybetini yapmayın' der ve bunu 'ölü kardeşinin etini yemeye' benzetir; ilkenin doğrudan dayanağı bu ayettir. Hümeze 104:1 arkadan çekiştireni kınar; Kalem 68:11 'laf götürüp getiren'i olumsuz sıfat olarak sayar. DİA 'GIYBET' maddesi hadislerdeki tanım ve istisnaları aktarır.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 20,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "49:12",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "104:1",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "68:11",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "49:11",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "yalan",
+    "zulum"
+  ]
+}

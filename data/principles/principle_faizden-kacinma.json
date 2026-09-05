@@ -1,0 +1,48 @@
+{
+  "slug": "faizden-kacinma",
+  "nameTr": "Faizden Kaçınma",
+  "nameAr": "اجتناب الربا",
+  "rootLatin": null,
+  "definition": "Borç üzerinden karşılıksız artış almaktan uzak durmak.",
+  "explanation": "2:275 faizle alışverişi ayırır. 2:276 faizin bereketini yok ettiğini, sadakanın ise artırdığını bildirir. 2:278-279 iman edenlerden kalan faizi bırakmalarını ister ve aksi hâlde savaş açılmış sayılacağını söyler; ancak anaparanın kaldığını da belirtir. 3:130 kat kat faizi yasaklar; 30:39 faizle verilenin Allah katında artmadığını söyler.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 43,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "2:275",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:278",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "3:130",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:276",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "30:39",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "zulum",
+    "infak",
+    "rizik"
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "surahId": 28,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Firavun'un zulmü; Mûsâ'nın doğumu ve annesine dönüşü",
+      "verseStart": 1,
+      "verseEnd": 13,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Mûsâ'nın adam öldürmesi ve kaçışı",
+      "verseStart": 14,
+      "verseEnd": 21,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Medyen ve Şu'ayb'ın kızları",
+      "verseStart": 22,
+      "verseEnd": 28,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Tûr'daki çağrı ve Firavun'un helâki",
+      "verseStart": 29,
+      "verseEnd": 42,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Mûsâ'ya verilen Kitap ve \"iki sihir\" iddiası",
+      "verseStart": 43,
+      "verseEnd": 50,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Kitap ehlinden iman edenler; hidayet Allah'tandır",
+      "verseStart": 51,
+      "verseEnd": 56,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Güvenli harem, dünya metaı ve mahşerdeki sorgu",
+      "verseStart": 57,
+      "verseEnd": 67,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Rabbin dilediğini seçer; gece ve gündüz",
+      "verseStart": 68,
+      "verseEnd": 75,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 9,
+      "title": "Kārûn",
+      "verseStart": 76,
+      "verseEnd": 84,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 10,
+      "title": "\"Kur'an'ı sana farz kılan seni döndürecektir\"",
+      "verseStart": 85,
+      "verseEnd": 88,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

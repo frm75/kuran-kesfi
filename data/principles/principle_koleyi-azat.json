@@ -1,0 +1,42 @@
+{
+  "slug": "koleyi-azat",
+  "nameTr": "Boyunduruğu Çözmek",
+  "nameAr": "تحرير الرقبة",
+  "rootLatin": null,
+  "definition": "Esaret altındakinin özgürlüğüne kavuşturulması; Kur'an'ın birçok kefarette ilk sıraya koyduğu çözüm.",
+  "explanation": "90:12-13 sarp yokuşu 'tutsak bir boynu çözmek' diye tanımlar. Kur'an bunu yanlışlıkla adam öldürmenin (4:92) ve zıhârın (58:3) kefaretinde ilk seçenek yapar. 24:33 ise özgürlük bedelini ödemek isteyen köleyle sözleşme yapılmasını ve Allah'ın verdiği maldan onlara verilmesini emreder.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 36,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "90:13",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "4:92",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "58:3",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "24:33",
+      "role": "secondary",
+      "note": "Mükâtebe"
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "birr",
+    "adalet"
+  ]
+}

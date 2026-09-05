@@ -17,8 +17,27 @@
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { extname, join, relative } from "node:path";
 import {
+  conceptInput,
+  contentSourcesFile,
+  locationsFile,
+  noldekeOrderFile,
   parseVerseRef,
+  principleInput,
   staticAuthorsIndex,
+  staticConcept,
+  staticConceptsIndex,
+  staticLocations,
+  staticPrinciple,
+  staticPrinciplesIndex,
+  staticStoriesIndex,
+  staticStory,
+  staticTimeline,
+  staticVerseLinks,
+  staticVerseRelations,
+  staticSurahSections,
+  storyInput,
+  surahSectionsFile,
+  timelineFile,
   staticRoot,
   staticRootsIndex,
   staticVerseWords,
@@ -177,6 +196,11 @@ async function checkDatabase(): Promise<void> {
                SELECT 1 FROM story_lesson_source s WHERE s.story_lesson_id = sl.id)`,
     },
     {
+      label: "kavram kaynagi",
+      sql: `SELECT c.slug AS key FROM concept c
+             WHERE NOT EXISTS (SELECT 1 FROM concept_source s WHERE s.concept_id = c.id)`,
+    },
+    {
       label: "zaman cizelgesi kaynagi",
       sql: `SELECT te."order"::text AS key FROM timeline_event te
              WHERE NOT EXISTS (
@@ -291,6 +315,13 @@ function checkStaticOutput(): void {
   /** Kelimelerin gosterdigi kokler ve gercekten var olan kok dosyalari */
   const referencedRoots = new Set<string>();
   const rootFileNames = new Set<string>();
+  /** Icerik katmani: dizin <-> dosya eslesmesi */
+  let storiesIndexSlugs = new Set<string>();
+  const storyFileSlugs = new Set<string>();
+  let principlesIndexSlugs = new Set<string>();
+  const principleFileSlugs = new Set<string>();
+  let conceptsIndexSlugs = new Set<string>();
+  const conceptFileSlugs = new Set<string>();
 
   for (const path of files) {
     const relativePath = relative(dataRoot, path);
@@ -313,17 +344,29 @@ function checkStaticOutput(): void {
     //
     // Istisna genis degil: yalnizca Arap harfleri, en fazla 8 harf. Bosluk,
     // buyuk-kucuk harf karisikligi ya da baska bir alfabe yine reddedilir.
+    //
+    // IKINCI ISTISNA: icerik katmani dosyalari <tur>_<slug>.json bicimindedir
+    // (story_hz-yusuf.json) ve slug TIRE tasir. Plan 20.2'nin "alt cizgi"
+    // kurali dosya adindaki AYIRICI icindir; slug'in kendi ayiricisi tiredir
+    // ve ayni slug adreste de kullanilir (/kissa/hz-yusuf). Slug'i dosya
+    // adinda alt cizgiye cevirmek her okumada bir donusum gerektirirdi ve
+    // ölü baglanti kaynagi olurdu — kok dosyalarindaki gerekcenin aynisi.
     const base = relativePath.split("/").pop() ?? "";
     const isRootFile = relativePath.startsWith("root/");
+    const isContentFile = /^(?:story|principle|concept)\//.test(relativePath);
     checksRun += 1;
     const nameOk = isRootFile
       ? /^[\u0621-\u064A]{1,8}\.json$/.test(base)
-      : /^[a-z0-9_]+\.json$/.test(base);
+      : isContentFile
+        ? /^(?:story|principle|concept)_[a-z0-9]+(?:-[a-z0-9]+)*\.json$/.test(base)
+        : /^[a-z0-9_]+\.json$/.test(base);
     if (!nameOk) {
       errors.push(
         isRootFile
           ? `${relativePath}: kok dosya adi yalnizca Arap harfi olmali (1-8 harf)`
-          : `${relativePath}: dosya adi alt cizgili kucuk harf olmali (plan 20.2)`,
+          : isContentFile
+            ? `${relativePath}: dosya adi <tur>_<slug>.json olmali, slug kebab-case`
+            : `${relativePath}: dosya adi alt cizgili kucuk harf olmali (plan 20.2)`,
       );
     }
 
@@ -509,9 +552,190 @@ function checkStaticOutput(): void {
         if (word.rootArabic !== null) referencedRoots.add(word.rootArabic);
       });
       wordCount += wordData.words.length;
+    } else if (relativePath === "stories_index.json") {
+      const result = staticStoriesIndex.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) errors.push(`${relativePath}: ${result.error.message}`);
+      else storiesIndexSlugs = new Set(result.data.stories.map((x) => x.slug));
+    } else if (relativePath.startsWith("story/")) {
+      const result = staticStory.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) {
+        errors.push(`${relativePath}: ${result.error.message}`);
+        continue;
+      }
+      storyFileSlugs.add(result.data.slug);
+      if (base !== `story_${result.data.slug}.json`) {
+        errors.push(`${relativePath}: dosya adi story_${result.data.slug}.json olmali`);
+      }
+      // Parcalar sirali ve verseCount tutarli olmali
+      const sum = result.data.passages.reduce((a, p) => a + (p.verseEnd - p.verseStart + 1), 0);
+      if (sum !== result.data.verseCount) {
+        errors.push(`${relativePath}: verseCount ${result.data.verseCount} ama parcalar ${sum} ayet kapsiyor`);
+      }
+      result.data.passages.forEach((p, i) => {
+        if (p.order !== i + 1) errors.push(`${relativePath}: parca sirasi kesintili (${p.order})`);
+        if (p.verseEnd < p.verseStart) errors.push(`${relativePath}: parca ${p.order} tersine aralik`);
+      });
+    } else if (relativePath === "locations.json") {
+      const result = staticLocations.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) errors.push(`${relativePath}: ${result.error.message}`);
+    } else if (relativePath === "timeline.json") {
+      const result = staticTimeline.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) errors.push(`${relativePath}: ${result.error.message}`);
+      else {
+        result.data.events.forEach((e, i) => {
+          if (i > 0 && e.order <= (result.data.events[i - 1]?.order ?? 0)) {
+            errors.push(`${relativePath}: olaylar order'a gore sirali degil (${e.order})`);
+          }
+        });
+      }
+    } else if (relativePath === "principles_index.json") {
+      const result = staticPrinciplesIndex.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) errors.push(`${relativePath}: ${result.error.message}`);
+      else principlesIndexSlugs = new Set(result.data.principles.map((x) => x.slug));
+    } else if (relativePath.startsWith("principle/")) {
+      const result = staticPrinciple.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) {
+        errors.push(`${relativePath}: ${result.error.message}`);
+        continue;
+      }
+      principleFileSlugs.add(result.data.slug);
+      if (base !== `principle_${result.data.slug}.json`) {
+        errors.push(`${relativePath}: dosya adi principle_${result.data.slug}.json olmali`);
+      }
+      if (!result.data.verses.some((v) => v.role === "primary")) {
+        errors.push(`${relativePath}: birincil ayet dayanagi yok (plan 18.3)`);
+      }
+    } else if (relativePath === "concepts_index.json") {
+      const result = staticConceptsIndex.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) errors.push(`${relativePath}: ${result.error.message}`);
+      else conceptsIndexSlugs = new Set(result.data.concepts.map((x) => x.slug));
+    } else if (relativePath.startsWith("concept/")) {
+      const result = staticConcept.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) {
+        errors.push(`${relativePath}: ${result.error.message}`);
+        continue;
+      }
+      conceptFileSlugs.add(result.data.slug);
+      if (base !== `concept_${result.data.slug}.json`) {
+        errors.push(`${relativePath}: dosya adi concept_${result.data.slug}.json olmali`);
+      }
+      const st = result.data.stats;
+      if (st.mekki + st.medeni !== st.verseCount || st.verseCount !== result.data.verses.length) {
+        errors.push(`${relativePath}: dagilim istatistigi ayet sayisiyla tutarsiz`);
+      }
+    } else if (relativePath === "verse_links.json") {
+      const result = staticVerseLinks.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) errors.push(`${relativePath}: ${result.error.message}`);
+      else {
+        for (const key of Object.keys(result.data.verses)) {
+          const id = Number(key);
+          const surahId = Math.floor(id / 1000);
+          if (surahId < 1 || surahId > 114 || id % 1000 === 0) {
+            errors.push(`${relativePath}: gecersiz ayet anahtari ${key}`);
+            break;
+          }
+        }
+      }
+    } else if (relativePath === "sections.json") {
+      const result = staticSurahSections.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) errors.push(`${relativePath}: ${result.error.message}`);
+      else {
+        /*
+         * Bitisiklik cikti tarafinda BIR DAHA bakiliyor. Girdi semasi zaten
+         * dogruluyor ama arayuz "bu ayet hangi konuda?" sorusunun her ayette
+         * cevabi olduguna guveniyor; bosluk kalirsa sayfa sessizce basliksiz
+         * kalir, hata vermez. Sessiz bozulma en pahali bozulmadir.
+         */
+        for (const [key, entry] of Object.entries(result.data.surahs)) {
+          const sorted = [...entry.sections].sort((a, b) => a.order - b.order);
+          let expected = 1;
+          let broken = false;
+          for (const [i, section] of sorted.entries()) {
+            if (section.order !== i + 1 || section.verseStart !== expected) {
+              errors.push(
+                `${relativePath}: sure ${key} bolumlemesi ${section.order}. bolumde kopuk ` +
+                  `(${section.verseStart}. ayetten basliyor, ${expected} bekleniyordu)`,
+              );
+              broken = true;
+              break;
+            }
+            expected = section.verseEnd + 1;
+          }
+          if (broken) continue;
+          for (const section of sorted) {
+            const inside = section.alsoVerses.filter(
+              (n) => n >= section.verseStart && n <= section.verseEnd,
+            );
+            if (inside.length > 0) {
+              errors.push(
+                `${relativePath}: sure ${key} bolum ${section.order}: ek ayet ${inside.join(", ")} ` +
+                  "zaten ana aralikta",
+              );
+              break;
+            }
+          }
+        }
+      }
+    } else if (relativePath === "verse_relations.json") {
+      const result = staticVerseRelations.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) errors.push(`${relativePath}: ${result.error.message}`);
+      else {
+        /*
+         * Iki kural veritabani kisitiyla korunuyor ama cikti dosyasi elle de
+         * duzenlenebilir; burada bir daha bakiliyor:
+         *   1. Bir ayet kendisiyle iliskilendirilemez (verse_relation_not_self).
+         *   2. "muhtemel" yalnizca kavram uzerinden kurulan bag icindir
+         *      (plan 12.5) — kissa/olay/kok bagi sayimdir, kesindir.
+         */
+        for (const [key, list] of Object.entries(result.data.verses)) {
+          const id = Number(key);
+          const surahId = Math.floor(id / 1000);
+          if (surahId < 1 || surahId > 114 || id % 1000 === 0) {
+            errors.push(`${relativePath}: gecersiz ayet anahtari ${key}`);
+            break;
+          }
+          for (const r of list) {
+            if (r.surahId * 1000 + r.verseNumber === id) {
+              errors.push(`${relativePath}: ${key} kendisiyle iliskilendirilmis`);
+              break;
+            }
+            if ((r.confidence === "muhtemel") !== (r.type === "same_topic")) {
+              errors.push(
+                `${relativePath}: ${key} -> ${String(r.surahId)}:${String(r.verseNumber)} ` +
+                  `${r.type} turu icin confidence '${r.confidence}' beklenmiyor`,
+              );
+              break;
+            }
+          }
+        }
+      }
     } else {
       warn("statik cikti", `${relativePath} icin tanimli sema yok, atlandi`);
     }
+  }
+
+  // Dizin ile dosyalar birebir eslesmeli — olu baglanti olmasin
+  for (const [label, index, files] of [
+    ["kissa", storiesIndexSlugs, storyFileSlugs],
+    ["ilke", principlesIndexSlugs, principleFileSlugs],
+    ["kavram", conceptsIndexSlugs, conceptFileSlugs],
+  ] as const) {
+    checksRun += 1;
+    const missing = [...index].filter((x) => !files.has(x));
+    const orphan = [...files].filter((x) => !index.has(x));
+    if (missing.length > 0) errors.push(`${label}: dizinde var, dosyasi yok: ${missing.join(", ")}`);
+    if (orphan.length > 0) errors.push(`${label}: dosyasi var, dizinde yok: ${orphan.join(", ")}`);
   }
 
   checksRun += 1;
@@ -590,18 +814,32 @@ function checkStaticOutput(): void {
     }
   }
 
-  // Performans butcesi (plan 20.4): tek dosya asiri buyumemeli
+  /*
+   * Performans butcesi (plan 20.4): tek dosya asiri buyumemeli.
+   *
+   * Esik iki turlu. Plan 20.4 SAYFA AGIRLIGI icin yazilmis; asagidaki iki
+   * dosyayi hicbir sayfa indirmez, build zamaninda okunup HTML'e donusurler
+   * (apps/web/src/lib/data.ts). Onlar icin 300 KB anlamsiz bir uyari uretir ve
+   * gercek asimlar bu gurultunun icinde kaybolur. Yine de sinirsiz degiller:
+   * bu dosyalar public/data altinda durur, yani istenirse indirilebilir ve her
+   * yayina kopyalanir. Buyume gozden kacmasin diye ayri, yuksek esik konuldu.
+   */
+  const PAGE_BUDGET = 300 * 1024;
+  const BUILD_ONLY_BUDGET = 8 * 1024 * 1024;
+  const buildOnly = new Set(["verse_links.json", "verse_relations.json"]);
+
   checksRun += 1;
-  const oversized = files
-    .map((path) => ({ path: relative(dataRoot, path), size: statSync(path).size }))
-    .filter((entry) => entry.size > 300 * 1024);
-  if (oversized.length > 0) {
-    for (const entry of oversized) {
-      warn(
-        "performans butcesi",
-        `${entry.path} ${Math.round(entry.size / 1024)} KB (esik 300 KB, plan 20.4)`,
-      );
-    }
+  for (const path of files) {
+    const rel = relative(dataRoot, path);
+    const size = statSync(path).size;
+    const isBuildOnly = buildOnly.has(rel);
+    const budget = isBuildOnly ? BUILD_ONLY_BUDGET : PAGE_BUDGET;
+    if (size <= budget) continue;
+    warn(
+      "performans butcesi",
+      `${rel} ${Math.round(size / 1024)} KB (esik ${Math.round(budget / 1024)} KB` +
+        (isBuildOnly ? ", build-zamani dosyasi" : ", plan 20.4") + ")",
+    );
   }
 }
 
@@ -644,6 +882,27 @@ async function checkManualData(): Promise<void> {
     return;
   }
 
+  /**
+   * Tur bazli girdi semalari (Faz 1'de eklenecegi soylenmisti — eklendi,
+   * 2026-09-05). Dosya yolu hangi semayi soyluyorsa o uygulanir; bilinmeyen
+   * yol yalnizca ayet referansi taramasindan gecer ve UYARI verir.
+   */
+  const inputSchemaFor = (rel: string):
+    | { safeParse: (v: unknown) => { success: boolean; error?: { message: string } } }
+    | null => {
+    if (rel === "data/sources/content_sources.json") return contentSourcesFile;
+    if (rel === "data/locations/locations.json") return locationsFile;
+    if (rel === "data/timeline/timeline.json") return timelineFile;
+    if (rel === "data/timeline/noldeke_order.json") return noldekeOrderFile;
+    if (/^data\/stories\/story_[a-z0-9-]+\.json$/.test(rel)) return storyInput;
+    if (/^data\/principles\/principle_[a-z0-9-]+\.json$/.test(rel)) return principleInput;
+    if (/^data\/concepts\/concept_[a-z0-9-]+\.json$/.test(rel)) return conceptInput;
+    if (/^data\/sections\/sections_(?:[1-9]|[1-9][0-9]|10[0-9]|11[0-4])\.json$/.test(rel)) {
+      return surahSectionsFile;
+    }
+    return null;
+  };
+
   const refs = new Map<string, string[]>();
   for (const path of files) {
     const relativePath = relative(repoRoot, path);
@@ -653,6 +912,14 @@ async function checkManualData(): Promise<void> {
     } catch (error) {
       errors.push(`${relativePath}: gecersiz JSON — ${String(error)}`);
       continue;
+    }
+    const schema = inputSchemaFor(relativePath);
+    checksRun += 1;
+    if (schema === null) {
+      warn("elle veri", `${relativePath}: tanimli girdi semasi yok, yalnizca ayet referanslari tarandi`);
+    } else {
+      const result = schema.safeParse(parsed);
+      if (!result.success) errors.push(`${relativePath}: ${result.error?.message ?? "sema hatasi"}`);
     }
     collectVerseRefs(parsed, relativePath, refs);
   }

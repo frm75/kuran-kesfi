@@ -1,0 +1,21 @@
+{
+  "slug": "takva",
+  "nameTr": "Takvâ",
+  "nameAr": "التقوى",
+  "definition": "Allah'a karşı sorumluluk bilinci; O'nun koyduğu sınırları gözeterek korunmak.",
+  "parentSlug": null,
+  "roots": [
+    "wqy"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "iman",
+      "type": "part_of",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

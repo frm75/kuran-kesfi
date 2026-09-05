@@ -1,0 +1,26 @@
+{
+  "slug": "sebil",
+  "nameTr": "Yol (sebîl)",
+  "nameAr": "السبيل",
+  "definition": "Gidilen yol. 'Allah yolunda' ifadesi infaktan cihada kadar geniş bir alanı kapsar; karşıtı 'tâgūt yolu'dur.",
+  "parentSlug": null,
+  "roots": [
+    "sbl"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "hidayet",
+      "type": "co_occurrence",
+      "weight": 3
+    },
+    {
+      "target": "dalalet",
+      "type": "contrast",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

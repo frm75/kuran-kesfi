@@ -1,0 +1,21 @@
+{
+  "slug": "cennet",
+  "nameTr": "Cennet",
+  "nameAr": "الجنة",
+  "definition": "Örtülü bahçe; müminlere vaat edilen yurt. Kök anlamı 'örtmek, gizlemek'tir; cin ve cünun da aynı köktendir.",
+  "parentSlug": null,
+  "roots": [
+    "jnn"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "ahiret",
+      "type": "part_of",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

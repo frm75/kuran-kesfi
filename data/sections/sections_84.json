@@ -1,0 +1,31 @@
+{
+  "surahId": 84,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Göğün yarılması ve insanın Rabbine gidişi",
+      "verseStart": 1,
+      "verseEnd": 6,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Kitabı sağından ve arkasından verilenler",
+      "verseStart": 7,
+      "verseEnd": 15,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Yemin: halden hale geçiş ve iman etmeyenler",
+      "verseStart": 16,
+      "verseEnd": 25,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

@@ -8,7 +8,9 @@
 - ~~Alan adı ve proje adı~~ → **KAPANDI 2026-09-04**: `kurankesfi.tr`, "Kur'an-ı Kerim Keşfi",
   tagline "Keşfet • Oku • Anla" (CLAUDE.md → Domain ve Marka; plan §11)
 - Diyanet Kur'an Yolu tefsirinin kullanım şartları; yazılı izin gerekip gerekmediği
-- Kavram setinin ilk kaynağı: Diyanet konu fihristi mi, özgün derleme mi
+- ~~Kavram setinin ilk kaynağı~~ → **KAPANDI 2026-09-05**: özgün derleme. TDV İslâm Ansiklopedisi
+  maddeleri + mevcut kök verisi; ayet eşleştirmesi kökten hesaplanıyor. Diyanet konu fihristinin
+  kullanım şartı belirsizdi, beklenmedi (71 kavram yazıldı)
 - Arapça kıraat için hangi kârîler (lisans uyumlu olanlar arasından)
 - Bağış/sunucu masrafı yaklaşımı
 - `surah_section` başlıkları için kaynak ve atıf biçimi

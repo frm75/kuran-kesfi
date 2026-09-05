@@ -1,0 +1,21 @@
+{
+  "slug": "kitap",
+  "nameTr": "Kitap",
+  "nameAr": "الكتاب",
+  "definition": "Yazılmış olan; Kur'an, önceki vahiyler ve amel defteri için kullanılır.",
+  "parentSlug": null,
+  "roots": [
+    "ktb"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "vahiy",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

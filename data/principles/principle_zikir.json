@@ -1,0 +1,63 @@
+{
+  "slug": "zikir",
+  "nameTr": "Zikir (Allah'ı Anma)",
+  "nameAr": "الذكر",
+  "rootLatin": "pkr",
+  "definition": "Allah'ı dille ve kalple sürekli hatırda tutmak; O'nu anmayı hayatın parçası yapmak.",
+  "explanation": "'Beni anın ki ben de sizi anayım' (2:152), 'Allah'ı çokça anın' (33:41) ve Ra'd 13:28 'kalpler ancak Allah'ı anmakla huzur bulur' zikrin çerçevesini kurar. Cum'a 62:10 alışverişte bile zikri hatırlatır; Ankebût 29:45 zikri namazla birlikte anar. Kökün 'hatırlatma, öğüt, Kur'an' anlamları da eşleştirmede görünür.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 32,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "2:152",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "33:41",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "62:10",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "13:28",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "29:45",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "3:191",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "7:205",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [
+    {
+      "slug": "hz-davud",
+      "note": "Dağların ve kuşların tesbihi"
+    }
+  ],
+  "concepts": [
+    "zikir",
+    "dua",
+    "hamd"
+  ]
+}

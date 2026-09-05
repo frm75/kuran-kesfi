@@ -1,0 +1,43 @@
+{
+  "slug": "yetim-malini-koruma",
+  "nameTr": "Yetimin Malını Koruma",
+  "nameAr": "حفظ مال اليتيم",
+  "rootLatin": null,
+  "definition": "Yetimin malını en güzel biçimde işletmek, rüştüne erince eksiksiz teslim etmek.",
+  "explanation": "4:2 yetimlere mallarının verilmesini, temizin pisle değiştirilmemesini emreder. 4:10 yetim malını haksız yiyenlerin karınlarına ateş doldurduğunu söyler. 6:152 ve 17:34 aynı kuralı koyar: rüşde erişinceye kadar ancak en güzel şekilde yaklaşmak.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 42,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "4:2",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "4:10",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "17:34",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "6:152",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "emanet",
+    "zulum",
+    "adalet"
+  ]
+}

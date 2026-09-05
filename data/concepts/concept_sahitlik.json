@@ -1,0 +1,26 @@
+{
+  "slug": "sahitlik",
+  "nameTr": "Şahitlik",
+  "nameAr": "الشهادة",
+  "definition": "Bilerek ve doğru biçimde tanıklık etmek. Hem hukukî tanıklık hem de imanın ikrarı anlamında kullanılır; kıyamet gününde uzuvların ve peygamberlerin şahitliği anlatılır.",
+  "parentSlug": null,
+  "roots": [
+    "$hd"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "adalet",
+      "type": "co_occurrence",
+      "weight": 3
+    },
+    {
+      "target": "sidk",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

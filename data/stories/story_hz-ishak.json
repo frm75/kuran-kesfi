@@ -1,0 +1,72 @@
+{
+  "slug": "hz-ishak",
+  "title": "Hz. İshak",
+  "type": "prophet",
+  "chronologicalOrder": 9,
+  "eraStart": "M.Ö. 2000 civarı (yaklaşık)",
+  "eraEnd": null,
+  "summary": "İbrâhim'e ileri yaşında müjdelenen oğul; Yakub'un babası. Kur'an onu müjde, bereket ve salih soy bağlamında anar; ayrıntılı kıssası yoktur.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-ibrahim",
+    "hz-yakub"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Misafirlerin müjdesi",
+      "ref": "11:71-73",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Salihlerden bir nebî",
+      "ref": "37:112-113",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "İbrâhim'e bağış",
+      "ref": "21:72-73",
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Hicretten sonra verilen oğul",
+      "ref": "19:49-50",
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Bilgin bir çocuk müjdesi",
+      "ref": "51:28-30",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "İshak'ın ileri yaşta müjdelenmesi, ilâhî lütfun beşerî ölçülere bağlı olmadığının örneği olarak yorumlanır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "İSHAK maddesi — islamansiklopedisi.org.tr/ishak",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "kenan",
+      "order": 1,
+      "eventDescription": "Doğup yaşadığı bölge.",
+      "passageOrders": [
+        1,
+        2
+      ]
+    }
+  ],
+  "concepts": [
+    "nimet",
+    "mujde"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "slug": "sukur",
+  "nameTr": "Şükür",
+  "nameAr": "الشكر",
+  "definition": "Nimeti verenin Allah olduğunu bilmek, dille ikrar etmek ve nimeti yerinde kullanmak.",
+  "parentSlug": null,
+  "roots": [
+    "$kr"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "nimet",
+      "type": "cause",
+      "weight": 3
+    },
+    {
+      "target": "kufur",
+      "type": "contrast",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

@@ -1,0 +1,52 @@
+{
+  "slug": "ofkeyi-yutma",
+  "nameTr": "Öfkeyi Yutma",
+  "nameAr": "كظم الغيظ",
+  "rootLatin": null,
+  "definition": "Öfkelendiğinde kendine hâkim olmak, öfkeyle karar vermemek ve affa yönelmek.",
+  "explanation": "Âl-i İmrân 3:134 muttakileri 'öfkelerini yutan ve insanları affeden' diye tanımlar; Şûrâ 42:37 'öfkelendiklerinde bağışlarlar' der. Fussilet 41:34 kötülüğü iyilikle savmayı öğütler. Mûsâ'nın Tûr'dan dönüşte öfkesi ve ardından duası (7:150-151) öfke ile tevbenin birlikte anlatıldığı bir örnektir.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 8,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "3:134",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "42:37",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "7:199",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "41:34",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "7:150-151",
+      "role": "secondary",
+      "note": "Mûsâ'nın öfkesi ve duası"
+    }
+  ],
+  "stories": [
+    {
+      "slug": "hz-musa",
+      "note": "Tûr'dan dönüşteki öfke ve dua"
+    }
+  ],
+  "concepts": [
+    "af",
+    "sabir"
+  ]
+}

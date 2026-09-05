@@ -1,0 +1,26 @@
+{
+  "slug": "nubuvvet",
+  "nameTr": "Nübüvvet",
+  "nameAr": "النبوة",
+  "definition": "Peygamberlik; haber getirme. 'Nebî' bu köktendir.",
+  "parentSlug": null,
+  "roots": [
+    "nbA"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "risalet",
+      "type": "co_occurrence",
+      "weight": 3
+    },
+    {
+      "target": "vahiy",
+      "type": "co_occurrence",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

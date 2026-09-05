@@ -1,8 +1,7 @@
 ---
 import type { GetStaticPaths } from "astro";
 import Base from "~/layouts/Base.astro";
-import SourceBadge from "~/components/SourceBadge.astro";
-import { getRoot, getRootsIndex, getSources } from "~/lib/data";
+import { getRoot, getRootsIndex } from "~/lib/data";
 
 /**
  * Tek kök sayfası — plan §2 "Kelime" kapısı, §12.6.
@@ -24,11 +23,6 @@ export const getStaticPaths = (() => {
 
 const { arabic } = Astro.props;
 const root = getRoot(arabic);
-
-const wordSource = getSources().sources.find((s) => s.slug === "acikkuran");
-if (wordSource === undefined) {
-  throw new Error("Kelime ve kok verisinin kaynagi (acikkuran) sources.json icinde yok.");
-}
 
 /** Geçişleri sureye göre grupla — 1722 satırlık düz liste okunmaz. */
 interface SurahGroup {
@@ -58,28 +52,22 @@ for (const occurrence of root.occurrences) {
   description={`${root.arabic} kökü Kur'an'da ${root.occurrenceCount} kez geçiyor.`}
   arabic
 >
-  <main id="icerik" class="mx-auto max-w-normal px-4 py-8">
-    <nav aria-label="Konum" class="text-text-secondary mb-6 text-sm">
+  <main id="icerik" class="pg pg-normal">
+    <nav aria-label="Konum" class="pg-crumb">
       <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
       <a href="/kok">Kökler</a> <span aria-hidden="true">›</span>
       <span aria-current="page" lang="ar" dir="rtl">{root.arabic}</span>
     </nav>
 
-    <header class="border-border border-b pb-6">
+    <header class="pg-head">
       <h1 class="root-hero m-0">
         <span lang="ar" dir="rtl" class="root-arabic">{root.arabic}</span>
         <span class="root-latin">{root.latin}</span>
       </h1>
-      <p class="text-text-secondary mt-3 mb-0">
-        Kur'an'da <strong>{root.occurrenceCount}</strong> kelimede geçiyor.
-      </p>
-      <div class="mt-4">
-        <SourceBadge
-          contentClass="kaynakli"
-          sources={[wordSource]}
-          label={`${root.arabic} kökü ve anlamı`}
-        />
-      </div>
+      <ul class="chip-row">
+        <li class="chip is-accent"><b>{root.occurrenceCount}</b> kelimede geçiyor</li>
+        <li class="chip"><b>{groups.length}</b> surede</li>
+      </ul>
     </header>
 
     {
@@ -88,17 +76,18 @@ for (const occurrence of root.occurrences) {
           Bu kökün anlamı kaynakta yok.
         </p>
       ) : (
-        <section class="mt-8">
-          <h2 class="text-xl">Anlam</h2>
-          <p class="root-meaning mt-2">{root.meaningTr}</p>
+        <section>
+          <div class="sec-head"><h2>Anlam</h2></div>
+          <p class="root-meaning">{root.meaningTr}</p>
         </section>
       )
     }
 
-    <section class="mt-10">
-      <h2 class="text-xl">
-        Geçtiği yerler <span class="text-text-muted text-sm">({root.occurrenceCount})</span>
-      </h2>
+    <section>
+      <div class="sec-head">
+        <h2>Geçtiği yerler</h2>
+        <span class="sec-note">{root.occurrenceCount} geçiş, sureye göre</span>
+      </div>
 
       {
         groups.length === 0 ? (

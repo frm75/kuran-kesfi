@@ -1,0 +1,21 @@
+{
+  "slug": "tevhid",
+  "nameTr": "Tevhid",
+  "nameAr": "التوحيد",
+  "definition": "Allah'ın zâtında, sıfatlarında ve ibadette bir ve tek olduğunu bilmek ve buna göre yaşamak. Kur'an'ın merkezî ilkesi.",
+  "parentSlug": null,
+  "roots": [
+    "wHd"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "sirk",
+      "type": "contrast",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

@@ -1,0 +1,26 @@
+{
+  "slug": "su",
+  "nameTr": "Su",
+  "nameAr": "الماء",
+  "definition": "Hayatın kaynağı; Kur'an her canlıyı sudan yarattığını bildirir (21:30).",
+  "parentSlug": null,
+  "roots": [
+    "mwh"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "hayat",
+      "type": "cause",
+      "weight": 2
+    },
+    {
+      "target": "rizik",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

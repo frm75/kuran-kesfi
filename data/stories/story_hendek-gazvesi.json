@@ -1,0 +1,35 @@
+{
+  "slug": "hendek-gazvesi",
+  "title": "Hendek Gazvesi",
+  "type": "event",
+  "chronologicalOrder": 49,
+  "eraStart": "H. 5 / M. 627",
+  "eraEnd": null,
+  "summary": "Hicretin 5. yılında Medine'nin kuşatılması. Kur'an kuşatma sırasında mü'minlerin ve münafıkların tutumunu yan yana koyar; Ahzâb suresi adını bu 'düşman birlikleri'nden alır.",
+  "coverImage": null,
+  "relatedStories": [
+    "asr-i-saadet"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Orduların gelişi ve kalplerin sınanması",
+      "ref": "33:9-17",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Münafıkların sözleri ve kuşatmanın kaldırılışı",
+      "ref": "33:18-27",
+      "note": null
+    }
+  ],
+  "lessons": [],
+  "locations": [],
+  "concepts": [
+    "imtihan",
+    "sabir",
+    "nusret",
+    "tevekkul"
+  ]
+}

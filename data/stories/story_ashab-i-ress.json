@@ -1,0 +1,31 @@
+{
+  "slug": "ashab-i-ress",
+  "title": "Ashâb-ı Ress",
+  "type": "people",
+  "chronologicalOrder": 42,
+  "eraStart": null,
+  "eraEnd": null,
+  "summary": "Kur'an'da iki yerde, helâk edilen kavimler arasında adı geçen topluluk. Haklarında ayrıntı verilmez; bu kıssa yalnızca adın geçtiği yerleri gösterir.",
+  "coverImage": null,
+  "relatedStories": [],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Âd, Semûd ve Ress halkı",
+      "ref": "25:38-39",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Yalanlayan kavimler arasında",
+      "ref": "50:12-14",
+      "note": null
+    }
+  ],
+  "lessons": [],
+  "locations": [],
+  "concepts": [
+    "helak",
+    "uyari"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "surahId": 105,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Fil sahiplerine yapılan",
+      "verseStart": 1,
+      "verseEnd": 2,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Kuşlar ve sonuç",
+      "verseStart": 3,
+      "verseEnd": 5,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

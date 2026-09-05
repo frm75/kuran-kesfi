@@ -1,0 +1,62 @@
+{
+  "slug": "tevazu",
+  "nameTr": "Tevazu (Alçakgönüllülük)",
+  "nameAr": "التواضع",
+  "rootLatin": null,
+  "definition": "Kendini başkalarından üstün görmemek; yürüyüşte, konuşmada ve ilişkilerde ölçülü ve yumuşak olmak.",
+  "explanation": "Lokmân 31:18-19 'insanlara karşı böbürlenme, yürüyüşünde ölçülü ol' der; İsrâ 17:37 yeryüzünde kibirle yürümeyi yasaklar; Furkān 25:63 Rahmân'ın kullarını 'yeryüzünde alçakgönüllülükle yürüyenler' diye tanımlar. Şuarâ 26:215 Hz. Peygamber'e müminlere karşı 'kanadını indirmesini' söyler.",
+  "dailyNote": null,
+  "oppositeSlug": "kibirden-kacinma",
+  "order": 12,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "31:18-19",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "17:37",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "25:63",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "26:215",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "15:88",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "7:55",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "28:83",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [
+    {
+      "slug": "lokman",
+      "note": "'Yürüyüşünde ölçülü ol' (31:19)"
+    }
+  ],
+  "concepts": [
+    "kibir",
+    "ihsan"
+  ]
+}

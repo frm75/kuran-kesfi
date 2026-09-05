@@ -1,0 +1,216 @@
+---
+import Base from "~/layouts/Base.astro";
+import { getSurahsIndex, getTimeline } from "~/lib/data";
+
+/**
+ * Nüzul sırası ve zaman çizelgesi — plan §2.2.
+ *
+ * İki sıralama yan yana: Mısır/Ezher (ana, Tanzil'den) ve Nöldeke (alternatif).
+ * Farklı olduklarında fark İŞARETLENİR — plan §2.2 bunu açıkça istiyor.
+ *
+ * İnteraktif çizelge JavaScript ister; CSP `script-src` kapalı. Bunun yerine
+ * dönem dönem gruplanmış bir liste: siyer olayları ve o dönemde inen sureler
+ * yan yana. "Bu sure indiğinde ne oluyordu?" sorusunun JS'siz karşılığı.
+ */
+
+const surahs = getSurahsIndex().surahs;
+const events = getTimeline();
+
+const periodLabel = {
+  mekke_1: "Mekke — ilk dönem",
+  mekke_2: "Mekke — orta dönem",
+  mekke_3: "Mekke — son dönem",
+  medine: "Medine",
+} as const;
+
+const byRevelation = [...surahs].sort(
+  (a, b) => a.revelationOrderStandard - b.revelationOrderStandard,
+);
+
+/** İki sıralamanın ayrıldığı sure sayısı — iddia değil sayım. */
+const withNoldeke = byRevelation.filter((s) => s.revelationOrderNoldeke !== null);
+const differing = withNoldeke.filter(
+  (s) => s.revelationOrderNoldeke !== s.revelationOrderStandard,
+).length;
+
+const eventsByPeriod = new Map<string, typeof events>();
+for (const event of events) {
+  const bucket = eventsByPeriod.get(event.period) ?? [];
+  bucket.push(event);
+  eventsByPeriod.set(event.period, bucket);
+}
+
+/**
+ * Nöldeke dönem sınırları: 1-48 Mekke I, 49-69 Mekke II, 70-90 Mekke III,
+ * 91-114 Medine (noldeke_order.json başındaki nota göre). Sureyi döneme
+ * bağlamak için Nöldeke sırası kullanılır; yoksa Mekkî/Medenî bilgisi kalır.
+ */
+function periodOf(noldeke: number | null, revelationType: string): string | null {
+  if (noldeke === null) return revelationType === "medeni" ? "medine" : null;
+  if (noldeke <= 48) return "mekke_1";
+  if (noldeke <= 69) return "mekke_2";
+  if (noldeke <= 90) return "mekke_3";
+  return "medine";
+}
+
+const surahsByPeriod = new Map<string, typeof surahs>();
+for (const surah of byRevelation) {
+  const period = periodOf(surah.revelationOrderNoldeke, surah.revelationType);
+  if (period === null) continue;
+  const bucket = surahsByPeriod.get(period) ?? [];
+  bucket.push(surah);
+  surahsByPeriod.set(period, bucket);
+}
+
+const periods = ["mekke_1", "mekke_2", "mekke_3", "medine"] as const;
+---
+
+<Base
+  title="Nüzul Sırası ve Zaman Çizelgesi — Kur'an-ı Kerim Keşfi"
+  description="Sureler iniş sırasıyla, siyer olaylarıyla birlikte. Mısır ve Nöldeke sıralamaları yan yana."
+  arabic
+>
+  <main id="icerik" class="pg pg-wide">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">Zaman</span>
+    </nav>
+
+    <header class="pg-head">
+      <p class="pg-kicker">II. Kapı — Zaman</p>
+      <h1 class="pg-title">Nüzul Sırası ve Siyer</h1>
+      <p class="pg-lede">
+        Mushaf sırası iniş sırası değildir: ilk inen Alak suresi mushafta 96. sıradadır.
+        Burada sureler indikleri sıraya göre, o dönemde olan olaylarla birlikte duruyor.
+      </p>
+      <ul class="fact-row">
+        <li><b>{events.length}</b><span>siyer olayı</span></li>
+        <li><b>114</b><span>sure sıralı</span></li>
+        <li><b>{differing}</b><span>surede iki sıralama farklı</span></li>
+      </ul>
+    </header>
+
+    <section>
+      <div class="sec-head">
+        <h2>Dönem dönem</h2>
+        <span class="sec-note">Olaylar ve o dönemde inen sureler</span>
+      </div>
+
+      {
+        periods.map((period) => {
+          const periodEvents = eventsByPeriod.get(period) ?? [];
+          const periodSurahs = surahsByPeriod.get(period) ?? [];
+          return (
+            <section class="era">
+              <h3 class:list={["era-head", `is-${period}`]}>{periodLabel[period]}</h3>
+
+              <ol class="event-list">
+                {periodEvents.map((event) => (
+                  <li>
+                    <div class="ev-head">
+                      <span class="ev-year">
+                        {event.approxYear === null ? "—" : `${String(event.approxYear)}`}
+                      </span>
+                      <h4>{event.title}</h4>
+                      <span class:list={["conf", `is-${event.confidence}`]}>{event.confidence}</span>
+                    </div>
+                    <p class="ev-desc">{event.description}</p>
+                    {event.surahs.length > 0 && (
+                      <p class="ev-surahs">
+                        <span class="ev-label">İlgili sureler:</span>
+                        {event.surahs.map((surah) => (
+                          <a href={`/${surah.slug}`}>{surah.nameTr}</a>
+                        ))}
+                      </p>
+                    )}
+                    {event.verses.length > 0 && (
+                      <p class="ev-verses">
+                        <span class="ev-label">Ayetler:</span>
+                        {event.verses.slice(0, 8).map((verse) => (
+                          <a href={`/${verse.surahSlug}/${String(verse.verseNumber)}`}>
+                            {verse.surahNameTr} {verse.verseNumber}
+                          </a>
+                        ))}
+                        {event.verses.length > 8 && (
+                          <span class="text-text-muted">+{event.verses.length - 8}</span>
+                        )}
+                      </p>
+                    )}
+                    <p class="ev-source">{event.sourceNote}</p>
+                  </li>
+                ))}
+              </ol>
+
+              {periodSurahs.length > 0 && (
+                <details class="era-surahs">
+                  <summary>
+                    Bu dönemde inen {periodSurahs.length} sure
+                    <span class="text-text-muted"> (Nöldeke sıralamasına göre)</span>
+                  </summary>
+                  <ol class="era-surah-list">
+                    {periodSurahs.map((surah) => (
+                      <li>
+                        <a href={`/${surah.slug}`}>
+                          <span class="es-noldeke">{surah.revelationOrderNoldeke}</span>
+                          <span class="es-name">{surah.nameTr}</span>
+                          <span class="es-mushaf">mushafta {surah.id}.</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ol>
+                </details>
+              )}
+            </section>
+          );
+        })
+      }
+    </section>
+
+    <section>
+      <div class="sec-head">
+        <h2>İki sıralama yan yana</h2>
+        <span class="sec-note">
+          Mısır/Ezher sıralaması ana referans; Nöldeke alternatif. {differing} surede ayrılıyorlar
+        </span>
+      </div>
+      <p class="text-text-secondary mb-4 text-sm">
+        Nüzul sırası kesin bir bilgi değildir: her iki sıralama da rivayet ve iç kanıt
+        değerlendirmesine dayanır. Fark gizlenmiyor — ayrıldıkları yerler işaretli.
+      </p>
+      <div class="table-scroll">
+        <table class="order-table">
+          <thead>
+            <tr>
+              <th scope="col">Mısır</th>
+              <th scope="col">Nöldeke</th>
+              <th scope="col">Sure</th>
+              <th scope="col">Mushaf</th>
+              <th scope="col">İniş yeri</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              byRevelation.map((surah) => {
+                const diff =
+                  surah.revelationOrderNoldeke !== null &&
+                  surah.revelationOrderNoldeke !== surah.revelationOrderStandard;
+                return (
+                  <tr class:list={[diff && "is-diff"]}>
+                    <td>{surah.revelationOrderStandard}</td>
+                    <td>
+                      {surah.revelationOrderNoldeke ?? "—"}
+                      {diff && <span class="diff-mark" title="iki sıralama farklı">≠</span>}
+                    </td>
+                    <th scope="row"><a href={`/${surah.slug}`}>{surah.nameTr}</a></th>
+                    <td>{surah.id}</td>
+                    <td>{surah.revelationType === "mekki" ? "Mekkî" : "Medenî"}</td>
+                  </tr>
+                );
+              })
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</Base>

@@ -1,0 +1,72 @@
+{
+  "slug": "ashab-i-kehf",
+  "title": "Ashâb-ı Kehf",
+  "type": "people",
+  "chronologicalOrder": 30,
+  "eraStart": "M.S. 3. yüzyıl (rivayet)",
+  "eraEnd": null,
+  "summary": "Kavimlerinin şirkinden kaçarak mağaraya sığınan gençler ve köpekleri. Allah onları üç yüz dokuz yıl uyutur, güneşin yönü ve yanlarına dönmeleriyle korunurlar; uyandıklarında ne kadar kaldıklarını tartışırlar. Kur'an sayıları ve yeri hakkında tartışmayı Allah'a bırakır.",
+  "coverImage": null,
+  "relatedStories": [
+    "zulkarneyn"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Kıssaya giriş",
+      "ref": "18:9-12",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Tevhid ve mağaraya sığınma",
+      "ref": "18:13-16",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Uyku, güneş ve köpek",
+      "ref": "18:17-20",
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Uyanış ve sayı tartışması",
+      "ref": "18:21-22",
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Süre ve 'Allah bilir'",
+      "ref": "18:23-26",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Ashâb-ı Kehf kıssası, inanç uğruna toplumdan ayrılmanın ve Allah'ın korumasına güvenin örneği olarak ele alınır; sayı ve yer tartışmasının bırakılması, kıssanın özüne odaklanma ilkesi sayılır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "ASHÂB-ı KEHF maddesi — islamansiklopedisi.org.tr/ashab-i-kehf",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "kehf-magarasi",
+      "order": 1,
+      "eventDescription": "Mağara; yeri bilinmez, birçok aday vardır.",
+      "passageOrders": [
+        3
+      ]
+    }
+  ],
+  "concepts": [
+    "iman",
+    "tevekkul",
+    "sirk",
+    "dirilis"
+  ]
+}

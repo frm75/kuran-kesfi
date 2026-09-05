@@ -29,3 +29,5 @@ export * from "./scholar-notes.js";
 export * from "./export.js";
 export * from "./user_data.js";
 export * from "./static_data.js";
+export * from "./static_content.js";
+export * from "./content_input.js";

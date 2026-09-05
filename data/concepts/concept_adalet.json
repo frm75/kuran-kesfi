@@ -1,0 +1,28 @@
+{
+  "slug": "adalet",
+  "nameTr": "Adalet",
+  "nameAr": "العدل",
+  "definition": "Herkese hakkını vermek, hükümde ve davranışta dengeyi gözetmek. Kur'an hem 'adl' hem 'kıst' kelimeleriyle emreder.",
+  "parentSlug": null,
+  "roots": [
+    "Edl",
+    "qsT",
+    "wzn"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "zulum",
+      "type": "contrast",
+      "weight": 3
+    },
+    {
+      "target": "ihsan",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

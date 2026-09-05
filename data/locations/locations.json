@@ -1,0 +1,317 @@
+{
+  "//": [
+    "Kissa konumlari — plan 2.1, 8.3. Her konum: guven derecesi + en az bir kaynak + neden bu derece (sourceNote).",
+    "kesin: tartismasiz (Kabe, Medine, Kudus). muhtemel: cogunluk gorusu ama kesin degil. rivayet: kaynaklarda gecer, cografi teyit yok.",
+    "Koordinatlar bugunku yerlesimin merkezidir; 'rivayet' derecelilerde koordinat en yaygin rivayete gore verilir ve alternatifler yazilir.",
+    "Kaynak: TDV Islam Ansiklopedisi ilgili maddeleri (sourceNote icinde madde adi)."
+  ],
+  "locations": [
+    {
+      "slug": "mekke",
+      "name": "Mekke",
+      "modernName": "Mekke (Makkah al-Mukarramah)",
+      "country": "Suudi Arabistan",
+      "lat": 21.4225, "lng": 39.8262,
+      "confidence": "kesin",
+      "sourceNote": "Kâbe'nin ve vahyin başladığı şehrin yeri tartışmasızdır. DİA 'MEKKE' ve 'KÂBE' maddeleri.",
+      "alternatives": [],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi", "kuran-metni"]
+    },
+    {
+      "slug": "medine",
+      "name": "Medine (Yesrib)",
+      "modernName": "Medine (al-Madinah al-Munawwarah)",
+      "country": "Suudi Arabistan",
+      "lat": 24.4686, "lng": 39.6142,
+      "confidence": "kesin",
+      "sourceNote": "Hicret yurdu; yeri tartışmasızdır. DİA 'MEDİNE' maddesi.",
+      "alternatives": [],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi"]
+    },
+    {
+      "slug": "kudus",
+      "name": "Kudüs — Mescid-i Aksâ",
+      "modernName": "Kudüs (al-Quds / Jerusalem)",
+      "country": "Filistin",
+      "lat": 31.7761, "lng": 35.2358,
+      "confidence": "kesin",
+      "sourceNote": "İsrâ 17:1'deki Mescid-i Aksâ'nın Kudüs'te olduğu klasik tefsirlerde ve tarih kaynaklarında ittifakla kabul edilir. DİA 'MESCİD-i AKSÂ' ve 'KUDÜS' maddeleri.",
+      "alternatives": [],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi"]
+    },
+    {
+      "slug": "misir",
+      "name": "Mısır",
+      "modernName": "Mısır (Nil vadisi; Yusuf ve Musa kıssalarının sahnesi)",
+      "country": "Mısır",
+      "lat": 30.0444, "lng": 31.2357,
+      "confidence": "kesin",
+      "sourceNote": "Kur'an Mısır'ı adıyla anar (Yûnus 10:87, Yûsuf 12:21, 99; Zuhruf 43:51). Ülke kesindir; Firavun'un başkenti (Memfis, Pi-Ramesse ya da Teb) kesin değildir — koordinat modern başkent Kahire'ye verilmiştir. DİA 'MISIR' maddesi.",
+      "alternatives": [
+        { "name": "Memfis (Mit Rahina)", "lat": 29.8486, "lng": 31.2544, "note": "Eski Krallık başkenti; bazı araştırmacılar Yusuf dönemini buraya bağlar.", "sourceSlugs": ["tdv-islam-ansiklopedisi"] },
+        { "name": "Pi-Ramesse (Kantir)", "lat": 30.7994, "lng": 31.8353, "note": "Ramses dönemi başkenti; Musa dönemi için sık anılan aday.", "sourceSlugs": ["tdv-islam-ansiklopedisi"] }
+      ],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi", "kuran-metni"]
+    },
+    {
+      "slug": "sina-tur",
+      "name": "Sînâ — Tûr Dağı",
+      "modernName": "Cebel-i Mûsâ (Sînâ Yarımadası)",
+      "country": "Mısır",
+      "lat": 28.5395, "lng": 33.9751,
+      "confidence": "muhtemel",
+      "sourceNote": "Kur'an 'Tûr' ve 'Tûr-i Sînîn' der (Tîn 95:2, Mü'minûn 23:20). Geleneksel yer Cebel-i Mûsâ'dır; Kuzeybatı Arabistan (Cebel el-Lavz) tezi de vardır, ittifak yoktur. DİA 'TÛR' ve 'SÎNÂ' maddeleri.",
+      "alternatives": [
+        { "name": "Cebel el-Lavz", "lat": 28.6544, "lng": 35.3036, "note": "Kuzeybatı Arabistan tezi; azınlık görüşü.", "sourceSlugs": ["tdv-islam-ansiklopedisi"] }
+      ],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi", "kuran-metni"]
+    },
+    {
+      "slug": "babil",
+      "name": "Bâbil",
+      "modernName": "Bâbil harabeleri (Hille yakını)",
+      "country": "Irak",
+      "lat": 32.5364, "lng": 44.4208,
+      "confidence": "kesin",
+      "sourceNote": "Bakara 2:102'de adıyla geçer; antik kentin yeri arkeolojik olarak kesindir. DİA 'BÂBİL' maddesi.",
+      "alternatives": [],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi", "kuran-metni"]
+    },
+    {
+      "slug": "cudi",
+      "name": "Cûdî Dağı",
+      "modernName": "Cûdî Dağı (Şırnak)",
+      "country": "Türkiye",
+      "lat": 37.3703, "lng": 42.4578,
+      "confidence": "muhtemel",
+      "sourceNote": "Hûd 11:44 geminin Cûdî'ye oturduğunu söyler. İslam kaynakları Cezîre bölgesindeki bu dağı gösterir; Tevrat geleneği Ağrı'yı (Ararat) anar. Çoğunluk görüşü Şırnak Cûdî'sidir. DİA 'CÛDÎ DAĞI' maddesi.",
+      "alternatives": [
+        { "name": "Ağrı Dağı (Ararat)", "lat": 39.7019, "lng": 44.2983, "note": "Kitâb-ı Mukaddes geleneği; İslam kaynaklarında yaygın değil.", "sourceSlugs": ["tdv-islam-ansiklopedisi"] }
+      ],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi", "kuran-metni"]
+    },
+    {
+      "slug": "sebe-marib",
+      "name": "Sebe — Me'rib",
+      "modernName": "Me'rib (Ma'rib)",
+      "country": "Yemen",
+      "lat": 15.4167, "lng": 45.3333,
+      "confidence": "kesin",
+      "sourceNote": "Sebe 34:15-16'daki 'iki bahçe' ve set; Me'rib Seddi kalıntıları ve Sebe krallığının merkezi arkeolojik olarak bilinir. DİA 'SEBE' ve 'ME'RİB' maddeleri.",
+      "alternatives": [],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi", "kuran-metni"]
+    },
+    {
+      "slug": "medyen",
+      "name": "Medyen",
+      "modernName": "el-Bed' (Tebük bölgesi) ve çevresi",
+      "country": "Suudi Arabistan",
+      "lat": 28.4667, "lng": 35.0167,
+      "confidence": "muhtemel",
+      "sourceNote": "Şuayb kavminin ve Musa'nın sığındığı yer (Kasas 28:22-23). Akabe Körfezi'nin doğusu, Kuzeybatı Arabistan'da olduğu genel kabuldür; kent merkezi kesin değil. DİA 'MEDYEN' maddesi.",
+      "alternatives": [],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi", "kuran-metni"]
+    },
+    {
+      "slug": "hicr",
+      "name": "Hicr",
+      "modernName": "Medâin-i Sâlih (el-Ulâ)",
+      "country": "Suudi Arabistan",
+      "lat": 26.7917, "lng": 37.9542,
+      "confidence": "kesin",
+      "sourceNote": "Semûd kavminin yurdu; Hicr 15:80 adıyla anar, Medâin-i Sâlih kaya mezarları bugün de yerindedir. DİA 'HİCR' ve 'SEMÛD' maddeleri.",
+      "alternatives": [],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi", "kuran-metni"]
+    },
+    {
+      "slug": "ahkaf",
+      "name": "Ahkāf",
+      "modernName": "Hadramut ile Uman arasındaki kum bölgesi",
+      "country": "Yemen",
+      "lat": 17.5, "lng": 49.5,
+      "confidence": "muhtemel",
+      "sourceNote": "Âd kavminin yurdu (Ahkāf 46:21). Güney Arabistan'da kumullar bölgesi olduğu kabul edilir; nokta yer verilemez. DİA 'AHKĀF' ve 'ÂD' maddeleri.",
+      "alternatives": [],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi", "kuran-metni"]
+    },
+    {
+      "slug": "eyke",
+      "name": "Eyke",
+      "modernName": "Tebük çevresi (Medyen'e komşu)",
+      "country": "Suudi Arabistan",
+      "lat": 28.3838, "lng": 36.5550,
+      "confidence": "rivayet",
+      "sourceNote": "Ashâb-ı Eyke (Hicr 15:78, Şuarâ 26:176). Tefsirlerde Medyen'e yakın, ağaçlık bir bölge olarak anlatılır; Tebük civarı denir, coğrafi teyit yoktur. DİA 'EYKE' maddesi.",
+      "alternatives": [],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi"]
+    },
+    {
+      "slug": "lut-golu",
+      "name": "Lût Kavminin Yurdu — Sodom",
+      "modernName": "Lût Gölü (Ölü Deniz) havzası",
+      "country": "Ürdün / Filistin",
+      "lat": 31.5, "lng": 35.5,
+      "confidence": "muhtemel",
+      "sourceNote": "Kur'an şehir adı vermez; 'yolun üstünde' (Hicr 15:76) der. Ölü Deniz havzası genel kabuldür; kentin tam yeri (Bâb ez-Zirâ, Tell el-Hammâm vb.) tartışmalıdır. DİA 'LÛT' maddesi.",
+      "alternatives": [
+        { "name": "Bâb ez-Zirâ", "lat": 31.25, "lng": 35.53, "note": "Ölü Deniz'in güneydoğusu; arkeolojik aday.", "sourceSlugs": ["tdv-islam-ansiklopedisi"] },
+        { "name": "Tell el-Hammâm", "lat": 31.84, "lng": 35.67, "note": "Kuzeydoğu havza tezi.", "sourceSlugs": ["tdv-islam-ansiklopedisi"] }
+      ],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi", "kuran-metni"]
+    },
+    {
+      "slug": "ninova",
+      "name": "Nînevâ",
+      "modernName": "Ninova harabeleri (Musul karşısı)",
+      "country": "Irak",
+      "lat": 36.3594, "lng": 43.1528,
+      "confidence": "muhtemel",
+      "sourceNote": "Yunus'un gönderildiği 'yüz bin ve daha fazla' kişilik şehir (Sâffât 37:147). Kur'an ad vermez; tefsir ve tarih kaynakları Nînevâ'yı gösterir. DİA 'YÛNUS' ve 'NÎNOVA' maddeleri.",
+      "alternatives": [],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi"]
+    },
+    {
+      "slug": "ur-harran",
+      "name": "İbrahim'in Memleketi — Ur / Harran",
+      "modernName": "Ur (Tel el-Mukayyer) ve Harran",
+      "country": "Irak / Türkiye",
+      "lat": 30.9626, "lng": 46.1031,
+      "confidence": "rivayet",
+      "sourceNote": "Kur'an İbrahim'in doğduğu yeri adlandırmaz. Kaynaklar Bâbil ülkesi, Kûsâ ve Ur'u; hicret durağı olarak Harran'ı anar. Hiçbiri kesin değil. DİA 'İBRÂHİM' maddesi.",
+      "alternatives": [
+        { "name": "Harran", "lat": 36.8650, "lng": 39.0317, "note": "Kitâb-ı Mukaddes'te aile durağı; bazı İslam kaynaklarında doğum yeri.", "sourceSlugs": ["tdv-islam-ansiklopedisi"] },
+        { "name": "Kûsâ (Kûfe yakını)", "lat": 32.4, "lng": 44.4, "note": "Bâbil bölgesi rivayeti.", "sourceSlugs": ["tdv-islam-ansiklopedisi"] }
+      ],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi"]
+    },
+    {
+      "slug": "kenan",
+      "name": "Kenan — Filistin",
+      "modernName": "Filistin / el-Halîl (Hebron) çevresi",
+      "country": "Filistin",
+      "lat": 31.5326, "lng": 35.0998,
+      "confidence": "muhtemel",
+      "sourceNote": "İbrahim'in yerleştiği 'bereketli yer' (Enbiyâ 21:71) ve Yakub ailesinin Mısır öncesi yurdu. Bölge kabul görür, yerleşim noktası kesin değil; el-Halîl İbrahim'in kabriyle anılır. DİA 'İBRÂHİM', 'HALÎL' maddeleri.",
+      "alternatives": [],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi", "kuran-metni"]
+    },
+    {
+      "slug": "kizildeniz-gecis",
+      "name": "Denizin Yarıldığı Yer",
+      "modernName": "Süveyş Körfezi / Kızıldeniz kıyısı",
+      "country": "Mısır",
+      "lat": 29.9, "lng": 32.55,
+      "confidence": "rivayet",
+      "sourceNote": "Bakara 2:50, Şuarâ 26:63. Kur'an 'deniz' der, yer vermez. Süveyş Körfezi, Akabe Körfezi ve Bardavil gölü tezleri vardır; hiçbiri teyitli değil. DİA 'MÛSÂ' maddesi.",
+      "alternatives": [
+        { "name": "Akabe Körfezi (Nuveybi)", "lat": 29.03, "lng": 34.67, "note": "Sina'nın doğusundan geçiş tezi.", "sourceSlugs": ["tdv-islam-ansiklopedisi"] }
+      ],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi", "kuran-metni"]
+    },
+    {
+      "slug": "bedir",
+      "name": "Bedir",
+      "modernName": "Bedir",
+      "country": "Suudi Arabistan",
+      "lat": 23.7800, "lng": 38.7900,
+      "confidence": "kesin",
+      "sourceNote": "Âl-i İmrân 3:123 adıyla anar; kasaba bugün aynı adla yerindedir. DİA 'BEDİR GAZVESİ' maddesi.",
+      "alternatives": [],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi", "kuran-metni"]
+    },
+    {
+      "slug": "uhud",
+      "name": "Uhud",
+      "modernName": "Uhud Dağı (Medine)",
+      "country": "Suudi Arabistan",
+      "lat": 24.5017, "lng": 39.6136,
+      "confidence": "kesin",
+      "sourceNote": "Medine'nin kuzeyindeki dağ; Âl-i İmrân 3:121-179 savaşı anlatır. DİA 'UHUD GAZVESİ' maddesi.",
+      "alternatives": [],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi"]
+    },
+    {
+      "slug": "hudeybiye",
+      "name": "Hudeybiye",
+      "modernName": "eş-Şümeysî (Mekke'nin batısı)",
+      "country": "Suudi Arabistan",
+      "lat": 21.4400, "lng": 39.6200,
+      "confidence": "kesin",
+      "sourceNote": "Fetih 48:24 'Mekke'nin göbeğinde' der; Hudeybiye kuyusu ve antlaşma yeri bugün eş-Şümeysî'dir. DİA 'HUDEYBİYE ANTLAŞMASI' maddesi.",
+      "alternatives": [],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi"]
+    },
+    {
+      "slug": "taif",
+      "name": "Tâif",
+      "modernName": "Tâif",
+      "country": "Suudi Arabistan",
+      "lat": 21.2703, "lng": 40.4158,
+      "confidence": "kesin",
+      "sourceNote": "Sakîf kabilesinin şehri; Hz. Peygamber'in 620'deki davet yolculuğu ve Zuhruf 43:31'deki 'iki şehir'den biri sayılması. DİA 'TÂİF' maddesi.",
+      "alternatives": [],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi"]
+    },
+    {
+      "slug": "habesistan",
+      "name": "Habeşistan — Aksum",
+      "modernName": "Aksum",
+      "country": "Etiyopya",
+      "lat": 14.1211, "lng": 38.7239,
+      "confidence": "kesin",
+      "sourceNote": "İlk müslümanların hicret ettiği Necâşî'nin ülkesi; Aksum krallığının merkezi bilinir. DİA 'HABEŞİSTAN' maddesi.",
+      "alternatives": [],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi"]
+    },
+    {
+      "slug": "kehf-magarasi",
+      "name": "Ashâb-ı Kehf Mağarası",
+      "modernName": "Efes (Selçuk) ya da Amman — birden çok aday",
+      "country": "Türkiye / Ürdün",
+      "lat": 37.9500, "lng": 27.3667,
+      "confidence": "rivayet",
+      "sourceNote": "Kehf 18:9-26 yer vermez. Efes, Amman (Racîb), Tarsus ve Afşin başta olmak üzere birçok aday vardır; hiçbiri teyitli değildir. Koordinat en eski Hristiyan geleneğinin gösterdiği Efes'e verilmiştir. DİA 'ASHÂB-ı KEHF' maddesi.",
+      "alternatives": [
+        { "name": "Amman — Racîb", "lat": 31.9028, "lng": 35.9906, "note": "Ürdün'de mağara ve kilise kalıntısı.", "sourceSlugs": ["tdv-islam-ansiklopedisi"] },
+        { "name": "Tarsus", "lat": 36.9177, "lng": 34.8949, "note": "Anadolu geleneği.", "sourceSlugs": ["tdv-islam-ansiklopedisi"] },
+        { "name": "Afşin (Eshâb-ı Kehf)", "lat": 38.2486, "lng": 36.9147, "note": "Anadolu geleneği; Selçuklu külliyesi.", "sourceSlugs": ["tdv-islam-ansiklopedisi"] }
+      ],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi"]
+    },
+    {
+      "slug": "zulkarneyn-seddi",
+      "name": "Zülkarneyn'in Seddi",
+      "modernName": "Derbent (Kafkasya) — rivayet",
+      "country": "Rusya (Dağıstan)",
+      "lat": 42.0667, "lng": 48.2833,
+      "confidence": "rivayet",
+      "sourceNote": "Kehf 18:93-97 'iki dağ arası' der, yer vermez. Kafkas geçitleri (Derbent, Daryal) ve Çin Seddi gibi çok farklı tezler vardır; hiçbiri teyitli değildir. DİA 'ZÜLKARNEYN' maddesi.",
+      "alternatives": [
+        { "name": "Daryal Geçidi", "lat": 42.7400, "lng": 44.6300, "note": "Kafkasya'nın orta geçidi.", "sourceSlugs": ["tdv-islam-ansiklopedisi"] }
+      ],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi"]
+    },
+    {
+      "slug": "hendek-medine",
+      "name": "Hendek — Medine'nin Kuzeyi",
+      "modernName": "Sel' Dağı çevresi (Medine)",
+      "country": "Suudi Arabistan",
+      "lat": 24.4740, "lng": 39.6030,
+      "confidence": "kesin",
+      "sourceNote": "Ahzâb 33:9-27'de anlatılan kuşatma; hendek Medine'nin açık kuzey cephesinde kazıldı. DİA 'HENDEK GAZVESİ' maddesi.",
+      "alternatives": [],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi"]
+    },
+    {
+      "slug": "huneyn",
+      "name": "Huneyn",
+      "modernName": "Mekke–Tâif yolu üzerinde vadi",
+      "country": "Suudi Arabistan",
+      "lat": 21.45, "lng": 40.10,
+      "confidence": "muhtemel",
+      "sourceNote": "Tevbe 9:25 adıyla anar. Mekke ile Tâif arasında bir vadi olduğu kesindir; tam yeri konusunda görüşler farklıdır. DİA 'HUNEYN GAZVESİ' maddesi.",
+      "alternatives": [],
+      "sourceSlugs": ["tdv-islam-ansiklopedisi", "kuran-metni"]
+    }
+  ]
+}

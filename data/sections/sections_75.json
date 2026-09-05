@@ -1,0 +1,47 @@
+{
+  "surahId": 75,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Yemin: kemiklerin toplanması ve o günün sahnesi",
+      "verseStart": 1,
+      "verseEnd": 15,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Vahyi acele alma",
+      "verseStart": 16,
+      "verseEnd": 19,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Dünyayı sevmek; iki tür yüz",
+      "verseStart": 20,
+      "verseEnd": 25,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Can boğaza dayandığında",
+      "verseStart": 26,
+      "verseEnd": 35,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "İnsan başıboş mu bırakılacak?",
+      "verseStart": 36,
+      "verseEnd": 40,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

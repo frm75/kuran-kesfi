@@ -1,0 +1,28 @@
+{
+  "slug": "iram",
+  "title": "İrem",
+  "type": "event",
+  "chronologicalOrder": 44,
+  "eraStart": null,
+  "eraEnd": null,
+  "summary": "Fecr suresinde 'ülkeler içinde benzeri yaratılmamış' diye anılan, Âd kavmine bağlı sütunlu şehir. Kur'an onu helâk edilen güç örnekleri arasında sayar.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-hud"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "İrem, Semûd ve Firavun",
+      "ref": "89:6-13",
+      "note": null
+    }
+  ],
+  "lessons": [],
+  "locations": [],
+  "concepts": [
+    "helak",
+    "kibir",
+    "zulum"
+  ]
+}

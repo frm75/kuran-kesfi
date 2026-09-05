@@ -1,0 +1,26 @@
+{
+  "slug": "ecel",
+  "nameTr": "Ecel",
+  "nameAr": "الأجل",
+  "definition": "Belirlenmiş süre ve vade; hem bireysel ömür hem toplumların süresi için kullanılır.",
+  "parentSlug": null,
+  "roots": [
+    "Ajl"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "olum",
+      "type": "co_occurrence",
+      "weight": 3
+    },
+    {
+      "target": "kader",
+      "type": "part_of",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

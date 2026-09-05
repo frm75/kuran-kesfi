@@ -1,0 +1,48 @@
+{
+  "slug": "dinde-zorlama-yok",
+  "nameTr": "Dinde Zorlama Yok",
+  "nameAr": "لا إكراه في الدين",
+  "rootLatin": null,
+  "definition": "İnanca zorlamamak; tebliğin sınırının hatırlatma olduğunu bilmek.",
+  "explanation": "2:256 açıkça 'dinde zorlama yoktur' der ve gerekçesini doğrunun eğriden ayrılmış olmasına bağlar. 10:99 Allah dileseydi herkesin iman edeceğini söyleyip 'sen mi insanları zorlayacaksın' diye sorar. 18:29 tercihi kişiye bırakır. 88:21-22 ve 50:45 peygamberin görevini 'öğüt vermek' ile sınırlar, 'sen zorba değilsin' der.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 45,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "2:256",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "10:99",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "88:21",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "18:29",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "50:45",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "hidayet",
+    "iman",
+    "sebil"
+  ]
+}

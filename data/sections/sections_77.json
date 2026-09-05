@@ -1,0 +1,39 @@
+{
+  "surahId": 77,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Gönderilenlere yemin ve hüküm günü",
+      "verseStart": 1,
+      "verseEnd": 15,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Yaratılıştaki deliller",
+      "verseStart": 16,
+      "verseEnd": 28,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Yalanlayanların karşılığı",
+      "verseStart": 29,
+      "verseEnd": 40,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Sakınanların hâli ve son uyarı",
+      "verseStart": 41,
+      "verseEnd": 50,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

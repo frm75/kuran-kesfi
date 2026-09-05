@@ -1,0 +1,33 @@
+{
+  "slug": "borcu-yazma",
+  "nameTr": "Borcu Yazmak",
+  "nameAr": "كتابة الدين",
+  "rootLatin": null,
+  "definition": "Vadeli alacak ve borcu belgeye bağlamak, şahit tutmak.",
+  "explanation": "Kur'an'ın en uzun ayeti (2:282) borcun yazılmasını, kâtibin adaletle yazmasını ve şahit tutulmasını ayrıntısıyla emreder. Yolculukta yazıcı bulunamazsa rehin yeterlidir; ancak güvene dayanılıyorsa emanetin eksiksiz ödenmesi istenir (2:283).",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 34,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "2:282",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:283",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "emanet",
+    "adalet",
+    "sidk"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "slug": "helak",
+  "nameTr": "Helâk",
+  "nameAr": "الهلاك",
+  "definition": "Bir topluluğun zulmü sebebiyle yok edilmesi. Kur'an helâki keyfî bir yok ediş olarak değil, uyarı sonrasında gelen bir sonuç olarak anlatır.",
+  "parentSlug": null,
+  "roots": [
+    "hlk"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "uyari",
+      "type": "cause",
+      "weight": 3
+    },
+    {
+      "target": "azap",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

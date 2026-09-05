@@ -1,0 +1,21 @@
+{
+  "slug": "nur",
+  "nameTr": "Nûr (Işık)",
+  "nameAr": "النور",
+  "definition": "Işık ve aydınlık; Kur'an'da hidayetin ve vahyin sembolü.",
+  "parentSlug": null,
+  "roots": [
+    "nwr"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "hidayet",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

@@ -1,0 +1,63 @@
+{
+  "surahId": 14,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Karanlıklardan aydınlığa; Mûsâ ve şükür",
+      "verseStart": 1,
+      "verseEnd": 8,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Geçmiş kavimler ve peygamberlerin yardım istemesi",
+      "verseStart": 9,
+      "verseEnd": 17,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Kül meseli ve şeytanın mahşerdeki konuşması",
+      "verseStart": 18,
+      "verseEnd": 23,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Güzel söz ve kötü söz meselleri",
+      "verseStart": 24,
+      "verseEnd": 27,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Nimeti küfre değişenler; sayılamayan nimetler",
+      "verseStart": 28,
+      "verseEnd": 34,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "İbrâhim'in duası",
+      "verseStart": 35,
+      "verseEnd": 41,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Zalimlerin âkıbeti ve yerin başka yere dönüşmesi",
+      "verseStart": 42,
+      "verseEnd": 52,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

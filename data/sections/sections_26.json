@@ -1,0 +1,87 @@
+{
+  "surahId": 26,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "\"Mü'min olmuyorlar diye üzülme\"; yerdeki deliller",
+      "verseStart": 1,
+      "verseEnd": 9,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Mûsâ ve Firavun",
+      "verseStart": 10,
+      "verseEnd": 68,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "İbrâhim'in duası ve mahşer sahnesi",
+      "verseStart": 69,
+      "verseEnd": 104,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Nûh",
+      "verseStart": 105,
+      "verseEnd": 122,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Hûd ve Âd kavmi",
+      "verseStart": 123,
+      "verseEnd": 140,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Sâlih ve Semûd kavmi",
+      "verseStart": 141,
+      "verseEnd": 159,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Lût",
+      "verseStart": 160,
+      "verseEnd": 175,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Şu'ayb ve Eyke halkı",
+      "verseStart": 176,
+      "verseEnd": 191,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 9,
+      "title": "Kur'an'ın indirilişi; \"onu şeytanlar indirmedi\"",
+      "verseStart": 192,
+      "verseEnd": 212,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 10,
+      "title": "\"En yakın akrabanı uyar\"; şairler",
+      "verseStart": 213,
+      "verseEnd": 227,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "slug": "hz-zulkifl",
+  "title": "Hz. Zülkifl",
+  "type": "prophet",
+  "chronologicalOrder": 35,
+  "eraStart": null,
+  "eraEnd": null,
+  "summary": "Kur'an'da yalnızca iki yerde, sabredenler ve iyiler arasında anılan peygamber. Kıssası anlatılmaz; adı sabırla birlikte geçer.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-ismail",
+    "hz-elyesa"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Sabredenlerden ve salihlerden",
+      "ref": "21:85-86",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "İyilerden biri olarak anılışı",
+      "ref": "38:48",
+      "note": null
+    }
+  ],
+  "lessons": [],
+  "locations": [],
+  "concepts": [
+    "sabir",
+    "nubuvvet"
+  ]
+}

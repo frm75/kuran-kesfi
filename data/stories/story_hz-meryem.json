@@ -1,0 +1,87 @@
+{
+  "slug": "hz-meryem",
+  "title": "Hz. Meryem",
+  "type": "person",
+  "chronologicalOrder": 28,
+  "eraStart": "M.S. 1. yüzyıl başı",
+  "eraEnd": null,
+  "summary": "Kur'an'da adı geçen tek kadın; bir sure onun adını taşır. Annesi tarafından mabede adanır, Zekeriyyâ himayesinde büyür, meleklerle konuşur, babasız olarak Îsâ'yı doğurur ve kavminin ithamı karşısında beşikteki Îsâ konuşur. Kur'an onu 'seçilmiş' ve 'sıddîka' olarak anar.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-isa",
+    "hz-zekeriya"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Doğumu ve mabede adanışı",
+      "ref": "3:35-37",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Seçilmişlik ve Îsâ müjdesi",
+      "ref": "3:42-47",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Mihraba çekilme ve ruhun gelişi",
+      "ref": "19:16-22",
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Doğum ve hurma ağacı",
+      "ref": "19:23-26",
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Kavmine dönüş ve beşikteki konuşma",
+      "ref": "19:27-33",
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Doğruluğu ve ayet oluşu",
+      "ref": "21:91",
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "İffetin örneği",
+      "ref": "66:12",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Meryem, Kur'an'da iffet, teslimiyet ve Allah'a yönelişin örneği olarak sunulur; 'seçilmiş' ve 'sıddîka' sıfatları buna bağlanır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "MERYEM maddesi — islamansiklopedisi.org.tr/meryem",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "kudus",
+      "order": 1,
+      "eventDescription": "Mabed ve mihrap.",
+      "passageOrders": [
+        1,
+        2,
+        3
+      ]
+    }
+  ],
+  "concepts": [
+    "iman",
+    "sidk",
+    "takva",
+    "nimet"
+  ]
+}

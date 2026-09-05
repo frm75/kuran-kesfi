@@ -1,0 +1,23 @@
+{
+  "surahId": 104,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Mal toplayıp insanları çekiştiren kimse",
+      "verseStart": 1,
+      "verseEnd": 3,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Hutame",
+      "verseStart": 4,
+      "verseEnd": 9,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

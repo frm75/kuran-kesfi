@@ -1,0 +1,43 @@
+{
+  "slug": "eslere-iyi-davranma",
+  "nameTr": "Eşlere İyi Davranma",
+  "nameAr": "المعاشرة بالمعروف",
+  "rootLatin": null,
+  "definition": "Evlilikte iyilikle geçinmek; hoşlanmadığın yerde bile insafı elden bırakmamak.",
+  "explanation": "4:19 kadınlarla 'iyilikle geçinmeyi' emreder ve hoşlanılmayan bir şeyde Allah'ın çok hayır koymuş olabileceğini söyler. 30:21 evliliği huzur, sevgi ve merhamet üzerinden bir ayet sayar. 2:187 eşleri birbirine 'örtü' diye tanımlar. 4:129 tam eşitliğin imkânsızlığını kabul eder ama birini askıda bırakmayı yasaklar.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 40,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "4:19",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "30:21",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:187",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "4:129",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "ihsan",
+    "rahmet",
+    "adalet"
+  ]
+}

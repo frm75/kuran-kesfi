@@ -1,0 +1,75 @@
+{
+  "slug": "anne-babaya-iyilik",
+  "nameTr": "Anne Babaya İyilik",
+  "nameAr": "الإحسان إلى الوالدين",
+  "rootLatin": null,
+  "definition": "Anne babaya saygı, hizmet ve güzel söz; yaşlılıklarında bakım; şirk dışında onlara itaat ve dua.",
+  "explanation": "İsrâ 17:23-24 anne babaya iyiliği tevhidin hemen ardından sayar ve 'onlara öf bile deme' der. Lokmân 31:14-15 ve Ahkāf 46:15 anne babaya iyiliği emreder ancak şirke çağırdıklarında itaati kaldırır. İbrâhim'in babasına 'ey babacığım' hitabı (19:42-45) muhalefetin bile saygılı dille yapılmasına örnektir.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 7,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "17:23-24",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "31:14-15",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "46:15",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "4:36",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:83",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "29:8",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "19:42-45",
+      "role": "secondary",
+      "note": "İbrâhim'in babasına hitabı"
+    },
+    {
+      "ref": "19:14",
+      "role": "secondary",
+      "note": "Yahyâ: anne babasına iyi"
+    }
+  ],
+  "stories": [
+    {
+      "slug": "lokman",
+      "note": "Öğütlerde anne baba hakkı"
+    },
+    {
+      "slug": "hz-ibrahim",
+      "note": "Babasına yumuşak çağrı"
+    },
+    {
+      "slug": "hz-yahya",
+      "note": "'Anne babasına iyi davranan'"
+    }
+  ],
+  "concepts": [
+    "ihsan",
+    "birr"
+  ]
+}

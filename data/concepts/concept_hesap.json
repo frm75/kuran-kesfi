@@ -1,0 +1,27 @@
+{
+  "slug": "hesap",
+  "nameTr": "Hesap",
+  "nameAr": "الحساب",
+  "definition": "Âhirette amellerin karşılığının görülmesi; tartı (mîzan) ile birlikte anılır.",
+  "parentSlug": null,
+  "roots": [
+    "Hsb",
+    "wzn"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "ahiret",
+      "type": "part_of",
+      "weight": 3
+    },
+    {
+      "target": "adalet",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

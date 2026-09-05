@@ -1,0 +1,68 @@
+{
+  "slug": "infak",
+  "nameTr": "İnfak (Allah Yolunda Harcama)",
+  "nameAr": "الإنفاق",
+  "rootLatin": "nfq",
+  "definition": "Maldan Allah rızası için, gösterişsiz ve incitmeden harcamak; zekâtın ötesinde gönüllü vermek.",
+  "explanation": "Bakara 2:261 infakı yedi başak veren tohuma benzetir; 2:267 'kazandıklarınızın iyilerinden verin' der; 2:271-272 gizli vermeyi över; Âl-i İmrân 3:92 'sevdiğinizden vermeden iyiliğe eremezsiniz' der. Münâfikūn 63:10 ölüm gelmeden infak etmeye çağırır. Not: نفق kökü Kur'an'da hem 'harcama' hem 'nifak/münafık' anlamlarını taşır; kavram eşleştirmesi kök temelli olduğu için o ayetler de listede görünür.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 18,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "2:267",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "3:92",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:195",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:254",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "57:7",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "63:10",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:261",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "2:274",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "2:271-272",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "infak",
+    "zekat",
+    "ihsan"
+  ]
+}

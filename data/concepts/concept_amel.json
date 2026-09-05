@@ -1,0 +1,22 @@
+{
+  "slug": "amel",
+  "nameTr": "Amel",
+  "nameAr": "العمل",
+  "definition": "Yapılan iş ve davranış; Kur'an'da iman neredeyse hep 'salih amel' ile birlikte geçer.",
+  "parentSlug": null,
+  "roots": [
+    "Eml",
+    "ksb"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "iman",
+      "type": "co_occurrence",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

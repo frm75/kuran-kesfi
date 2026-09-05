@@ -1,0 +1,21 @@
+{
+  "slug": "birr",
+  "nameTr": "Birr (İyilik)",
+  "nameAr": "البر",
+  "definition": "Geniş kapsamlı iyilik; imanın ve ibadetin ahlâkî karşılığı. Bakara 2:177 birr'i inanç, infak, namaz, ahde vefa ve sabırla tanımlar.",
+  "parentSlug": null,
+  "roots": [
+    "brr"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "ihsan",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

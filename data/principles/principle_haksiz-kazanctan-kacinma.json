@@ -1,0 +1,43 @@
+{
+  "slug": "haksiz-kazanctan-kacinma",
+  "nameTr": "Haksız Kazançtan Kaçınma",
+  "nameAr": "اجتناب أكل المال بالباطل",
+  "rootLatin": null,
+  "definition": "Başkasının malını bâtıl yolla yememek; ölçü ve tartıda hile yapmamak.",
+  "explanation": "2:188 malları haksız yere yemeyi ve bunu yetkililere taşıyarak günahı bilerek yemeyi yasaklar. 4:29 ölçüyü koyar: ancak karşılıklı rızaya dayanan ticaret. 83:1-3 ölçüde ve tartıda hile yapanlara yazıklar olsun der. 7:85 Şu'ayb'ın kavmine aynı çağrıyı yaptığını anlatır.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 44,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "2:188",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "4:29",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "83:1",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "7:85",
+      "role": "secondary",
+      "note": "Şu'ayb'ın çağrısı"
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "adalet",
+    "zulum",
+    "hak"
+  ]
+}

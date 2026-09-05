@@ -1,0 +1,84 @@
+{
+  "slug": "hz-salih",
+  "title": "Hz. Sâlih",
+  "type": "prophet",
+  "chronologicalOrder": 5,
+  "eraStart": null,
+  "eraEnd": null,
+  "summary": "Semûd kavmine gönderilen peygamber. Mucize olarak verilen deve, kavmin bu deveye zarar vermemesi istenir; deveyi keserler ve korkunç bir sesle helâk olurlar. Yurtları Hicr'dir (Medâin-i Sâlih).",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-hud",
+    "hz-suayb"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Semûd'a çağrı ve deve",
+      "ref": "7:73-79",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Üç günlük mühlet ve helâk",
+      "ref": "11:61-68",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Devenin su hakkı",
+      "ref": "26:141-159",
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Dokuz kişilik suikast planı",
+      "ref": "27:45-53",
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "İmtihan olarak deve",
+      "ref": "54:23-31",
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Devenin kesilmesi",
+      "ref": "91:11-15",
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Hicr halkı",
+      "ref": "15:80-84",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Semûd kıssasında deveye zarar vermek, Allah'ın koyduğu sınırı çiğnemenin örneği olarak yorumlanır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "SEMÛD maddesi — islamansiklopedisi.org.tr/semud",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "hicr",
+      "order": 1,
+      "eventDescription": "Semûd'un dağları yontarak yaptığı evler; Hicr (15:80-82).",
+      "passageOrders": [
+        7
+      ]
+    }
+  ],
+  "concepts": [
+    "kufur",
+    "zulum",
+    "imtihan"
+  ]
+}

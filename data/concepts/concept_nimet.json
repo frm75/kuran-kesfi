@@ -1,0 +1,21 @@
+{
+  "slug": "nimet",
+  "nameTr": "Nimet",
+  "nameAr": "النعمة",
+  "definition": "Allah'ın verdiği her iyilik; şükrün konusu.",
+  "parentSlug": null,
+  "roots": [
+    "nEm"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "sukur",
+      "type": "cause",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

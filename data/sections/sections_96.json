@@ -1,0 +1,39 @@
+{
+  "surahId": 96,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "İlk vahiy: Oku!",
+      "verseStart": 1,
+      "verseEnd": 5,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "İnsanın azgınlığı ve dönüşün Allah'a olması",
+      "verseStart": 6,
+      "verseEnd": 8,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Namaz kılanı engelleyen kimse",
+      "verseStart": 9,
+      "verseEnd": 14,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Uyarı ve secde emri",
+      "verseStart": 15,
+      "verseEnd": 19,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

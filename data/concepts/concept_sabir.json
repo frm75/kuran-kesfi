@@ -1,0 +1,26 @@
+{
+  "slug": "sabir",
+  "nameTr": "Sabır",
+  "nameAr": "الصبر",
+  "definition": "Zorluk, kayıp ve bekleyiş karşısında dayanmak; hakikat üzere direnmek. Kur'an'da namazla birlikte anılan etkin bir tutum.",
+  "parentSlug": null,
+  "roots": [
+    "Sbr"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "sukur",
+      "type": "co_occurrence",
+      "weight": 2
+    },
+    {
+      "target": "imtihan",
+      "type": "cause",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

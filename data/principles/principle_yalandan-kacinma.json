@@ -1,0 +1,57 @@
+{
+  "slug": "yalandan-kacinma",
+  "nameTr": "Yalandan Kaçınma",
+  "nameAr": "اجتناب الكذب",
+  "rootLatin": "kpb",
+  "definition": "Gerçeğe aykırı söz söylememek, yalancı şahitlik yapmamak ve hakkı bâtılla karıştırmamak.",
+  "explanation": "Hac 22:30 putlardan sonra 'yalan sözden kaçının' der; Bakara 2:42 hakkı bâtılla karıştırmayı ve bile bile gizlemeyi yasaklar; Furkān 25:72 Rahmân'ın kullarını 'yalana tanıklık etmeyenler' diye niteler. Nahl 16:105 yalanı imansızlığın belirtisi sayar. Kökün Kur'an'daki en yaygın kullanımı 'âyetleri yalanlama'dır; kök temelli eşleştirmede o ayetler de görünür.",
+  "dailyNote": null,
+  "oppositeSlug": "dogruluk",
+  "order": 22,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "22:30",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:42",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "25:72",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "16:105",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "39:3",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "40:28",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "3:61",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "yalan",
+    "sidk"
+  ]
+}

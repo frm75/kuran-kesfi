@@ -1,0 +1,28 @@
+{
+  "slug": "haberi-arastirma",
+  "nameTr": "Haberi Araştırma",
+  "nameAr": "التبين في الخبر",
+  "rootLatin": null,
+  "definition": "Gelen habere hemen inanmamak, doğruluğunu araştırmak.",
+  "explanation": "49:6 fâsığın getirdiği haberde araştırma yapılmasını emreder ve gerekçesini açıkça söyler: bilmeden bir topluluğa zarar verip sonra pişman olmamak için. Ayet bir haberin doğruluğunu, kaynağının güvenilirliğiyle birlikte tartmayı öğretir.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 58,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "49:6",
+      "role": "primary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "ilim",
+    "sidk",
+    "zan"
+  ]
+}

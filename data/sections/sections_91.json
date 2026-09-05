@@ -1,0 +1,23 @@
+{
+  "surahId": 91,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Yeminler ve nefsin arındırılması",
+      "verseStart": 1,
+      "verseEnd": 10,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Semûd kavmi ve deve",
+      "verseStart": 11,
+      "verseEnd": 15,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "slug": "isitme-gorme",
+  "nameTr": "İşitme ve görme",
+  "nameAr": "السمع والبصر",
+  "definition": "Kur'an'ın en çok tekrarladığı iki idrak aracı. Hem Allah'ın sıfatı olarak, hem de insanın sorumlu tutulduğu yeti olarak geçer; kalp ile birlikte anılır.",
+  "parentSlug": null,
+  "roots": [
+    "smE",
+    "bSr"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "kalp",
+      "type": "part_of",
+      "weight": 3
+    },
+    {
+      "target": "ilim",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

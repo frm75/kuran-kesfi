@@ -1,0 +1,52 @@
+{
+  "slug": "selamlasma",
+  "nameTr": "Selâmlaşma ve Güzel Karşılık",
+  "nameAr": "السلام",
+  "rootLatin": "slm",
+  "definition": "Karşılaşmada selâm vermek, verilen selâma daha güzeliyle karşılık vermek, eve girerken izin ve selâmla girmek.",
+  "explanation": "Nûr 24:27 ve 24:61 eve girerken selâm vermeyi emreder; Nisâ 4:86 'size selâm verildiğinde daha güzeliyle karşılık verin' der. En'âm 6:54 Hz. Peygamber'e müminlere 'selâm size' demesini söyler; Furkān 25:63 kaba söze 'selâm' diye karşılık vermeyi över. Kökün Kur'an'daki geniş kullanımı (İslâm, teslimiyet, esenlik) eşleştirmede görünür.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 25,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "24:27",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "24:61",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "4:86",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "6:54",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "25:63",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "33:44",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "islam",
+    "ihsan"
+  ]
+}

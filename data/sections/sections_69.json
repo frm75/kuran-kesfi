@@ -1,0 +1,55 @@
+{
+  "surahId": 69,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Hâkka; Semûd, Âd, Firavun ve Nûh kavimleri",
+      "verseStart": 1,
+      "verseEnd": 12,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Sûra üfürülüş ve arzın kaldırılması",
+      "verseStart": 13,
+      "verseEnd": 18,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Kitabı sağından verilen",
+      "verseStart": 19,
+      "verseEnd": 24,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Kitabı solundan verilen",
+      "verseStart": 25,
+      "verseEnd": 37,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Kur'an ne şairin ne kâhinin sözüdür",
+      "verseStart": 38,
+      "verseEnd": 47,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Kur'an kesin bilgidir; Rabbini tespih et",
+      "verseStart": 48,
+      "verseEnd": 52,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

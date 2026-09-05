@@ -1,0 +1,55 @@
+{
+  "slug": "sebe",
+  "title": "Sebe Kavmi",
+  "type": "people",
+  "chronologicalOrder": 20,
+  "eraStart": "M.Ö. 1. binyıl",
+  "eraEnd": null,
+  "summary": "Yemen'de iki yanı bahçelerle dolu bereketli yurt; nankörlük edince Arim seli setlerini yıkar, bahçeleri acı meyveli ağaçlara döner. Neml suresinde ise Süleyman dönemindeki güneşe tapan melike ve iman etmesi anlatılır.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-suleyman"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "İki bahçe, nimet ve sel",
+      "ref": "34:15-19",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Süleyman'a itaat eden melike",
+      "ref": "27:22-44",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Sebe kıssası nimete nankörlüğün sonucu olarak, melike kıssası ise istişare ve hakikat karşısında teslim olmanın örneği olarak ele alınır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "SEBE maddesi — islamansiklopedisi.org.tr/sebe",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "sebe-marib",
+      "order": 1,
+      "eventDescription": "Me'rib seddi ve iki bahçe.",
+      "passageOrders": [
+        1,
+        2
+      ]
+    }
+  ],
+  "concepts": [
+    "nimet",
+    "sukur",
+    "kufur",
+    "iman"
+  ]
+}

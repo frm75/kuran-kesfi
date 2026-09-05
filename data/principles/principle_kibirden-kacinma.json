@@ -1,0 +1,71 @@
+{
+  "slug": "kibirden-kacinma",
+  "nameTr": "Kibirden Kaçınma",
+  "nameAr": "اجتناب الكبر",
+  "rootLatin": null,
+  "definition": "Kendini üstün görmemek, gerçeği kabulden büyüklenmeyle kaçınmamak, insanlara tepeden bakmamak.",
+  "explanation": "Lokmân 31:18 'yüzünü insanlardan çevirme, böbürlenerek yürüme' der; İsrâ 17:37 kibirle yürümeyi yasaklar; Nahl 16:23 ve Mü'min 40:35 kibirlileri kınar; Hadîd 57:23 kendini beğenip böbürleneni Allah'ın sevmediğini söyler. İblis'in secdeden kaçınması (7:12-13) ve Kārûn kibrin kıssadaki örnekleridir.",
+  "dailyNote": null,
+  "oppositeSlug": "tevazu",
+  "order": 28,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "31:18",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "17:37",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "57:23",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "16:23",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "40:35",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "7:146",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "4:36",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "7:12-13",
+      "role": "secondary",
+      "note": "İblis'in kibri"
+    }
+  ],
+  "stories": [
+    {
+      "slug": "hz-adem",
+      "note": "İblis'in secdeden kaçınması"
+    },
+    {
+      "slug": "karun",
+      "note": "Kavmine karşı gösteriş"
+    }
+  ],
+  "concepts": [
+    "kibir",
+    "zulum"
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "slug": "ihsan",
+  "nameTr": "İhsan (Güzel Davranış)",
+  "nameAr": "الإحسان",
+  "rootLatin": "Hsn",
+  "definition": "Yapılan işi en güzel şekilde yapmak; karşılık beklemeden iyilik etmek; Allah'ı görüyormuş gibi davranmak.",
+  "explanation": "Nahl 16:90 'Allah adaleti ve ihsanı emreder' der; Bakara 2:195 'ihsan edin, Allah ihsan edenleri sever'; Kasas 28:77 'Allah sana nasıl ihsan ettiyse sen de ihsan et'; Rahmân 55:60 ihsanın karşılığının ihsan olduğunu bildirir. Yûsuf kıssasında Yûsuf dört kez 'muhsin' olarak anılır. DİA 'İHSAN' maddesi kavramı adaletin bir üst basamağı olarak açıklar.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 23,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "16:90",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:195",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "28:77",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "4:36",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "55:60",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "3:134",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "12:22",
+      "role": "secondary",
+      "note": "Yûsuf: muhsinlerden"
+    },
+    {
+      "ref": "12:90",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [
+    {
+      "slug": "hz-yusuf",
+      "note": "'Muhsinlerden' sıfatı (12:22, 56, 78, 90)"
+    }
+  ],
+  "concepts": [
+    "ihsan",
+    "birr",
+    "adalet"
+  ]
+}

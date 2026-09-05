@@ -1,0 +1,51 @@
+{
+  "slug": "lokman",
+  "title": "Lokmân",
+  "type": "person",
+  "chronologicalOrder": 24,
+  "eraStart": null,
+  "eraEnd": null,
+  "summary": "Kendisine hikmet verilen ve oğluna öğütleriyle anılan bilge. Öğütleri şirkten uzak durma, anne babaya iyilik, namaz, iyiliği emretme, tevazu ve ölçülü konuşma ekseninde on ayette toplanır. Peygamber mi bilge mi olduğu tartışmalıdır; yaşadığı dönem bilinmez.",
+  "coverImage": null,
+  "relatedStories": [],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Hikmet ve şükür",
+      "ref": "31:12",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Şirk ve anne baba hakkı",
+      "ref": "31:13-15",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Namaz, sabır, tevazu ve ses",
+      "ref": "31:16-19",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Lokmân'ın öğütleri tefsirlerde aile eğitiminin Kur'anî çerçevesi olarak okunur; anne babaya iyilikle Allah'a şirk arasındaki sınır bu öğütlerde çizilir.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "LOKMAN maddesi — islamansiklopedisi.org.tr/lokman",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [],
+  "concepts": [
+    "hikmet",
+    "sukur",
+    "sirk",
+    "namaz",
+    "sabir",
+    "kibir"
+  ]
+}

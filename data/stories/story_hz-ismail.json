@@ -1,0 +1,74 @@
+{
+  "slug": "hz-ismail",
+  "title": "Hz. İsmâil",
+  "type": "prophet",
+  "chronologicalOrder": 8,
+  "eraStart": "M.Ö. 2000 civarı (yaklaşık)",
+  "eraEnd": null,
+  "summary": "İbrâhim'in oğlu; babasıyla Kâbe'yi inşa eder, Mekke'ye yerleşir. Kur'an onu sözünde duran, sabırlı ve ailesine namazı emreden bir peygamber olarak anar. Kurban kıssasındaki oğulun İsmail olduğu çoğunluk görüşüdür.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-ibrahim",
+    "hz-ishak"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Kurban imtihanı",
+      "ref": "37:101-111",
+      "note": "Oğulun adı Kur'an'da verilmez; çoğunluk İsmail der."
+    },
+    {
+      "order": 2,
+      "title": "Kâbe'nin inşası",
+      "ref": "2:125-129",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Mekke'ye yerleşme ve dua",
+      "ref": "14:37-39",
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Sözünde duran, namazı emreden",
+      "ref": "19:54-55",
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Sabredenlerden",
+      "ref": "21:85-86",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "İsmâil, sözünde sadakat ve ailesine ibadeti emretme özellikleriyle anılır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "İSMÂİL maddesi — islamansiklopedisi.org.tr/ismail",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "mekke",
+      "order": 1,
+      "eventDescription": "Kâbe'nin inşası ve Mekke'ye yerleşme.",
+      "passageOrders": [
+        2,
+        3
+      ]
+    }
+  ],
+  "concepts": [
+    "sabir",
+    "sidk",
+    "namaz",
+    "ahid"
+  ]
+}

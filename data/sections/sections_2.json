@@ -1,0 +1,359 @@
+{
+  "surahId": 2,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Kitabın niteliği ve sakınanların vasıfları",
+      "verseStart": 1,
+      "verseEnd": 5,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "İnkâra saplananlar",
+      "verseStart": 6,
+      "verseEnd": 7,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Münafıklar ve iki benzetme",
+      "verseStart": 8,
+      "verseEnd": 20,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Kulluk çağrısı ve Kur'an'a meydan okuma",
+      "verseStart": 21,
+      "verseEnd": 29,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Âdem'in yaratılışı ve yeryüzüne iniş",
+      "verseStart": 30,
+      "verseEnd": 39,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "İsrâiloğullarına çağrı: verdiğiniz sözü tutun",
+      "verseStart": 40,
+      "verseEnd": 46,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Hatırlatılan nimetler: denizin yarılması, buzağı, Kitap",
+      "verseStart": 47,
+      "verseEnd": 53,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Tövbe, Allah'ı görme isteği, gölge ve kudret helvası",
+      "verseStart": 54,
+      "verseEnd": 59,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 9,
+      "title": "Sudan ve yemekten şikâyet",
+      "verseStart": 60,
+      "verseEnd": 61,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 10,
+      "title": "İnananlar, Yahudiler, Hıristiyanlar ve Sâbiîler",
+      "verseStart": 62,
+      "verseEnd": 62,
+      "alsoVerses": [],
+      "note": "Tek ayetlik bölüm: hüküm kendinden önceki ve sonraki anlatının ikisine de bağlanmıyor."
+    },
+    {
+      "order": 11,
+      "title": "Tûr'un kaldırılması ve Cumartesi yasağı",
+      "verseStart": 63,
+      "verseEnd": 66,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 12,
+      "title": "Sığır kıssası ve katılaşan kalpler",
+      "verseStart": 67,
+      "verseEnd": 74,
+      "alsoVerses": [],
+      "note": "Sureye adını veren bölüm."
+    },
+    {
+      "order": 13,
+      "title": "Kitabı tahrif edenler ve \"sayılı günler\" iddiası",
+      "verseStart": 75,
+      "verseEnd": 82,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 14,
+      "title": "Misak: ana babaya iyilik, kan dökmemek",
+      "verseStart": 83,
+      "verseEnd": 86,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 15,
+      "title": "Peygamberlerin yalanlanması",
+      "verseStart": 87,
+      "verseEnd": 96,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 16,
+      "title": "Cebrâil'e düşmanlık, Süleyman ve sihir",
+      "verseStart": 97,
+      "verseEnd": 103,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 17,
+      "title": "\"Râinâ\" demeyin; nesih; Kitap ehlinin kıskançlığı",
+      "verseStart": 104,
+      "verseEnd": 110,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 18,
+      "title": "Cennet iddiaları, mescitler, doğu ve batı",
+      "verseStart": 111,
+      "verseEnd": 121,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 19,
+      "title": "İbrâhim'in imtihanı ve Kâbe'nin yükseltilmesi",
+      "verseStart": 122,
+      "verseEnd": 129,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 20,
+      "title": "İbrâhim'in dini ve Ya'kūb'un vasiyeti",
+      "verseStart": 130,
+      "verseEnd": 141,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 21,
+      "title": "Kıble'nin değiştirilmesi",
+      "verseStart": 142,
+      "verseEnd": 152,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 22,
+      "title": "Sabır, namaz ve imtihan",
+      "verseStart": 153,
+      "verseEnd": 157,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 23,
+      "title": "Safâ ile Merve; hakkı gizleyenler; tek ilah",
+      "verseStart": 158,
+      "verseEnd": 163,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 24,
+      "title": "Yaratılıştaki deliller ve ortak koşanlar",
+      "verseStart": 164,
+      "verseEnd": 167,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 25,
+      "title": "Helal ve haram yiyecekler; atalara uyma",
+      "verseStart": 168,
+      "verseEnd": 176,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 26,
+      "title": "İyilik (birr) nedir",
+      "verseStart": 177,
+      "verseEnd": 177,
+      "alsoVerses": [],
+      "note": "Tek ayet; sure içindeki en kapsamlı iyilik tanımı olduğu için ayrı tutuldu."
+    },
+    {
+      "order": 27,
+      "title": "Kısas ve vasiyet",
+      "verseStart": 178,
+      "verseEnd": 182,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 28,
+      "title": "Oruç",
+      "verseStart": 183,
+      "verseEnd": 187,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 29,
+      "title": "Haksız kazanç ve hilaller",
+      "verseStart": 188,
+      "verseEnd": 189,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 30,
+      "title": "Savaş hükümleri",
+      "verseStart": 190,
+      "verseEnd": 195,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 31,
+      "title": "Hac ve umre",
+      "verseStart": 196,
+      "verseEnd": 203,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 32,
+      "title": "İki insan tipi ve barışa çağrı",
+      "verseStart": 204,
+      "verseEnd": 210,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 33,
+      "title": "İsrâiloğullarına sorulan ve ümmetin imtihanı",
+      "verseStart": 211,
+      "verseEnd": 214,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 34,
+      "title": "Sorular: infak, savaş, içki ve kumar, yetimler, evlilik",
+      "verseStart": 215,
+      "verseEnd": 221,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 35,
+      "title": "Ay hali, yeminler ve îlâ",
+      "verseStart": 222,
+      "verseEnd": 228,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 36,
+      "title": "Boşanma, emzirme, vefat iddeti ve mehir",
+      "verseStart": 229,
+      "verseEnd": 237,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 37,
+      "title": "Namaz, korku namazı ve dul eşler",
+      "verseStart": 238,
+      "verseEnd": 242,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 38,
+      "title": "Yurtlarını terk edenler; Tâlût ve Câlût",
+      "verseStart": 243,
+      "verseEnd": 252,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 39,
+      "title": "Peygamberler arasındaki fark, Âyetü'l-Kürsî, dinde zorlama yok",
+      "verseStart": 253,
+      "verseEnd": 257,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 40,
+      "title": "Üç diriliş sahnesi",
+      "verseStart": 258,
+      "verseEnd": 260,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 41,
+      "title": "İnfakın örnekleri ve âdâbı",
+      "verseStart": 261,
+      "verseEnd": 274,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 42,
+      "title": "Faiz",
+      "verseStart": 275,
+      "verseEnd": 281,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 43,
+      "title": "Borcun yazılması",
+      "verseStart": 282,
+      "verseEnd": 283,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 44,
+      "title": "Kapanış: peygamberin ve mü'minlerin imanı, son dua",
+      "verseStart": 284,
+      "verseEnd": 286,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

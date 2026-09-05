@@ -1,0 +1,26 @@
+{
+  "slug": "hikmet",
+  "nameTr": "Hikmet",
+  "nameAr": "الحكمة",
+  "definition": "İsabetli karar ve derin kavrayış; aynı kök 'hüküm vermek' anlamını taşır.",
+  "parentSlug": null,
+  "roots": [
+    "Hkm"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "ilim",
+      "type": "co_occurrence",
+      "weight": 3
+    },
+    {
+      "target": "adalet",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

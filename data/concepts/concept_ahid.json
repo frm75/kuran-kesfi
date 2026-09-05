@@ -1,0 +1,22 @@
+{
+  "slug": "ahid",
+  "nameTr": "Ahid (Söz ve Antlaşma)",
+  "nameAr": "العهد",
+  "definition": "Verilen söz, yapılan antlaşma ve yerine getirme yükümlülüğü.",
+  "parentSlug": null,
+  "roots": [
+    "Ehd",
+    "wfy"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "sidk",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

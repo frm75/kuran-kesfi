@@ -1,0 +1,39 @@
+{
+  "surahId": 72,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Cinlerin Kur'an'ı dinlemesi ve söyledikleri",
+      "verseStart": 1,
+      "verseEnd": 15,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Dosdoğru olmak ve mescitler",
+      "verseStart": 16,
+      "verseEnd": 19,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "De ki: ben ancak Rabbime kulluk ederim",
+      "verseStart": 20,
+      "verseEnd": 24,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Gaybın bilgisi kime aittir",
+      "verseStart": 25,
+      "verseEnd": 28,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

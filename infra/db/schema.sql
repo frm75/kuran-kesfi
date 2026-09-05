@@ -396,6 +396,15 @@ CREATE TABLE concept_root (
   PRIMARY KEY (concept_id, root_id)
 );
 
+-- Kavram tanımının kaynağı (plan §8.5: ansiklopedik, kaynaklı). 2026-09-05'te
+-- eklendi — ilke ve konumda vardı, kavramda unutulmuştu; content import'u
+-- kaynaksız kavram yazamasın diye tablo açıldı.
+CREATE TABLE concept_source (
+  concept_id integer NOT NULL REFERENCES concept (id) ON DELETE CASCADE,
+  source_id  integer NOT NULL REFERENCES source (id),
+  PRIMARY KEY (concept_id, source_id)
+);
+
 CREATE TABLE story_concept (
   story_id   integer NOT NULL REFERENCES story (id) ON DELETE CASCADE,
   concept_id integer NOT NULL REFERENCES concept (id) ON DELETE CASCADE,

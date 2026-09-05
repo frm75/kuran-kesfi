@@ -1,0 +1,38 @@
+{
+  "slug": "alay-etmeme",
+  "nameTr": "Alay Etmeme",
+  "nameAr": "ترك السخرية",
+  "rootLatin": null,
+  "definition": "Kimseyi küçümsememek, lakap takmamak, kaş göz işaretiyle aşağılamamak.",
+  "explanation": "49:11 bir topluluğun diğerini alaya almasını yasaklar ve gerekçe koyar: alay edilen daha hayırlı olabilir. Aynı ayet kötü lakap takmayı da yasaklar. 104:1-2 insanları arkadan çekiştirip alay edeni kınar; 83:29-33 dünyada mü'minlere gülenlerin ahiretteki durumunu anlatır.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 46,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "49:11",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "104:1",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "83:29",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "kibir",
+    "tevazu-kavram",
+    "zulum"
+  ]
+}

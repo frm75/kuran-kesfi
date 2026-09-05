@@ -1,0 +1,62 @@
+{
+  "slug": "takva",
+  "nameTr": "Takvâ (Allah'a Karşı Sorumluluk Bilinci)",
+  "nameAr": "التقوى",
+  "rootLatin": "wqy",
+  "definition": "Allah'ın koyduğu sınırları gözeterek yaşamak; O'na karşı sorumluluğunu her an hatırda tutmak.",
+  "explanation": "'Azığın en hayırlısı takvâdır' (2:197), 'Allah'tan hakkıyla korkun' (3:102) ve 'üstünlük takvâ iledir' (49:13) ilkenin ana ayetleridir. Haşr 59:18 takvâyı âhiret hazırlığıyla, Talâk 65:2-3 çıkış yolu ve rızıkla bağlar. Kur'an'da hidayetin muttakiler için olduğu Bakara'nın girişinde söylenir (2:2).",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 24,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "2:197",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "3:102",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "59:18",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "3:200",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "49:13",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "65:2-3",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "2:2",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "7:26",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "takva",
+    "iman"
+  ]
+}

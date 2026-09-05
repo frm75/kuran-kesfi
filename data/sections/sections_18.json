@@ -1,0 +1,71 @@
+{
+  "surahId": 18,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Kitabın indirilişi ve \"Allah çocuk edindi\" diyenler",
+      "verseStart": 1,
+      "verseEnd": 8,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Ashâb-ı Kehf",
+      "verseStart": 9,
+      "verseEnd": 26,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Rabbinin kitabını oku; sabah akşam dua edenler",
+      "verseStart": 27,
+      "verseEnd": 31,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "İki bağ sahibi",
+      "verseStart": 32,
+      "verseEnd": 46,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Kıyamet günü kitabın konulması ve İblîs",
+      "verseStart": 47,
+      "verseEnd": 59,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Mûsâ ve Hızır",
+      "verseStart": 60,
+      "verseEnd": 82,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Zülkarneyn",
+      "verseStart": 83,
+      "verseEnd": 101,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Amelce en çok ziyanda olanlar ve kapanış",
+      "verseStart": 102,
+      "verseEnd": 110,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

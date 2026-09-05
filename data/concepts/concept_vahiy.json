@@ -1,0 +1,21 @@
+{
+  "slug": "vahiy",
+  "nameTr": "Vahiy",
+  "nameAr": "الوحي",
+  "definition": "Allah'ın peygamberine bildirisi; kök anlamı gizlice ve hızla bildirmektir.",
+  "parentSlug": null,
+  "roots": [
+    "wHy"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "nubuvvet",
+      "type": "co_occurrence",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

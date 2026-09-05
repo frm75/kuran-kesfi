@@ -1,0 +1,79 @@
+{
+  "surahId": 43,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Ana kitap ve yaratılıştaki nimetler",
+      "verseStart": 1,
+      "verseEnd": 14,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Meleklere kız isnadı ve atalara uyma",
+      "verseStart": 15,
+      "verseEnd": 25,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "İbrâhim'in sözü; \"iki şehrin birinden büyük bir adam\"",
+      "verseStart": 26,
+      "verseEnd": 35,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Rahmân'ın zikrini görmezden gelen ve arkadaşı",
+      "verseStart": 36,
+      "verseEnd": 45,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Mûsâ ve Firavun",
+      "verseStart": 46,
+      "verseEnd": 56,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Meryem oğlu Îsâ örneği",
+      "verseStart": 57,
+      "verseEnd": 65,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Kıyamet günü dostlar ve cennet",
+      "verseStart": 66,
+      "verseEnd": 73,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Suçluların hâli ve Mâlik'e seslenmeleri",
+      "verseStart": 74,
+      "verseEnd": 80,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 9,
+      "title": "Rahmân'ın çocuğu yoktur; \"hoş gör ve selam de\"",
+      "verseStart": 81,
+      "verseEnd": 89,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

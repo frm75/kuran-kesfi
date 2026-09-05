@@ -1,0 +1,87 @@
+{
+  "surahId": 23,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Kurtuluşa eren mü'minlerin vasıfları",
+      "verseStart": 1,
+      "verseEnd": 11,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "İnsanın yaratılış evreleri ve gökten inen su",
+      "verseStart": 12,
+      "verseEnd": 22,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Nûh",
+      "verseStart": 23,
+      "verseEnd": 30,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Sonraki nesiller ve peygamberleri",
+      "verseStart": 31,
+      "verseEnd": 44,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Mûsâ, Hârûn ve Îsâ; tek din",
+      "verseStart": 45,
+      "verseEnd": 56,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Hayır işlerine koşuşanlar",
+      "verseStart": 57,
+      "verseEnd": 62,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Kalplerin gafleti ve gelen azap",
+      "verseStart": 63,
+      "verseEnd": 77,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Kulak, göz ve gönül; \"Allah'ındır diyecekler\"",
+      "verseStart": 78,
+      "verseEnd": 92,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 9,
+      "title": "Dua ve sığınma",
+      "verseStart": 93,
+      "verseEnd": 98,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 10,
+      "title": "Ölüm, berzah, sûr ve hesap",
+      "verseStart": 99,
+      "verseEnd": 118,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

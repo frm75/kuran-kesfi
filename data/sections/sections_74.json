@@ -1,0 +1,47 @@
+{
+  "surahId": 74,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Kalk da uyar; sûr günü",
+      "verseStart": 1,
+      "verseEnd": 10,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Yalnız yarattığım kişi ve Sekar",
+      "verseStart": 11,
+      "verseEnd": 30,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Cehennem görevlileri ve yeminler",
+      "verseStart": 31,
+      "verseEnd": 37,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Herkes kazandığına rehindir; suçlulara sorulanlar",
+      "verseStart": 38,
+      "verseEnd": 48,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Öğütten yüz çevirenler",
+      "verseStart": 49,
+      "verseEnd": 56,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

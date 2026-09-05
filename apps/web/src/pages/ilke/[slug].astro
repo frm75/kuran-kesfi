@@ -1,0 +1,129 @@
+---
+import type { GetStaticPaths } from "astro";
+import Base from "~/layouts/Base.astro";
+import { getDefaultAuthor, getPrinciple, getPrinciplesIndex, getVerseText } from "~/lib/data";
+
+/** Tek ilke — plan §18.2. Dayanak ayetler rolüyle ayrılır (birincil / ikincil). */
+
+export const getStaticPaths = (() =>
+  getPrinciplesIndex().map((p) => ({ params: { slug: p.slug } }))) satisfies GetStaticPaths;
+
+const { slug } = Astro.params;
+if (slug === undefined) throw new Error("ilke slug yok");
+const principle = getPrinciple(slug);
+const author = getDefaultAuthor();
+
+const primary = principle.verses.filter((v) => v.role === "primary");
+const secondary = principle.verses.filter((v) => v.role === "secondary");
+---
+
+<Base
+  title={`${principle.nameTr} — İlke — Kur'an-ı Kerim Keşfi`}
+  description={principle.definition.slice(0, 160)}
+  arabic
+  reading
+>
+  <main id="icerik" class="pg pg-normal">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <a href="/ilkeler">İlkeler</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">{principle.nameTr}</span>
+    </nav>
+
+    <header class="pg-head">
+      <p class="pg-kicker">İlke</p>
+      <h1 class="pg-title">
+        {principle.nameTr}
+        {principle.nameAr !== null && (
+          <span lang="ar" dir="rtl" class="pg-title-ar">{principle.nameAr}</span>
+        )}
+      </h1>
+      <p class="pg-lede">{principle.definition}</p>
+      <ul class="chip-row">
+        <li class="chip is-accent"><b>{primary.length}</b> birincil dayanak</li>
+        <li class="chip"><b>{secondary.length}</b> ikincil</li>
+        {principle.root !== null && (
+          <li class="chip">
+            kök <a href={`/kok/${principle.root.arabic}`} lang="ar" dir="rtl">{principle.root.arabic}</a>
+          </li>
+        )}
+        {principle.opposite !== null && (
+          <li class="chip">karşıtı <a href={`/ilke/${principle.opposite.slug}`}>{principle.opposite.nameTr}</a></li>
+        )}
+      </ul>
+    </header>
+
+    <section>
+      <div class="sec-head"><h2>Açıklama</h2></div>
+      <p class="explain-text">{principle.explanation}</p>
+    </section>
+
+    <section>
+      <div class="sec-head">
+        <h2>Dayanak ayetler</h2>
+        <span class="sec-note">Birincil: doğrudan emir · meal: {author.name}</span>
+      </div>
+      <ol class="ref-list">
+        {
+          primary.map((v) => (
+            <li>
+              <a class="rf-ref" href={`/${v.surahSlug}/${String(v.verseNumber)}`}>
+                {v.surahNameTr} {v.verseNumber}
+              </a>
+              <span class="rf-role is-primary">birincil</span>
+              <p class="rf-text">{getVerseText(v.surahId, v.verseNumber, author.slug) ?? "Bu ayetin bu mealde karşılığı kaynakta yok."}</p>
+              {v.note !== null && <p class="rf-note">{v.note}</p>}
+            </li>
+          ))
+        }
+        {
+          secondary.map((v) => (
+            <li>
+              <a class="rf-ref" href={`/${v.surahSlug}/${String(v.verseNumber)}`}>
+                {v.surahNameTr} {v.verseNumber}
+              </a>
+              <span class="rf-role">ikincil</span>
+              <p class="rf-text">{getVerseText(v.surahId, v.verseNumber, author.slug) ?? "Bu ayetin bu mealde karşılığı kaynakta yok."}</p>
+              {v.note !== null && <p class="rf-note">{v.note}</p>}
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    {
+      (principle.stories.length > 0 || principle.concepts.length > 0) && (
+        <section>
+          <div class="sec-head"><h2>Bağlantılar</h2></div>
+          <div class="link-groups">
+            {principle.stories.length > 0 && (
+              <div>
+                <h3>Kıssalarda</h3>
+                <ul class="tag-list">
+                  {principle.stories.map((s) => (
+                    <li>
+                      <a href={`/kissa/${s.slug}`}>{s.title}</a>
+                      {s.note !== null && <span class="tag-note">{s.note}</span>}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {principle.concepts.length > 0 && (
+              <div>
+                <h3>Kavramlar</h3>
+                <ul class="tag-list">
+                  {principle.concepts.map((c) => (
+                    <li>
+                      <a href={`/kavram/${c.slug}`}>{c.nameTr}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </section>
+      )
+    }
+  </main>
+</Base>

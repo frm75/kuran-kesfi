@@ -1,0 +1,47 @@
+{
+  "surahId": 80,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Âmâ gelince yüzün ekşitilmesi",
+      "verseStart": 1,
+      "verseEnd": 10,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Kur'an bir öğüttür",
+      "verseStart": 11,
+      "verseEnd": 16,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "İnsanın nankörlüğü ve yaratılışı",
+      "verseStart": 17,
+      "verseEnd": 23,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Yiyeceğe bakış: yağmur ve bitkiler",
+      "verseStart": 24,
+      "verseEnd": 32,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Sâhha günü: iki tür yüz",
+      "verseStart": 33,
+      "verseEnd": 42,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

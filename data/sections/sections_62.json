@@ -1,0 +1,31 @@
+{
+  "surahId": 62,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Ümmîlere gönderilen peygamber",
+      "verseStart": 1,
+      "verseEnd": 4,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Tevrat'la yükümlü olup amel etmeyenler",
+      "verseStart": 5,
+      "verseEnd": 8,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Cuma namazı ve dağılan cemaat",
+      "verseStart": 9,
+      "verseEnd": 11,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

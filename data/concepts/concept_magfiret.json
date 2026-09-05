@@ -1,0 +1,26 @@
+{
+  "slug": "magfiret",
+  "nameTr": "Mağfiret (Bağışlanma)",
+  "nameAr": "المغفرة",
+  "definition": "Allah'ın günahı örtüp bağışlaması. Kök anlamı 'örtmek, korumak'tır.",
+  "parentSlug": null,
+  "roots": [
+    "gfr"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "tevbe",
+      "type": "cause",
+      "weight": 3
+    },
+    {
+      "target": "rahmet",
+      "type": "co_occurrence",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

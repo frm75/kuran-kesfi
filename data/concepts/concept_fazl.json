@@ -1,0 +1,26 @@
+{
+  "slug": "fazl",
+  "nameTr": "Fazl (lütuf)",
+  "nameAr": "الفضل",
+  "definition": "Hak edilenin üzerine verilen. Kur'an bağışlanmayı ve rızkı çoğu yerde Allah'ın lütfuna bağlar; karşılığın hak edilmişten fazla olabileceğini bildirir.",
+  "parentSlug": null,
+  "roots": [
+    "fDl"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "rahmet",
+      "type": "co_occurrence",
+      "weight": 3
+    },
+    {
+      "target": "nimet",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

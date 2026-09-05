@@ -1,0 +1,26 @@
+{
+  "slug": "olum",
+  "nameTr": "Ölüm",
+  "nameAr": "الموت",
+  "definition": "Hayatın sonu ve âhiret hayatının başlangıcı.",
+  "parentSlug": null,
+  "roots": [
+    "mwt"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "hayat",
+      "type": "contrast",
+      "weight": 3
+    },
+    {
+      "target": "dirilis",
+      "type": "cause",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

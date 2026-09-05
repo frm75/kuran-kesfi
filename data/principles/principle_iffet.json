@@ -1,0 +1,43 @@
+{
+  "slug": "iffet",
+  "nameTr": "İffet",
+  "nameAr": "العفة",
+  "rootLatin": null,
+  "definition": "Gözü ve ırzı korumak; zinaya yaklaşmamak.",
+  "explanation": "24:30 mü'min erkeklere, 24:31 mü'min kadınlara aynı emri ayrı ayrı verir: gözleri sakınmak ve ırzı korumak. 23:5-7 kurtuluşa erenlerin vasıfları arasında ırzı korumayı sayar. 17:32 zinaya 'yaklaşmayı' bile yasaklayarak sınırı fiilden öne çeker.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 49,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "24:30",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "24:31",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "17:32",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "23:5",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "takva",
+    "nefs",
+    "hayir"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "slug": "velayet",
+  "nameTr": "Velâyet",
+  "nameAr": "الولاية",
+  "definition": "Dostluk, koruyuculuk ve yakınlık bağı. Kur'an mü'minlerin velisinin Allah olduğunu bildirir; velâyet karşılıklı sorumluluk taşıyan bir bağdır.",
+  "parentSlug": null,
+  "roots": [
+    "wly"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "iman",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

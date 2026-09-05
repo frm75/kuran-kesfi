@@ -10,7 +10,8 @@
     "tanzil-translations": "tsx tanzil_translations.ts",
     "acikkuran": "tsx acikkuran.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "transcription": "tsx transcription.ts"
+    "transcription": "tsx transcription.ts",
+    "content": "tsx content.ts"
   },
   "dependencies": {
     "@kuran/pipeline": "workspace:*",

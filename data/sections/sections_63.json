@@ -1,0 +1,23 @@
+{
+  "surahId": 63,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Münafıkların yeminleri ve sözleri",
+      "verseStart": 1,
+      "verseEnd": 8,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Mal ve evlat sizi Allah'ı anmaktan alıkoymasın",
+      "verseStart": 9,
+      "verseEnd": 11,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

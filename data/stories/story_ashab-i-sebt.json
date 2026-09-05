@@ -1,0 +1,41 @@
+{
+  "slug": "ashab-i-sebt",
+  "title": "Ashâb-ı Sebt (Cumartesi Ehli)",
+  "type": "people",
+  "chronologicalOrder": 37,
+  "eraStart": null,
+  "eraEnd": null,
+  "summary": "Cumartesi yasağını hileyle çiğneyen deniz kıyısındaki kent halkı. Kur'an olayı, yasağı doğrudan delmeden 'çevresinden dolaşmanın' da ihlal sayıldığına örnek olarak anlatır.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-musa"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Deniz kıyısındaki kent ve üç grup",
+      "ref": "7:163-166",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "İbret kılınmaları",
+      "ref": "2:65-66",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Cumartesi hükmünün kime farz kılındığı",
+      "ref": "16:124",
+      "note": null
+    }
+  ],
+  "lessons": [],
+  "locations": [],
+  "concepts": [
+    "imtihan",
+    "zulum",
+    "curum",
+    "hak"
+  ]
+}

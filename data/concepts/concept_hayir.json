@@ -1,0 +1,21 @@
+{
+  "slug": "hayir",
+  "nameTr": "Hayır",
+  "nameAr": "الخير",
+  "definition": "İyi, faydalı ve tercih edilir olan; Kur'an'da hem ahlâkî iyilik hem servet anlamında kullanılır.",
+  "parentSlug": null,
+  "roots": [
+    "xyr"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "ser",
+      "type": "contrast",
+      "weight": 3
+    }
+  ],
+  "verses": []
+}

@@ -1,0 +1,71 @@
+{
+  "surahId": 24,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Zina cezası, iftira ve liân",
+      "verseStart": 1,
+      "verseEnd": 10,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "İfk hadisesi",
+      "verseStart": 11,
+      "verseEnd": 26,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "İzin isteme, gözleri sakınma, örtünme ve evlendirme",
+      "verseStart": 27,
+      "verseEnd": 34,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Nûr ayeti ve iki misal",
+      "verseStart": 35,
+      "verseEnd": 40,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Tesbih eden varlıklar; bulutlar ve yaratılış",
+      "verseStart": 41,
+      "verseEnd": 46,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Münafıkların hükme razı olmaması ve hilâfet vaadi",
+      "verseStart": 47,
+      "verseEnd": 57,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Ev içi izin âdâbı ve birlikte yemek",
+      "verseStart": 58,
+      "verseEnd": 61,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Peygamberin çağrısı ve izin almak",
+      "verseStart": 62,
+      "verseEnd": 64,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

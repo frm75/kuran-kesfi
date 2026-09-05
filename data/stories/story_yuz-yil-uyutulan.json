@@ -1,0 +1,29 @@
+{
+  "slug": "yuz-yil-uyutulan",
+  "title": "Yüz Yıl Ölü Bırakılan Kimse",
+  "type": "person",
+  "chronologicalOrder": 46,
+  "eraStart": null,
+  "eraEnd": null,
+  "summary": "Harabeye dönmüş bir şehre uğrayıp 'Allah burayı nasıl diriltecek?' diyen, yüz yıl ölü bırakılıp sonra diriltilen kişi. Kur'an adını vermez.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-ibrahim"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Şehir, yüz yıl ve diriltiliş",
+      "ref": "2:259",
+      "note": null
+    }
+  ],
+  "lessons": [],
+  "locations": [],
+  "concepts": [
+    "dirilis",
+    "kudret",
+    "ilim",
+    "ayet"
+  ]
+}

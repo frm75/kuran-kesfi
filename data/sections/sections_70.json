@@ -1,0 +1,39 @@
+{
+  "surahId": 70,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Soran birisi: azabı uzak görenler",
+      "verseStart": 1,
+      "verseEnd": 7,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "O günün dehşeti ve cehennemin çağrısı",
+      "verseStart": 8,
+      "verseEnd": 18,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "İnsanın hırsı ve namaz kılanların vasıfları",
+      "verseStart": 19,
+      "verseEnd": 35,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "İnkâr edenlerin beklentisi ve çıkış günü",
+      "verseStart": 36,
+      "verseEnd": 44,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

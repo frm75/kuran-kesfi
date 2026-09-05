@@ -1,0 +1,42 @@
+{
+  "slug": "komsu-hakki",
+  "nameTr": "Komşu Hakkı",
+  "nameAr": "حق الجار",
+  "rootLatin": null,
+  "definition": "Yakın ve uzak komşuya iyilik etmek, onlara zarar vermemek ve ihtiyaçlarını gözetmek.",
+  "explanation": "Nisâ 4:36 anne baba, akraba, yetim ve yoksulun ardından 'yakın komşuya, uzak komşuya ve yanınızdaki arkadaşa' iyiliği emreder; ilkenin Kur'an'daki doğrudan dayanağı bu ayettir. Beled 90:14-16 ve Bakara 2:177 yoksul ve kimsesizi gözetmeyi iyilik (birr) sayar. DİA 'KOMŞU' maddesi hadislerdeki geniş komşu hakkı vurgusunu aktarır.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 16,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "4:36",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:177",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "90:14-16",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "107:1-7",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "ihsan",
+    "birr"
+  ]
+}

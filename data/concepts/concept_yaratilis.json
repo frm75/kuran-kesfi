@@ -1,0 +1,21 @@
+{
+  "slug": "yaratilis",
+  "nameTr": "Yaratılış",
+  "nameAr": "الخلق",
+  "definition": "Allah'ın yoktan var etmesi; insanın, göklerin ve yerin yaratılışı.",
+  "parentSlug": null,
+  "roots": [
+    "xlq"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "kudret",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

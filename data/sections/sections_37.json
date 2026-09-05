@@ -1,0 +1,111 @@
+{
+  "surahId": 37,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Saf bağlayanlara yemin; göğün korunması",
+      "verseStart": 1,
+      "verseEnd": 11,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Alay edenler ve hüküm günü",
+      "verseStart": 12,
+      "verseEnd": 21,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Zulmedenlerin toplanması ve saptıranlarla çekişme",
+      "verseStart": 22,
+      "verseEnd": 39,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "İhlaslı kulların nimetleri ve cehennemdeki arkadaş",
+      "verseStart": 40,
+      "verseEnd": 61,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Zakkum ağacı ve öncekilerin sapması",
+      "verseStart": 62,
+      "verseEnd": 74,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Nûh",
+      "verseStart": 75,
+      "verseEnd": 82,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "İbrâhim ve oğlunun kurban edilişi",
+      "verseStart": 83,
+      "verseEnd": 113,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Mûsâ ve Hârûn",
+      "verseStart": 114,
+      "verseEnd": 122,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 9,
+      "title": "İlyâs",
+      "verseStart": 123,
+      "verseEnd": 132,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 10,
+      "title": "Lût",
+      "verseStart": 133,
+      "verseEnd": 138,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 11,
+      "title": "Yûnus",
+      "verseStart": 139,
+      "verseEnd": 148,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 12,
+      "title": "Meleklere dişi isim vermek ve uydurulan nesep",
+      "verseStart": 149,
+      "verseEnd": 160,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 13,
+      "title": "Meleklerin makamı, peygamberlere yardım vaadi ve kapanış",
+      "verseStart": 161,
+      "verseEnd": 182,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

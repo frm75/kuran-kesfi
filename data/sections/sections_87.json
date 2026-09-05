@@ -1,0 +1,31 @@
+{
+  "surahId": 87,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Rabbin adını tespih: yaratma ve ölçü",
+      "verseStart": 1,
+      "verseEnd": 5,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Kur'an'ın okutulması ve öğüdün fayda vermesi",
+      "verseStart": 6,
+      "verseEnd": 13,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Arınanın kurtuluşu; ahiret daha hayırlıdır",
+      "verseStart": 14,
+      "verseEnd": 19,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

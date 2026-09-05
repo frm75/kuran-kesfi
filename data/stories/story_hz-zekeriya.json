@@ -1,0 +1,62 @@
+{
+  "slug": "hz-zekeriya",
+  "title": "Hz. Zekeriyyâ",
+  "type": "prophet",
+  "chronologicalOrder": 26,
+  "eraStart": "M.S. 1. yüzyıl başı",
+  "eraEnd": null,
+  "summary": "Meryem'in bakımını üstlenen, ileri yaşında ve eşi kısırken çocuk için dua eden peygamber; Yahyâ ile müjdelenir, işaret olarak üç gün konuşmaz. Kur'an duasını ve mihraptaki hâlini anlatır.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-yahya",
+    "hz-meryem"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Meryem'in himayesi ve dua",
+      "ref": "3:37-41",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Gizli yakarış ve müjde",
+      "ref": "19:2-11",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Duaya icabet",
+      "ref": "21:89-90",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Zekeriyyâ'nın 'Rabbim beni tek bırakma' duası, çaresizlikte umudu kesmemenin örneği olarak ele alınır.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "ZEKERİYYÂ maddesi — islamansiklopedisi.org.tr/zekeriyya",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "kudus",
+      "order": 1,
+      "eventDescription": "Mihrapta dua.",
+      "passageOrders": [
+        1,
+        2
+      ]
+    }
+  ],
+  "concepts": [
+    "dua",
+    "umut",
+    "nimet",
+    "mujde"
+  ]
+}

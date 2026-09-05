@@ -1,0 +1,39 @@
+{
+  "surahId": 83,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Ölçüde ve tartıda hile yapanlar",
+      "verseStart": 1,
+      "verseEnd": 6,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Siccîn ve yalanlayanlar",
+      "verseStart": 7,
+      "verseEnd": 17,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "İlliyyûn ve iyiler",
+      "verseStart": 18,
+      "verseEnd": 28,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Dünyada gülenler, ahirette gülünenler",
+      "verseStart": 29,
+      "verseEnd": 36,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

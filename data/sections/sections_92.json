@@ -1,0 +1,31 @@
+{
+  "surahId": 92,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Yeminler: çabalar çeşit çeşittir",
+      "verseStart": 1,
+      "verseEnd": 4,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Veren ile cimrilik eden",
+      "verseStart": 5,
+      "verseEnd": 13,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Ateş ve ondan uzak tutulan",
+      "verseStart": 14,
+      "verseEnd": 21,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

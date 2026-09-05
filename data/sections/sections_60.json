@@ -1,0 +1,31 @@
+{
+  "surahId": 60,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Düşmanı dost edinmemek",
+      "verseStart": 1,
+      "verseEnd": 3,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "İbrâhim'de güzel örnek; savaşmayanlara iyilik",
+      "verseStart": 4,
+      "verseEnd": 9,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Hicret eden mü'min kadınlar ve biat",
+      "verseStart": 10,
+      "verseEnd": 13,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

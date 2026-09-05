@@ -1,0 +1,26 @@
+{
+  "slug": "zan",
+  "nameTr": "Zan",
+  "nameAr": "الظن",
+  "definition": "Kesin bilgiye dayanmayan kanaat. Kur'an zannın çoğundan sakınmayı emreder ve zannın haktan hiçbir şey ifade etmediğini bildirir.",
+  "parentSlug": null,
+  "roots": [
+    "Znn"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "ilim",
+      "type": "contrast",
+      "weight": 3
+    },
+    {
+      "target": "yalan",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

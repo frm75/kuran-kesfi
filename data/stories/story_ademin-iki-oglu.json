@@ -1,0 +1,35 @@
+{
+  "slug": "ademin-iki-oglu",
+  "title": "Âdem'in İki Oğlu",
+  "type": "people",
+  "chronologicalOrder": 43,
+  "eraStart": null,
+  "eraEnd": null,
+  "summary": "Kurbanı kabul edilmeyenin kardeşini öldürmesi. Kur'an bu ilk cinayeti anlattıktan sonra bir cana kıymayı bütün insanlığı öldürmeye denk sayan hükmü koyar.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-adem"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "İki kurban ve cinayet",
+      "ref": "5:27-31",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Bir cana kıyma ve bir canı yaşatma",
+      "ref": "5:32",
+      "note": null
+    }
+  ],
+  "lessons": [],
+  "locations": [],
+  "concepts": [
+    "zulum",
+    "takva",
+    "curum",
+    "nefs"
+  ]
+}

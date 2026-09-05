@@ -1,0 +1,41 @@
+{
+  "slug": "ashab-i-eyke",
+  "title": "Ashâb-ı Eyke",
+  "type": "people",
+  "chronologicalOrder": 45,
+  "eraStart": null,
+  "eraEnd": null,
+  "summary": "Şu'ayb'ın gönderildiği, ölçü ve tartıda hile yapan halk. 'Gölge günü' azabıyla helâk edilmeleriyle anlatılır.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-suayb"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Zalim bir halk olarak anılışı",
+      "ref": "15:78-79",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Şu'ayb'ın çağrısı ve gölge günü azabı",
+      "ref": "26:176-191",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Yalanlayan topluluklar arasında",
+      "ref": "38:13",
+      "note": null
+    }
+  ],
+  "lessons": [],
+  "locations": [],
+  "concepts": [
+    "zulum",
+    "adalet",
+    "helak",
+    "uyari"
+  ]
+}

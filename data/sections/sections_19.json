@@ -1,0 +1,79 @@
+{
+  "surahId": 19,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Zekeriyyâ ve Yahyâ",
+      "verseStart": 1,
+      "verseEnd": 15,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Meryem ve Îsâ",
+      "verseStart": 16,
+      "verseEnd": 40,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "İbrâhim ve babası",
+      "verseStart": 41,
+      "verseEnd": 50,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Mûsâ, Hârûn, İsmâil ve İdrîs",
+      "verseStart": 51,
+      "verseEnd": 58,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Namazı zayi edenler ve tövbe edenler",
+      "verseStart": 59,
+      "verseEnd": 65,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Dirilişe itiraz; cehenneme uğramak",
+      "verseStart": 66,
+      "verseEnd": 72,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "İki grubun karşılaştırılması ve \"bana mal verilecek\" diyen",
+      "verseStart": 73,
+      "verseEnd": 82,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Şeytanların gönderilmesi ve şefaat",
+      "verseStart": 83,
+      "verseEnd": 87,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 9,
+      "title": "\"Rahmân çocuk edindi\" iddiası ve reddi",
+      "verseStart": 88,
+      "verseEnd": 98,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

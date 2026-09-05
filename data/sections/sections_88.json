@@ -1,0 +1,39 @@
+{
+  "surahId": 88,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Zillete bürünen yüzler",
+      "verseStart": 1,
+      "verseEnd": 7,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Nimet içindeki yüzler",
+      "verseStart": 8,
+      "verseEnd": 16,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Deveye, göğe, dağlara, yere bakış",
+      "verseStart": 17,
+      "verseEnd": 20,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Öğüt ver; dönüş bizedir",
+      "verseStart": 21,
+      "verseEnd": 26,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "slug": "karsilik",
+  "nameTr": "Karşılık (cezâ)",
+  "nameAr": "الجزاء",
+  "definition": "Amelin dengiyle görülmesi. Kelime hem mükâfat hem ceza için kullanılır; ölçüsü zulümsüzlüktür.",
+  "parentSlug": null,
+  "roots": [
+    "jzy"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "hesap",
+      "type": "co_occurrence",
+      "weight": 3
+    },
+    {
+      "target": "adalet",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

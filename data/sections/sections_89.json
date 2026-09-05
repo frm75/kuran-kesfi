@@ -1,0 +1,47 @@
+{
+  "surahId": 89,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Yeminler",
+      "verseStart": 1,
+      "verseEnd": 5,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Âd, Semûd ve Firavun",
+      "verseStart": 6,
+      "verseEnd": 14,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "İnsanın bolluk ve darlık karşısındaki tutumu",
+      "verseStart": 15,
+      "verseEnd": 20,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Yerin parçalanması ve pişmanlık",
+      "verseStart": 21,
+      "verseEnd": 26,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Huzur içindeki nefis",
+      "verseStart": 27,
+      "verseEnd": 30,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

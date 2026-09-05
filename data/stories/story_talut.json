@@ -1,0 +1,35 @@
+{
+  "slug": "talut",
+  "title": "Tâlût ve Câlût",
+  "type": "person",
+  "chronologicalOrder": 36,
+  "eraStart": null,
+  "eraEnd": null,
+  "summary": "İsrâiloğullarına hükümdar olarak gönderilen ve ordusu ırmakla sınanan Tâlût'un kıssası; Câlût'u Dâvûd'un öldürmesiyle biter.",
+  "coverImage": null,
+  "relatedStories": [
+    "hz-davud"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Hükümdar istemeleri ve Tâlût'un seçilişi",
+      "ref": "2:246-248",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Irmakla imtihan ve Câlût'un yenilgisi",
+      "ref": "2:249-251",
+      "note": null
+    }
+  ],
+  "lessons": [],
+  "locations": [],
+  "concepts": [
+    "imtihan",
+    "sabir",
+    "mulk",
+    "nusret"
+  ]
+}

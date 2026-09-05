@@ -14,6 +14,19 @@ import type {
   StaticSurahTranslation,
   StaticSurahsIndex,
   StaticVerseDetail,
+  StaticConcept,
+  StaticConceptsIndex,
+  StaticLocations,
+  StaticPrinciple,
+  StaticPrinciplesIndex,
+  StaticStoriesIndex,
+  StaticStory,
+  StaticTimeline,
+  StaticVerseLinks,
+  StaticVerseRelation,
+  StaticVerseRelations,
+  StaticSurahSection,
+  StaticSurahSections,
 } from "@kuran/schema";
 
 /**
@@ -238,4 +251,232 @@ export function splitFootnoteMarkers(
 /** "Bakara suresi, 153. ayet" — ekran okuyucu ve baslik icin. */
 export function verseLabel(surahNameTr: string, verseNumber: number): string {
   return `${surahNameTr} suresi, ${verseNumber}. ayet`;
+}
+
+// ---------------------------------------------------------------------------
+// İçerik katmanı — kıssa, konum, kavram, ilke, zaman çizelgesi
+//
+// Dosyalar scripts/build/lib/content.ts tarafından üretilir. İçerik tabloları
+// boşsa dosya hiç yazılmaz; bu yüzden okuyucular `null` / boş dizi döner ve
+// sayfalar `getStaticPaths` içinde hiç yol üretmez. Site içerik gelmeden de
+// kurulabilir (plan §9 Faz 1: veri katkıyla genişler).
+// ---------------------------------------------------------------------------
+
+function readJsonOrNull<T>(relativePath: string): T | null {
+  const path = resolve(DATA_DIR, relativePath);
+  if (!existsSync(path)) return null;
+  return JSON.parse(readFileSync(path, "utf8")) as T;
+}
+
+export const getStoriesIndex = once(
+  (): StaticStoriesIndex["stories"] =>
+    readJsonOrNull<StaticStoriesIndex>("stories_index.json")?.stories ?? [],
+);
+export function getStory(slug: string): StaticStory {
+  return readJson<StaticStory>(`story/story_${slug}.json`);
+}
+
+export const getPrinciplesIndex = once(
+  (): StaticPrinciplesIndex["principles"] =>
+    readJsonOrNull<StaticPrinciplesIndex>("principles_index.json")?.principles ?? [],
+);
+export function getPrinciple(slug: string): StaticPrinciple {
+  return readJson<StaticPrinciple>(`principle/principle_${slug}.json`);
+}
+
+export const getConceptsIndex = once(
+  (): StaticConceptsIndex["concepts"] =>
+    readJsonOrNull<StaticConceptsIndex>("concepts_index.json")?.concepts ?? [],
+);
+export function getConcept(slug: string): StaticConcept {
+  return readJson<StaticConcept>(`concept/concept_${slug}.json`);
+}
+
+export const getLocations = once(
+  (): StaticLocations["locations"] => readJsonOrNull<StaticLocations>("locations.json")?.locations ?? [],
+);
+export const getTimeline = once(
+  (): StaticTimeline["events"] => readJsonOrNull<StaticTimeline>("timeline.json")?.events ?? [],
+);
+
+/**
+ * Ayet → bağlı içerik (kıssa, ilke, kavram, olay).
+ *
+ * 712 KB'lık tek dosya; `once` ile bir kez okunur ve 6236 ayet sayfası aynı
+ * nesneyi kullanır. Tarayıcıya GİTMEZ — build zamanında HTML'e dönüşür.
+ */
+const verseLinks = once(
+  (): StaticVerseLinks["verses"] => readJsonOrNull<StaticVerseLinks>("verse_links.json")?.verses ?? {},
+);
+
+export interface VerseConnections {
+  stories: { slug: string; title: string }[];
+  principles: { slug: string; nameTr: string; role: "primary" | "secondary" }[];
+  concepts: { slug: string; nameTr: string; weight: number }[];
+  events: StaticTimeline["events"];
+}
+
+/** Bir ayetin keşif ağındaki bağları — plan §12.4. */
+export function getVerseConnections(surahId: number, verseNumber: number): VerseConnections {
+  const entry = verseLinks()[String(surahId * 1000 + verseNumber)];
+  if (entry === undefined) return { stories: [], principles: [], concepts: [], events: [] };
+
+  const storyTitle = new Map(getStoriesIndex().map((s) => [s.slug, s.title]));
+  const principleName = new Map(getPrinciplesIndex().map((p) => [p.slug, p.nameTr]));
+  const conceptName = new Map(getConceptsIndex().map((c) => [c.slug, c.nameTr]));
+  const eventByOrder = new Map(getTimeline().map((e) => [e.order, e]));
+
+  return {
+    stories: entry.stories.flatMap((slug) => {
+      const title = storyTitle.get(slug);
+      return title === undefined ? [] : [{ slug, title }];
+    }),
+    principles: entry.principles.flatMap((p) => {
+      const nameTr = principleName.get(p.slug);
+      return nameTr === undefined ? [] : [{ slug: p.slug, nameTr, role: p.role }];
+    }),
+    concepts: entry.concepts.flatMap((c) => {
+      const nameTr = conceptName.get(c.slug);
+      return nameTr === undefined ? [] : [{ slug: c.slug, nameTr, weight: c.weight }];
+    }),
+    events: entry.events.flatMap((order) => {
+      const event = eventByOrder.get(order);
+      return event === undefined ? [] : [event];
+    }),
+  };
+}
+
+/**
+ * Sure içi konu bölümlemesi — plan §12.1, §12.15.
+ *
+ * Bölümlemesi olmayan sure dosyada geçmez; okuyucu `null` döner ve sayfa
+ * başlık göstermez. Ana aralıklar bitişik olduğu için bölümlemesi OLAN bir
+ * surede her ayetin tam bir ana konusu vardır.
+ */
+const surahSections = once(
+  (): StaticSurahSections["surahs"] =>
+    readJsonOrNull<StaticSurahSections>("sections.json")?.surahs ?? {},
+);
+
+export interface VerseSections {
+  origin: "source" | "platform";
+  sourceSlug: string | null;
+  /** Ayetin içinde bulunduğu ana konu — bölümlemesi olan surede her zaman var. */
+  main: StaticSurahSection;
+  /** `alsoVerses` üzerinden ayete değen ek konular (plan §12.15 kural 3). */
+  also: StaticSurahSection[];
+  previous: StaticSurahSection | null;
+  next: StaticSurahSection | null;
+  total: number;
+}
+
+/** Bir surenin bütün konu başlıkları — sure sayfası için. */
+export function getSurahSections(surahId: number): StaticSurahSections["surahs"][string] | null {
+  return surahSections()[String(surahId)] ?? null;
+}
+
+/** Bir ayetin bulunduğu konu, komşu konular ve varsa ek konular. */
+export function getVerseSections(surahId: number, verseNumber: number): VerseSections | null {
+  const entry = surahSections()[String(surahId)];
+  if (entry === undefined) return null;
+  const index = entry.sections.findIndex(
+    (x) => verseNumber >= x.verseStart && verseNumber <= x.verseEnd,
+  );
+  // Bitişiklik şemada ve linter'da doğrulanıyor; yine de burada sessizce
+  // yanlış başlık göstermektense hiç göstermemek doğru davranış.
+  const main = index === -1 ? undefined : entry.sections[index];
+  if (main === undefined) return null;
+  return {
+    origin: entry.origin,
+    sourceSlug: entry.sourceSlug,
+    main,
+    also: entry.sections.filter((x) => x.order !== main.order && x.alsoVerses.includes(verseNumber)),
+    previous: index > 0 ? entry.sections[index - 1] ?? null : null,
+    next: entry.sections[index + 1] ?? null,
+    total: entry.sections.length,
+  };
+}
+
+/**
+ * Ayet → ayet ilişki ağı — plan §12.5.
+ *
+ * verse_links.json ile aynı kalıp: tek dosya, `once`, tarayıcıya gitmez.
+ * Dosya sure adı taşımaz (satır sayısı ~50 bin, ad koymak dosyayı üçe
+ * katlardı); ad ve slug burada surahs_index.json'dan çözülür.
+ */
+const verseRelations = once(
+  (): StaticVerseRelations["verses"] =>
+    readJsonOrNull<StaticVerseRelations>("verse_relations.json")?.verses ?? {},
+);
+
+export interface RelatedVerse {
+  surahId: number;
+  surahSlug: string;
+  surahNameTr: string;
+  verseNumber: number;
+  type: StaticVerseRelation["type"];
+  /** Neden ilişkili — kullanıcıya olduğu gibi gösterilir, gizlenmez. */
+  reason: string;
+  confidence: StaticVerseRelation["confidence"];
+}
+
+/**
+ * Bir ayetin ilişkili ayetleri, güçlüden zayıfa.
+ *
+ * Sure kaydı bulunamayan satır atlanır: üretim tarafı bunu zaten engelliyor
+ * (referans linter), ama burada sessizce ölü bağlantı üretmektense düşürmek
+ * doğru davranış.
+ */
+export function getRelatedVerses(surahId: number, verseNumber: number): RelatedVerse[] {
+  const list = verseRelations()[String(surahId * 1000 + verseNumber)];
+  if (list === undefined) return [];
+  const surahById = new Map(getSurahsIndex().surahs.map((s) => [s.id, s]));
+  return list.flatMap((r) => {
+    const surah = surahById.get(r.surahId);
+    if (surah === undefined) return [];
+    return [
+      {
+        surahId: r.surahId,
+        surahSlug: surah.slug,
+        surahNameTr: surah.nameTr,
+        verseNumber: r.verseNumber,
+        type: r.type,
+        reason: r.reason,
+        confidence: r.confidence,
+      },
+    ];
+  });
+}
+
+/** Kıssa/ilke sayfaları ayet METNİ taşımaz; metin çekirdek katmandan gelir. */
+export interface PassageVerse {
+  verseNumber: number;
+  textUthmani: string;
+  transcriptionTr: string | null;
+  translation: string | null;
+}
+
+export function getPassageVerses(
+  surahId: number,
+  verseStart: number,
+  verseEnd: number,
+  authorSlug: string,
+): PassageVerse[] {
+  const surah = getSurah(surahId);
+  const translation = getSurahTranslation(authorSlug, surahId);
+  const byNumber = new Map((translation?.verses ?? []).map((v) => [v.verseNumber, v.text]));
+  return surah.verses
+    .filter((v) => v.verseNumber >= verseStart && v.verseNumber <= verseEnd)
+    .map((v) => ({
+      verseNumber: v.verseNumber,
+      textUthmani: v.textUthmani,
+      transcriptionTr: v.transcriptionTr,
+      translation: byNumber.get(v.verseNumber) ?? null,
+    }));
+}
+
+/** Tek ayetin meali — ilke ve kavram sayfalarındaki dayanak listeleri için. */
+export function getVerseText(surahId: number, verseNumber: number, authorSlug: string): string | null {
+  const translation = getSurahTranslation(authorSlug, surahId);
+  return (translation?.verses ?? []).find((v) => v.verseNumber === verseNumber)?.text ?? null;
 }

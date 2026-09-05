@@ -1,0 +1,213 @@
+---
+import type { GetStaticPaths } from "astro";
+import Base from "~/layouts/Base.astro";
+import { getConcept, getConceptsIndex, getDefaultAuthor, getVerseText } from "~/lib/data";
+
+/**
+ * Tek kavram — plan §2.4, §12.3 "kavramın Kur'an içindeki dağılımı".
+ *
+ * Dağılım gerçek veriden hesaplanır. Mekke/Medine oranı SURE bazlıdır: ayet
+ * bazlı nüzul verisi yok, o yüzden sayfada da böyle yazılır (plan §1.5).
+ *
+ * Ayet listesi ağırlığa göre sıralı ve İLK 60 ile sınırlı — "iman" 879 ayette
+ * geçiyor, hepsini meal metniyle basmak sayfayı 1 MB yapardı. Kesildiği
+ * kullanıcıya yazılır, sessizce kırpılmaz.
+ */
+
+export const getStaticPaths = (() =>
+  getConceptsIndex().map((c) => ({ params: { slug: c.slug } }))) satisfies GetStaticPaths;
+
+const LIMIT = 60;
+
+const { slug } = Astro.params;
+if (slug === undefined) throw new Error("kavram slug yok");
+const concept = getConcept(slug);
+const author = getDefaultAuthor();
+
+const shown = concept.verses.slice(0, LIMIT);
+const hidden = concept.verses.length - shown.length;
+
+const relationLabel = {
+  co_occurrence: "birlikte geçer",
+  cause: "sebep-sonuç",
+  contrast: "zıt",
+  part_of: "parçası",
+} as const;
+
+const total = concept.stats.mekki + concept.stats.medeni;
+const mekkiPercent = total === 0 ? 0 : Math.round((concept.stats.mekki / total) * 100);
+
+/** En çok geçtiği 12 sure — dağılım çubuğu için. */
+const topSurahs = [...concept.stats.bySurah].sort((a, b) => b.count - a.count).slice(0, 12);
+const maxCount = topSurahs[0]?.count ?? 1;
+---
+
+<Base
+  title={`${concept.nameTr} — Kavram — Kur'an-ı Kerim Keşfi`}
+  description={concept.definition.slice(0, 160)}
+  arabic
+  reading
+>
+  <main id="icerik" class="pg pg-normal">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <a href="/kavramlar">Kavramlar</a> <span aria-hidden="true">›</span>
+      {concept.parent !== null && (
+        <>
+          <a href={`/kavram/${concept.parent.slug}`}>{concept.parent.nameTr}</a>
+          <span aria-hidden="true">›</span>
+        </>
+      )}
+      <span aria-current="page">{concept.nameTr}</span>
+    </nav>
+
+    <header class="pg-head">
+      <p class="pg-kicker">Kavram</p>
+      <h1 class="pg-title">
+        {concept.nameTr}
+        {concept.nameAr !== null && (
+          <span lang="ar" dir="rtl" class="pg-title-ar">{concept.nameAr}</span>
+        )}
+      </h1>
+      <p class="pg-lede">{concept.definition}</p>
+      <ul class="chip-row">
+        <li class="chip is-accent"><b>{concept.stats.verseCount}</b> ayet</li>
+        <li class="chip"><b>{concept.stats.surahCount}</b> sure</li>
+        {
+          concept.roots.map((root) => (
+            <li class="chip">
+              kök <a href={`/kok/${root.arabic}`} lang="ar" dir="rtl">{root.arabic}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </header>
+
+    {
+      concept.stats.verseCount > 0 && (
+        <section>
+          <div class="sec-head">
+            <h2>Kur'an'daki dağılımı</h2>
+            <span class="sec-note">Kök geçişlerinden hesaplandı</span>
+          </div>
+          <p class="dist-note">
+            Ayetlerin <strong>%{mekkiPercent}</strong>'i Mekke, <strong>%{100 - mekkiPercent}</strong>'i
+            Medine surelerinde. <span class="text-text-muted">
+              Oran <em>sure</em> bazlıdır: ayet bazlı nüzul verisi kaynakta yok, bu yüzden
+              karma surelerde ayrım yapılamıyor.
+            </span>
+          </p>
+          <ol class="dist-bars">
+            {topSurahs.map((surah) => (
+              <li>
+                <a href={`/${surah.slug}`}>{surah.nameTr}</a>
+                <span class="db-track">
+                  <span class="db-fill" style={`width:${String(Math.round((surah.count / maxCount) * 100))}%`} />
+                </span>
+                <span class="db-count">{surah.count}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )
+    }
+
+    {
+      concept.relations.length > 0 && (
+        <section>
+          <div class="sec-head">
+            <h2>Bağlı kavramlar</h2>
+            <span class="sec-note">"birlikte geçer" bağları aynı ayette bulunma sıklığından hesaplandı</span>
+          </div>
+          <ul class="rel-list">
+            {concept.relations.map((rel) => (
+              <li>
+                <a href={`/kavram/${rel.slug}`}>{rel.nameTr}</a>
+                <span class:list={["rel-type", `is-${rel.type}`]}>{relationLabel[rel.type]}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      shown.length > 0 && (
+        <section>
+          <div class="sec-head">
+            <h2>Geçtiği ayetler</h2>
+            <span class="sec-note">
+              {hidden > 0
+                ? `En yoğun ${String(shown.length)} ayet gösteriliyor, ${String(hidden)} ayet daha var`
+                : `${String(shown.length)} ayet`} · meal: {author.name}
+            </span>
+          </div>
+          <ol class="ref-list">
+            {shown.map((verse) => (
+              <li>
+                <a class="rf-ref" href={`/${verse.surahSlug}/${String(verse.verseNumber)}`}>
+                  {verse.surahNameTr} {verse.verseNumber}
+                </a>
+                <span class:list={["rf-weight", `is-w${String(verse.weight)}`]}>
+                  {verse.weight === 3 ? "merkezî" : verse.weight === 2 ? "belirgin" : "geçiyor"}
+                </span>
+                <p class="rf-text">
+                  {getVerseText(verse.surahId, verse.verseNumber, author.slug) ??
+                    "Bu ayetin bu mealde karşılığı kaynakta yok."}
+                </p>
+              </li>
+            ))}
+          </ol>
+          {hidden > 0 && (
+            <p class="text-text-muted mt-4 text-sm">
+              Kalan {hidden} ayet için kök sayfasına bakın:{" "}
+              {concept.roots.map((root) => (
+                <a href={`/kok/${root.arabic}`} lang="ar" dir="rtl" class="ms-2">{root.arabic}</a>
+              ))}
+            </p>
+          )}
+        </section>
+      )
+    }
+
+    {
+      (concept.stories.length > 0 || concept.principles.length > 0 || concept.children.length > 0) && (
+        <section>
+          <div class="sec-head"><h2>Bağlantılar</h2></div>
+          <div class="link-groups">
+            {concept.children.length > 0 && (
+              <div>
+                <h3>Alt kavramlar</h3>
+                <ul class="tag-list">
+                  {concept.children.map((c) => (
+                    <li><a href={`/kavram/${c.slug}`}>{c.nameTr}</a></li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {concept.principles.length > 0 && (
+              <div>
+                <h3>İlkeler</h3>
+                <ul class="tag-list">
+                  {concept.principles.map((p) => (
+                    <li><a href={`/ilke/${p.slug}`}>{p.nameTr}</a></li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {concept.stories.length > 0 && (
+              <div>
+                <h3>Kıssalar</h3>
+                <ul class="tag-list">
+                  {concept.stories.map((s) => (
+                    <li><a href={`/kissa/${s.slug}`}>{s.title}</a></li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </section>
+      )
+    }
+  </main>
+</Base>

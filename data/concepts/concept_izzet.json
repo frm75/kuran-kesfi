@@ -1,0 +1,26 @@
+{
+  "slug": "izzet",
+  "nameTr": "İzzet",
+  "nameAr": "العزة",
+  "definition": "Üstünlük ve onur. Kur'an izzetin tümüyle Allah'a ait olduğunu, insanın onu başka yerde aramasının boş olduğunu bildirir.",
+  "parentSlug": null,
+  "roots": [
+    "Ezz"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "kibir",
+      "type": "contrast",
+      "weight": 3
+    },
+    {
+      "target": "tevazu-kavram",
+      "type": "contrast",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

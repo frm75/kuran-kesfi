@@ -1,0 +1,26 @@
+{
+  "slug": "ihsan",
+  "nameTr": "İhsan",
+  "nameAr": "الإحسان",
+  "definition": "Yapılanı en güzel biçimde yapmak; karşılık beklemeden iyilik etmek. Tefsirlerde adaletin bir üst basamağı sayılır.",
+  "parentSlug": null,
+  "roots": [
+    "Hsn"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "adalet",
+      "type": "co_occurrence",
+      "weight": 2
+    },
+    {
+      "target": "birr",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

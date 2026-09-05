@@ -1,0 +1,57 @@
+{
+  "slug": "akrabaya-iyilik",
+  "nameTr": "Akrabaya İyilik (Sıla-i Rahim)",
+  "nameAr": "صلة الرحم",
+  "rootLatin": null,
+  "definition": "Akrabayla ilişkiyi kesmemek, onlara iyilik etmek ve haklarını vermek.",
+  "explanation": "Nahl 16:90 adalet ve ihsanla birlikte 'akrabaya vermeyi' emreder; İsrâ 17:26 ve Rûm 30:38 'akrabaya hakkını ver' der; Nisâ 4:36 iyilik listesinde akrabayı anne babanın ardından sayar. Nisâ 4:1 akrabalık bağını Allah'a saygıyla birlikte anar. DİA 'SILA-i RAHİM' maddesi ilgili hadis birikimini aktarır.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 19,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "16:90",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "17:26",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "30:38",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "4:36",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:177",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "4:1",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "2:83",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "ihsan",
+    "birr"
+  ]
+}

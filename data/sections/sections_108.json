@@ -1,0 +1,23 @@
+{
+  "surahId": 108,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Kevser'in verilmesi ve karşılığı: namaz ve kurban",
+      "verseStart": 1,
+      "verseEnd": 2,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Buğzedene cevap",
+      "verseStart": 3,
+      "verseEnd": 3,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

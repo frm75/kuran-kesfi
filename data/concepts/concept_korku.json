@@ -1,0 +1,21 @@
+{
+  "slug": "korku",
+  "nameTr": "Korku (Havf)",
+  "nameAr": "الخوف",
+  "definition": "Allah'a karşı saygı kaynaklı çekinme; umutla dengelenir.",
+  "parentSlug": null,
+  "roots": [
+    "xwf"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "umut",
+      "type": "contrast",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

@@ -1,0 +1,43 @@
+{
+  "slug": "savasta-olcululuk",
+  "nameTr": "Savaşta Ölçülü Olmak",
+  "nameAr": "عدم الاعتداء في القتال",
+  "rootLatin": null,
+  "definition": "Savaşta aşırıya kaçmamak, barışa yanaşana yanaşmak.",
+  "explanation": "2:190 savaşa izin verirken hemen ardından 'aşırı gitmeyin' der ve aşırı gidenlerin sevilmediğini bildirir. 2:193 savaşın amacını baskının kalkmasıyla sınırlar. 8:61 karşı taraf barışa yanaşırsa yanaşmayı emreder. 60:8 savaşmamış olanlara iyilik ve adaleti yasaklamadığını açıkça söyler.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 38,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "kuran-metni"
+  ],
+  "verses": [
+    {
+      "ref": "2:190",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "8:61",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:193",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "60:8",
+      "role": "secondary",
+      "note": "Savaşmayanlara iyilik"
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "adalet",
+    "cihad",
+    "zulum"
+  ]
+}

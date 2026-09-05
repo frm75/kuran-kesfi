@@ -1,0 +1,41 @@
+{
+  "slug": "hudeybiye",
+  "title": "Hudeybiye ve Rıdvân Biatı",
+  "type": "event",
+  "chronologicalOrder": 50,
+  "eraStart": "H. 6 / M. 628",
+  "eraEnd": null,
+  "summary": "Hicretin 6. yılında yapılan ve o gün geri adım gibi görünen antlaşma. Kur'an onu 'apaçık bir fetih' diye adlandırır; ağaç altındaki biat da bu olayda geçer.",
+  "coverImage": null,
+  "relatedStories": [
+    "asr-i-saadet"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "\"Apaçık bir fetih\" ve biat",
+      "ref": "48:1-10",
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Ağaç altındaki biat ve vaad edilen kazançlar",
+      "ref": "48:18-21",
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Mekke'de olanlar ve doğrulanan rüya",
+      "ref": "48:24-27",
+      "note": null
+    }
+  ],
+  "lessons": [],
+  "locations": [],
+  "concepts": [
+    "ahid",
+    "sabir",
+    "nusret",
+    "riza"
+  ]
+}

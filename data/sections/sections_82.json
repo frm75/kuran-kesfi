@@ -1,0 +1,31 @@
+{
+  "surahId": 82,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Göğün yarıldığı gün",
+      "verseStart": 1,
+      "verseEnd": 5,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Ey insan! Seni yaratan ve yazıcı melekler",
+      "verseStart": 6,
+      "verseEnd": 12,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "İyiler, günahkârlar ve o günün buyruğu",
+      "verseStart": 13,
+      "verseEnd": 19,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

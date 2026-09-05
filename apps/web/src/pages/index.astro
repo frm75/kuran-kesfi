@@ -83,90 +83,131 @@ const featuredDateLabel = buildDate.toLocaleDateString("tr-TR", {
   year: "numeric",
 });
 
-/** Beş keşif kapısı — plan §2. Yalnızca Kelime hazır. */
+/**
+ * Beş keşif kapısı — plan §2. Yalnızca Kelime hazır.
+ *
+ * `href` sayfanın kendisi, `to` KARTIN GİTTİĞİ YER. Hazır olmayan kapılar
+ * olmayan bir sayfaya bağlanamaz (dürüstlük kuralı, plan §1.5) ama tık da
+ * boşa gitmemeli: onlar "Kullanacağınız araçlar" bölümüne iniyor, çünkü
+ * neyin ne zaman geleceği orada yazıyor.
+ */
 const gates = [
   {
     numeral: "I",
     name: "Harita",
     note: "Nuh'un gemisi, Yusuf'un kuyusu, Musa'nın yolculuğu — kıssaların geçtiği yerler, her birinin ne kadar kesin olduğu belirtilerek.",
-    href: undefined,
+    href: "/harita",
+    to: "/harita",
   },
   {
     numeral: "II",
     name: "Zaman",
     note: "Sureleri mushaf sırasıyla değil indikleri sırayla okuyun. O gün Mekke'de ne oluyordu, hemen yanında.",
-    href: undefined,
+    href: "/zaman",
+    to: "/zaman",
   },
   {
     numeral: "III",
     name: "Kavram",
     note: "Sabır nereye bağlanıyor, şükürle nasıl kesişiyor? Kavramlar arasında gezinin, her düğümde ayetleri görün.",
-    href: undefined,
+    href: "/kavramlar",
+    to: "/kavramlar",
   },
   {
     numeral: "IV",
     name: "Kelime",
     note: "Arapça bilmeden de kökleri izleyin. Bir kelimenin kökü, türevleri ve Kur'an'ın her yerindeki izi.",
     href: "/kok",
+    to: "/kok",
   },
   {
     numeral: "V",
     name: "İlkeler",
     note: "Adalet, emanet, ölçüde dürüstlük, öfkeyi yutmak — dayandığı ayetler ve tefsir kaynaklarıyla birlikte.",
-    href: undefined,
+    href: "/ilkeler",
+    to: "/ilkeler",
   },
 ] as const;
 
-/** Ayet merkezli ağ — §5'teki şemanın etiketleri (plan §15). */
+/**
+ * Ayet merkezli ağ — §5'teki şemanın etiketleri (plan §15).
+ *
+ * `to`: bugün gerçekten çalışan şey nereye götürüyor. Bağlam ve Nüzul için
+ * hazır bir örnek sayfa var (hero ayetinin kendi sayfası ve suresi); Kök
+ * kendi bölümüne gider. Kalanlar henüz yok, "Kullanacağınız araçlar"a iner.
+ */
+const heroVerseHref = `/${heroVerse.surahSlug}/${String(heroVerse.verseNumber)}`;
 const spokes = [
-  { name: "Bağlam", note: "Önceki ve sonraki ayetler, sure içindeki konu başlığı" },
-  { name: "Kıssa", note: "Ayetin parçası olduğu anlatı, kronolojik sırasıyla" },
-  { name: "Kavram", note: "İçinde geçen kavramlar ve bağlı kavramlar" },
-  { name: "Kök", note: "Kelimelerin kökleri ve Kur'an'daki diğer kullanımları" },
-  { name: "Nüzul", note: "İniş sırası, dönemi ve o döneme ait olaylar" },
-  { name: "Konum", note: "Anlatılan olayın geçtiği yer, güven derecesiyle" },
+  {
+    name: "Bağlam",
+    note: "Önceki ve sonraki ayetler, sure içindeki konu başlığı",
+    to: heroVerseHref,
+  },
+  { name: "Kıssa", note: "Ayetin parçası olduğu anlatı, kronolojik sırasıyla", to: "/kissalar" },
+  { name: "Kavram", note: "İçinde geçen kavramlar ve bağlı kavramlar", to: "/kavramlar" },
+  { name: "Kök", note: "Kelimelerin kökleri ve Kur'an'daki diğer kullanımları", to: "/kok" },
+  {
+    name: "Nüzul",
+    note: "İniş sırası, dönemi ve o döneme ait olaylar",
+    to: "/zaman",
+  },
+  { name: "Konum", note: "Anlatılan olayın geçtiği yer, güven derecesiyle", to: "/harita" },
 ] as const;
 
-/** Modüller — plan §2. Durum dürüstçe işaretlenir. */
+/**
+ * Modüller — plan §2. Durum dürüstçe işaretlenir.
+ *
+ * `to` yalnızca HAZIR modüllerde var. "Yakında" olanlar tıklanmaz: olmayan
+ * bir sayfaya bağlamak da, kendi bölümüne geri döndürmek de kullanıcıyı
+ * kandırır. Durum etiketi zaten ne olduğunu söylüyor.
+ */
 const modules = [
   {
     name: "Klasik okuma",
     state: "hazir",
+    to: "/sureler",
     note: `${totals.surahs} sure, ${totals.verses} ayet; Arapça metin ve meal yan yana.`,
   },
   {
     name: "Meal karşılaştırma",
     state: "hazir",
+    to: heroVerseHref,
     note: `${authors.length} meal yan yana. Aynı ayetin farklı karşılanışını görün.`,
   },
   {
     name: "Çeviriyazı",
     state: "hazir",
+    to: heroVerseHref,
     note: "Her ayetin Latin harfli okunuşu. Arapça bilmeden de takip edilir.",
   },
   {
     name: "Meal sahipliği",
     state: "hazir",
+    to: "/kaynaklar",
     note: "Her mealin ve tefsirin kime ait olduğu metnin yanında yazar.",
   },
   {
     name: "Kelime ve kök",
     state: "hazir",
+    to: "/kok",
     note: "77.429 kelime, 1.641 kök. Kökten türevlere, türevlerden ayetlere.",
   },
   {
     name: "Kıssalar",
-    state: "yakinda",
+    state: "hazir",
+    to: "/kissalar",
     note: "Kıssa akışı ve kronoloji; her adım ayete bağlı.",
   },
   {
     name: "Kavram ağı",
-    state: "yakinda",
+    state: "hazir",
+    to: "/kavramlar",
     note: "Kavramdan ayete, ayetten kavrama; bağları izleyin.",
   },
   {
     name: "Harita",
-    state: "yakinda",
+    state: "hazir",
+    to: "/harita",
     note: "Kıssaların coğrafyası. Liste alternatifi zorunlu.",
   },
   {
@@ -203,10 +244,10 @@ const menu = [
     href: "#kapilar",
     items: [
       { name: "Kök Kelime Keşfi", note: "Kökten türevlere, türevlerden ayetlere", href: "/kok" },
-      { name: "Kıssa Haritası", note: "Kıssaların geçtiği yerler", href: undefined },
-      { name: "Nüzul Zaman Çizelgesi", note: "Sureler iniş sırasıyla", href: undefined },
-      { name: "Kavram Haritası", note: "Kavramlar arası bağlar", href: undefined },
-      { name: "İlkeler", note: "Kur'an'ın tavsiye ettiği ilkeler", href: undefined },
+      { name: "Kıssa Haritası", note: "Kıssaların geçtiği yerler", href: "/harita" },
+      { name: "Nüzul Zaman Çizelgesi", note: "Sureler iniş sırasıyla", href: "/zaman" },
+      { name: "Kavram Haritası", note: "Kavramlar arası bağlar", href: "/kavramlar" },
+      { name: "İlkeler", note: "Kur'an'ın tavsiye ettiği ilkeler", href: "/ilkeler" },
     ],
   },
   {
@@ -330,14 +371,18 @@ const menu = [
           alt="Kur'an-ı Kerim Keşfi"
         />
 
-        <p class="lp-eyebrow"><span>KEŞFET • OKU • ANLA</span></p>
-
+        {/* Marka şeridi kaldırıldı: başlığın kendisi zaten aynı kelimeleri
+            taşıyor, üstünde tekrar etmesi gürültü oluyordu. */}
         <h1 class="lp-h1">
-          Kur'an bir liste değil
-          <span class="lp-l2">bir ağdır</span>
+          Oku. Anla. Keşfet.
+          <span class="lp-l2">Hayatına Taşı.</span>
         </h1>
 
         <p class="lp-hero-sub">
+          Kur'an'ı okumak bir başlangıçtır. Anlamak bir yolculuk, yaşamak ise hedeftir.
+        </p>
+
+        <p class="lp-hero-lede">
           Bir ayeti açın; geçtiği kıssa, bağlı olduğu kavram, kökü, indiği dönem ve
           anlatıldığı yer aynı anda önünüze gelsin. {authors.length} meal ve kaynağı
           gösterilen açıklamalarla.
@@ -367,18 +412,18 @@ const menu = [
     </header>
 
     {/* --- 2. Neden Farklı ----------------------------------------------- */}
-    <section class="lp-manifesto" aria-labelledby="neden-farkli-baslik">
+    <section class="lp-manifesto" id="neden-farkli" aria-labelledby="neden-farkli-baslik">
       <h2 id="neden-farkli-baslik" class="sr-only">Neden farklı</h2>
       <div class="lp-wrap lp-man-grid">
         <div class="lp-man-cell">
-          <h3>Her bilgi kaynağıyla</h3>
+          <h3><a href="/kaynaklar" class="lp-stretch">Her bilgi kaynağıyla</a></h3>
           <p>
             Tefsir de meal de hoca açıklaması da bir yorumdur. Hepsini kimin söylediğiyle,
             hangi esere dayandığıyla birlikte gösteriyoruz. Farklı görüşler yan yana durur.
           </p>
         </div>
         <div class="lp-man-cell">
-          <h3>Reklamsız, üyeliksiz</h3>
+          <h3><a href="#sadaka-baslik" class="lp-stretch">Reklamsız, üyeliksiz</a></h3>
           <p>
             Ücretli bölüm, reklam, takip kodu yok. Yazı tipleri bile kendi sunucumuzdan
             gelir — tarayıcınız üçüncü bir siteye istek atmaz. Girmek için hesap açmanız
@@ -386,7 +431,7 @@ const menu = [
           </p>
         </div>
         <div class="lp-man-cell">
-          <h3>Belirsizlik gizlenmez</h3>
+          <h3><a href="/kaynaklar" class="lp-stretch">Belirsizlik gizlenmez</a></h3>
           <p>
             Bir konum tartışmalıysa haritada öyle görünür. Nüzul sırasında farklı görüş
             varsa ikisi de yazar. Kesin olmayan hiçbir şey kesinmiş gibi sunulmaz.
@@ -412,8 +457,12 @@ const menu = [
                 <span class="lp-gate-num" aria-hidden="true">
                   {gate.numeral}
                 </span>
+                {/* Bağlantı başlıkta, tık alanı kartın tamamı (.lp-stretch).
+                    Hazır olmayan kapı "Kullanacağınız araçlar"a iner. */}
                 <h3>
-                  {gate.href === undefined ? gate.name : <a href={gate.href}>{gate.name}</a>}
+                  <a href={gate.to} class="lp-stretch">
+                    {gate.name}
+                  </a>
                 </h3>
                 <p>{gate.note}</p>
                 <p class:list={["state", gate.href === undefined ? "state-yakinda" : "state-hazir"]}>
@@ -427,7 +476,7 @@ const menu = [
     </section>
 
     {/* --- 4. Nasıl Çalışır ---------------------------------------------- */}
-    <section class="lp-net" aria-labelledby="nasil-baslik">
+    <section class="lp-net" id="nasil" aria-labelledby="nasil-baslik">
       <div class="lp-wrap lp-net-grid">
         <div>
           <p class="rule-ornament" aria-hidden="true"><span></span></p>
@@ -441,7 +490,9 @@ const menu = [
             {
               spokes.map((spoke) => (
                 <li>
-                  <b>{spoke.name}</b>
+                  <a href={spoke.to} class="lp-stretch">
+                    <b>{spoke.name}</b>
+                  </a>
                   <span>{spoke.note}</span>
                 </li>
               ))
@@ -501,7 +552,15 @@ const menu = [
           {
             modules.map((module) => (
               <li class:list={["lp-mod", module.state === "yakinda" && "is-soon"]}>
-                <h3>{module.name}</h3>
+                <h3>
+                  {"to" in module ? (
+                    <a href={module.to} class="lp-stretch">
+                      {module.name}
+                    </a>
+                  ) : (
+                    module.name
+                  )}
+                </h3>
                 <p>{module.note}</p>
                 <p class:list={["state", `state-${module.state}`]}>{stateLabel[module.state]}</p>
               </li>
@@ -874,48 +933,128 @@ const menu = [
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* Video kendi başına biraz fazla parlak; metnin altında kalması için
-       koyulaştırılıyor. Perde bunun üstüne biniyor. */
-    opacity: 0.55;
+    /* Tam güçte. Karartma perdenin ve metin siperinin işi — videoyu ayrıca
+       soldurmak ikisini üst üste bindirip görüntüyü öldürüyordu. */
+    opacity: 1;
+    /* Perde kesildiği için video artık doğrudan görünüyor; derecelendirmenin
+       çoğu encode'a taşındı (build_media.ts EQ). Burada yalnızca ekranda
+       kalan son bir kademe var. */
+    filter: saturate(1.16) contrast(1.06);
   }
 
   /*
-   * Perde: videoyu metnin arkasına iter.
+   * Perde — videonun kendisi düzeltildikten SONRA ayarlandı.
    *
-   * İki katman — ortadan dışa doğru koyulaşan radyal, üstüne alttan gelen
-   * düz geçiş. Alt kenar tamamen --bg-primary'ye kavuşuyor ki video bir
-   * yerde "bitmiyor", sayfaya karışıyor.
+   * 2026-09-05: asıl sorun perde değildi. Kaynak videonun kendisi koyu
+   * derecelenmişti ve kesim, başındaki 2 sn'lik uzay siyahı ile sonundaki
+   * 1,5 sn'lik fade-to-black'i içeri alıyordu — 11,4 sn'lik döngünün %31'i
+   * siyah geçiyordu, poster de 0. kareydi. Ölçüm (signalstats YAVG):
+   *
+   *   eski çıktı   en karanlık  31/255   ortalama   89/255
+   *   yeni çıktı   en karanlık  76/255   ortalama  137/255
+   *
+   * 2026-09-05 (ikinci tur): kullanıcı "hâlâ çok koyu, fark edilmiyor"
+   * dedi. Ölçüldü — bu kez suçlu perdeydi. Video medyanı 149/255, perdenin
+   * çekirdeği %52; ekrana düşen ~70/255 idi, yani videonun yarısı perdede
+   * kayboluyordu. Çekirdek %52 -> %20'ye indirildi, kenar karartması ve üst
+   * bant da yarıya çekildi. Okunurluk tümüyle GLİF GÖLGESİNE bırakıldı:
+   * gölge yalnızca harfin çevresini karartır, görüntüyü öldürmez.
+   * Alt bant korundu — orası perde değil, sayfa zeminine geçiş.
+   *
+   * Video artık gerçekten parlak olduğu için perde AZALTILDI ama metnin
+   * okunurluğu perdeye değil GLİF GÖLGESİNE bırakıldı (aşağıda): gölge
+   * yalnızca harflerin çevresini karartır, görüntünün tamamını değil.
+   *
+   * İlk deneme %38'di; en parlak karede (çöl göğü, 8,5 sn) başlığın arkasına
+   * düşen en parlak piksel 164/255 çıktı, ham kontrast 2,11:1 — perde
+   * gökyüzünde yetmiyordu. Çekirdek %52'ye çıkarıldı ama elips DARALTILDI
+   * (%62×70 → %56×64): metnin arkası kararıyor, kenarlar ve alt yarı açık
+   * kalıyor. Görünen video eskisinden hâlâ çok daha parlak çünkü kaynağın
+   * kendisi %54 parlaklaştı.
+   *
+   * Kontrast WCAG 1.4.3'ün dediği gibi HALEYLE ölçülüyor: gölge varsa
+   * harfin komşu pikseli gölgedir, arka plan değil. Ölçüm DESIGN.md §8'de.
    */
   .lp-hero-veil {
     position: absolute;
     inset: 0;
     z-index: 1;
     background:
+      /* Metin siperi — TAM GENİŞLİK. `.lp-hero-in` üzerinde olamaz: o kutu
+         1180px'e kilitli, kenarında düz bir dikiş bırakıyordu. */
       radial-gradient(
-        120% 90% at 50% 42%,
-        color-mix(in srgb, var(--bg-primary) 30%, transparent) 0%,
-        color-mix(in srgb, var(--bg-primary) 78%, transparent) 58%,
-        var(--bg-primary) 100%
+        58% 62% at 50% 46%,
+        color-mix(in srgb, var(--bg-primary) 38%, transparent) 0%,
+        color-mix(in srgb, var(--bg-primary) 26%, transparent) 58%,
+        transparent 100%
+      ),
+      radial-gradient(
+        140% 115% at 50% 45%,
+        transparent 0%,
+        color-mix(in srgb, var(--bg-primary) 3%, transparent) 38%,
+        color-mix(in srgb, var(--bg-primary) 8%, transparent) 66%,
+        color-mix(in srgb, var(--bg-primary) 18%, transparent) 100%
       ),
       linear-gradient(
         to bottom,
-        color-mix(in srgb, var(--bg-primary) 62%, transparent) 0%,
-        transparent 26%,
-        transparent 62%,
+        color-mix(in srgb, var(--bg-primary) 22%, transparent) 0%,
+        color-mix(in srgb, var(--bg-primary) 5%, transparent) 22%,
+        transparent 58%,
+        color-mix(in srgb, var(--bg-primary) 62%, transparent) 90%,
         var(--bg-primary) 100%
       );
   }
 
-  /* Açık modda kağıt zemin üzerinde koyu video ters düşüyor; daha da
-     silikleştirilip perde beyaza çekiliyor. */
+  /* Açık modda perde kağıt tonudur, yani KARARTMAZ AÇAR. Video parlaklaştığı
+     için opaklık 0,45'ten 0,55'e çıktı; koyu mürekkep metin zaten üstünde. */
+  /*
+   * 2026-09-05 (ucuncu tur): kullanici "arka goruntu yine perde arkasi"
+   * dedi. Ekran goruntusu alinca sebep gorundu: ACIK MODDA video %55
+   * opaklıktaydı, yani yarısı kağıt zeminine karışıyordu. Perde değil
+   * videonun kendisi soluktu. Tam güce alındı; açık modda metin KOYU
+   * mürekkep olduğu için tehlike parlak alan değil KARANLIK alandır —
+   * perde bu yüzden karartmaz, AÇAR ve çekirdeği bir kademe artırıldı.
+   */
   @media (prefers-color-scheme: light) {
     :root:not([data-theme="dark"]) .lp-hero-video {
-      opacity: 0.28;
+      opacity: 1;
+    }
+    :root:not([data-theme="dark"]) .lp-hero-veil {
+      background:
+        radial-gradient(
+          62% 70% at 50% 48%,
+          color-mix(in srgb, var(--bg-primary) 46%, transparent) 0%,
+          color-mix(in srgb, var(--bg-primary) 34%, transparent) 55%,
+          transparent 100%
+        ),
+        radial-gradient(
+          140% 115% at 50% 45%,
+          transparent 0%,
+          color-mix(in srgb, var(--bg-primary) 8%, transparent) 38%,
+          color-mix(in srgb, var(--bg-primary) 20%, transparent) 66%,
+          color-mix(in srgb, var(--bg-primary) 38%, transparent) 100%
+        ),
+        linear-gradient(
+          to bottom,
+          color-mix(in srgb, var(--bg-primary) 55%, transparent) 0%,
+          color-mix(in srgb, var(--bg-primary) 12%, transparent) 22%,
+          transparent 55%,
+          color-mix(in srgb, var(--bg-primary) 70%, transparent) 88%,
+          var(--bg-primary) 100%
+        );
     }
   }
   :root[data-theme="light"] .lp-hero-video {
-    opacity: 0.28;
+    opacity: 1;
   }
+
+  /*
+   * Metin siperi.
+   *
+   * Kenarlarda video tam görünsün diye perde hafifletildi; okunurluğu burada
+   * garantiye alıyoruz. Kutu değil, yumuşak bir radyal — sınırı belli olmuyor.
+   * Merkezde ~%50 karartma: tepe kare (160/255) için gereken %39'un üstünde.
+   */
   .lp-hero-in {
     position: relative;
     z-index: 2;
@@ -925,6 +1064,116 @@ const menu = [
     padding: var(--space-16) var(--space-4) var(--space-12);
     text-align: center;
   }
+  /*
+   * Glif gölgesi — okunurluğun ASIL taşıyıcısı.
+   *
+   * Perde bütün görüntüyü karartır; gölge yalnızca harfin çevresindeki
+   * birkaç pikseli karartır. Aynı kontrastı görüntüyü öldürmeden verir.
+   * İki katman: dar ve koyu olan kenarı keskinleştirir, geniş ve yumuşak
+   * olan parlak karelerde harfin etrafına hale açar.
+   */
+  .lp-hero-in :is(h1, p, span) {
+    /* Ölçüldü (haleyle, en parlak kare): tek dar katman 85% ile alıntı
+       satırı p05 3,23:1, giriş paragrafı medyan 4,36:1 kalıyordu. 2px
+       ötede gölge %34'e düşüyordu. İki dar katman (2px %95 + 4px %90)
+       harfin 2px komşusunu ~%55 örtüyor; ölçüm DESIGN.md §8'de. */
+    /* İlk iki katman TAM OPAK ve dar: harfin ~3px komşusunu neredeyse
+       tamamen örterler. Ölçüm 2px komşuyu okuduğu için kontratı taşıyan
+       katmanlar bunlar. Geniş ve yumuşak olanlar yalnızca geçişi yumuşatır;
+       görüntünün geri kalanına dokunmazlar — perdenin aksine.
+
+       Yarıçaplar ÖLÇÜMLE bulundu, tahminle değil. 1px+3px opak denendi:
+       slogan 2,49:1'de kaldı (eşik 3,0). Slogan ince ve italik, glif
+       çeperi dar; gölge 2px komşuya yeterince ulaşmıyordu. 2px+5px opak
+       + 10px %92 ile ölçüm eşiklerin üstüne çıktı: slogan 3,04:1. Pay
+       inceydi (eşik 3,0), 10px katmanı %97'ye çekildi — son ölçüm
+       aşağıdaki tabloda, DESIGN.md §8'de. */
+    text-shadow:
+      0 0 2px var(--bg-primary),
+      0 0 5px var(--bg-primary),
+      0 0 10px color-mix(in srgb, var(--bg-primary) 97%, transparent),
+      0 2px 20px color-mix(in srgb, var(--bg-primary) 80%, transparent),
+      0 4px 40px color-mix(in srgb, var(--bg-primary) 58%, transparent);
+  }
+  /* Açık modda perde kağıt tonu, metin koyu mürekkep: hale ters düşer. */
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .lp-hero-in :is(h1, p, span) {
+      text-shadow: 0 1px 10px color-mix(in srgb, var(--bg-primary) 80%, transparent);
+    }
+  }
+  :root[data-theme="light"] .lp-hero-in :is(h1, p, span) {
+    text-shadow: 0 1px 10px color-mix(in srgb, var(--bg-primary) 80%, transparent);
+  }
+  /*
+   * Giriş efekti — plan §13 (hareket kullanıcının denetiminde).
+   *
+   * JS YOK: saf CSS animasyonu, `script-src` kapalıyken de çalışır.
+   *
+   * Başlangıç durumu (opacity: 0) BASE KURALA YAZILMAZ, yalnızca keyframe'in
+   * `from` adımında durur. Sebebi güvenlik: animasyon herhangi bir nedenle
+   * çalışmazsa — tarayıcı desteklemiyorsa ya da aşağıdaki reduced-motion
+   * kuralı `animation: none` yaparsa — element normal stiline döner ve
+   * GÖRÜNÜR olur. Base kurala opacity:0 yazılsaydı metin kalıcı kaybolurdu.
+   *
+   * Gecikmeler okuma sırasını izler: logo, başlığın iki satırı, slogan,
+   * giriş paragrafı, düğmeler, ayet. Toplam ~1,5 sn; ilk ekranın tamamı
+   * bu süre içinde yerine oturuyor.
+   */
+  @keyframes lp-rise {
+    from {
+      opacity: 0;
+      transform: translateY(1.1rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes lp-logo-in {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .lp-hero-logo,
+  .lp-hero-in h1,
+  .lp-hero-in .lp-l2,
+  .lp-hero-sub,
+  .lp-hero-lede,
+  .lp-hero-acts,
+  .lp-hero-verse {
+    animation: lp-rise 800ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+  .lp-hero-logo {
+    animation-name: lp-logo-in;
+    animation-duration: 900ms;
+  }
+  .lp-hero-in h1 { animation-delay: 160ms; }
+  /* İkinci satır kendi başına gelir: "Hayatına Taşı." vurgusu böyle çıkıyor.
+     `span` blok yapılmadan transform uygulanamaz; .lp-l2 zaten blok. */
+  .lp-hero-in .lp-l2 { animation-delay: 340ms; }
+  .lp-hero-sub { animation-delay: 520ms; }
+  .lp-hero-lede { animation-delay: 700ms; }
+  .lp-hero-acts { animation-delay: 860ms; }
+  .lp-hero-verse { animation-delay: 1020ms; }
+
+  /* Hareketi azalt diyene hareket YOK — elementler doğrudan yerinde durur. */
+  @media (prefers-reduced-motion: reduce) {
+    .lp-hero-logo,
+    .lp-hero-in h1,
+    .lp-hero-in .lp-l2,
+    .lp-hero-sub,
+    .lp-hero-lede,
+    .lp-hero-acts,
+    .lp-hero-verse {
+      animation: none;
+    }
+  }
+
   .lp-hero-logo {
     width: clamp(9rem, 19vw, 13.5rem);
     height: auto;
@@ -961,13 +1210,50 @@ const menu = [
   }
   .lp-h1 .lp-l2 {
     display: block;
+    /* Koyu modda --accent-hover 11:1 veriyor; açık modda kağıt üzerinde
+       1,51:1'e düşüyordu. Metin sürümü moda göre değişir. */
     color: var(--accent-hover);
     font-style: italic;
   }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .lp-h1 .lp-l2 {
+      color: var(--accent-text);
+    }
+  }
+  :root[data-theme="light"] .lp-h1 .lp-l2 {
+    color: var(--accent-text);
+  }
+  /* Alıntı satırı — başlığın altında, serif ve italik. */
   .lp-hero-sub {
+    max-width: 46rem;
+    margin: var(--space-6) auto 0;
+    color: var(--accent-hover);
+    /* Açık mod karşılığı aşağıda — kağıt üzerinde 4,77:1. */
+    font-family: var(--font-heading);
+    /* En küçük boyut 1.5rem = 24px: WCAG "büyük metin" sınırı. Altına
+       inerse eşik 3:1'den 4,5:1'e çıkar ve parlak karelerde kalır
+       (ölçüldü: en parlak karede 3,83:1). */
+    font-size: clamp(1.5rem, 2.6vw, 1.75rem);
+    font-style: italic;
+    font-weight: var(--fw-light);
+    line-height: 1.45;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .lp-hero-sub {
+      color: var(--accent-text);
+    }
+  }
+  :root[data-theme="light"] .lp-hero-sub {
+    color: var(--accent-text);
+  }
+
+  /* Ne yaptığımızı anlatan satır; alıntının altında, sakin. */
+  .lp-hero-lede {
     max-width: var(--content-normal);
     margin: var(--space-6) auto 0;
-    color: var(--text-secondary);
+    /* Normal boyutlu metin, eşik 4,5:1. İkincil ton (#CFC7B6) en parlak
+       karede medyan 4,36'da kalıyordu; birincil parşömen gerekli payı verdi. */
+    color: var(--text-primary);
     font-size: var(--text-md);
     line-height: var(--lh-relaxed);
   }
@@ -1160,7 +1446,8 @@ const menu = [
   .lp-gate h3 a {
     color: var(--text-primary);
   }
-  .lp-gate.is-soon h3 {
+  .lp-gate.is-soon h3,
+  .lp-gate.is-soon h3 a {
     color: var(--text-muted);
   }
   /* Tasarımda açıklama yalnızca üzerine gelince açılıyordu; dokunmatik ve
@@ -1171,6 +1458,50 @@ const menu = [
     color: var(--text-secondary);
     font-size: var(--text-sm);
     line-height: var(--lh-normal);
+  }
+
+  /*
+   * Gerilmiş bağlantı — kartın tamamı tıklanır (kullanıcı isteği 2026-09-05:
+   * "ana sayfada olanlar tıklanır olsun ve ilgili bölümüne gitsin").
+   *
+   * Bağlantı başlıktadır; ::after ile kartı kaplar. Böylece ekran okuyucu
+   * yine kısa bir metin duyar ("Kelime"), kart metnini bağlantı olarak
+   * okumaz. Kap `position: relative` olmalı — .lp-gate, .lp-mod,
+   * .lp-man-cell ve .lp-net-list li aşağıda öyle.
+   */
+  .lp-stretch {
+    color: inherit;
+    text-decoration: none;
+  }
+  .lp-stretch::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+  /* Klavye odağı KARTIN kenarında görünür, harflerin değil. :has()
+     desteklenmiyorsa varsayılan odak halkası harflerde kalır — hiç
+     kalmamasından iyidir; bu yüzden outline:none @supports içinde. */
+  @supports selector(:has(a)) {
+    .lp-stretch:focus-visible {
+      outline: none;
+    }
+    :is(.lp-gate, .lp-mod, .lp-man-cell, .lp-net-list li):has(.lp-stretch:focus-visible) {
+      outline: 2px solid var(--accent);
+      outline-offset: -2px;
+    }
+  }
+  .lp-man-cell,
+  .lp-net-list li,
+  .lp-mod {
+    position: relative;
+  }
+  /* Tıklanabilir kart üzerine gelince başlık pirince döner — tıklanabilir
+     olduğu renkle değil imleçle de belli: ::after tüm kartı kapladığı için
+     imleç zaten el oluyor. */
+  :is(.lp-gate, .lp-mod, .lp-man-cell):has(.lp-stretch):hover h3,
+  .lp-net-list li:has(.lp-stretch):hover b {
+    color: var(--accent-text);
   }
 
   /* --- Nasıl çalışır ----------------------------------------------------- */
@@ -1209,8 +1540,11 @@ const menu = [
     border-bottom: 1px solid var(--border);
     font-size: var(--text-sm);
   }
-  .lp-net-list b {
+  /* Bağlantı artık flex çocuğu; sabit sütun genişliği ona geçti. */
+  .lp-net-list .lp-stretch {
     flex: 0 0 7rem;
+  }
+  .lp-net-list b {
     color: var(--accent-text);
     font-weight: var(--fw-medium);
   }

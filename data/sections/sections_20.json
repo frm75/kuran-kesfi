@@ -1,0 +1,71 @@
+{
+  "surahId": 20,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Kur'an sıkıntı için indirilmedi; Rahmân Arş'a kuruldu",
+      "verseStart": 1,
+      "verseEnd": 8,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "Mûsâ'nın çağrılışı ve Firavun'a gönderilişi",
+      "verseStart": 9,
+      "verseEnd": 48,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Firavun'la konuşma ve sihirbazların iman edişi",
+      "verseStart": 49,
+      "verseEnd": 76,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Denizden geçiş ve İsrâiloğullarına hitap",
+      "verseStart": 77,
+      "verseEnd": 82,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Buzağı ve Sâmirî",
+      "verseStart": 83,
+      "verseEnd": 98,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "Geçmişin haberleri, kıyamet sahnesi ve Arapça Kur'an",
+      "verseStart": 99,
+      "verseEnd": 114,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Âdem ve İblîs; zikirden yüz çevirenler",
+      "verseStart": 115,
+      "verseEnd": 127,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Öncekilerden ibret; sabret ve namazı emret",
+      "verseStart": 128,
+      "verseEnd": 135,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

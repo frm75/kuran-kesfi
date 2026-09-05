@@ -1,0 +1,89 @@
+---
+import Base from "~/layouts/Base.astro";
+import { getConceptsIndex } from "~/lib/data";
+
+/**
+ * Kavram listesi — plan §2.4.
+ *
+ * Graf görünümü (force-directed) JavaScript ister; CSP `script-src` kapalı ve
+ * plan §12 graf için liste alternatifini zorunlu kılıyor. Bu sayfa o listedir:
+ * kavramlar ağaç yapısıyla (üst kavram → alt kavram) gruplanmış.
+ */
+
+const concepts = getConceptsIndex();
+const roots = concepts.filter((c) => c.parentSlug === null);
+const childrenOf = new Map<string, typeof concepts>();
+for (const c of concepts) {
+  if (c.parentSlug === null) continue;
+  const bucket = childrenOf.get(c.parentSlug) ?? [];
+  bucket.push(c);
+  childrenOf.set(c.parentSlug, bucket);
+}
+
+const totalVerses = concepts.reduce((a, c) => a + c.verseCount, 0);
+const sorted = [...roots].sort((a, b) => b.verseCount - a.verseCount);
+---
+
+<Base
+  title="Kavramlar — Kur'an-ı Kerim Keşfi"
+  description={`Kur'an'ın ${concepts.length} temel kavramı; kök verisinden hesaplanan ayet dağılımlarıyla.`}
+  arabic
+>
+  <main id="icerik" class="pg pg-wide">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">Kavramlar</span>
+    </nav>
+
+    <header class="pg-head">
+      <p class="pg-kicker">III. Kapı — Kavram</p>
+      <h1 class="pg-title">Kavramlar</h1>
+      <p class="pg-lede">
+        Her kavram bir ya da birkaç Arapça köke bağlıdır; ayet eşleştirmesi o köklerin
+        Kur'an'daki geçişlerinden <strong>hesaplanır</strong>, elle seçilmez. Bu yüzden
+        sayılar doğrulanabilir: kavramın kökü hangi ayette geçiyorsa ayet listede vardır.
+      </p>
+      <ul class="fact-row">
+        <li><b>{concepts.length}</b><span>kavram</span></li>
+        <li><b>{totalVerses}</b><span>ayet bağı</span></li>
+        <li><b>{roots.length}</b><span>üst kavram</span></li>
+      </ul>
+    </header>
+
+    <ol class="concept-grid">
+      {
+        sorted.map((concept) => {
+          const kids = childrenOf.get(concept.slug) ?? [];
+          return (
+            <li>
+              <a class="cn-main" href={`/kavram/${concept.slug}`}>
+                <span class="cn-head">
+                  <span class="cn-name">{concept.nameTr}</span>
+                  {concept.nameAr !== null && (
+                    <span class="cn-ar" lang="ar" dir="rtl">
+                      {concept.nameAr}
+                    </span>
+                  )}
+                </span>
+                <span class="cn-def">{concept.definition}</span>
+                <span class="cn-meta">{concept.verseCount} ayet</span>
+              </a>
+              {kids.length > 0 && (
+                <ul class="cn-kids">
+                  {kids.map((kid) => (
+                    <li>
+                      <a href={`/kavram/${kid.slug}`}>
+                        {kid.nameTr}
+                        <span class="cn-kid-count">{kid.verseCount}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          );
+        })
+      }
+    </ol>
+  </main>
+</Base>

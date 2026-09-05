@@ -1,0 +1,21 @@
+{
+  "slug": "uyari",
+  "nameTr": "Uyarı (Nezâret)",
+  "nameAr": "النذارة",
+  "definition": "Sonuçtan sakındıran haber; peygamberlerin ikinci görevi.",
+  "parentSlug": null,
+  "roots": [
+    "npr"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "mujde",
+      "type": "contrast",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

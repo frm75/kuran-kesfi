@@ -1,0 +1,103 @@
+{
+  "surahId": 11,
+  "origin": "platform",
+  "sourceSlug": null,
+  "sections": [
+    {
+      "order": 1,
+      "title": "Kitabın sağlamlığı ve bağışlanma dileme çağrısı",
+      "verseStart": 1,
+      "verseEnd": 8,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 2,
+      "title": "İnsanın hâli, Kur'an'a meydan okuma ve iki zümre",
+      "verseStart": 9,
+      "verseEnd": 24,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 3,
+      "title": "Nûh ve gemi",
+      "verseStart": 25,
+      "verseEnd": 49,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 4,
+      "title": "Hûd ve Âd kavmi",
+      "verseStart": 50,
+      "verseEnd": 60,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 5,
+      "title": "Sâlih ve Semûd kavmi",
+      "verseStart": 61,
+      "verseEnd": 68,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 6,
+      "title": "İbrâhim'e gelen elçiler",
+      "verseStart": 69,
+      "verseEnd": 76,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 7,
+      "title": "Lût",
+      "verseStart": 77,
+      "verseEnd": 83,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 8,
+      "title": "Şu'ayb ve Medyen halkı",
+      "verseStart": 84,
+      "verseEnd": 95,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 9,
+      "title": "Mûsâ ve Firavun",
+      "verseStart": 96,
+      "verseEnd": 99,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 10,
+      "title": "Memleketlerin haberleri; mutsuzlar ve mutlular",
+      "verseStart": 100,
+      "verseEnd": 108,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 11,
+      "title": "Şüphe etme; \"emrolunduğun gibi dosdoğru ol\"",
+      "verseStart": 109,
+      "verseEnd": 113,
+      "alsoVerses": [],
+      "note": null
+    },
+    {
+      "order": 12,
+      "title": "Namaz; öncekilerden öğüt; \"bekleyin, biz de bekleriz\"",
+      "verseStart": 114,
+      "verseEnd": 123,
+      "alsoVerses": [],
+      "note": null
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "slug": "iftiradan-kacinma",
+  "nameTr": "İftiradan Kaçınma",
+  "nameAr": "اجتناب القذف",
+  "rootLatin": null,
+  "definition": "Bir kimseye, özellikle iffeti konusunda, delilsiz suç isnat etmemek; söylentiyi araştırmadan yaymamak.",
+  "explanation": "Nûr 24:4 iffetli kadınlara iftira edenlere ağır ceza koyar ve şahitliklerini düşürür; 24:11-19 İfk olayını anlatıp söylentiyi yaymayı kınar; 24:23 iftiranın iki dünyadaki sonucunu bildirir. Mümtehine 60:12 iftira etmemeyi biat şartı yapar. Yûsuf'a atılan iftira (12:25-29) kıssa düzeyindeki örnektir.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 14,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "24:4",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "24:23",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "60:12",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "24:11-19",
+      "role": "secondary",
+      "note": "İfk olayı"
+    },
+    {
+      "ref": "4:112",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "33:58",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "12:25-29",
+      "role": "secondary",
+      "note": "Yûsuf'a iftira"
+    }
+  ],
+  "stories": [
+    {
+      "slug": "hz-yusuf",
+      "note": "Zindana götüren iftira"
+    },
+    {
+      "slug": "hz-meryem",
+      "note": "Kavminin ithamı (19:27-28)"
+    }
+  ],
+  "concepts": [
+    "yalan",
+    "zulum",
+    "sidk"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "slug": "ummet",
+  "nameTr": "Ümmet",
+  "nameAr": "الأمة",
+  "definition": "Ortak bir yol ya da önder etrafında toplanan topluluk. Kur'an hem geçmiş milletleri hem de Muhammed ümmetini bu kelimeyle anar; her ümmete bir uyarıcı gönderildiği bildirilir.",
+  "parentSlug": null,
+  "roots": [
+    "Amm"
+  ],
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi"
+  ],
+  "relations": [
+    {
+      "target": "nubuvvet",
+      "type": "co_occurrence",
+      "weight": 2
+    }
+  ],
+  "verses": []
+}

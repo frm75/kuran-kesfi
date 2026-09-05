@@ -1,0 +1,46 @@
+{
+  "slug": "ashab-i-fil",
+  "title": "Fil Vak'ası",
+  "type": "event",
+  "chronologicalOrder": 33,
+  "eraStart": "M.S. 570 civarı",
+  "eraEnd": null,
+  "summary": "Ebrehe'nin Kâbe'yi yıkmak için fillerle Mekke üzerine yürümesi ve ordusunun sürü sürü kuşların attığı taşlarla yenilmiş ekin gibi olması. Hz. Peygamber'in doğduğu yıl olarak anılır; olay Kureyş'in ortak hafızasında 'Fil yılı' adını almıştır.",
+  "coverImage": null,
+  "relatedStories": [
+    "asr-i-saadet"
+  ],
+  "passages": [
+    {
+      "order": 1,
+      "title": "Fil ordusunun akıbeti",
+      "ref": "105:1-5",
+      "note": null
+    }
+  ],
+  "lessons": [
+    {
+      "text": "Fil Vak'ası, Kâbe'nin korunmasının ve Kureyş'e verilen nimetin hatırlatılması bağlamında Kureyş suresiyle birlikte okunur.",
+      "sourceName": "TDV İslâm Ansiklopedisi",
+      "sourceReference": "FİL VAK'ASI maddesi — islamansiklopedisi.org.tr/fil-vakasi",
+      "sourceSlugs": [
+        "tdv-islam-ansiklopedisi"
+      ],
+      "order": 1
+    }
+  ],
+  "locations": [
+    {
+      "locationSlug": "mekke",
+      "order": 1,
+      "eventDescription": "Kâbe'ye yönelen ordunun helâki.",
+      "passageOrders": [
+        1
+      ]
+    }
+  ],
+  "concepts": [
+    "nimet",
+    "kudret"
+  ]
+}

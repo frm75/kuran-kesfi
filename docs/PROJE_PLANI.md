@@ -329,18 +329,27 @@ Tüm import scriptleri tekrar çalıştırılabilir (upsert), kaynak bazlı ayr�
 - Statik JSON build scripti
 - Klasik okuma ekranı (sure/ayet/meal) — veri akışını doğrulamak için
 
-**Faz 1 — Kıssa Haritası (3-4 hafta)**
-- 3 örnek kıssa ile (Nuh, Yusuf, Musa) veri şeması ve JSON formatı netleştirilir
-- Harita arayüzü, kıssa paneli, anlatı modu
-- Kalan kıssaların veri girişi (paralel, katkıya açık)
+**Faz 1 — Kıssa Haritası (3-4 hafta)** — *2026-09-05: veri ve arayüz yayında*
+- ~~3 örnek kıssa ile veri şeması netleştirilir~~ → 34 kıssa, 188 parça, 43 kaynaklı ders girildi
+- ~~Harita arayüzü, kıssa paneli, anlatı modu~~ → `/kissalar`, `/kissa/<slug>` (anlatı modu), `/harita`
+- **Harita MapLibre DEĞİL statik SVG.** Gerekçe: MapLibre `script-src` ister ve üçüncü taraf tile
+  `connect-src` ister; CSP ikisini de kapatıyor. Kara parçaları Natural Earth 1:110m verisinden build
+  zamanında çiziliyor. Yakınlaştırma kayboldu; karşılığında konum listesi asıl arayüz oldu (§12 zaten
+  liste alternatifini zorunlu kılıyor) ve sayfa 0 bayt JS kaldı
+- Kalan kıssaların veri girişi katkıya açık
 
-**Faz 2 — Zaman Çizelgesi + Meal Farkları (2-3 hafta)**
-- Nüzul sırası çizelgesi, siyer eşleştirme
-- Meal karşılaştırma ve kelime düzeyi fark vurgulama
+**Faz 2 — Zaman Çizelgesi + Meal Farkları (2-3 hafta)** — *çizelge yayında*
+- ~~Nüzul sırası çizelgesi, siyer eşleştirme~~ → `/zaman`: 22 siyer olayı, dönem dönem gruplanmış;
+  Nöldeke sıralaması 114 surenin hepsi için girildi ve Mısır sıralamasıyla **109 surede farklı** —
+  fark tabloda işaretli (§2.2). İnteraktif çizelge yerine JS'siz liste
+- Meal karşılaştırma yayında (`/<sure>/<ayet>`); kelime düzeyi fark vurgulama henüz yok
 
-**Faz 3 — Kök Kelime + Kavram Haritası (3-4 hafta)**
-- Kök ağacı arayüzü
-- Çekirdek kavram seti (50-100 kavram) ve graf arayüzü
+**Faz 3 — Kök Kelime + Kavram Haritası (3-4 hafta)** — *kavram seti yayında*
+- Kök arayüzü yayında (`/kok`, 1641 kök)
+- ~~Çekirdek kavram seti (50-100 kavram) ve graf arayüzü~~ → **71 kavram**, 12.857 ayet bağı.
+  Graf D3 ister (`script-src` kapalı); yerine ağaç + "bağlı kavramlar" listesi. Ayet eşleştirmesi
+  kökten hesaplanıyor, elle seçilmiyor — sayılar doğrulanabilir
+- **İlkeler modülü (§18) de tamamlandı:** 32 ilke, 116 birincil + 113 ikincil ayet dayanağı
 
 **Faz 4 — Günlük, PWA, Ses (2 hafta)**
 - IndexedDB notlar, ezber tekrar, dışa/içe aktarma
@@ -569,25 +578,45 @@ Yukarıdaki şema uygulamanın ana sayfasıdır. `kurankesfi.tr` kök adresinde 
 bölüm sırası aşağıdaki gibidir. Görsel karşılığı (bölüm şablonu, boşluk, tipografi) `docs/DESIGN.md` §7.
 
 0. **Menü** — logo + marka, açılır listelerle gezinme; yalnızca var olan sayfalar bağlantı
-1. **Hero** — logo, "Kur'an bir liste değil, bir ağdır", tagline, iki CTA, Âl-i İmrân 103
+1. **Hero** — alt katmanda sessiz hero videosu; logo, "Kur'an bir liste değil, bir ağdır", tagline,
+   iki CTA, Âl-i İmrân 103
 2. **Neden Farklı** — her bilgi kaynağıyla · reklamsız, üyeliksiz · belirsizlik gizlenmez (§1)
 3. **5 Keşif Kapısı** — Harita · Zaman · Kavram · Kelime · İlkeler (§2)
 4. **Nasıl Çalışır** — "merkezde ayet var": ayet merkezli bağlantı şeması (§15)
 5. **Modüller** — modül kartları, durum etiketiyle (§2)
-6. **Kaynaklar** — meal listesi + kaynak kartları, lisanslarıyla (§3)
-7. **Kaynak Şeffaflığı** — üç rozet: kaynaklı · alternatif · derleme (§12.10)
-8. **Kur'an'da Bugün** — günün ayeti, meali ve kaynak rozetleri
-9. **Bülten** — günlük/haftalık ayet ve ilke aboneliği (§19)
-10. **Kapanış** — Sadaka-i Cariye notu + açık kaynak lisans tablosu + CTA
-11. **Footer** — zorunlu atıf bağlantıları (`<Attribution>`, her sayfada)
+6. **Mealler** — meal sahiplerinin adı; lisans kartı ve rozet gösterimi YOK
+7. **Kur'an'da Bugün** — günün ayeti, meali ve mealin sahibi
+8. **Bülten** — günlük/haftalık ayet ve ilke aboneliği (§19)
+9. **Kapanış** — Sadaka-i Cariye notu + açık kaynak lisans tablosu + CTA
+10. **Footer** — zorunlu atıf bağlantıları (`<Attribution>`, her sayfada)
+
+**Kaynak bölümleri kaldırıldı (kullanıcı kararı 2026-09-04).** Önceki sürümde "Kaynaklar" (lisans kartları)
+ve "Kaynak Şeffaflığı" (üç rozet gösterimi) diye iki ayrı bölüm vardı; aynı bilgi sayfanın dört yerinde
+tekrarlanıyordu. Tanıtım sayfasında kalan tek şey **mealin ve tefsirin kime ait olduğu**.
+
+Bu bir *sunum* kararıdır, atıf yükümlülüğünün kaldırılması DEĞİLDİR: `<Attribution>` her sayfanın altında
+durur, `/kaynaklar` sayfası yerindedir — Açık Kuran verisi CC BY-NC-SA 4.0, atıf lisansın şartı (§12.10,
+`data/LICENSE`).
+
+**2026-09-05: kaynak kutuları bütün içerik sayfalarından kaldırıldı** (sure listesi, sure, ayet, kök listesi,
+kök — 10 rozet). Aynı kullanıcı kararının devamı: "sadece meal veya tefsirlerin kime ait olduğunu yazacağız".
+Atıf artık üç yerde ve üçü de kodla zorunlu: mealin üstündeki yazar adı (`<Translation>`, `sourceDeclaredBy`
+boşsa build durur), `<Attribution>` (her sayfa) ve `/kaynaklar`. `<SourceBadge>` bileşeni ve §12.10 kuralı
+silinmedi; çok kaynaklı içerik (kıssa, kavram, hoca notu) geldiğinde yeniden değerlendirilir.
+
+**Tıklanabilir kartlar (2026-09-05):** Neden Farklı, Beş Kapı, Nasıl Çalışır düğümleri ve hazır modüller
+kartın tamamıyla tıklanır (`.lp-stretch`). Hazır olan kendi sayfasına gider; hazır olmayan kapı ve düğümler
+"Kullanacağınız araçlar" bölümüne iner (orada durumu yazıyor). "Yakında" modülleri tıklanmaz — olmayan
+sayfaya bağlantı vermek de kendine döndürmek de dürüst değil.
 
 **Dürüstlük kuralı.** Hazır olmayan bölüm "yakında" etiketiyle işaretlenir, çalışıyor gibi gösterilmez.
 Bülten için kayıt formu KONULMAZ: arkasında sunucu yok ve CSP `form-action 'none'` diyor; çalışmayan bir
 kutu göstermek kullanıcıyı yanıltmak olur (§1.5). Menüde de yalnızca var olan sayfalar bağlantıdır.
 
-**Betik yok.** Sunucu CSP'si `default-src 'none'`; `script-src` ve `media-src` tanımlı değil. Tasarımdaki
-video, canvas animasyonu, kaydırınca katılaşan menü ve burger menüsü JS'siz karşılıklarıyla kuruldu
-(statik SVG, `backdrop-filter`, `<details>`). Ayrıntı ve gerekçe: `docs/DESIGN.md` §11.
+**Betik yok.** Sunucu CSP'si `default-src 'none'`; `script-src` tanımlı değil. Canvas animasyonu,
+kaydırınca katılaşan menü ve burger menüsü JS'siz karşılıklarıyla kuruldu (`backdrop-filter`, `<details>`).
+Hero videosu için CSP'ye yalnızca `media-src 'self'` eklendi — üçüncü taraf medya hâlâ yasak, betik hâlâ
+kapalı. Ayrıntı ve gerekçe: `docs/DESIGN.md` §11.
 
 ---
 
@@ -777,6 +806,16 @@ Telegram botu Faz 3; WhatsApp Faz 5 (yayın sonrası). İlkeler modülü (Bölü
 - AI ile üretilecek görsellerin promptları yalnızca İngilizce yazılır (render sadakati için); prompt'a "no human
   figures, no faces, no text" kısıtı her zaman eklenir.
 - Üretilen görseller `data/images/` altında kaynak/prompt notuyla saklanır; lisansı belirsiz stok görsel kullanılmaz.
+- **Kural videoyu da kapsar.** Tanıtım sayfasının hero videosu kaynağında beş peygamber insan figürü olarak
+  görünüyordu; o aralıklar kare kare taranıp çıkarıldı ve karar `scripts/media/build_media.ts` içinde
+  saniye saniye kayıt altına alındı. Yeni bir video/görsel geldiğinde **yayına almadan önce aynı tarama
+  yapılır**; "yüzü görünmüyor" yeterli değildir, figürün kendisi yasaktır.
+- **2026-09-05 düzeltmesi.** İlk kesim (2026-09-04) üç yerde figür kaçırmıştı ve yayına çıkmıştı:
+  gemi önünde küçük figür (7,20 sn), kıyıda ayakta figür (8,50–9,00), Hz. Yunus suya batarken
+  (11,45–12,00) ve aynı figür balinanın üstünde (13,50–13,80). Sebep: aralıklar sahne notuna göre
+  ("gemi yakın plan") seçilmişti, her sınıra bakılmamıştı. Yeni kural: **aralıklar sahne değil, iki ucu
+  ayrı ayrı kareye bakılarak doğrulanmış figürsüz pencere olarak tanımlanır** (`WINDOWS`), tarama 0,05 sn
+  adımla yapılır ve **üretilen çıktı da** ayrıca taranır. Pencere sınırları yalnızca daraltılır.
 
 ## 20.4 Performans Bütçesi
 - İlk yükleme: < 100 KB JS, < 200 KB toplam (fontlar hariç)
@@ -813,9 +852,15 @@ Telegram botu Faz 3; WhatsApp Faz 5 (yayın sonrası). İlkeler modülü (Bölü
   harfler Inter'den alt kümelenip ayrı bir aile olarak yığının başına konuldu;
   `unicode-range` ile sınırlı, o harfler sayfada geçmiyorsa indirilmez.
   Ölçüm ve gerekçe: `docs/DESIGN.md` §2
+- **Hero videosu (yalnızca tanıtım sayfası):** `/media/hero.mp4` **763 KB**, 11,4 sn, sessiz,
+  1280×720. Sayfa 12 KB'lık poster ile açılır, video arkadan iner — LCP'yi poster taşır.
+  Diğer sayfalar bu dosyayı hiç istemez
 - **JavaScript: 0 bayt.** Hedef değil, ölçülen durum — hiçbir sayfada betik yok.
   Sunucu CSP'si `default-src 'none'` ile bunu zorluyor; betik eklenecekse önce
-  CSP'ye `script-src 'self'` girmelidir (`infra/nginx/kurankesfi.tr.conf`)
+  CSP'ye `script-src 'self'` girmelidir (`infra/nginx/kurankesfi.tr.conf`).
+  Video için CSP'ye yalnızca `media-src 'self'` eklendi (2026-09-04); duman
+  testi her yayında başlığın kendisini okuyup `script-src`'nin kapalı
+  kaldığını doğrular
 - LCP < 2 sn (3G), CLS < 0.1
 - Sure JSON'ları ve ses dosyaları lazy; harita/graf kütüphaneleri yalnızca ilgili sayfada
 - Görseller WebP/AVIF, `loading="lazy"`, boyut belirtilmiş
