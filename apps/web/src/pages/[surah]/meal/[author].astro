@@ -1,0 +1,69 @@
+---
+import type { GetStaticPaths } from "astro";
+import Base from "~/layouts/Base.astro";
+import SurahReading from "~/components/SurahReading.astro";
+import {
+  authorHasSurah,
+  getAuthorsIndex,
+  getDefaultAuthor,
+  getSurahMetaById,
+  getSurahsIndex,
+  getTurkishAuthors,
+} from "~/lib/data";
+
+/**
+ * Sureyi secilen mealle okuma — plan §2.7 ("meal secimi").
+ *
+ * `/bakara-suresi/meal/ali-bulac` gibi. Ekran `/`<sure> ile birebir ayni
+ * (<SurahReading>); degisen tek sey hangi mealin basildigi.
+ *
+ * ## Kac sayfa, neden
+ *
+ * 114 sure x 26 Turkce meal, ontanimli meal haric (o kanonik adreste duruyor,
+ * ayni ekrani iki adresten yayinlamanin anlami yok) ve Suleymaniye Vakfi'nin
+ * Tahrim suresi haric (kaynakta yok) = 2849 sayfa, ~187 MB HTML. Maliyetin
+ * buyuk kismi Arapca metin ve ceviriyazinin her mealde tekrar etmesi.
+ *
+ * Ingilizce ceviriler bilerek disarida (getTurkishAuthors'un yorumu): 53 meal
+ * icin sure boyu sayfa uretmek ~382 MB ederdi. Hepsi ayet sayfasinda duruyor.
+ *
+ * ## Rota cakismasi yok
+ *
+ * Kardes rota `[surah]/[verse].astro` yalnizca SAYI ureten yollar tanimliyor
+ * ("/bakara-suresi/153"); "meal" bir ayet numarasi olamaz. Iki rota da statik
+ * uretildigi icin cakisma derleme zamaninda gorulur, calisma zamaninda degil.
+ */
+
+export const getStaticPaths = (() => {
+  const defaultSlug = getDefaultAuthor().slug;
+  const authors = getTurkishAuthors().filter((author) => author.slug !== defaultSlug);
+
+  return getSurahsIndex().surahs.flatMap((surah) =>
+    authors
+      // Kaynakta olmayan sure icin sayfa uretilmez; bos sayfa yerine meal
+      // secicide "bu surede yok" yaziyor (plan §1.5).
+      .filter((author) => authorHasSurah(author, surah.id))
+      .map((author) => ({
+        params: { surah: surah.slug, author: author.slug },
+        props: { surahId: surah.id, authorSlug: author.slug },
+      })),
+  );
+}) satisfies GetStaticPaths;
+
+const { surahId, authorSlug } = Astro.props;
+
+const surah = getSurahMetaById().get(surahId);
+if (surah === undefined) throw new Error(`surahs_index.json icinde ${surahId} yok.`);
+
+const author = getAuthorsIndex().authors.find((item) => item.slug === authorSlug);
+if (author === undefined) throw new Error(`authors_index.json icinde '${authorSlug}' meali yok.`);
+---
+
+<Base
+  title={`${surah.nameTr} Suresi — ${author.name} meali`}
+  description={`${surah.nameTr} suresinin ${author.name} meali: ${surah.verseCount} ayet, Arapça metin ve çeviriyazı ile.`}
+  arabic
+  reading
+>
+  <SurahReading surahId={surahId} authorSlug={authorSlug} />
+</Base>

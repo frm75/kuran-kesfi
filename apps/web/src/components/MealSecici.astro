@@ -1,0 +1,95 @@
+---
+import type { StaticAuthor } from "@kuran/schema";
+import { authorHasSurah, getTurkishAuthors, surahReadingPath } from "~/lib/data";
+
+/**
+ * Sure sayfasindaki meal gecisi — plan §2.7 ("meal secimi"), §2.3.
+ *
+ * ## Neden ayri sayfa, neden acilir liste
+ *
+ * Sure sayfasi tek meal gosteriyor cunku hepsini basmak imkansiz: Bakara tek
+ * mealle bile 411 KB (91 KB gzip); 26 meali ayni sayfaya koymak onu ~4 MB
+ * yapardi. Bu yuzden her meal kendi sayfasinda durur (`/<sure>/meal/<yazar>`)
+ * ve bu bilesen aralarindaki gecisi verir.
+ *
+ * JavaScript YOK (plan §1: ilk yukleme < 100 KB JS, okuma ekraninda hic).
+ * `<details>` tarayicinin kendi acilir ogesi: klavye, ekran okuyucu ve
+ * JS'siz tarayici destegi bedava gelir. Sayfa basina maliyeti ~1,5 KB.
+ *
+ * ## Belirsizlik saklanmaz (plan §1.5)
+ *
+ * Bir mealde o sure hic yoksa (Suleymaniye Vakfi / Tahrim) satir listeden
+ * ATILMAZ: baglantisiz, "bu surede yok" notuyla durur. Silmek okuyucuya o
+ * mealin var olmadigini dusundururdu; bosluk kaynagin boslugu, bizim degil.
+ */
+
+interface Props {
+  surahSlug: string;
+  surahId: number;
+  /** Sayfada su an gosterilen mealin yazar slug'i. */
+  currentSlug: string;
+}
+
+const { surahSlug, surahId, currentSlug } = Astro.props;
+
+const authors: StaticAuthor[] = getTurkishAuthors();
+const current = authors.find((author) => author.slug === currentSlug);
+if (current === undefined) {
+  throw new Error(
+    `<MealSecici> Turkce meal listesinde '${currentSlug}' yok. ` +
+      "Sure okuma ekrani yalnizca Turkce meallerle calisir (data.ts getTurkishAuthors).",
+  );
+}
+
+const rows = authors.map((author) => ({
+  slug: author.slug,
+  name: author.name,
+  available: authorHasSurah(author, surahId),
+  href: surahReadingPath(surahSlug, author.slug),
+  isCurrent: author.slug === currentSlug,
+}));
+
+const availableCount = rows.filter((row) => row.available).length;
+---
+
+<details class="meal-picker">
+  <summary class="chip is-accent">
+    <span>meal:</span>
+    <b>{current.name}</b>
+    <span aria-hidden="true" class="meal-picker-caret">▾</span>
+    <span class="sr-only">— başka bir meal seç</span>
+  </summary>
+
+  <div class="meal-picker-panel">
+    <p class="meal-picker-note">
+      {availableCount} Türkçe meal. Aralarındaki fark yorum farkıdır; hiçbiri
+      tek doğru olarak sunulmaz. İngilizce çeviriler ayet sayfalarında.
+    </p>
+    <ul>
+      {
+        rows.map((row) =>
+          !row.available ? (
+            <li>
+              <span class="meal-picker-missing">
+                {row.name} <small>bu surede yok</small>
+              </span>
+            </li>
+          ) : row.isCurrent ? (
+            <li>
+              <span class="meal-picker-current" aria-current="page">
+                {row.name} <span class="sr-only">— şu an okunan meal</span>
+              </span>
+            </li>
+          ) : (
+            <li>
+              <a href={row.href}>{row.name}</a>
+            </li>
+          ),
+        )
+      }
+    </ul>
+  </div>
+</details>
+
+{/* Stiller global.css'te (§ Meal seçici) — scoped <style> her ögeye
+    data-astro-cid-* ekliyor, 2963 sure sayfasında gereksiz bayt. */}

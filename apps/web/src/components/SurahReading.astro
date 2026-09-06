@@ -1,0 +1,215 @@
+---
+import MealSecici from "~/components/MealSecici.astro";
+import Translation from "~/components/Translation.astro";
+import VerseArabic from "~/components/VerseArabic.astro";
+import {
+  authorHasSurah,
+  getAuthorsIndex,
+  getDefaultAuthor,
+  getSurah,
+  getSurahTranslation,
+  getSurahsIndex,
+  surahReadingPath,
+  verseLabel,
+} from "~/lib/data";
+
+/**
+ * Klasik okuma ekraninin govdesi — plan §7, DESIGN.md §9 adim 4.
+ *
+ * Tek sutun, tek meal. Dort meali birden koymak Bakara'yi 300 KB'a cikarirdi
+ * (olcum: scripts/build/README.md); meal karsilastirmasi ayet sayfasinin isi.
+ *
+ * JavaScript yok. Kenardaki ayet numarasi o ayetin kendi sayfasina gider.
+ *
+ * ## Neden bilesen (2026-09-06)
+ *
+ * Ayni ekran iki adresten cikiyor: `/<sure>` (ontanimli meal, kanonik) ve
+ * `/<sure>/meal/<yazar>` (secilen meal). Ikisi ayri dosyada yazilsaydi 200
+ * satirlik okuma ekrani kopyalanir ve zamanla ayrisirdi — birinde duzeltilen
+ * bir sey digerinde bozuk kalirdi. Sayfa dosyalari artik yalnizca <Base>
+ * basligini ve hangi meali istediklerini soyluyor.
+ *
+ * ## 2026-09-05 duzeni
+ *
+ * Kaynak rozetleri kaldirildi (kullanici karari: mealin kime ait oldugu
+ * yazsin yeter). Yasal atif kaybolmadi — <Attribution> her sayfanin altinda,
+ * /kaynaklar yerinde duruyor (data/LICENSE, CC BY-NC-SA 4.0).
+ *
+ * Ayet numarasi metnin sonundan kenar bosluguna alindi ve ayet altindaki uc
+ * parcali kunye satiri ("tek basina ac · Sayfa · Cuz") silindi: numara zaten
+ * baglanti, sayfa ve cuz de sure basliginda yaziyor. Bakara'da bu 286 satir
+ * eksiltiyor.
+ */
+
+interface Props {
+  surahId: number;
+  /** Hangi mealin gosterilecegi. Turkce meallerden biri olmali. */
+  authorSlug: string;
+}
+
+const { surahId, authorSlug } = Astro.props;
+
+const author = getAuthorsIndex().authors.find((item) => item.slug === authorSlug);
+if (author === undefined) {
+  throw new Error(`authors_index.json icinde '${authorSlug}' meali yok.`);
+}
+
+const surah = getSurah(surahId);
+const index = getSurahsIndex().surahs;
+const previous = index.find((item) => item.id === surahId - 1);
+const next = index.find((item) => item.id === surahId + 1);
+
+const isDefaultAuthor = author.slug === getDefaultAuthor().slug;
+
+/**
+ * Komsu sure ayni mealde acilir; o mealde o sure yoksa kanonik adrese duser.
+ * Okuyucuyu bos bir sayfaya goturmektense ontanimli meale birakmak dogru.
+ */
+const neighbourHref = (slug: string, id: number): string =>
+  authorHasSurah(author, id) ? surahReadingPath(slug, author.slug) : `/${slug}`;
+
+const translation = getSurahTranslation(author.slug, surahId);
+const translationByVerse = new Map(
+  (translation?.verses ?? []).map((verse) => [verse.verseNumber, verse]),
+);
+
+/**
+ * Besmele.
+ *
+ * Fatiha'da 1. ayettir, Tevbe'de (9) hic yoktur; diger 112 surede mushafta
+ * sure basinda yer alir ama ayet sayilmaz. Metin uydurulmuyor — Fatiha'nin
+ * 1. ayetinden aliniyor.
+ */
+const showBasmala = surahId !== 1 && surahId !== 9;
+const basmala = showBasmala ? getSurah(1).verses[0]?.textUthmani : undefined;
+
+const revelation = surah.revelationType === "mekki" ? "Mekkî" : "Medenî";
+---
+
+<main id="icerik" class="pg pg-normal">
+  <nav aria-label="Konum" class="pg-crumb">
+    <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+    <a href="/sureler">Sureler</a> <span aria-hidden="true">›</span>
+    {
+      isDefaultAuthor ? (
+        <span aria-current="page">{surah.nameTr}</span>
+      ) : (
+        <Fragment>
+          <a href={`/${surah.slug}`}>{surah.nameTr}</a>{" "}
+          <span aria-hidden="true">›</span>
+          <span aria-current="page">{author.name} meali</span>
+        </Fragment>
+      )
+    }
+  </nav>
+
+  <header class="pg-head">
+    <p class="pg-kicker">{surah.id}. sure</p>
+    <h1 class="pg-title">
+      {surah.nameTr} Suresi
+      <span lang="ar" dir="rtl" class="pg-title-ar">{surah.nameAr}</span>
+    </h1>
+
+    <ul class="chip-row">
+      <li class="chip"><b>{surah.verseCount}</b> ayet</li>
+      <li class="chip">{revelation}</li>
+      <li class="chip">iniş sırası <b>{surah.revelationOrderStandard}</b></li>
+      <li class="chip">sayfa <b>{surah.pageStart}</b></li>
+      {/* Mealin sahibi metnin yanında yazar — kaynak kutusunun yerine geçen
+          tek bilgi bu (kullanıcı kararı, 2026-09-05). 2026-09-06'da bu çip
+          aynı zamanda meal geçişi oldu: adı okumak için açmak gerekmiyor,
+          kapalı hâli eskisiyle aynı. */}
+      <li>
+        <MealSecici surahSlug={surah.slug} surahId={surah.id} currentSlug={author.slug} />
+      </li>
+    </ul>
+  </header>
+
+  {
+    basmala !== undefined && (
+      <p lang="ar" dir="rtl" class="verse-arabic is-large border-border mb-8 border-b pb-6 text-center">
+        {basmala}
+      </p>
+    )
+  }
+
+  {
+    translation === null && (
+      /* Belirsizlik saklanmaz (plan §1.5): mealin bu suresi kaynakta yok. */
+      <p class="border-border text-text-secondary mb-8 rounded border border-dashed p-3 text-sm">
+        {author.name} mealinde bu sure kaynakta bulunmuyor. Arapça metin aşağıda;
+        diğer meallere yukarıdaki meal listesinden veya ayet sayfalarından
+        ulaşabilirsiniz.
+      </p>
+    )
+  }
+
+  <ol class="verse-list">
+    {
+      surah.verses.map((verse) => {
+        const meal = translationByVerse.get(verse.verseNumber);
+        const label = verseLabel(surah.nameTr, verse.verseNumber);
+        return (
+          <li id={`ayet-${String(verse.verseNumber)}`}>
+            <a class="v-num" href={`/${surah.slug}/${String(verse.verseNumber)}`}>
+              <span class="sr-only">{label} — tek başına aç</span>
+              <span aria-hidden="true">{verse.verseNumber}</span>
+            </a>
+            <div class="v-body">
+              <VerseArabic
+                text={verse.textUthmani}
+                verseNumber={verse.verseNumber}
+                label={label}
+                sajda={verse.sajda}
+              />
+
+              {verse.transcriptionTr !== null && (
+                <p lang="tr" class="transcription">
+                  {verse.transcriptionTr}
+                </p>
+              )}
+
+              {meal === undefined ? (
+                <p class="text-text-secondary m-0 text-sm">
+                  Bu ayetin {author.name} mealinde karşılığı kaynakta yok.
+                </p>
+              ) : (
+                <Translation
+                  authorName={author.name}
+                  authorSlug={author.slug}
+                  text={meal.text}
+                  footnotes={meal.footnotes}
+                  sourceDeclaredBy="sayfa altındaki kaynak listesi"
+                  anchorPrefix={`${String(surah.id)}-${String(verse.verseNumber)}-${author.slug}`}
+                  hideAuthor
+                />
+              )}
+            </div>
+          </li>
+        );
+      })
+    }
+  </ol>
+
+  <nav aria-label="Sureler arası gezinme" class="pg-nav">
+    {
+      previous === undefined ? (
+        <span />
+      ) : (
+        <a href={neighbourHref(previous.slug, previous.id)}>
+          <span aria-hidden="true">←</span> {previous.id}. {previous.nameTr}
+        </a>
+      )
+    }
+    <a href="/sureler">Bütün sureler</a>
+    {
+      next === undefined ? (
+        <span />
+      ) : (
+        <a href={neighbourHref(next.slug, next.id)}>
+          {next.id}. {next.nameTr} <span aria-hidden="true">→</span>
+        </a>
+      )
+    }
+  </nav>
+</main>
