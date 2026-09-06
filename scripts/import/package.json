@@ -12,7 +12,15 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "transcription": "tsx transcription.ts",
     "content": "tsx content.ts",
-    "elevation": "tsx elevation.ts"
+    "elevation": "tsx elevation.ts",
+    "quranenc": "tsx quranenc.ts",
+    "corpus-coranicum": "tsx corpus_coranicum.ts",
+    "quranenc-tafsir": "tsx quranenc_tafsir.ts",
+    "qul-tafsir": "tsx qul_tafsir.ts",
+    "qul-word-root": "tsx qul_word_root.ts",
+    "qul-matching-ayah": "tsx qul_matching_ayah.ts",
+    "scripture": "tsx scripture.ts",
+    "alagas": "tsx alagas.ts"
   },
   "dependencies": {
     "@kuran/pipeline": "workspace:*",
