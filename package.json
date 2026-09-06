@@ -26,6 +26,8 @@
     "media:r2:check": "pnpm build:packages && pnpm --filter @kuran/media media:r2:check",
     "media:r2:list": "pnpm build:packages && pnpm --filter @kuran/media media:r2:list",
     "media:r2:push": "pnpm build:packages && pnpm --filter @kuran/media media:r2:push",
+    "//media:terrain": "3D arazi yukselti karelerini AWS Terrain Tiles'tan indirir (media/tiles/terrain). Sonra media:r2:push ile R2'ye cikar.",
+    "media:terrain": "pnpm build:packages && pnpm --filter @kuran/media terrain",
     "notes:import": "pnpm build:packages && pnpm --filter @kuran/sync notes",
     "notes:check": "pnpm build:packages && pnpm --filter @kuran/sync notes:check",
     "deploy": "./scripts/deploy/deploy.sh",

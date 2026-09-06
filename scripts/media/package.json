@@ -9,7 +9,8 @@
     "typecheck": "tsc --noEmit",
     "media:r2:check": "tsx r2_sync.ts check",
     "media:r2:list": "tsx r2_sync.ts list",
-    "media:r2:push": "tsx r2_sync.ts push"
+    "media:r2:push": "tsx r2_sync.ts push",
+    "terrain": "tsx fetch_terrain.ts"
   },
   "dependencies": {
     "@kuran/pipeline": "workspace:*",

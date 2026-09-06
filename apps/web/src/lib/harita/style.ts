@@ -59,6 +59,20 @@ const GLYPHS = "https://medya.kurankesfi.tr/tiles/fonts/{fontstack}/{range}.pbf"
 const PMTILES = "pmtiles://https://medya.kurankesfi.tr/tiles/kesif.pmtiles";
 
 /**
+ * Yukselti kareleri — 3D arazi ve kabartma golgesi icin.
+ *
+ * Terrarium bicimi (Mapzen/AWS Terrain Tiles), kendi sunucumuzdan aynalanmis
+ * (scripts/media/fetch_terrain.ts). Esri kullanilmadi: Elevation servisi
+ * yalniz nokta sorgusu sunuyor, kare yayinlamiyor — olculdu, 404.
+ *
+ * z9'da duruyor; MapLibre ustunu overzoom ile olcekliyor. Duz PNG olmasi
+ * bilerek: Cloudflare `.png`'yi varsayilan cacheliyor, PMTiles arsivi ise
+ * 512 MB sinirini astigi icin cachelenmiyordu.
+ */
+export const TERRAIN_TILES = "https://medya.kurankesfi.tr/tiles/terrain/{z}/{x}/{y}.png";
+export const TERRAIN_MAXZOOM = 9;
+
+/**
  * Altligin bbox'i.
  *
  * Ilk surum 22,5 - 60,45 idi: 26 konumun HEPSINI iceriyordu ama genis bir
@@ -87,6 +101,33 @@ export function buildStyle(p: Palette): StyleSpecification {
         url: PMTILES,
         attribution:
           '<a href="https://openstreetmap.org/copyright">OpenStreetMap</a> · <a href="https://protomaps.com">Protomaps</a>',
+      },
+      /**
+       * Kaynak her zaman tanimli ama karelerini YALNIZCA kabartma acikken
+       * indirir: MapLibre raster-dem'i ancak bir hillshade katmani ya da
+       * setTerrain onu kullandiginda ceker. Yani varsayilan haritanin
+       * maliyeti degismiyor.
+       */
+      arazi: {
+        type: "raster-dem",
+        tiles: [TERRAIN_TILES],
+        tileSize: 256,
+        maxzoom: TERRAIN_MAXZOOM,
+        /**
+         * SINIR ZORUNLU. Vektor altlik sinirini PMTiles arsivinin icinden
+         * okuyor; ham kare listesinde boyle bir bilgi yok, dolayisiyla
+         * MapLibre kutunun disindaki kareleri de istiyor ve R2 404 donuyor
+         * (2026-09-06'da yayinda goruldu: konsolda 404, harita calisiyor
+         * ama gereksiz istek). Sinir verilince o kareler hic istenmiyor.
+         *
+         * Deger TILE_BOUNDS ile AYNI olmali — aynalama da o kutuya gore
+         * yapildi (scripts/media/fetch_terrain.ts).
+         */
+        bounds: TILE_BOUNDS,
+        // Terrarium: yukseklik = (R*256 + G + B/256) - 32768
+        encoding: "terrarium",
+        attribution:
+          '<a href="https://registry.opendata.aws/terrain-tiles/">AWS Terrain Tiles</a>',
       },
     },
     layers: [

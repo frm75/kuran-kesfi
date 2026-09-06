@@ -2545,6 +2545,46 @@ a.ctx-num:hover {
   outline-offset: -2px;
 }
 
+/* Kabartma anahtarı — katman seçicinin altında, aynı dilde. */
+.map-live-relief {
+  position: absolute;
+  inset-block-start: calc(var(--space-3) + 2.1rem);
+  inset-inline-start: var(--space-3);
+  display: block;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-overlay);
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+  cursor: pointer;
+}
+.map-live-relief input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.map-live-relief input:checked + span {
+  color: var(--accent-text);
+  font-weight: 600;
+}
+/* Açık olduğunu renk TEK BAŞINA söylemesin: işaret de değişir. */
+.map-live-relief span::before {
+  content: "○ ";
+}
+.map-live-relief input:checked + span::before {
+  content: "● ";
+}
+.map-live-relief:has(input:focus-visible) {
+  outline: 2px solid var(--accent-text);
+  outline-offset: -2px;
+}
+/* Uydu katmanı yokken (anahtar tanımlı değil) seçici basılmaz; kabartma
+   anahtarı o zaman en üste çıkar. */
+.map-live:not(:has([data-map-layers])) .map-live-relief {
+  inset-block-start: var(--space-3);
+}
+
 .map-live-panel {
   position: absolute;
   inset-block-end: var(--space-3);

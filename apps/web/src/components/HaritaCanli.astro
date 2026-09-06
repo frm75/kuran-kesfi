@@ -155,6 +155,16 @@ const mapData = {
     )
   }
 
+  {/*
+    Kabartma AYRI bir anahtar, katman secicinin bir secenegi degil: katman
+    (harita/uydu) ile kabartma dikey olarak bagimsiz — uydunun uzerinde de
+    arazi kabartmasi anlamli.
+  */}
+  <label class="map-live-relief" data-map-relief>
+    <input type="checkbox" />
+    <span>Kabartma</span>
+  </label>
+
   <div class="map-live-panel" data-map-panel hidden aria-live="polite"></div>
 </div>
 
@@ -260,6 +270,12 @@ const mapData = {
 
     const protocol = new Protocol();
     addProtocol("pmtiles", protocol.tile);
+
+    /**
+     * DESIGN.md 5: hareket azaltma tercihi. Kabartma acilirken kamera
+     * egiliyor; bu tercih aciksa gecis animasyonsuz yapilir.
+     */
+    const hareketAzalt = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     let p = palette();
     const map = new MapLibreMap({
@@ -732,6 +748,8 @@ const mapData = {
        * KENDI konum pinlerimiz ve etiketlerimiz HER IKI katmanda da kalir —
        * haritanin varlik sebebi onlar.
        */
+      // Kabartma golgesi uyduda da anlamli — uydu fotografi duzdur, golge
+      // ona da kabartma katar. Bu yuzden altlik listesine GIRMIYOR.
       const altlikKatmanlari = [
         "zemin-su",
         "kara",
@@ -806,6 +824,65 @@ const mapData = {
         if (map.getLayer("konum-gelenek")) {
           map.setPaintProperty("konum-gelenek", "circle-color", uydu ? "rgba(0,0,0,0.55)" : p.mapLand);
         }
+      }
+
+      /**
+       * KABARTMA — hillshade + 3D arazi, tek anahtar.
+       *
+       * Ikisi ayni veriyi (raster-dem) kullaniyor ve ayri ayri sunmak
+       * kullaniciya anlamsiz bir secim yaptirirdi: "golge ama duz mu, egik
+       * ama golgesiz mi". Acildiginda ucu birden olur — golge, yukseklik,
+       * egim.
+       *
+       * Yukselti kareleri YALNIZCA burasi acilinca inmeye baslar; kapaliyken
+       * haritanin maliyeti degismez.
+       */
+      function kabartma(ac: boolean): void {
+        const varOlan = map.getLayer("kabartma-golge");
+        if (ac) {
+          if (!varOlan) {
+            /**
+             * Golge "etiket-ulke"den ONCE ekleniyor, yani BUTUN etiketlerin
+             * ve pinlerin altinda ama zeminin ustunde.
+             *
+             * Ilk denemede `su` katmanindan once eklenmisti ve UYDU ACIKKEN
+             * KAYBOLUYORDU: uydu rasteri de "etiket-ulke"den once eklenmis
+             * durumda, yani golgenin ustune biniyordu. Bu konum ikisinde de
+             * dogru — vektor altligin da uydunun da uzerinde.
+             */
+            map.addLayer(
+              {
+                id: "kabartma-golge",
+                type: "hillshade",
+                source: "arazi",
+                paint: {
+                  "hillshade-exaggeration": 0.45,
+                  "hillshade-shadow-color": "rgba(0,0,0,0.55)",
+                  "hillshade-highlight-color": "rgba(255,255,255,0.18)",
+                  "hillshade-accent-color": "rgba(0,0,0,0)",
+                },
+              },
+              map.getLayer("etiket-ulke") ? "etiket-ulke" : undefined,
+            );
+          }
+          map.setTerrain({ source: "arazi", exaggeration: 1.35 });
+          // Egim olmadan 3D fark edilmez; donme kapali kalir (DESIGN.md:
+          // sakin — pusulasi kaymis harita yon duygusunu bozar).
+          map.easeTo({ pitch: 55, duration: hareketAzalt ? 0 : 700 });
+        } else {
+          map.setTerrain(null);
+          if (varOlan) map.removeLayer("kabartma-golge");
+          map.easeTo({ pitch: 0, duration: hareketAzalt ? 0 : 500 });
+        }
+      }
+
+      const kabartmaKutu = document.querySelector<HTMLInputElement>(
+        "[data-map-relief] input",
+      );
+      if (kabartmaKutu) {
+        kabartmaKutu.addEventListener("change", () => {
+          kabartma(kabartmaKutu.checked);
+        });
       }
 
       const secici = document.querySelector<HTMLElement>("[data-map-layers]");

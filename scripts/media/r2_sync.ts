@@ -108,6 +108,12 @@ function cacheControl(ext: string): string {
 /** 8 MB ustu tek parca PUT riskli; lib-storage cok parcali yukler. */
 const PART_SIZE = 8 * 1024 * 1024;
 
+/**
+ * Es zamanli yukleme sayisi. Yapay `sleep` yok (CLAUDE.md veri kurallari);
+ * sinir es zamanlilikla konur. 24, 9.721 karelik arazi setiyle olculdu.
+ */
+const PARALEL = 24;
+
 // --- yardimcilar -------------------------------------------------------------
 
 function sha256File(path: string): Promise<string> {
@@ -129,6 +135,24 @@ async function walk(dir: string): Promise<string[]> {
     else out.push(full);
   }
   return out;
+}
+
+/**
+ * Basit is havuzu — p-limit bagimliligi eklemeden es zamanlilik.
+ * Sira paylasilan bir sayacla ilerler; her isci bir sonrakini alir.
+ */
+async function havuz<T>(items: T[], n: number, isle: (item: T) => Promise<void>): Promise<void> {
+  let i = 0;
+  const isci = async (): Promise<void> => {
+    for (;;) {
+      const idx = i;
+      i += 1;
+      const item = items[idx];
+      if (item === undefined) return;
+      await isle(item);
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(n, items.length) }, () => isci()));
 }
 
 function human(bytes: number): string {
@@ -249,16 +273,22 @@ async function push(dryRun: boolean): Promise<void> {
   // sha256 tek seferde hesaplanir: hem degisiklik tespiti hem nesne
   // ustverisi ayni degeri kullanir (ETag cok parcali yuklemede MD5 degil).
   const hashes = new Map<string, string>();
-  for (const file of files) {
+  await havuz(files, 32, async (file) => {
     hashes.set(file, await sha256File(file));
-  }
+  });
 
-  // --- degismeyenleri atla --------------------------------------------------
+  // --- degismeyenleri atla, kalanlari PARALEL yukle -------------------------
+  //
+  // Sirali surum 513 glyph dosyasini 213 saniyede yukluyordu — dosya basina
+  // bir HeadObject + bir PUT, hepsi gidis donus bekleyerek. 3D arazi 9.721
+  // kare getirdi; ayni hizla ~70 dakika surerdi. Is ag gecikmesiyle sinirli,
+  // CPU'yla degil: es zamanlilik dogrudan cozuyor.
   let uploaded = 0;
   let skipped = 0;
   let bytes = 0;
+  let hata = 0;
 
-  for (const file of files) {
+  await havuz(files, PARALEL, async (file) => {
     const key = relative(stagingDir, file).split(sep).join("/");
     const hash = hashes.get(file) as string;
     const size = statSync(file).size;
@@ -266,9 +296,7 @@ async function push(dryRun: boolean): Promise<void> {
 
     let remoteHash: string | undefined;
     try {
-      const head = await s3.send(
-        new HeadObjectCommand({ Bucket: r2.bucket, Key: key }),
-      );
+      const head = await s3.send(new HeadObjectCommand({ Bucket: r2.bucket, Key: key }));
       remoteHash = head.Metadata?.["sha256"];
     } catch {
       // yok — yuklenecek
@@ -276,40 +304,51 @@ async function push(dryRun: boolean): Promise<void> {
 
     if (remoteHash === hash) {
       skipped += 1;
-      continue;
+      return;
     }
 
     if (dryRun) {
-      info(`[deneme] ${key}  ${human(size)}`);
       uploaded += 1;
       bytes += size;
-      continue;
+      if (uploaded <= 20) info(`[deneme] ${key}  ${human(size)}`);
+      return;
     }
 
-    const upload = new Upload({
-      client: s3,
-      partSize: PART_SIZE,
-      params: {
-        Bucket: r2.bucket,
-        Key: key,
-        Body: createReadStream(file),
-        ContentType: CONTENT_TYPE[ext] ?? "application/octet-stream",
-        CacheControl: cacheControl(ext),
-        // ETag cok parcali yuklemede "-N" ekiyle gelir ve MD5 olmaz;
-        // degisiklik tespiti bu yuzden ETag'e degil sha256'ya bakar.
-        Metadata: { sha256: hash },
-      },
-    });
-    await upload.done();
-    uploaded += 1;
-    bytes += size;
-    info(`${key}  ${human(size)}  ${r2.publicBase}/${key}`);
-  }
+    try {
+      const upload = new Upload({
+        client: s3,
+        partSize: PART_SIZE,
+        params: {
+          Bucket: r2.bucket,
+          Key: key,
+          Body: createReadStream(file),
+          ContentType: CONTENT_TYPE[ext] ?? "application/octet-stream",
+          CacheControl: cacheControl(ext),
+          // ETag cok parcali yuklemede "-N" ekiyle gelir ve MD5 olmaz;
+          // degisiklik tespiti bu yuzden ETag'e degil sha256'ya bakar.
+          Metadata: { sha256: hash },
+        },
+      });
+      await upload.done();
+      uploaded += 1;
+      bytes += size;
+      // Binlerce kare yuklenirken her satiri basmak cikti kirletiyor;
+      // tek tek adres yalnizca kucuk yuklemelerde anlamli.
+      if (files.length <= 40) info(`${key}  ${human(size)}  ${r2.publicBase}/${key}`);
+      else if (uploaded % 500 === 0) info(`${String(uploaded)} yuklendi · ${human(bytes)}`);
+    } catch (e) {
+      hata += 1;
+      warn(`${key}: ${e instanceof Error ? e.message : "bilinmeyen hata"}`);
+    }
+  });
 
   info(
     `${dryRun ? "[deneme] " : ""}${uploaded} yuklendi (${human(bytes)}), ` +
-      `${skipped} degismedigi icin atlandi.`,
+      `${skipped} degismedigi icin atlandi${hata > 0 ? `, ${String(hata)} HATALI` : ""}.`,
   );
+  if (hata > 0) {
+    fail("Bazi dosyalar yuklenemedi; komutu tekrar calistir — yuklenenler atlanir.");
+  }
 }
 
 // --- giris -------------------------------------------------------------------
