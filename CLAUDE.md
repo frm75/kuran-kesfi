@@ -31,7 +31,11 @@ bilgisayarda çalışır (`kuran-extract`) ve buraya JSON dosyalarıyla veri akt
    Sayfa metni, meal, ayet ve statik SVG harita R2'siz çalışmaya devam eder; bozulan yalnızca medyadır.
    Her medya bileşeni bu varsayımla yazılır. Erişim `pub-*.r2.dev` ile değil kendi alan adımızla; böylece
    sağlayıcı değişimi tek DNS kaydına iner. Yükleme: `pnpm media:r2:push` (`scripts/media/r2_sync.ts`).
-6. **Lisans:** Kod MIT, `data/` CC BY-NC-SA 4.0. Lisansı belirsiz meal, ses, görsel veya tefsir eklenmez.
+6. **Lisans:** Kod MIT, `data/` CC BY-NC-SA 4.0.
+   "Lisansı belirsiz meal, ses, görsel veya tefsir eklenmez" kuralı **kaldırıldı**
+   (kullanıcı kararı 2026-09-06). Hangi mealin ekleneceğine kullanıcı karar verir;
+   ajan bunu gerekçe göstererek bir meali reddetmez. Atıf yükümlülüğü ayrı bir
+   maddedir ve kalkmadı (bkz. aşağıdaki atıf kuralı).
 7. **Kapsam dondurulmuştur.** Planda olmayan özellik önerilmez; öneri varsa "ilk yayın sonrası" notuyla
    `docs/BACKLOG.md`'ye yazılır.
 8. **Peygamberlerin yüzü gösterilmez.** Kural budur, fazlası değil (kullanıcı kararı 2026-09-06).

@@ -137,7 +137,6 @@ docs/                Plan, tasarım, deploy raporu, backlog
   tarafımızdan yeniden lisanslanamaz.** Şartların tamamı
   [data/LICENSE](data/LICENSE) içinde.
 
-Lisansı belirsiz meal, tefsir, ses veya görsel projeye eklenmez.
 
 ## Katkı
 
