@@ -237,12 +237,30 @@ const stateLabel = {
   yakinda: "yakında",
 } as const;
 
-/** Menü — yalnızca var olan sayfalar bağlantıdır (dürüstlük kuralı). */
+/**
+ * Menü — yalnızca var olan sayfalar bağlantıdır (dürüstlük kuralı).
+ *
+ * 2026-09-06: menüde üç boşluk vardı, üçü de düzeltildi.
+ *   1. `/kissalar` HİÇBİR yerde yoktu — ne "Keşfet"te ne "Oku"da. 50
+ *      kıssalık canlı bir bölüm menüden erişilemiyordu. "Kıssa Haritası"
+ *      vardı ama o `/harita`ya gider, kıssa listesine değil.
+ *   2. `/kaynaklar` yoktu. Her sayfanın altındaki <Attribution> üzerinden
+ *      erişiliyordu ama iç sayfaların menüsünde (Base.astro) yer alıyor.
+ *   3. Mobil panel yalnızca ÜST BAŞLIKLARI basıyordu; alt maddeler hiç
+ *      yoktu. Yani telefondan ana sayfaya giren biri kök, harita, zaman,
+ *      kavram, ilke, kıssa ve kaynak sayfalarının hiçbirine menüden
+ *      ulaşamıyordu. En ağır olan buydu.
+ *
+ * İki kapı yapısı korundu: ana sayfada sekiz düz bağlantı yerine "Keşfet"
+ * ve "Oku" iki giriş noktası. İç sayfalarda menü zaten düz ve tam
+ * (Base.astro). Açılır listeler saf CSS — :hover / :focus-within, JS yok.
+ */
 const menu = [
   {
     label: "Keşfet",
     href: "#kapilar",
     items: [
+      { name: "Kıssalar", note: "Kıssa akışı ve kronoloji, her adım ayete bağlı", href: "/kissalar" },
       { name: "Kök Kelime Keşfi", note: "Kökten türevlere, türevlerden ayetlere", href: "/kok" },
       { name: "Kıssa Haritası", note: "Kıssaların geçtiği yerler", href: "/harita" },
       { name: "Nüzul Zaman Çizelgesi", note: "Sureler iniş sırasıyla", href: "/zaman" },
@@ -255,7 +273,16 @@ const menu = [
     href: "/sureler",
     items: [
       { name: "Sure Listesi", note: `${totals.surahs} sure`, href: "/sureler" },
-      { name: "Meal Karşılaştırma", note: "Mealleri yan yana", href: "/sureler" },
+      // Karşılaştırma AYET sayfasında yaşıyor: 26 Türkçe meal aynı anda,
+      // üstünde hangilerinin görüneceğini seçen JS'siz bir panel. Menü
+      // buraya, Fâtiha'nın ilk ayetine açılıyor — sabit ve tanıdık bir
+      // başlangıç. Eskiden `/sureler`e gidiyordu, yani "Sure Listesi" ile
+      // aynı yere; iki madde tek hedefti (kullanıcı bildirdi 2026-09-06).
+      {
+        name: "Meal Karşılaştırma",
+        note: "26 meal yan yana; istediğinizi seçin",
+        href: "/fatiha-suresi/1#mealler",
+      },
       { name: "Mushaf Modu", note: "Sayfa düzeninde Arapça metin", href: undefined },
       { name: "Sade Okuma", note: "Dikkat dağıtmayan tek sütun", href: undefined },
     ],
@@ -306,6 +333,11 @@ const menu = [
             </li>
           ))
         }
+        {/* Kaynaklar açılır liste değil, düz bağlantı: tek sayfa. Atıf
+            zorunluluğu gereği menüde görünür olması gerekiyor. */}
+        <li class="lp-mi">
+          <a href="/kaynaklar">Kaynaklar</a>
+        </li>
       </ul>
 
       <a href="/sureler" class="lp-nav-cta">Keşfetmeye başla</a>
@@ -316,9 +348,23 @@ const menu = [
         <div class="lp-burger-panel">
           {
             menu.map((entry) => (
-              <a href={entry.href}>{entry.label}</a>
+              <div class="lp-burger-grp">
+                <a href={entry.href} class="is-head">
+                  {entry.label}
+                </a>
+                {entry.items.map((item) =>
+                  item.href === undefined ? (
+                    <span class="is-soon">{item.name} — yakında</span>
+                  ) : (
+                    <a href={item.href} class="is-sub">
+                      {item.name}
+                    </a>
+                  ),
+                )}
+              </div>
             ))
           }
+          <a href="/kaynaklar" class="is-head">Kaynaklar</a>
           <a href="/sureler" class="is-cta">
             Keşfetmeye başla
           </a>
@@ -363,16 +409,9 @@ const menu = [
       <div class="lp-hero-veil" aria-hidden="true"></div>
 
       <div class="lp-hero-in">
-        <img
-          class="lp-hero-logo"
-          src="/brand/logo-256.webp"
-          width="215"
-          height="215"
-          alt="Kur'an-ı Kerim Keşfi"
-        />
-
-        {/* Marka şeridi kaldırıldı: başlığın kendisi zaten aynı kelimeleri
-            taşıyor, üstünde tekrar etmesi gürültü oluyordu. */}
+        {/* Logo ve marka şeridi kaldırıldı (kullanıcı kararı 2026-09-06):
+            ikisi de üst şeritte zaten duruyor, hero'da tekrar edince
+            başlığın önüne geçiyorlardı. */}
         <h1 class="lp-h1">
           Oku. Anla. Keşfet.
           <span class="lp-l2">Hayatına Taşı.</span>
@@ -908,6 +947,31 @@ const menu = [
     color: var(--text-secondary);
     text-decoration: none;
   }
+  /* Grup basligi kalin ve birincil tonda; alt maddeler girintili ve kucuk.
+     Boylece iki kapi yapisi mobilde de okunuyor, duz bir liste yigini
+     olmuyor. */
+  .lp-burger-grp {
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .lp-burger-grp + .lp-burger-grp {
+    padding-top: var(--space-2);
+  }
+  .lp-burger-panel a.is-head {
+    color: var(--text-primary);
+    font-weight: var(--fw-medium);
+  }
+  .lp-burger-panel a.is-sub {
+    padding-block: var(--space-2);
+    padding-left: var(--space-6);
+    font-size: var(--text-sm);
+  }
+  .lp-burger-panel .is-soon {
+    display: block;
+    padding: var(--space-2) var(--space-3) var(--space-2) var(--space-6);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
   .lp-burger-panel a.is-cta {
     margin-top: var(--space-2);
     background-color: var(--accent);
@@ -982,25 +1046,29 @@ const menu = [
     background:
       /* Metin siperi — TAM GENİŞLİK. `.lp-hero-in` üzerinde olamaz: o kutu
          1180px'e kilitli, kenarında düz bir dikiş bırakıyordu. */
+      /* 2026-09-06: kullanıcı üçüncü kez "perde çok koyu, görüntü
+         anlaşılmıyor" dedi. Çekirdek DARALTILDI ve HAFİFLETİLDİ — kutunun
+         dışı artık tamamen açık, karartma yalnızca metnin oturduğu dar
+         elipste. Okunurluk perdeden değil glif halkasından geliyor. */
       radial-gradient(
-        58% 62% at 50% 46%,
-        color-mix(in srgb, var(--bg-primary) 38%, transparent) 0%,
-        color-mix(in srgb, var(--bg-primary) 26%, transparent) 58%,
+        42% 46% at 50% 44%,
+        color-mix(in srgb, var(--bg-primary) 24%, transparent) 0%,
+        color-mix(in srgb, var(--bg-primary) 14%, transparent) 60%,
         transparent 100%
       ),
       radial-gradient(
         140% 115% at 50% 45%,
         transparent 0%,
-        color-mix(in srgb, var(--bg-primary) 3%, transparent) 38%,
-        color-mix(in srgb, var(--bg-primary) 8%, transparent) 66%,
-        color-mix(in srgb, var(--bg-primary) 18%, transparent) 100%
+        color-mix(in srgb, var(--bg-primary) 2%, transparent) 40%,
+        color-mix(in srgb, var(--bg-primary) 5%, transparent) 70%,
+        color-mix(in srgb, var(--bg-primary) 12%, transparent) 100%
       ),
       linear-gradient(
         to bottom,
-        color-mix(in srgb, var(--bg-primary) 22%, transparent) 0%,
-        color-mix(in srgb, var(--bg-primary) 5%, transparent) 22%,
-        transparent 58%,
-        color-mix(in srgb, var(--bg-primary) 62%, transparent) 90%,
+        color-mix(in srgb, var(--bg-primary) 12%, transparent) 0%,
+        color-mix(in srgb, var(--bg-primary) 3%, transparent) 20%,
+        transparent 62%,
+        color-mix(in srgb, var(--bg-primary) 58%, transparent) 92%,
         var(--bg-primary) 100%
       );
   }
@@ -1023,8 +1091,8 @@ const menu = [
       background:
         radial-gradient(
           62% 70% at 50% 48%,
-          color-mix(in srgb, var(--bg-primary) 46%, transparent) 0%,
-          color-mix(in srgb, var(--bg-primary) 34%, transparent) 55%,
+          color-mix(in srgb, var(--bg-primary) 32%, transparent) 0%,
+          color-mix(in srgb, var(--bg-primary) 22%, transparent) 55%,
           transparent 100%
         ),
         radial-gradient(
@@ -1089,11 +1157,11 @@ const menu = [
        inceydi (eşik 3,0), 10px katmanı %97'ye çekildi — son ölçüm
        aşağıdaki tabloda, DESIGN.md §8'de. */
     text-shadow:
-      0 0 2px var(--bg-primary),
-      0 0 5px var(--bg-primary),
-      0 0 10px color-mix(in srgb, var(--bg-primary) 97%, transparent),
-      0 2px 20px color-mix(in srgb, var(--bg-primary) 80%, transparent),
-      0 4px 40px color-mix(in srgb, var(--bg-primary) 58%, transparent);
+      0 0 3px var(--bg-primary),
+      0 0 7px var(--bg-primary),
+      0 0 13px color-mix(in srgb, var(--bg-primary) 98%, transparent),
+      0 2px 24px color-mix(in srgb, var(--bg-primary) 84%, transparent),
+      0 4px 46px color-mix(in srgb, var(--bg-primary) 60%, transparent);
   }
   /* Açık modda perde kağıt tonu, metin koyu mürekkep: hale ters düşer. */
   @media (prefers-color-scheme: light) {
@@ -1129,17 +1197,6 @@ const menu = [
       transform: none;
     }
   }
-  @keyframes lp-logo-in {
-    from {
-      opacity: 0;
-      transform: scale(0.9);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-  .lp-hero-logo,
   .lp-hero-in h1,
   .lp-hero-in .lp-l2,
   .lp-hero-sub,
@@ -1147,10 +1204,6 @@ const menu = [
   .lp-hero-acts,
   .lp-hero-verse {
     animation: lp-rise 800ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
-  }
-  .lp-hero-logo {
-    animation-name: lp-logo-in;
-    animation-duration: 900ms;
   }
   .lp-hero-in h1 { animation-delay: 160ms; }
   /* İkinci satır kendi başına gelir: "Hayatına Taşı." vurgusu böyle çıkıyor.
@@ -1163,7 +1216,6 @@ const menu = [
 
   /* Hareketi azalt diyene hareket YOK — elementler doğrudan yerinde durur. */
   @media (prefers-reduced-motion: reduce) {
-    .lp-hero-logo,
     .lp-hero-in h1,
     .lp-hero-in .lp-l2,
     .lp-hero-sub,
@@ -1174,11 +1226,6 @@ const menu = [
     }
   }
 
-  .lp-hero-logo {
-    width: clamp(9rem, 19vw, 13.5rem);
-    height: auto;
-    margin: 0 auto var(--space-6);
-  }
   .lp-eyebrow {
     display: flex;
     align-items: center;
