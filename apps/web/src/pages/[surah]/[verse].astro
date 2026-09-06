@@ -18,6 +18,7 @@ import {
   sortAuthorsForDisplay,
   verseLabel,
 } from "~/lib/data";
+import { dateText, getVerseManuscripts } from "~/lib/manuscripts";
 
 /**
  * Tek ayet sayfası — plan §12.4 (ayet paneli) ve §2.3 (meal karşılaştırma).
@@ -78,6 +79,16 @@ const hasLinks =
  * bağlantıya tıklamak zorunda kalınmaz.
  */
 const related = getRelatedVerses(surahId, verseNumber);
+
+/**
+ * Bu ayeti taşıyan eski mushaf yazmaları — docs/KAYNAK_ENVANTERI.md §2.4.
+ *
+ * Ayet başına ortalama 70, en çok 94 yazma düşüyor; hepsini basmak gürültü
+ * olurdu. Sayı verilir, en eski birkaçı gösterilir, tamamı /yazmalar'dadır.
+ *
+ * GÖRÜNTÜ YOK: kaynaktaki 2322 yazmanın hepsinde görüntü izni "restricted".
+ */
+const manuscripts = getVerseManuscripts(surahId, verseNumber);
 const defaultAuthor = getDefaultAuthor();
 
 /** Kelime ortasında kesmez; kesildiyse üç nokta koyar. */
@@ -184,6 +195,41 @@ if (rows.length !== verse.translations.length) {
 }
 
 const turkish = rows.filter((row) => row.language === "tr");
+
+/**
+ * Meal seciciyi calistiran kural kumesi.
+ *
+ * Onay kutusu panelde, meal kutusu izgarada; ikisi kardes degil. Bu yuzden
+ * her yazar icin bir eslestirme kurali gerekiyor — CSS'te "su kutu isaretliyse
+ * su karti goster" iliskisini kuran baska bir yol yok.
+ *
+ * Kurallar SATIR ICI veriliyor cunku yazar listesi veriden geliyor; global
+ * stil dosyasina yazilamaz. Maliyet sayfa basina ~2 KB ham, tekrar eden metin
+ * oldugu icin gzip sonrasi birkac yuz bayt. Sayfa butcesi 300 KB.
+ *
+ * `display: revert` kullaniliyor, `block` degil: `.translation` ileride farkli
+ * bir display alirsa kural onu bozmasin.
+ */
+const mealFilterCss = [
+  ".mf-empty{display:none}",
+  ".mealcmp:has(.mf-solo:checked) .meal-grid > .translation{display:none}",
+  ".mealcmp:has(.mf-solo:checked):not(:has(.mf-cb:checked)) .mf-empty{display:block}",
+  /*
+   * Karsilastirma modunda sutunlar daraliyor. Varsayilan izgara
+   * minmax(24rem, 1fr): 1148 px'lik alanda yalnizca 2 sutun cikiyor, yani
+   * uc meal secen okuyucu ikisini yan yana, ucuncusunu altta goruyordu.
+   * 20rem ile ayni alanda 3 sutun sigiyor. `auto-fit` bos raylari toplar,
+   * boylece iki meal secilince ikisi genis, ucu secilince ucu esit genislikte
+   * durur — secilen sayisina gore kendini ayarliyor.
+   */
+  ".mealcmp:has(.mf-solo:checked) .meal-grid" +
+    "{grid-template-columns:repeat(auto-fit,minmax(20rem,1fr))}",
+  ...turkish.map(
+    (row) =>
+      `.mealcmp:has(.mf-solo:checked):has(#mf-${row.slug}:checked) ` +
+      `.meal-grid > [data-author="${row.slug}"]{display:revert}`,
+  ),
+].join("");
 const other = rows.filter((row) => row.language !== "tr");
 
 const previous = verse.verseNumber > 1 ? verse.verseNumber - 1 : null;
@@ -442,7 +488,57 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
       )
     }
 
-    <section>
+    {
+      manuscripts !== null && manuscripts.oldest.length > 0 && (
+        <section>
+          <div class="sec-head">
+            <h2>Bu ayeti taşıyan yazmalar</h2>
+            <span class="sec-note">
+              Corpus Coranicum kataloğunda bu ayeti içeren {manuscripts.count} yazma
+              kayıtlı. En eski {manuscripts.oldest.length} tanesi aşağıda; görüntüler
+              kullanım kısıtlı olduğu için burada gösterilmez, kaynağa bağlanır.
+            </span>
+          </div>
+          <ul class="ms-verse-list">
+            {manuscripts.oldest.map((m) => (
+              <li>
+                <a class="ms-verse-item" href={`/yazma/${String(m.id)}`}>
+                  <span class="ms-date">{dateText(m)}</span>
+                  <span class="ms-title">{m.title}</span>
+                  {m.script !== null && <span class="ms-meta">{m.script}</span>}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p class="sec-note mt-3">
+            Tamamı: <a href="/yazmalar">yazma kataloğu</a>. Kaynak: Corpus Coranicum
+            (BBAW), CC BY-SA 4.0.
+          </p>
+        </section>
+      )
+    }
+
+    {/*
+      Meal karşılaştırma.
+
+      Sayfa 26 Türkçe mealin HEPSİNİ zaten basıyor; eksik olan SEÇİMDİ —
+      okuyucu üç meali yan yana koymak istediğinde 23 tanesini elle atlamak
+      zorundaydı (kullanıcı isteği 2026-09-06).
+
+      JavaScript YOK. Ayet sayfasında CSP `script-src` kapalı (`default-src
+      'none'`); açmak ayrı onay ister. Seçim tamamen CSS: onay kutuları +
+      `:has()`. `style-src` zaten `'self' 'unsafe-inline'`, üretilen kural
+      kümesi bu yüzden satır içi verilebiliyor — CSP'ye dokunulmadı.
+
+      Varsayılan davranış DEĞİŞMEDİ: hiçbir şey gizli değil, 26 meal açık
+      geliyor. Filtre ancak "yalnızca işaretlediklerimi göster" açıldığında
+      devreye girer. `:has()` desteklemeyen bir tarayıcıda kutular hiçbir şey
+      yapmaz ve sayfa bugünkü hâlinde kalır — içerik kaybı olmaz.
+
+      Seçim SAYFA DEĞİŞİNCE SIFIRLANIR. Saklamak için depolama gerekir, o da
+      JS demek. Bunu gizlemiyoruz; panelin altında yazıyor.
+    */}
+    <section class="mealcmp" id="mealler">
       <div class="sec-head">
         <h2>Türkçe mealler</h2>
         <span class="sec-note">
@@ -450,6 +546,36 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
           doğru olarak sunulmaz.
         </span>
       </div>
+
+      <details class="mf">
+        <summary class="mf-sum">
+          Karşılaştır — hangi mealler görünsün?
+        </summary>
+        <div class="mf-body">
+          <label class="mf-solo-row">
+            <input type="checkbox" class="mf-solo" />
+            <span>Yalnızca işaretlediklerimi göster</span>
+          </label>
+          <div class="mf-list">
+            {turkish.map((row) => (
+              <label class="mf-item">
+                <input type="checkbox" class="mf-cb" id={`mf-${row.slug}`} />
+                <span>{row.name}</span>
+              </label>
+            ))}
+          </div>
+          <p class="mf-note">
+            Seçim bu sayfada geçerlidir; başka bir ayete geçince sıfırlanır.
+            Saklamak tarayıcıda betik çalıştırmayı gerektirirdi, okuma
+            ekranında betik çalıştırmıyoruz.
+          </p>
+        </div>
+      </details>
+
+      <p class="mf-empty">
+        Hiçbir meal işaretlenmedi. Yukarıdaki listeden en az bir meal seçin ya
+        da “yalnızca işaretlediklerimi göster” kutusunu kapatın.
+      </p>
 
       <div class="meal-grid">
         {
@@ -518,4 +644,98 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
       }
     </nav>
   </main>
+
+  <style is:inline set:html={mealFilterCss}></style>
+
+  <style>
+    /* Panel sade: okuma ekraninda dikkat dagitmasin diye kapali gelir. */
+    .mf {
+      margin-bottom: var(--space-4);
+    }
+    .mf-sum {
+      display: inline-block;
+      padding: var(--space-2) var(--space-3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      cursor: pointer;
+    }
+    .mf-sum:hover {
+      border-color: var(--border-strong);
+      color: var(--text-primary);
+    }
+    .mf-body {
+      margin-top: var(--space-3);
+      padding: var(--space-4);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background-color: var(--bg-elevated);
+    }
+    .mf-solo-row {
+      display: flex;
+      gap: var(--space-2);
+      align-items: center;
+      margin-bottom: var(--space-3);
+      padding-bottom: var(--space-3);
+      border-bottom: 1px solid var(--border);
+      color: var(--text-primary);
+      font-weight: var(--fw-medium);
+      cursor: pointer;
+    }
+    /*
+     * Liste TABLO gibi dizilir (kullanici istegi 2026-09-06): satirlar esit
+     * yukseklikte, adlar alt alta hizali, aralarinda ince cizgi.
+     *
+     * Onceki hali serbest bir izgaraydi; ad uzunluklari farkli oldugu icin
+     * satirlar kayik duruyordu. Cozum uc parca:
+     *   - `grid-auto-rows` her satira ayni taban yuksekligi verir,
+     *   - `border-bottom` her hucrede oldugu icin cizgiler sutunlar boyunca
+     *     ayni hizada birlesir ve tablo cizgisi gibi okunur,
+     *   - sutun genisligi 16rem: en uzun ad ("Suleymaniye Vakfi (Eski
+     *     Baski)") tek satira sigar, sarma olmaz.
+     * Yine de bir ad sararsa izgara O SATIRIN tum hucrelerini birlikte
+     * buyutur, yani tablo bozulmaz — yalnizca o satir yuksekleşir.
+     */
+    .mf-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+      grid-auto-rows: minmax(2.5rem, auto);
+      column-gap: var(--space-6);
+      border-top: 1px solid var(--border);
+    }
+    .mf-item {
+      display: flex;
+      gap: var(--space-3);
+      align-items: center;
+      padding-block: var(--space-2);
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      line-height: 1.3;
+      cursor: pointer;
+    }
+    .mf-item:hover {
+      color: var(--text-primary);
+    }
+    /* Kutu kucultulmesin, ad uzunlugu ne olursa olsun hizada kalsin. */
+    .mf-item input,
+    .mf-solo-row input {
+      flex: none;
+      margin: 0;
+    }
+    .mf-note {
+      margin: var(--space-3) 0 0;
+      color: var(--text-muted);
+      font-size: var(--text-xs);
+      line-height: var(--lh-relaxed);
+    }
+    .mf-empty {
+      margin: 0 0 var(--space-4);
+      padding: var(--space-4);
+      border: 1px dashed var(--border-strong);
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+    }
+  </style>
 </Base>
