@@ -114,6 +114,17 @@ export function buildStyle(p: Palette): StyleSpecification {
   return {
     version: 8,
     glyphs: GLYPHS,
+    /**
+     * KÜRE PROJEKSIYONU.
+     *
+     * Mercator kutuplara dogru alani sisiriyor; kissa cografyasi 14K ile 42K
+     * arasinda ve o bantta bile Habesistan-Kafkasya mesafesi oldugundan
+     * buyuk duruyordu. Kure gercek olcegi veriyor.
+     *
+     * MapLibre yakinlasinca kendiliginden Mercator'a geciyor (globe yalniz
+     * uzak zoom'da anlamli); yani sehir olceginde davranis degismiyor.
+     */
+    projection: { type: "globe" },
     // sprite ANAHTARI YOK — bkz. dosya basi. Hicbir katman icon-image kullanmaz.
     sources: {
       altlik: {
@@ -128,6 +139,23 @@ export function buildStyle(p: Palette): StyleSpecification {
        * setTerrain onu kullandiginda ceker. Yani varsayilan haritanin
        * maliyeti degismiyor.
        */
+      /**
+       * DUNYA KARA SILUETI — Natural Earth 1:110m, kamu mali.
+       *
+       * Altlik yalniz 5,3-72,48 kutusunu kapsiyor. Kure projeksiyonunda
+       * uzaklasinca gezegenin geri kalani BOS cikiyordu ve harita bozuk gibi
+       * duruyordu. Bu kaynak yalnizca SILUET verir: sinir, etiket, yol yok —
+       * "burasi kara" demekle yetinir, kissa cografyasinin disina bilgi
+       * iddiasi tasimaz.
+       *
+       * Kendi sunucumuzdan (138 KB); statik SVG harita da ayni dosyadan
+       * ciziliyor, ikinci kopya tutulmuyor.
+       */
+      dunya: {
+        type: "geojson",
+        data: "/geo/ne_110m_land.geojson",
+        attribution: '<a href="https://www.naturalearthdata.com/">Natural Earth</a>',
+      },
       arazi: {
         type: "raster-dem",
         tiles: [TERRAIN_TILES],
@@ -159,6 +187,14 @@ export function buildStyle(p: Palette): StyleSpecification {
         type: "background",
         paint: { "background-color": p.mapWater },
       },
+      // Once dunya silueti, sonra ayrintili kara: ayni renk, kutunun icinde
+      // vektor veri ustune biner ve dikis gorunmez.
+      {
+        id: "dunya-kara",
+        type: "fill",
+        source: "dunya",
+        paint: { "fill-color": p.mapLand },
+      },
       {
         id: "kara",
         type: "fill",
@@ -173,6 +209,19 @@ export function buildStyle(p: Palette): StyleSpecification {
         type: "fill",
         source: "altlik",
         "source-layer": "landcover",
+        /**
+         * z5'ten once cizilmiyor. KURE gorunumunde altligimizin kutusu
+         * (5,3-72,48) cevresindeki dunya siluetinden ACIK bir dikdortgen
+         * olarak siriyordu: icerde ortu/kiyi/kabartma var, disarida duz renk.
+         * Uzak zoomda bu ayrinti zaten okunmuyor; kapatilinca dikis kayboluyor
+         * ve detay yakinlastikca beliriyor.
+         *
+         * ESIK 3, 5 DEGIL: /harita varsayilan kadraji z~3,3'te aciliyor
+         * (26 konumun tamami). 5'te birakilinca varsayilan gorunumde
+         * kabartma ve ortu HIC gorunmuyordu — olculdu, DEM istegi 0 idi.
+         * Kure ise z3'un altinda basliyor; esik tam aralarina dusuyor.
+         */
+        minzoom: 3,
         paint: {
           "fill-color": [
             "match",
@@ -235,6 +284,9 @@ export function buildStyle(p: Palette): StyleSpecification {
         id: "kabartma-golge",
         type: "hillshade",
         source: "arazi",
+        // Ayni dikis gerekcesi (bkz. `ortu`). Ayrica kure gorunumunde
+        // kabartma zaten piksel altinda kaliyor; bosuna kare indirilmiyor.
+        minzoom: 3,
         paint: {
           "hillshade-exaggeration": karanlik ? 0.6 : 0.45,
           // Karanlik zeminde golgeyi ARTIRMAK ise yaramaz — siyah uzerine
@@ -265,7 +317,8 @@ export function buildStyle(p: Palette): StyleSpecification {
         type: "line",
         source: "altlik",
         "source-layer": "water",
-        minzoom: 4,
+        // Ayni dikis gerekcesi (bkz. `ortu`).
+        minzoom: 3,
         paint: {
           "line-color": p.borderStrong,
           "line-width": ["interpolate", ["linear"], ["zoom"], 4, 0.4, 12, 1.2],
@@ -283,6 +336,8 @@ export function buildStyle(p: Palette): StyleSpecification {
         source: "altlik",
         "source-layer": "boundaries",
         filter: ["==", ["get", "kind"], "country"],
+        // Ayni dikis gerekcesi (bkz. `ortu`).
+        minzoom: 3,
         paint: {
           "line-color": p.border,
           "line-width": ["interpolate", ["linear"], ["zoom"], 3, 0.6, 10, 1.4],

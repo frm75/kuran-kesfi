@@ -61,3 +61,21 @@ for (const file of files) {
   copyFileSync(resolve(dist, file), resolve(targetDir, file));
 }
 console.log(`[harita] isci dosyalari kopyalandi: ${files.join(", ")} -> ${targetDir}`);
+
+/**
+ * DUNYA KARA SILUETI — kure projeksiyonu icin.
+ *
+ * Altligimiz yalniz 5,3-72,48 kutusunu kapsiyor. Mercator'da bu gorunmuyordu;
+ * kureye gecince uzaklasinca gezegenin geri kalani BOS cikti — harita bozuk
+ * gibi duruyordu. Natural Earth 1:110m kara cokgenleri (134 KB, kamu mali)
+ * o boslugu dolduruyor.
+ *
+ * Dosya zaten repoda: statik SVG harita da build zamaninda ayni veriden
+ * ciziliyor (pages/harita.astro). Ikinci bir kopya tutulmuyor, buraya
+ * kopyalaniyor; public/geo git'e girmez.
+ */
+const geoSrc = resolve(here, "../../../data/geo/ne_110m_land.geojson");
+const geoDir = resolve(here, "../public/geo");
+mkdirSync(geoDir, { recursive: true });
+copyFileSync(geoSrc, resolve(geoDir, "ne_110m_land.geojson"));
+console.log(`[harita] dunya silueti kopyalandi -> ${geoDir}`);

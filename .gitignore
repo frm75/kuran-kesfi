@@ -67,3 +67,7 @@ media/*
 # (apps/web/scripts/prepare-harita.mjs). Kaynagi pnpm-lock.yaml; ikinci bir
 # kopyayi surum gecmisinde tutmanin anlami yok.
 apps/web/public/_maplibre/
+
+# Kure projeksiyonu icin dunya kara silueti — build oncesi data/geo'dan
+# kopyalanir (apps/web/scripts/prepare-harita.mjs). Kaynak repoda zaten var.
+apps/web/public/geo/

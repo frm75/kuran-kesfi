@@ -2486,11 +2486,25 @@ a.ctx-num:hover {
   position: relative;
   margin-bottom: var(--space-4);
 }
+/* Harita okuma sütununu TAŞAR.
+   Kıssa sayfası `.pg-normal` (40rem) — metin için doğru genişlik ama harita
+   için dar: kutu 608 px kalıyordu ve Mûsâ rotasının dört durağı sıkışıyordu.
+   Metin sütunu daralmadan yalnızca harita genişliyor; üst sınır landing
+   bölümleriyle aynı (`--content-wide`), yani sayfa dilinden çıkmıyor.
+   `100vw` kaydırma çubuğunu da sayar, 3rem pay onu karşılıyor. */
+@media (min-width: 60rem) {
+  .map-live {
+    --map-w: min(var(--content-wide), calc(100vw - 3rem));
+    width: var(--map-w);
+    margin-inline: calc((100% - var(--map-w)) / 2);
+  }
+}
 .map-live-canvas {
   width: 100%;
   /* Yükseklik viewport'a bağlı: telefonda liste ekranı yemesin, masaüstünde
-     kıssa coğrafyası bir bakışta görünsün. */
-  height: clamp(20rem, 62vh, 40rem);
+     kıssa coğrafyası bir bakışta görünsün. 2026-09-06'da büyütüldü —
+     62vh/40rem kutuyu dar bırakıyordu, kıssa rotası sıkışık okunuyordu. */
+  height: clamp(24rem, 74vh, 52rem);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   background-color: var(--bg-elevated);
