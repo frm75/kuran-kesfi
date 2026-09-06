@@ -7,47 +7,46 @@
   ],
   "sourceSha256": "f80a0d18372386aef4433944469846b72b532476c945bf44d014ddb9a8f8744a",
   "sourceBytes": 9716013,
-  "durationSeconds": 13.9,
-  "speed": 0.5,
+  "durationSeconds": 35.05,
+  "speed": 0.6,
   "eq": "eq=gamma=1.55:saturation=1.30:contrast=1.06",
-  "windows": [
+  "segments": [
     {
+      "kind": "src",
       "start": 1.8,
-      "end": 3.1,
-      "note": "dunya uzaydan, atmosfere inis, nehir vadisi"
+      "end": 18.6,
+      "note": "kesintisiz: dunya, vadi, tufan, yarilan deniz, col, sehir"
     },
     {
-      "start": 7.3,
-      "end": 8.45,
-      "note": "gemi tufanda, yagmur duvari"
+      "kind": "still",
+      "file": "kabe.jpg",
+      "seconds": 6,
+      "note": "Kabe (uretilmis kare, yavas geri acilma)"
     },
     {
-      "start": 10.3,
-      "end": 11.3,
-      "note": "yarilan deniz, icinden gunes"
-    },
-    {
-      "start": 13.9,
-      "end": 18.3,
-      "note": "col safagi, kervan, sehir, vahiy isigi, dunya"
+      "kind": "src",
+      "start": 18.6,
+      "end": 19.95,
+      "note": "kapanis: uzaydan dunya, altin yaylar",
+      "minY": 45
     }
   ],
-  "crf": 30,
+  "crf": 22,
   "files": [
     {
       "file": "hero.mp4",
-      "bytes": 1364965,
-      "sha256": "af06fc33031cc4d940ff64d6ef9688414fb5e24deb1477beda677896a98fb4dc"
+      "bytes": 9529213,
+      "sha256": "8450e2010a94a7231272d7e20da82d7febaf722985ac611955441384a4818a82"
     },
     {
       "file": "hero-poster.webp",
-      "bytes": 12658,
-      "sha256": "21fc2dc6a5788240a3c0074d59d6a31d71c0286fc8325abc0c7ad2a4bea5ea24"
+      "bytes": 15242,
+      "sha256": "bb0d3b9086b03f69405a5b5a5a3610018f9575623cabac44888c7b3af5ab9d62"
     },
     {
       "file": "hero-poster.jpg",
-      "bytes": 20722,
-      "sha256": "ca8095dc3154e2525ca9a67617f22b6272f2e7a1be1e618ee09ebf5869d15d59"
+      "bytes": 24933,
+      "sha256": "990dee0a96e1eac180f6ff3323e3bd7f169445f16f44af10f7f30b6bbb929868"
     }
   ]
 }

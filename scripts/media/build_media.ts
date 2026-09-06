@@ -58,7 +58,8 @@ import sharp from "sharp";
  *
  * Yavaslatma: pencereler daraldigi icin ham sure 7,9 sn'ye dustu. SPEED ile
  * gerilir; hem sure geri gelir hem arka plan videosuna yakisan agir bir
- * tempo olur. minterpolate=blend kare tekrarindan dogan takilmayi siler.
+ * tempo olur. Kare tekrari sorun degil: cikti 15 fps, kaynagin bu hizdaki
+ * efektif kare hizi 14,4 fps — neredeyse birebir (bkz. FPS).
  *
  * ============================================================================
  *
@@ -80,31 +81,106 @@ const TMP = resolve(import.meta.dirname, ".tmp");
  * Her sinir kare kare kontrol edildi; yanindaki not neyin hemen disarida
  * kaldigini soyluyor ki ilerde biri "biraz genisletelim" demesin.
  */
-const WINDOWS: readonly [number, number, string][] = [
-  // 3,10'dan sonra vadide Hz. Adem beliriyor. 1,80'den once kare siyah.
-  [1.8, 3.1, "dunya uzaydan, atmosfere inis, nehir vadisi"],
-  // 7,25'te gemi onunde figur var; 8,50'de kiyidaki figur beliriyor.
-  [7.3, 8.45, "gemi tufanda, yagmur duvari"],
-  // 10,25'te kadrajda figur var; 11,45'te Hz. Yunus suya batmaya basliyor.
-  [10.3, 11.3, "yarilan deniz, icinden gunes"],
-  // 13,80'e kadar balinanin ustunde figur duruyor; 18,30'dan sonra fade.
-  [13.9, 18.3, "col safagi, kervan, sehir, vahiy isigi, dunya"],
+/*
+ * 2026-09-05 (dorduncu tur) — KULLANICI KARARI: figur kisiti kaldirildi.
+ * Kullanicinin sozu: "figur olsun zaten arkasi donuk sorun degil".
+ * Kaynaktaki figurler uzak, kucuk ve sirti donuk siluetlerdir.
+ *
+ * DIKKAT: CLAUDE.md satir 127 ve plan 20.3 HALA "figur yok" diyor. Bu
+ * dosya artik oradan ayriliyor; belgeler kullanicinin onayiyla
+ * guncellenecek. Karar kaydi burada, tarihiyle duruyor.
+ *
+ * Kisit kalkinca KESMEYE de gerek kalmadi: figursuz pencereleri birbirine
+ * eklemek gerekmediginden tek surekli parca kullaniliyor. "Cok hizli
+ * akiyor" sikayeti de boylece kokten cozuluyor — sahne gecisi yok, akis
+ * kaynagin kendi temposu.
+ *
+ * Sinirlar artik PARLAKLIGA gore: 1,80 oncesi uzay siyahi, 18,60 sonrasi
+ * siyah uzayda dunya (kare ortalamasi 60'a duser, metnin arkasinda koyu
+ * durur). Ikisi de disarida.
+ */
+/**
+ * Montaj sirasi. Iki tur parca var:
+ *   src    kaynak videodan bir aralik (SPEED ile gerilir)
+ *   still  duran gorsel; zoompan ile yavas ic ceker, boylece montajin
+ *          havadan suzulme dili bozulmaz
+ *
+ * 2026-09-06 — KULLANICI ISTEGI: "en son Kabe cikmali". Kaynakta Kabe YOK;
+ * sondaki yapi altin kubbe + turkuaz kubbe + minare, yani Kubbetu's-Sahra
+ * gorunumu. Kesmeyle duzeltilemedigi icin Kabe karesi uretildi
+ * (Higgsfield / nano_banana_pro, 2026-09-06). Ardindan kullanicinin
+ * istedigi kapanis geliyor: uzaydan dunya — o kaynakta zaten var (18,60
+ * sonrasi). Metin orada olmadigi icin karenin koyulugu sorun degil.
+ */
+type Segment =
+  | {
+      readonly kind: "src";
+      readonly start: number;
+      readonly end: number;
+      readonly note: string;
+      /** Bu parcaya ozel parlaklik tabani; verilmezse MIN_Y gecerli. */
+      readonly minY?: number;
+    }
+  | {
+      readonly kind: "still";
+      readonly file: string;
+      readonly seconds: number;
+      readonly note: string;
+      readonly minY?: number;
+    };
+
+const SEGMENTS: readonly Segment[] = [
+  { kind: "src", start: 1.8, end: 18.6, note: "kesintisiz: dunya, vadi, tufan, yarilan deniz, col, sehir" },
+  { kind: "still", file: "kabe.jpg", seconds: 6, note: "Kabe (uretilmis kare, yavas geri acilma)" },
+  /*
+   * Kapanis KASITLI OLARAK KARANLIK: siyah uzayda dunya. Kare ortalamasi
+   * ~60'a duser ama bu "video yok" degil, sahnenin kendisi. MIN_Y kapisi
+   * bu parca icin 45'e cekildi; gerisi 60'ta kaliyor, yani asil govdeyi
+   * koruyan esik gevsetilmedi.
+   */
+  { kind: "src", start: 18.6, end: 19.95, note: "kapanis: uzaydan dunya, altin yaylar", minY: 45 },
 ];
 
 /** Parcalar arasi gecis suresi. */
 const XFADE = 0.6;
 
 /**
+ * Cikti kare hizi.
+ *
+ * 2026-09-06: kullanici "video cozunurlugu cok kotu" dedi. Cozunurluk
+ * DUSMEMISTI — kaynak 1280x720, cikti da 1280x720. Suclu baskaydi ve
+ * olculdu (Laplacian varyansi, ayni kare, 6 sn'lik dilimde 12 ayar):
+ *
+ *   ayar                        KB/6sn   netlik
+ *   minterpolate=blend, crf 20    4261     6,62
+ *   minterpolate=mci,   crf 24    2323     5,54   (en kotu + hayalet)
+ *   fps=15,             crf 22    2651     7,82   <- secildi
+ *   fps=15,             crf 24    2222     7,41
+ *
+ * minterpolate=blend her ara kareyi iki komsunun ortalamasi yapiyordu:
+ * hem YUMUSATIYOR hem de entropiyi artirdigi icin dosyayi BUYUTUYORDU.
+ * Ikisini birden kaybediyorduk.
+ *
+ * Ara kareye zaten gerek yok: kaynak 24 fps, SPEED 0.6 ile efektif kare
+ * hizi 24 x 0,6 = 14,4 fps. Cikti 15 fps'te her kaynak karesi bir kez
+ * gosteriliyor (yaklasik 24 karede bir tekrar) — ne harmanlama, ne
+ * duzensiz kare tekrari. 24 fps'te kalinsaydi her kare 1 veya 2 kez
+ * gosterilip titreme yapardi; blend de bunu ortmek icin konmustu.
+ */
+const FPS = 15;
+
+/**
  * Oynatma hizi.
  *
- * 2026-09-05 ucuncu tur: kullanici "cok hizli akiyor" dedi. Pencereler
- * figursuz araliklarla sinirli (1,3 + 1,15 + 1,0 + 4,4 sn ham); UZATILAMAZ,
- * cunku hemen bitisiginde insan figuru var (plan 20.3). O yuzden hiz
- * dusuruldu: 0,75 -> 0,5. Ham 7,85 sn -> ekranda ~14,5 sn; sahne basina
- * ~2,3 sn'den ~3,6 sn'ye cikiyor. minterpolate ara kare urettigi icin
- * yavaslatma takilma yapmiyor.
+ * 2026-09-06 (dorduncu tur): kullanici "video cok hizli" dedi — ikinci kez.
+ * 0,85 yetmemis. 0,60'a cekildi: 16,80 sn'lik govde ekranda ~28 sn'ye
+ * yayiliyor. Kaynak hava cekimi zaten hizli suzuluyor; asil hiz hissi
+ * kamera hareketinden geliyor, kesmeden degil (kesme zaten yok).
+ * Cikti 15 fps oldugu icin yavaslatma takilma yapmaz: kaynagin bu hizdaki
+ * efektif kare hizi 14,4 fps, yani kare basina neredeyse tam bir cikti
+ * karesi dusuyor (bkz. FPS).
  */
-const SPEED = 0.5;
+const SPEED = 0.6;
 
 /**
  * Renk derecelendirme.
@@ -131,7 +207,7 @@ const EQ = "eq=gamma=1.55:saturation=1.30:contrast=1.06";
  * ~570 KB'dan ~1 MB'a cikiyor, tek varlik icin kabul edilebilir.
  * aq-mode=3 karanlik gradyanlarda bantlanmayi onler.
  */
-const CRF = 30;
+const CRF = 22;
 
 const sha256 = (buf: Buffer): string => createHash("sha256").update(buf).digest("hex");
 
@@ -153,34 +229,107 @@ function requireFfmpeg(): void {
  * Pencere ham suresi SPEED ile gerilir; xfade'te iki parca ust uste bindigi
  * icin her gecis kadar geri alinir.
  */
-const stretched = (w: readonly [number, number, string]): number => (w[1] - w[0]) / SPEED;
-const TOTAL = WINDOWS.reduce((a, w) => a + stretched(w), 0) - XFADE * (WINDOWS.length - 1);
+const stretched = (seg: Segment): number =>
+  seg.kind === "src" ? (seg.end - seg.start) / SPEED : seg.seconds;
+const TOTAL = SEGMENTS.reduce((a, seg) => a + stretched(seg), 0) - XFADE * (SEGMENTS.length - 1);
+
+/**
+ * Duran gorselin baslangic yakinlastirmasi; oradan 1,00'a YAVASCA ACILIR
+ * (zoom out, kullanici karari 2026-09-06).
+ */
+const STILL_ZOOM_FROM = 1.1;
+
+/**
+ * zoompan'in ic calisma cozunurlugu.
+ *
+ * Titremenin ikinci kaynagi buydu ve olculdu: zoompan kirpma dikdortgenini
+ * TAMSAYIYA yuvarlar. 2560 tabanda kare basina adim 2,6 px; +-0,5 px'lik
+ * yuvarlama hatasi adimin besde biri kadar, yani gorunur bir seyirme.
+ * Taban buyudukce hata orani duser (ayni 6 sn'lik parcada olculdu,
+ * ardisik kare farklarinin oynakligi / ortalama hareket):
+ *
+ *   2560 taban   %24,7
+ *   7680 taban   %8,6   <- secildi
+ *
+ * Maliyet ~31 sn kodlama; yapinin tamami zaten ~3 dk.
+ */
+const STILL_BASE_W = 7680;
+const STILL_BASE_H = 4320;
+/** Duran gorselde gamma yukseltilmez: uretilen kare zaten dogru pozlanmis. */
+const STILL_EQ = "eq=saturation=1.06:contrast=1.02";
 
 /** Parcalari xfade zinciriyle birlestirir; cikti sessizdir (-an). */
 function buildCut(target: string): void {
   const inputs: string[] = [];
-  for (const [start, end] of WINDOWS) {
-    inputs.push("-ss", String(start), "-to", String(end), "-i", SOURCE);
+  for (const seg of SEGMENTS) {
+    if (seg.kind === "src") {
+      inputs.push("-ss", String(seg.start), "-to", String(seg.end), "-i", SOURCE);
+    } else {
+      /*
+       * TEK KARE beslenir — "-loop 1 -t <sure>" DEGIL.
+       *
+       * zoompan her GIRDI karesi icin `d` adet cikti karesi uretir. Girdi
+       * dongude beslenince (90 kare) zoompan 90x90 = 8100 kare uretmeye
+       * kalkiyordu; zoom rampasi her girdi karesinde basa donuyor, yani
+       * Kabe surekli geri sicriyordu. Kullanicinin "titreme" dedigi buydu.
+       * Standalone denemede 6 sn'lik parca 497 MB cikti — kanit buydu.
+       */
+      inputs.push("-i", resolve(import.meta.dirname, seg.file));
+    }
   }
 
-  const labels = WINDOWS.map((_, i) => String.fromCharCode(97 + i));
+  const labels = SEGMENTS.map((_, i) => String.fromCharCode(97 + i));
 
   /*
    * Zincir sirasi onemli:
-   *   setpts       once zamani gerer (0,75 hiz = PTS / 0,75)
-   *   minterpolate gerilmeden dogan kare tekrarini harmanlayarak siler;
-   *                blend secildi, mci hareketli suda hayalet birakiyordu
+   *   setpts       once zamani gerer (0,6 hiz = PTS / 0,6)
+   *   fps          cikti kare hizini sabitler; ARA KARE URETILMEZ
    *   eq           golgeleri kaldirir (bkz. dosya basi)
    *   format       xfade yuv420p bekler
    */
-  const parts = labels.map(
-    (l, i) =>
-      `[${String(i)}:v]setpts=(PTS-STARTPTS)/${String(SPEED)},` +
-      `minterpolate=fps=24:mi_mode=blend,${EQ},format=yuv420p[${l}]`,
-  );
+  const parts = labels.map((l, i) => {
+    const seg = SEGMENTS[i]!;
+    if (seg.kind === "src") {
+      return (
+        `[${String(i)}:v]setpts=(PTS-STARTPTS)/${String(SPEED)},` +
+        `fps=${String(FPS)},${EQ},format=yuv420p[${l}]`
+      );
+    }
+    /*
+     * Duran gorsel once BUYUTULUP sonra zoompan'a veriliyor (bkz.
+     * STILL_BASE_W). d = kare sayisi; zoom STILL_ZOOM_FROM'dan 1,00'a
+     * esit adimlarla ACILIR.
+     */
+    const frames = Math.round(seg.seconds * FPS);
+    const step = ((STILL_ZOOM_FROM - 1) / (frames - 1)).toFixed(7);
+    /*
+     * s ZOOMPAN GIRDISIYLE AYNI olmali. Kucuk verilirse (eski hali
+     * s=1280x720, girdi 2560) filtre once kirpar sonra olcekler ve
+     * "iw/2-(iw/zoom/2)" merkezleme matematigi tutmaz. Kucultme zoompan'dan
+     * SONRA yapiliyor; bu ayni zamanda kalan yuvarlama hatasini alti kat
+     * kuculttugu icin titremeyi de bastiriyor.
+     */
+    return (
+      `[${String(i)}:v]scale=${String(STILL_BASE_W)}:${String(STILL_BASE_H)}:flags=lanczos,` +
+      `zoompan=z='max(${String(STILL_ZOOM_FROM)}-on*${step},1.0)':d=${String(frames)}:` +
+      `x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':` +
+      `s=${String(STILL_BASE_W)}x${String(STILL_BASE_H)}:fps=${String(FPS)},` +
+      `scale=1280:720:flags=lanczos,setsar=1,${STILL_EQ},format=yuv420p[${l}]`
+    );
+  });
+
+  /*
+   * Tek pencere olabilir (2026-09-05: figur kisiti kalkinca kesme gerekmedi).
+   * O durumda xfade dongusu hic donmez ve "[v]" etiketi olusmaz; -map [v]
+   * "Output with label 'v' does not exist" ile patlar. Zinciri kapatmak icin
+   * son parcaya null filtresiyle "v" adi verilir.
+   */
+  if (labels.length === 1) {
+    parts.push(`[${labels[0]!}]null[v]`);
+  }
 
   // Her xfade'te toplam sure kadar ilerlenir, gecis payi geri alinir.
-  let running = stretched(WINDOWS[0]!);
+  let running = stretched(SEGMENTS[0]!);
   let prev = labels[0]!;
   for (let i = 1; i < labels.length; i += 1) {
     const offset = running - XFADE;
@@ -188,7 +337,7 @@ function buildCut(target: string): void {
     parts.push(
       `[${prev}][${labels[i]!}]xfade=transition=fade:duration=${String(XFADE)}:offset=${offset.toFixed(3)}[${out}]`,
     );
-    running = running + stretched(WINDOWS[i]!) - XFADE;
+    running = running + stretched(SEGMENTS[i]!) - XFADE;
     prev = out;
   }
 
@@ -257,10 +406,14 @@ async function main(): Promise<void> {
   const src = readFileSync(SOURCE);
   info(`kaynak: ${(src.length / 1048576).toFixed(1)} MB · ${sha256(src).slice(0, 12)}`);
   info(
-    `${String(WINDOWS.length)} figursuz pencere · hiz ${String(SPEED)}x -> ${TOTAL.toFixed(2)} sn`,
+    `${String(SEGMENTS.length)} parca · hiz ${String(SPEED)}x -> ${TOTAL.toFixed(2)} sn`,
   );
-  for (const [start, end, what] of WINDOWS) {
-    info(`  ${start.toFixed(2).padStart(5)}-${end.toFixed(2)}s  ${what}`);
+  for (const seg of SEGMENTS) {
+    info(
+      seg.kind === "src"
+        ? `  ${seg.start.toFixed(2).padStart(5)}-${seg.end.toFixed(2)}s  ${seg.note}`
+        : `  ${seg.file.padStart(11)} ${seg.seconds.toFixed(2)}s  ${seg.note}`,
+    );
   }
 
   mkdirSync(TMP, { recursive: true });
@@ -280,13 +433,36 @@ async function main(): Promise<void> {
   const profile = luminance(videoPath);
   info(`parlaklik (YAVG, 0,5 sn): ${profile.map((p) => p.y.toFixed(0)).join(" ")}`);
 
-  const darkest = profile.reduce((a, b) => (b.y < a.y ? b : a));
-  if (darkest.y < MIN_Y) {
+  /*
+   * Kapi parca farkindadir: her ornek, cikti zamanina gore hangi parcaya
+   * dustuyse onun tabaniyla karsilastirilir. Boylece kasitli karanlik bir
+   * kapanis, govdeyi koruyan esigi dusurmeden gecebilir.
+   */
+  /*
+   * Parca sinirlari, gecisin BITTIGI an degil BASLADIGI andir. xfade
+   * offset'i "onceki parcanin sonu eksi XFADE" oldugu icin yeni parca
+   * ekranda o anda gorunmeye baslar; ilk hesap bunu kacirinca kapanis
+   * karesi hala govde esigiyle olculuyordu.
+   */
+  const starts: { from: number; floor: number }[] = [];
+  {
+    let t = 0;
+    for (const [i, seg] of SEGMENTS.entries()) {
+      if (i > 0) t += stretched(SEGMENTS[i - 1]!) - XFADE;
+      starts.push({ from: t, floor: seg.minY ?? MIN_Y });
+    }
+  }
+  const floorAt = (at: number): number =>
+    [...starts].reverse().find((b) => at >= b.from)?.floor ?? MIN_Y;
+
+  const violation = profile.find((p) => p.y < floorAt(p.at));
+  if (violation !== undefined) {
     fail(
-      `${darkest.at.toFixed(1)}s karesi cok karanlik (YAVG ${darkest.y.toFixed(0)}, esik ${String(MIN_Y)}). ` +
-        "Pencere sinirlarini veya EQ gamma degerini gozden gecirin.",
+      `${violation.at.toFixed(1)}s karesi cok karanlik (YAVG ${violation.y.toFixed(0)}, ` +
+        `esik ${String(floorAt(violation.at))}). Parca sinirlarini veya EQ gamma degerini gozden gecirin.`,
     );
   }
+  const darkest = profile.reduce((a, b) => (b.y < a.y ? b : a));
 
   const brightest = profile.reduce((a, b) => (b.y > a.y ? b : a));
   info(`poster: ${brightest.at.toFixed(1)}s (YAVG ${brightest.y.toFixed(0)}, en karanlik ${darkest.y.toFixed(0)})`);
@@ -319,7 +495,7 @@ async function main(): Promise<void> {
         durationSeconds: Number(TOTAL.toFixed(2)),
         speed: SPEED,
         eq: EQ,
-        windows: WINDOWS.map(([start, end, note]) => ({ start, end, note })),
+        segments: SEGMENTS,
         crf: CRF,
         files: [...produced].map(([file, buf]) => ({
           file,
