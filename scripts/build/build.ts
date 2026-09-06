@@ -26,6 +26,7 @@
  *   principles_index.json · principle/principle_<slug>.json   ILKELER
  *   concepts_index.json · concept/concept_<slug>.json         KAVRAMLAR
  *   verse_links.json                                 ayet -> icerik ters dizini
+ *   scripture.json                                   Kitab-i Mukaddes atiflari (kunye + alinti)
  *
  * Icerik katmani lib/content.ts icinde; tablolar bossa hic dosya yazmaz.
  */
@@ -46,13 +47,18 @@ import {
   staticRoot,
   staticRootsIndex,
   staticSources,
+  scriptureBooksFile,
+  scriptureQuotesFile,
+  staticScripture,
   staticSurah,
   staticSurahTranslation,
   staticSurahsIndex,
   staticVerseDetail,
   staticVerseWords,
 } from "@kuran/schema";
-import { Report, closePool, fail, info, pool, stripSourceHtml } from "@kuran/pipeline";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { Report, closePool, fail, info, pool, repoRoot, stripSourceHtml } from "@kuran/pipeline";
 import { Emitter, dataRoot } from "./lib/emit.js";
 import { emitContent } from "./lib/content.js";
 
@@ -141,6 +147,57 @@ function toMeta(row: SurahRow): StaticSurahMeta {
     revelationOrderNoldeke: row.revelation_order_noldeke,
     pageStart: row.page_start,
   };
+}
+
+/**
+ * scripture.json — meal dipnotlarindaki Kitab-i Mukaddes atiflari.
+ *
+ * PostgreSQL'den GECMEZ, `data/scripture/` altindan dogrudan okunur. Sebep:
+ * bu iki dosyanin hicbir tabloyla iliskisi yok — biri kitap ADLARI sozlugu,
+ * digeri `pnpm data:scripture` ile uretilen alinti listesi. Iliskisiz bir sozluk
+ * icin tablo acmak, migration yazmak ve import adimi eklemek hicbir sey
+ * kazandirmazdi.
+ *
+ * Alinti sinirini burada BIR KEZ DAHA dogruluyoruz (semada `text` en fazla 200
+ * karakter): telifli metin yayina cikmadan once son kapi burasi. Sinir asilirsa
+ * build durur — sessizce gecmez (data/scripture/LICENSE.md).
+ */
+function emitScripture(emitter: Emitter, report: Report): void {
+  const scriptureDir = resolve(repoRoot, "data/scripture");
+  const booksParsed = scriptureBooksFile.safeParse(
+    JSON.parse(readFileSync(resolve(scriptureDir, "books.json"), "utf8")),
+  );
+  if (!booksParsed.success) {
+    fail(`data/scripture/books.json sema dogrulamasi basarisiz:\n${booksParsed.error.message}`);
+  }
+  const quotesParsed = scriptureQuotesFile.safeParse(
+    JSON.parse(readFileSync(resolve(scriptureDir, "quotes.json"), "utf8")),
+  );
+  if (!quotesParsed.success) {
+    fail(`data/scripture/quotes.json sema dogrulamasi basarisiz:\n${quotesParsed.error.message}`);
+  }
+
+  const payload = {
+    source: quotesParsed.data.source,
+    books: booksParsed.data.books,
+    quotes: quotesParsed.data.quotes,
+  };
+  const parsed = staticScripture.safeParse(payload);
+  if (!parsed.success) {
+    fail(`scripture.json sema dogrulamasi basarisiz:\n${parsed.error.message}`);
+  }
+  emitter.write("scripture.json", payload);
+
+  const longest = payload.quotes.reduce((max, quote) => Math.max(max, quote.text.length), 0);
+  info(
+    `kitab-i mukaddes: ${String(payload.books.length)} kitap, ` +
+      `${String(payload.quotes.length)} alinti (en uzun ${String(longest)} karakter)`,
+  );
+  report.note(
+    `Kitab-i Mukaddes alintisi: ${String(payload.quotes.length)} ayet, ` +
+      `en uzun ${String(longest)}/${String(payload.source.quoteLimit)} karakter — ` +
+      "telifli metin, iktibas (data/scripture/LICENSE.md)",
+  );
 }
 
 async function main(): Promise<void> {
@@ -437,9 +494,21 @@ async function main(): Promise<void> {
     { label: "Arapça metin: Tanzil Project", url: "https://tanzil.net" },
   ];
 
+  /*
+   * 2026-09-06 (kullanici karari): "kaynaklar sadece hocalarin meallerine atif
+   * yapilacak". MEAL bir platformun degil, onu yapan yazarin eseridir —
+   * "Mehmet Okuyan meali" gibi. Meal atfi bu yuzden yazar adiyla verilir:
+   * her mealin ustundeki yazar adi ve /kaynaklar sayfasindaki meal listesi.
+   *
+   * Bu satirdan "Mealler" CIKARILDI. Acik Kuran yalnizca GERCEKTEN kendi
+   * derlemesi olan veriyle kaliyor: dipnotlar, kelime ve kok verisi. Onlar
+   * meal degil, veri kumesidir ve CC BY-NC-SA atfi onlar icin gecerlidir.
+   * Tamamen kaldirilmasi istenirse kelime/kok verisinin atfi da kalkar —
+   * o ayri bir karar.
+   */
   if (usedSources.has("acikkuran")) {
     attributionLinks.push({
-      label: "Mealler, dipnotlar, kelime ve kök verisi: Açık Kuran (CC BY-NC-SA 4.0)",
+      label: "Dipnot, kelime ve kök verisi: Açık Kuran (CC BY-NC-SA 4.0)",
       url: "https://acikkuran.com",
     });
   }
@@ -453,6 +522,16 @@ async function main(): Promise<void> {
   if (usedSources.has("quran.com")) {
     attributionLinks.push({ label: "Sure adları: Quran.com", url: "https://quran.com" });
   }
+  /*
+   * QuranEnc satiri KALDIRILDI (kullanici karari 2026-09-06): oradan gelen uc
+   * kayit da meal, yani yazarlarinin eseri. Atiflari yazar adiyla veriliyor
+   * (Rowwad Tercume Merkezi, Saban Britch, Ali Ozek ve heyeti) — her mealin
+   * ustunde ve /kaynaklar meal listesinde. Meali hangi sitede bulduğumuz
+   * eserin sahibi degildir.
+   *
+   * QuranEnc surum numarasi meal bazinda author.license_note icinde durmaya
+   * devam eder ve /kaynaklar meal tablosunda gorunur.
+   */
 
   // Ceviriyazi bir meal degil; author tablosunda kaydi yok, bu yuzden
   // usedSources'ta gorunmez. Atif yukumlulugu yine de var: hazirlayanin adi
@@ -630,6 +709,8 @@ async function main(): Promise<void> {
     fail(`sources.json sema dogrulamasi basarisiz:\n${sourcesParsed.error.message}`);
   }
   emitter.write("sources.json", sourcesPayload);
+
+  emitScripture(emitter, report);
 
   const { files, bytes } = emitter.stats;
   info(
