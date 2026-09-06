@@ -1,0 +1,1112 @@
+{
+  "note": "Kitab-ı Mukaddes kitap adları sözlüğü. Meal dipnotlarında geçen atıfları tanımak için. İçerik yalnızca kitap ADLARIDIR — kutsal metin değildir, bu dosya data/LICENSE (CC BY-NC-SA) kapsamındadır. needsContext=true olan ad gündelik Türkçede de kullanılır (Çıkış, Yaratılış, Yunus, Vahiy); bu adlar yalnızca dipnotta Tevrat/İncil/Kitab-ı Mukaddes gibi bir bağlam sözcüğü geçiyorsa atıf sayılır.",
+  "books": [
+    {
+      "osisId": "Gen",
+      "slug": "gen",
+      "canon": "eski-ahit",
+      "order": 1,
+      "nameTr": "Yaratılış",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Yaratılış",
+          "needsContext": true
+        },
+        {
+          "text": "Tekvin"
+        },
+        {
+          "text": "Genesis"
+        }
+      ]
+    },
+    {
+      "osisId": "Exod",
+      "slug": "exod",
+      "canon": "eski-ahit",
+      "order": 2,
+      "nameTr": "Mısır'dan Çıkış",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Mısır'dan Çıkış"
+        },
+        {
+          "text": "Çıkış",
+          "needsContext": true
+        },
+        {
+          "text": "Huruç"
+        },
+        {
+          "text": "Exodus"
+        }
+      ]
+    },
+    {
+      "osisId": "Lev",
+      "slug": "lev",
+      "canon": "eski-ahit",
+      "order": 3,
+      "nameTr": "Levililer",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Levililer"
+        },
+        {
+          "text": "Leviticus"
+        }
+      ]
+    },
+    {
+      "osisId": "Num",
+      "slug": "num",
+      "canon": "eski-ahit",
+      "order": 4,
+      "nameTr": "Çölde Sayım",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Çölde Sayım"
+        },
+        {
+          "text": "Sayılar",
+          "needsContext": true
+        },
+        {
+          "text": "Sayım",
+          "needsContext": true
+        },
+        {
+          "text": "Numbers",
+          "needsContext": true
+        }
+      ]
+    },
+    {
+      "osisId": "Deut",
+      "slug": "deut",
+      "canon": "eski-ahit",
+      "order": 5,
+      "nameTr": "Yasa'nın Tekrarı",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Yasa'nın Tekrarı"
+        },
+        {
+          "text": "Tesniye"
+        },
+        {
+          "text": "Deuteronomy"
+        }
+      ]
+    },
+    {
+      "osisId": "Josh",
+      "slug": "josh",
+      "canon": "eski-ahit",
+      "order": 6,
+      "nameTr": "Yeşu",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Yeşu"
+        },
+        {
+          "text": "Joshua"
+        }
+      ]
+    },
+    {
+      "osisId": "Judg",
+      "slug": "judg",
+      "canon": "eski-ahit",
+      "order": 7,
+      "nameTr": "Hakimler",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Hakimler"
+        },
+        {
+          "text": "Hâkimler"
+        },
+        {
+          "text": "Judges"
+        }
+      ]
+    },
+    {
+      "osisId": "Ruth",
+      "slug": "ruth",
+      "canon": "eski-ahit",
+      "order": 8,
+      "nameTr": "Rut",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Rut",
+          "needsContext": true
+        },
+        {
+          "text": "Ruth"
+        }
+      ]
+    },
+    {
+      "osisId": "1Sam",
+      "slug": "1sam",
+      "canon": "eski-ahit",
+      "order": 9,
+      "nameTr": "1. Samuel",
+      "ordinal": 1,
+      "names": [
+        {
+          "text": "Samuel"
+        }
+      ]
+    },
+    {
+      "osisId": "2Sam",
+      "slug": "2sam",
+      "canon": "eski-ahit",
+      "order": 10,
+      "nameTr": "2. Samuel",
+      "ordinal": 2,
+      "names": [
+        {
+          "text": "Samuel"
+        }
+      ]
+    },
+    {
+      "osisId": "1Kgs",
+      "slug": "1kgs",
+      "canon": "eski-ahit",
+      "order": 11,
+      "nameTr": "1. Krallar",
+      "ordinal": 1,
+      "names": [
+        {
+          "text": "Krallar"
+        },
+        {
+          "text": "Melikler"
+        },
+        {
+          "text": "Kings"
+        }
+      ]
+    },
+    {
+      "osisId": "2Kgs",
+      "slug": "2kgs",
+      "canon": "eski-ahit",
+      "order": 12,
+      "nameTr": "2. Krallar",
+      "ordinal": 2,
+      "names": [
+        {
+          "text": "Krallar"
+        },
+        {
+          "text": "Melikler"
+        },
+        {
+          "text": "Kings"
+        }
+      ]
+    },
+    {
+      "osisId": "1Chr",
+      "slug": "1chr",
+      "canon": "eski-ahit",
+      "order": 13,
+      "nameTr": "1. Tarihler",
+      "ordinal": 1,
+      "names": [
+        {
+          "text": "Tarihler",
+          "needsContext": true
+        },
+        {
+          "text": "Eyyam"
+        },
+        {
+          "text": "Chronicles"
+        }
+      ]
+    },
+    {
+      "osisId": "2Chr",
+      "slug": "2chr",
+      "canon": "eski-ahit",
+      "order": 14,
+      "nameTr": "2. Tarihler",
+      "ordinal": 2,
+      "names": [
+        {
+          "text": "Tarihler",
+          "needsContext": true
+        },
+        {
+          "text": "Eyyam"
+        },
+        {
+          "text": "Chronicles"
+        }
+      ]
+    },
+    {
+      "osisId": "Ezra",
+      "slug": "ezra",
+      "canon": "eski-ahit",
+      "order": 15,
+      "nameTr": "Ezra",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Ezra",
+          "needsContext": true
+        }
+      ]
+    },
+    {
+      "osisId": "Neh",
+      "slug": "neh",
+      "canon": "eski-ahit",
+      "order": 16,
+      "nameTr": "Nehemya",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Nehemya"
+        },
+        {
+          "text": "Nehemiah"
+        }
+      ]
+    },
+    {
+      "osisId": "Esth",
+      "slug": "esth",
+      "canon": "eski-ahit",
+      "order": 17,
+      "nameTr": "Ester",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Ester",
+          "needsContext": true
+        },
+        {
+          "text": "Esther"
+        }
+      ]
+    },
+    {
+      "osisId": "Job",
+      "slug": "job",
+      "canon": "eski-ahit",
+      "order": 18,
+      "nameTr": "Eyüp",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Eyüp",
+          "needsContext": true
+        },
+        {
+          "text": "Eyub"
+        },
+        {
+          "text": "Job",
+          "needsContext": true
+        }
+      ]
+    },
+    {
+      "osisId": "Ps",
+      "slug": "ps",
+      "canon": "eski-ahit",
+      "order": 19,
+      "nameTr": "Mezmurlar",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Mezmurlar"
+        },
+        {
+          "text": "Mezmur"
+        },
+        {
+          "text": "Zebur"
+        },
+        {
+          "text": "Psalms"
+        }
+      ]
+    },
+    {
+      "osisId": "Prov",
+      "slug": "prov",
+      "canon": "eski-ahit",
+      "order": 20,
+      "nameTr": "Süleyman'ın Özdeyişleri",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Süleyman'ın Özdeyişleri"
+        },
+        {
+          "text": "Özdeyişler"
+        },
+        {
+          "text": "Süleyman'ın Meselleri"
+        },
+        {
+          "text": "Proverbs"
+        }
+      ]
+    },
+    {
+      "osisId": "Eccl",
+      "slug": "eccl",
+      "canon": "eski-ahit",
+      "order": 21,
+      "nameTr": "Vaiz",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Vaiz",
+          "needsContext": true
+        },
+        {
+          "text": "Ecclesiastes"
+        }
+      ]
+    },
+    {
+      "osisId": "Song",
+      "slug": "song",
+      "canon": "eski-ahit",
+      "order": 22,
+      "nameTr": "Ezgiler Ezgisi",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Ezgiler Ezgisi"
+        },
+        {
+          "text": "Neşideler Neşidesi"
+        },
+        {
+          "text": "Neşideler"
+        }
+      ]
+    },
+    {
+      "osisId": "Isa",
+      "slug": "isa",
+      "canon": "eski-ahit",
+      "order": 23,
+      "nameTr": "Yeşaya",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Yeşaya"
+        },
+        {
+          "text": "Yeşeya"
+        },
+        {
+          "text": "İşaya"
+        },
+        {
+          "text": "Isaiah"
+        }
+      ]
+    },
+    {
+      "osisId": "Jer",
+      "slug": "jer",
+      "canon": "eski-ahit",
+      "order": 24,
+      "nameTr": "Yeremya",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Yeremya"
+        },
+        {
+          "text": "Jeremiah"
+        }
+      ]
+    },
+    {
+      "osisId": "Lam",
+      "slug": "lam",
+      "canon": "eski-ahit",
+      "order": 25,
+      "nameTr": "Ağıtlar",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Ağıtlar",
+          "needsContext": true
+        },
+        {
+          "text": "Mersiyeler"
+        },
+        {
+          "text": "Lamentations"
+        }
+      ]
+    },
+    {
+      "osisId": "Ezek",
+      "slug": "ezek",
+      "canon": "eski-ahit",
+      "order": 26,
+      "nameTr": "Hezekiel",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Hezekiel"
+        },
+        {
+          "text": "Hezekyel"
+        },
+        {
+          "text": "Ezekiel"
+        }
+      ]
+    },
+    {
+      "osisId": "Dan",
+      "slug": "dan",
+      "canon": "eski-ahit",
+      "order": 27,
+      "nameTr": "Daniel",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Daniel"
+        }
+      ]
+    },
+    {
+      "osisId": "Hos",
+      "slug": "hos",
+      "canon": "eski-ahit",
+      "order": 28,
+      "nameTr": "Hoşea",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Hoşea"
+        },
+        {
+          "text": "Hosea"
+        }
+      ]
+    },
+    {
+      "osisId": "Joel",
+      "slug": "joel",
+      "canon": "eski-ahit",
+      "order": 29,
+      "nameTr": "Yoel",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Yoel"
+        },
+        {
+          "text": "Joel"
+        }
+      ]
+    },
+    {
+      "osisId": "Amos",
+      "slug": "amos",
+      "canon": "eski-ahit",
+      "order": 30,
+      "nameTr": "Amos",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Amos"
+        }
+      ]
+    },
+    {
+      "osisId": "Jonah",
+      "slug": "jonah",
+      "canon": "eski-ahit",
+      "order": 31,
+      "nameTr": "Yunus",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Yunus",
+          "needsContext": true
+        },
+        {
+          "text": "Jonah"
+        }
+      ]
+    },
+    {
+      "osisId": "Mic",
+      "slug": "mic",
+      "canon": "eski-ahit",
+      "order": 32,
+      "nameTr": "Mika",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Mika"
+        },
+        {
+          "text": "Micah"
+        }
+      ]
+    },
+    {
+      "osisId": "Nah",
+      "slug": "nah",
+      "canon": "eski-ahit",
+      "order": 33,
+      "nameTr": "Nahum",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Nahum"
+        }
+      ]
+    },
+    {
+      "osisId": "Hab",
+      "slug": "hab",
+      "canon": "eski-ahit",
+      "order": 34,
+      "nameTr": "Habakkuk",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Habakkuk"
+        }
+      ]
+    },
+    {
+      "osisId": "Zeph",
+      "slug": "zeph",
+      "canon": "eski-ahit",
+      "order": 35,
+      "nameTr": "Sefanya",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Sefanya"
+        },
+        {
+          "text": "Zephaniah"
+        }
+      ]
+    },
+    {
+      "osisId": "Hag",
+      "slug": "hag",
+      "canon": "eski-ahit",
+      "order": 36,
+      "nameTr": "Hagay",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Hagay"
+        },
+        {
+          "text": "Haggai"
+        }
+      ]
+    },
+    {
+      "osisId": "Zech",
+      "slug": "zech",
+      "canon": "eski-ahit",
+      "order": 37,
+      "nameTr": "Zekeriya",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Zekeriya"
+        },
+        {
+          "text": "Zechariah"
+        }
+      ]
+    },
+    {
+      "osisId": "Mal",
+      "slug": "mal",
+      "canon": "eski-ahit",
+      "order": 38,
+      "nameTr": "Malaki",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Malaki"
+        },
+        {
+          "text": "Malachi"
+        }
+      ]
+    },
+    {
+      "osisId": "Matt",
+      "slug": "matt",
+      "canon": "yeni-ahit",
+      "order": 39,
+      "nameTr": "Matta",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Matta"
+        },
+        {
+          "text": "Matthew"
+        }
+      ]
+    },
+    {
+      "osisId": "Mark",
+      "slug": "mark",
+      "canon": "yeni-ahit",
+      "order": 40,
+      "nameTr": "Markos",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Markos"
+        },
+        {
+          "text": "Mark",
+          "needsContext": true
+        }
+      ]
+    },
+    {
+      "osisId": "Luke",
+      "slug": "luke",
+      "canon": "yeni-ahit",
+      "order": 41,
+      "nameTr": "Luka",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Luka"
+        },
+        {
+          "text": "Luke"
+        }
+      ]
+    },
+    {
+      "osisId": "John",
+      "slug": "john",
+      "canon": "yeni-ahit",
+      "order": 42,
+      "nameTr": "Yuhanna",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Yuhanna"
+        },
+        {
+          "text": "John",
+          "needsContext": true
+        }
+      ]
+    },
+    {
+      "osisId": "Acts",
+      "slug": "acts",
+      "canon": "yeni-ahit",
+      "order": 43,
+      "nameTr": "Elçilerin İşleri",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Elçilerin İşleri"
+        },
+        {
+          "text": "Resullerin İşleri"
+        },
+        {
+          "text": "Acts",
+          "needsContext": true
+        }
+      ]
+    },
+    {
+      "osisId": "Rom",
+      "slug": "rom",
+      "canon": "yeni-ahit",
+      "order": 44,
+      "nameTr": "Romalılar",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Romalılar"
+        },
+        {
+          "text": "Romans"
+        }
+      ]
+    },
+    {
+      "osisId": "1Cor",
+      "slug": "1cor",
+      "canon": "yeni-ahit",
+      "order": 45,
+      "nameTr": "1. Korintliler",
+      "ordinal": 1,
+      "names": [
+        {
+          "text": "Korintliler"
+        },
+        {
+          "text": "Corinthians"
+        }
+      ]
+    },
+    {
+      "osisId": "2Cor",
+      "slug": "2cor",
+      "canon": "yeni-ahit",
+      "order": 46,
+      "nameTr": "2. Korintliler",
+      "ordinal": 2,
+      "names": [
+        {
+          "text": "Korintliler"
+        },
+        {
+          "text": "Corinthians"
+        }
+      ]
+    },
+    {
+      "osisId": "Gal",
+      "slug": "gal",
+      "canon": "yeni-ahit",
+      "order": 47,
+      "nameTr": "Galatyalılar",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Galatyalılar"
+        },
+        {
+          "text": "Galatians"
+        }
+      ]
+    },
+    {
+      "osisId": "Eph",
+      "slug": "eph",
+      "canon": "yeni-ahit",
+      "order": 48,
+      "nameTr": "Efesliler",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Efesliler"
+        },
+        {
+          "text": "Ephesians"
+        }
+      ]
+    },
+    {
+      "osisId": "Phil",
+      "slug": "phil",
+      "canon": "yeni-ahit",
+      "order": 49,
+      "nameTr": "Filipililer",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Filipililer"
+        },
+        {
+          "text": "Philippians"
+        }
+      ]
+    },
+    {
+      "osisId": "Col",
+      "slug": "col",
+      "canon": "yeni-ahit",
+      "order": 50,
+      "nameTr": "Koloseliler",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Koloseliler"
+        },
+        {
+          "text": "Colossians"
+        }
+      ]
+    },
+    {
+      "osisId": "1Thess",
+      "slug": "1thess",
+      "canon": "yeni-ahit",
+      "order": 51,
+      "nameTr": "1. Selanikliler",
+      "ordinal": 1,
+      "names": [
+        {
+          "text": "Selanikliler"
+        },
+        {
+          "text": "Thessalonians"
+        }
+      ]
+    },
+    {
+      "osisId": "2Thess",
+      "slug": "2thess",
+      "canon": "yeni-ahit",
+      "order": 52,
+      "nameTr": "2. Selanikliler",
+      "ordinal": 2,
+      "names": [
+        {
+          "text": "Selanikliler"
+        },
+        {
+          "text": "Thessalonians"
+        }
+      ]
+    },
+    {
+      "osisId": "1Tim",
+      "slug": "1tim",
+      "canon": "yeni-ahit",
+      "order": 53,
+      "nameTr": "1. Timoteos",
+      "ordinal": 1,
+      "names": [
+        {
+          "text": "Timoteos"
+        },
+        {
+          "text": "Timothy"
+        }
+      ]
+    },
+    {
+      "osisId": "2Tim",
+      "slug": "2tim",
+      "canon": "yeni-ahit",
+      "order": 54,
+      "nameTr": "2. Timoteos",
+      "ordinal": 2,
+      "names": [
+        {
+          "text": "Timoteos"
+        },
+        {
+          "text": "Timothy"
+        }
+      ]
+    },
+    {
+      "osisId": "Titus",
+      "slug": "titus",
+      "canon": "yeni-ahit",
+      "order": 55,
+      "nameTr": "Titus",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Titus"
+        }
+      ]
+    },
+    {
+      "osisId": "Phlm",
+      "slug": "phlm",
+      "canon": "yeni-ahit",
+      "order": 56,
+      "nameTr": "Filimon",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Filimon"
+        },
+        {
+          "text": "Philemon"
+        }
+      ]
+    },
+    {
+      "osisId": "Heb",
+      "slug": "heb",
+      "canon": "yeni-ahit",
+      "order": 57,
+      "nameTr": "İbraniler",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "İbraniler"
+        },
+        {
+          "text": "Hebrews"
+        }
+      ]
+    },
+    {
+      "osisId": "Jas",
+      "slug": "jas",
+      "canon": "yeni-ahit",
+      "order": 58,
+      "nameTr": "Yakup",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Yakup",
+          "needsContext": true
+        },
+        {
+          "text": "James",
+          "needsContext": true
+        }
+      ]
+    },
+    {
+      "osisId": "1Pet",
+      "slug": "1pet",
+      "canon": "yeni-ahit",
+      "order": 59,
+      "nameTr": "1. Petrus",
+      "ordinal": 1,
+      "names": [
+        {
+          "text": "Petrus"
+        },
+        {
+          "text": "Peter"
+        }
+      ]
+    },
+    {
+      "osisId": "2Pet",
+      "slug": "2pet",
+      "canon": "yeni-ahit",
+      "order": 60,
+      "nameTr": "2. Petrus",
+      "ordinal": 2,
+      "names": [
+        {
+          "text": "Petrus"
+        },
+        {
+          "text": "Peter"
+        }
+      ]
+    },
+    {
+      "osisId": "1John",
+      "slug": "1john",
+      "canon": "yeni-ahit",
+      "order": 61,
+      "nameTr": "1. Yuhanna",
+      "ordinal": 1,
+      "names": [
+        {
+          "text": "Yuhanna"
+        },
+        {
+          "text": "John",
+          "needsContext": true
+        }
+      ]
+    },
+    {
+      "osisId": "2John",
+      "slug": "2john",
+      "canon": "yeni-ahit",
+      "order": 62,
+      "nameTr": "2. Yuhanna",
+      "ordinal": 2,
+      "names": [
+        {
+          "text": "Yuhanna"
+        },
+        {
+          "text": "John",
+          "needsContext": true
+        }
+      ]
+    },
+    {
+      "osisId": "3John",
+      "slug": "3john",
+      "canon": "yeni-ahit",
+      "order": 63,
+      "nameTr": "3. Yuhanna",
+      "ordinal": 3,
+      "names": [
+        {
+          "text": "Yuhanna"
+        },
+        {
+          "text": "John",
+          "needsContext": true
+        }
+      ]
+    },
+    {
+      "osisId": "Jude",
+      "slug": "jude",
+      "canon": "yeni-ahit",
+      "order": 64,
+      "nameTr": "Yahuda",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Yahuda",
+          "needsContext": true
+        },
+        {
+          "text": "Jude"
+        }
+      ]
+    },
+    {
+      "osisId": "Rev",
+      "slug": "rev",
+      "canon": "yeni-ahit",
+      "order": 65,
+      "nameTr": "Vahiy",
+      "ordinal": null,
+      "names": [
+        {
+          "text": "Vahiy",
+          "needsContext": true
+        },
+        {
+          "text": "Revelation"
+        }
+      ]
+    }
+  ]
+}

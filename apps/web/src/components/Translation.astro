@@ -1,5 +1,12 @@
 ---
-import { splitFootnoteMarkers } from "~/lib/data";
+import {
+  getScripture,
+  getScriptureBooks,
+  getScriptureQuotes,
+  splitFootnoteMarkers,
+  verseReferenceHref,
+} from "~/lib/data";
+import { splitVerseReferences } from "~/lib/footnote-refs";
 
 /**
  * Tek bir meal bloğu — DESIGN.md §5: aynı bileşen her sayfada aynı görünür.
@@ -24,6 +31,19 @@ import { splitFootnoteMarkers } from "~/lib/data";
  * yazmadan bir meal render edilemez. Boş geçilirse build durur. Değer HTML'e
  * yazılmaz — 7996 sayfa × ~20 meal, ölçülebilir bayt; kural build zamanında
  * uygulanıyor, çıktıda tekrarlanmasına gerek yok.
+ *
+ * ## Dipnottaki ayet atıfları (2026-09-06)
+ *
+ * Dipnot metni artık düz basılmıyor: içindeki ayet atıfları (`Bakara 2:83`,
+ * `{{16:96}}Nahl 16/96{{/}}`) aynı mealin o ayetine bağlanıyor. Hangi atfın
+ * bağlanacağına `~/lib/footnote-refs` karar verir; oradaki kural dar tutuldu
+ * çünkü aynı biçimde Tevrat/İncil atıfları da var. Meal METNİ bu işlemden
+ * geçmez — orada yalnızca `[1]` dipnot işaretleri ayrılır.
+ *
+ * Dipnottaki Tevrat/İncil atıfları da işaretlenir ve açılır bir kutuda o
+ * ayetin KISA alıntısı gösterilir (en fazla 200 karakter, kaynak künyesi ve
+ * yayıncı bağlantısıyla). Metin teliflidir, iktibas edilmiştir; sınırlar
+ * `data/scripture/LICENSE.md`. Alıntısı olmayan atıf düz metin kalır.
  */
 
 interface Footnote {
@@ -76,6 +96,10 @@ if (sourceDeclaredBy.trim() === "") {
   );
 }
 
+const scripture = getScripture();
+const books = getScriptureBooks();
+const quotes = getScriptureQuotes();
+
 const segments = splitFootnoteMarkers(
   text,
   footnotes.map((footnote) => footnote.number),
@@ -118,7 +142,61 @@ const markerId = (number: number): string => `dnr-${anchorPrefix}-${number}`;
                 <span aria-hidden="true">↑</span>
                 <span class="sr-only">metne dön, dipnot</span> {footnote.number}
               </a>{" "}
-              <span lang={lang}>{footnote.text}</span>
+              {/* <details> akis icerigidir, <span> icinde gecersiz olurdu;
+                  kapsayici div CSS ile satir ici gosteriliyor. */}
+              <div lang={lang} class="footnote-text">
+                {splitVerseReferences(footnote.text).map((segment) => {
+                  if (segment.kind === "text") return segment.value;
+
+                  if (segment.kind === "scripture") {
+                    const book = books.get(segment.osisId);
+                    const quote = quotes.get(
+                      `${segment.osisId}.${String(segment.chapter)}.${String(segment.verse)}`,
+                    );
+                    // Alıntısı olmayan atıf düz metin kalır: metin uydurulmaz.
+                    if (book === undefined || quote === undefined || scripture === null) {
+                      return segment.label;
+                    }
+                    const canon = book.canon === "eski-ahit" ? "Eski Ahit" : "Yeni Ahit";
+                    const merged = quote.spanEnd > quote.spanStart;
+                    // Tek ifade: cok satirli JSX "2:" ile "13" arasina bosluk
+                    // koyuyor ve kunye "2: 13" diye cikiyordu.
+                    const cite = merged
+                      ? `${book.nameTr} ${String(quote.chapter)}:${String(quote.spanStart)}-${String(quote.spanEnd)}`
+                      : `${book.nameTr} ${String(quote.chapter)}:${String(quote.verse)}`;
+                    return (
+                      <details class="scripture-ref" data-canon={book.canon}>
+                        {/* prettier-ignore */}
+                        <summary><span class="scripture-label">{segment.label}</span><span class="sr-only"> — {canon}, {book.nameTr}; alıntıyı aç</span></summary>
+                        <div class="scripture-quote">
+                          <p class="scripture-cite">
+                            {`${canon} · ${cite}`}
+                            {merged && (
+                              <span class="scripture-note"> (bu çeviride birlikte veriliyor)</span>
+                            )}
+                          </p>
+                          <blockquote lang="tr">{quote.text}</blockquote>
+                          <p class="scripture-source">
+                            {scripture.source.name} — {scripture.source.publisher}.
+                            {quote.truncated && " Alıntı 200 karakterde kesilmiştir."}{" "}
+                            <a href={scripture.source.url} rel="nofollow noopener" target="_blank">
+                              tam metin
+                            </a>
+                          </p>
+                        </div>
+                      </details>
+                    );
+                  }
+
+                  const href = verseReferenceHref(authorSlug, segment.surahId, segment.verseNumber);
+                  // Hedefi dogrulanamayan atif duz metin kalir (plan §1.5).
+                  // Etiket tek satirda yazilir: cok satirli JSX baglantinin
+                  // icine bosluk katiyor ve "(Bakara 2/40)" metni sayfada
+                  // "( Bakara 2/40 )" oluyordu.
+                  // prettier-ignore
+                  return href === null ? segment.label : <a class="verse-ref" href={href}>{segment.label}</a>;
+                })}
+              </div>
             </li>
           ))}
         </ol>
