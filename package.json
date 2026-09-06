@@ -40,13 +40,24 @@
     "//import": "DIKKAT: 'import' adi kullanilamaz — pnpm'in yerlesik 'pnpm import' komutuyla catisir ve pnpm-lock.yaml'i siler.",
     "data:import": "pnpm build:packages && pnpm --filter @kuran/import tanzil && pnpm --filter @kuran/import acikkuran && pnpm --filter @kuran/import transcription",
     "content:import": "pnpm build:packages && pnpm --filter @kuran/import content",
+    "//data:quranenc": "quranenc.com 3 Turkce meal (Rowwad, Saban Britch, Ali Ozek heyeti). Yeniden yayin izinli; kosul 3 geregi arayuzde SURUM NUMARASI gosterilmelidir.",
+    "data:quranenc": "pnpm build:packages && pnpm --filter @kuran/import quranenc",
+    "//data:quranenc-tafsir": "Sa'di tefsiri Turkce (quranenc). Meallerden AYRI uc: /api/v1/tafsir/. Kosul 3 geregi surum numarasi arayuzde gosterilir.",
+    "data:quranenc-tafsir": "pnpm build:packages && pnpm --filter @kuran/import quranenc-tafsir",
+    "//data:qul-tafsir": "el-Muhtasar Turkce (QUL 258). Dosya elle indirilir: cache/qul/turkish-mokhtasar.json — QUL indirmesi oturum ister.",
+    "data:qul-tafsir": "pnpm build:packages && pnpm --filter @kuran/import qul-tafsir",
+    "//data:qul-extra": "QUL ek veriler. Dosyalar elle indirilir (oturum ister), cache/qul/ altina konur: word-root.db, matching-ayah.json.",
+    "data:qul-roots": "pnpm build:packages && pnpm --filter @kuran/import qul-word-root",
+    "data:qul-matching": "pnpm build:packages && pnpm --filter @kuran/import qul-matching-ayah",
     "//data:elevation": "Konum yuksekliklerini Esri'den ceker ve data/locations/locations.json icine YAZAR. Tek seferlik; site build'i bu servise baglanmaz (CLAUDE.md kural 5).",
     "data:elevation": "pnpm build:packages && pnpm --filter @kuran/import elevation",
     "//data:import-fallback": "Açık Kuran erişilemezse: pnpm --filter @kuran/import tanzil-translations (9 Türkçe meal + çeviriyazı). İkisi birlikte çalıştırılmaz — yazar slug'ları çakışır.",
     "db:up": "docker compose --env-file .env -f infra/db/docker-compose.yml up -d",
     "db:down": "docker compose --env-file .env -f infra/db/docker-compose.yml down",
     "db:reset": "docker compose --env-file .env -f infra/db/docker-compose.yml down -v && docker compose --env-file .env -f infra/db/docker-compose.yml up -d",
-    "db:psql": "docker exec -it kuran-pg psql -U \"${DB_USER:-kuran}\" -d \"${DB_NAME:-kuran}\""
+    "db:psql": "docker exec -it kuran-pg psql -U \"${DB_USER:-kuran}\" -d \"${DB_NAME:-kuran}\"",
+    "data:scripture": "pnpm build:packages && pnpm --filter @kuran/import scripture",
+    "//data:scripture": "Meal dipnotlarinin atif yaptigi Kitab-i Mukaddes ayetlerini alintilar (<=200 karakter, kaynakli). Telifli metin TOPLU kopyalanmaz; bkz. scripts/import/scripture.ts ve data/scripture/LICENSE.md."
   },
   "devDependencies": {
     "playwright": "^1.63.0"

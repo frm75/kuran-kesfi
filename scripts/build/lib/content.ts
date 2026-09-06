@@ -2,6 +2,7 @@ import type {
   StaticConcept,
   StaticConceptsIndex,
   StaticLocations,
+  StaticManuscripts,
   StaticPrinciple,
   StaticPrinciplesIndex,
   StaticStoriesIndex,
@@ -9,6 +10,7 @@ import type {
   StaticSurahMeta,
   StaticTimeline,
   StaticVerseLinks,
+  StaticVerseManuscripts,
   StaticVerseRelations,
   StaticSurahSections,
 } from "@kuran/schema";
@@ -16,12 +18,14 @@ import {
   staticConcept,
   staticConceptsIndex,
   staticLocations,
+  staticManuscripts,
   staticPrinciple,
   staticPrinciplesIndex,
   staticStoriesIndex,
   staticStory,
   staticTimeline,
   staticVerseLinks,
+  staticVerseManuscripts,
   staticVerseRelations,
   staticSurahSections,
 } from "@kuran/schema";
@@ -540,6 +544,114 @@ export async function emitContent(
     const linked = Object.keys(relPayload.verses).length;
     info(`ayet iliskisi: ${relationRows.length.toLocaleString("tr-TR")} bag · ${linked} ayet`);
     report.note(`Ayet iliskisi: ${relationRows.length.toLocaleString("tr-TR")} bag · ${linked} / 6236 ayet`);
+  }
+
+  /*
+   * --- eski mushaf yazmalari -------------------------------------------------
+   *
+   * GORUNTU YOK: kaynaktaki 2322 yazmanin hepsinde goruntu izni "restricted";
+   * `url` yalnizca corpuscoranicum.de'ye derin baglantidir (CLAUDE.md kural 5).
+   *
+   * Iki dosya cikar:
+   *   manuscripts.json        — kunyeler + kapsanan ayet araliklari
+   *   verse_manuscripts.json  — ayet basina SAYI + en eski birkac yazma
+   *
+   * Ayet basina ortalama 70, en cok 94 yazma dusuyor. Hepsini ayet sayfasina
+   * basmak gurultuden baska bir sey olmaz; bu yuzden ayet tarafinda yalnizca
+   * sayi ve en eskiler tasinir, tam liste yazma sayfalarindadir.
+   */
+  const manuscriptRows = await q<{
+    id: number; title: string; repository: string | null; idno: string | null;
+    orig_date: string | null; date_start: number | null; script: string | null;
+    summary: string | null; page_count: number; url: string;
+  }>(
+    `SELECT id, title, repository, idno, orig_date, date_start, script, summary,
+            page_count, url
+       FROM manuscript
+      ORDER BY date_start NULLS LAST, id`,
+  );
+
+  if (manuscriptRows.length > 0) {
+    const rangeRows = await q<{ manuscript_id: number; start_verse_id: number; end_verse_id: number }>(
+      `SELECT manuscript_id, start_verse_id, end_verse_id
+         FROM manuscript_range
+        ORDER BY manuscript_id, start_verse_id`,
+    );
+    const rangesById = new Map<number, [number, number][]>();
+    for (const r of rangeRows) {
+      const list = rangesById.get(r.manuscript_id) ?? [];
+      if (list.length === 0) rangesById.set(r.manuscript_id, list);
+      list.push([r.start_verse_id, r.end_verse_id]);
+    }
+
+    const msPayload: StaticManuscripts = {
+      manuscripts: manuscriptRows.map((m) => ({
+        id: m.id,
+        title: m.title,
+        repository: m.repository,
+        idno: m.idno,
+        origDate: m.orig_date,
+        dateStart: m.date_start,
+        script: m.script,
+        summary: m.summary,
+        pageCount: m.page_count,
+        url: m.url,
+        ranges: rangesById.get(m.id) ?? [],
+      })),
+    };
+    verifyOrFail(staticManuscripts, msPayload, "manuscripts.json");
+    emitter.write("manuscripts.json", msPayload);
+
+    // Ayet -> yazma: aralik genisletmesi gercek ayet listesine karsi yapilir,
+    // cunku verse_id = sure*1000 + ayet ve sure asan araliklar arada var
+    // olmayan kimlikler icerir.
+    const verseIdRows = await q<{ id: number }>("SELECT id FROM verse ORDER BY id");
+    const verseIds = verseIdRows.map((v) => v.id);
+
+    // En eski once: tarihi olmayanlar sona.
+    const orderById = new Map(manuscriptRows.map((m, index) => [m.id, index]));
+    const OLDEST_SHOWN = 5;
+
+    const byVerse = new Map<number, number[]>();
+    for (const r of rangeRows) {
+      let low = 0;
+      let high = verseIds.length;
+      while (low < high) {
+        const mid = (low + high) >> 1;
+        if ((verseIds[mid] ?? 0) < r.start_verse_id) low = mid + 1;
+        else high = mid;
+      }
+      for (let i = low; i < verseIds.length; i += 1) {
+        const id = verseIds[i] ?? 0;
+        if (id > r.end_verse_id) break;
+        const list = byVerse.get(id) ?? [];
+        if (list.length === 0) byVerse.set(id, list);
+        list.push(r.manuscript_id);
+      }
+    }
+
+    const vmPayload: StaticVerseManuscripts = { verses: {} };
+    for (const [verseId, ids] of byVerse) {
+      const unique = [...new Set(ids)].sort(
+        (a, b) => (orderById.get(a) ?? Infinity) - (orderById.get(b) ?? Infinity),
+      );
+      vmPayload.verses[String(verseId)] = {
+        count: unique.length,
+        oldest: unique.slice(0, OLDEST_SHOWN),
+      };
+    }
+    verifyOrFail(staticVerseManuscripts, vmPayload, "verse_manuscripts.json");
+    emitter.write("verse_manuscripts.json", vmPayload);
+
+    const dated = manuscriptRows.filter((m) => m.date_start !== null).length;
+    info(
+      `yazma: ${manuscriptRows.length} kunye · ${rangeRows.length} aralik · ` +
+        `${byVerse.size} / 6236 ayet kapsandi · ${dated} tarihli`,
+    );
+    report.note(
+      `Yazma: ${manuscriptRows.length} kunye · ${rangeRows.length} ayet araligi · ` +
+        `${byVerse.size} / 6236 ayet · ${dated} tarihlenebilir · goruntu yok, derin baglanti`,
+    );
   }
 
   info(

@@ -661,6 +661,116 @@
   padding: 0 0.15em;
 }
 
+/*
+ * Dipnottaki ayet atfı (2026-09-06).
+ *
+ * "Bakara 2:83" gibi bir atıf aynı mealin o ayetine gider. Dipnot zaten sönük
+ * ve küçük; bağlantı burada altı çizili DEĞİL, noktalı — sürekli atıf içeren
+ * dipnotlarda (Süleymaniye Vakfı'nda tek dipnotta onlarca var) düz altçizgi
+ * satırı okunmaz hâle getiriyordu.
+ */
+.translation .verse-ref {
+  color: inherit;
+  text-decoration: underline dotted;
+  text-underline-offset: 0.2em;
+  text-decoration-color: var(--border-strong);
+}
+.translation .verse-ref:hover,
+.translation .verse-ref:focus-visible {
+  color: var(--accent-text);
+  text-decoration: underline solid;
+}
+
+/* Dipnot gövdesi satır içi akar; <details> taşıyabilmesi için div (bkz.
+   Translation.astro). */
+.translation .footnote-text {
+  display: inline;
+}
+
+/*
+ * Kitab-ı Mukaddes atfı (2026-09-06).
+ *
+ * Kur'an atfından AYRI görünmeli: Kur'an atfı bağlantıdır, tıklayınca ayete
+ * gider; bu ise açılır bir alıntı kutusudur ve siteden çıkarmaz. Karışırlarsa
+ * okuyucu neyin nereye gittiğini bilemez.
+ *
+ * JavaScript yok — <details>. Kutu mutlak konumlanır, yoksa açılınca dipnot
+ * satırını ikiye bölerdi.
+ */
+.translation .scripture-ref {
+  position: relative;
+  display: inline;
+}
+.translation .scripture-ref > summary {
+  display: inline;
+  cursor: pointer;
+  list-style: none;
+}
+.translation .scripture-ref > summary::-webkit-details-marker {
+  display: none;
+}
+.translation .scripture-ref > summary::marker {
+  content: "";
+}
+.translation .scripture-label {
+  border-bottom: 1px dashed var(--border-strong);
+  color: var(--text-secondary);
+}
+.translation .scripture-ref[open] .scripture-label,
+.translation .scripture-ref > summary:hover .scripture-label,
+.translation .scripture-ref > summary:focus-visible .scripture-label {
+  border-bottom-style: solid;
+  color: var(--text-primary);
+}
+/* Açık olduğunu belli eden küçük işaret — rozet değil, sessiz bir imleç. */
+.translation .scripture-label::after {
+  content: "❞";
+  margin-inline-start: 0.25em;
+  font-size: 0.8em;
+  opacity: 0.55;
+}
+
+.translation .scripture-quote {
+  position: absolute;
+  z-index: 25;
+  top: 1.6em;
+  left: 0;
+  width: max-content;
+  max-width: min(32rem, calc(100vw - 2 * var(--space-4)));
+  padding: var(--space-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-overlay);
+  box-shadow: var(--shadow-lg);
+  white-space: normal;
+}
+.translation .scripture-cite {
+  margin: 0 0 var(--space-2);
+  color: var(--accent-text);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-medium);
+}
+.translation .scripture-note {
+  color: var(--text-muted);
+  font-weight: var(--fw-normal);
+}
+.translation .scripture-quote blockquote {
+  margin: 0;
+  padding-inline-start: var(--space-3);
+  border-inline-start: 2px solid var(--accent-muted);
+  color: var(--text-primary);
+  font-family: var(--font-reading);
+  font-size: var(--text-sm);
+  line-height: var(--lh-normal);
+}
+/* Telif künyesi gizlenemez: alıntının şartı (data/scripture/LICENSE.md). */
+.translation .scripture-source {
+  margin: var(--space-2) 0 0;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+}
+
 /* Bağlantıyla gelinen dipnot vurgulanır — nereye düşüldüğü belli olsun. */
 .translation li:target {
   background-color: var(--accent-muted);
@@ -1220,6 +1330,118 @@
 }
 .chip.is-accent b {
   color: var(--accent-text);
+}
+
+/* --- Meal seçici --------------------------------------------------------- */
+
+/*
+ * Sure sayfasındaki meal geçişi (2026-09-06). Bileşen:
+ * src/components/MealSecici.astro — orada NEDEN ayrı sayfa, neden <details>
+ * yazıyor. Burada yalnızca görünüş var.
+ *
+ * Kapalı hâli eski `meal: Diyanet İşleri` çipiyle aynı görünür; okuyucu hiçbir
+ * şeyi kaybetmeden yeni bir kapı kazanır. JavaScript yok: <details> tarayıcının
+ * kendi ögesi, klavye ve ekran okuyucu desteği hazır gelir.
+ */
+.meal-picker {
+  position: relative;
+}
+.meal-picker > summary {
+  cursor: pointer;
+  /* Üçgen işaretçi kendi ok karakterimizle çakışmasın. */
+  list-style: none;
+}
+.meal-picker > summary::-webkit-details-marker {
+  display: none;
+}
+.meal-picker > summary::marker {
+  content: "";
+}
+.meal-picker > summary:hover {
+  border-color: var(--accent-text);
+}
+.meal-picker > summary:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+}
+.meal-picker-caret {
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+.meal-picker[open] .meal-picker-caret {
+  transform: rotate(180deg);
+}
+
+.meal-picker-panel {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  width: max-content;
+  max-width: min(38rem, calc(100vw - 2 * var(--space-4)));
+  max-height: min(60vh, 26rem);
+  overflow-y: auto;
+  padding: var(--space-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-overlay);
+  box-shadow: var(--shadow-lg);
+}
+.meal-picker-note {
+  margin: 0 0 var(--space-2);
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  /* Not tek sütun kalsın; liste altında iki sütuna ayrılıyor. */
+  max-width: 30rem;
+}
+.meal-picker-panel ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  columns: 2;
+  column-gap: var(--space-4);
+}
+.meal-picker-panel li {
+  /* Sütun kırılması bir satırı ikiye bölmesin. */
+  break-inside: avoid;
+  margin: 0;
+}
+.meal-picker-panel a,
+.meal-picker-current,
+.meal-picker-missing {
+  display: block;
+  padding: 0.25rem var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.meal-picker-panel a {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+.meal-picker-panel a:hover {
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
+}
+.meal-picker-current {
+  background-color: var(--bg-elevated);
+  color: var(--accent-text);
+  font-weight: var(--fw-medium);
+}
+/* Kaynakta olmayan meal listeden ATILMAZ, sönük durur (plan §1.5). */
+.meal-picker-missing {
+  color: var(--text-muted);
+}
+.meal-picker-missing small {
+  font-size: var(--text-xs);
+  opacity: 0.8;
+}
+
+@media (max-width: 30rem) {
+  .meal-picker-panel ul {
+    columns: 1;
+  }
 }
 
 /* --- Sıçrama çubuğu ------------------------------------------------------ */
@@ -2743,4 +2965,173 @@ a.ctx-num:hover {
 }
 .location-list .tag-list {
   margin-top: var(--space-3);
+}
+
+/* -----------------------------------------------------------------------------
+   Eski mushaf yazmaları — /yazmalar, /yazma/<id> ve ayet sayfası bölümü.
+
+   Görüntü yoktur (kaynakta hepsi "restricted"), bu yüzden tasarım tamamen
+   metin: tarih solda sabit genişlikte, başlık yanında. JavaScript yok.
+   ----------------------------------------------------------------------------- */
+
+.century-grid {
+  display: grid;
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  list-style: none;
+}
+.century-grid a {
+  display: flex;
+  padding: var(--space-3);
+  flex-direction: column;
+  gap: var(--space-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-elevated);
+  color: inherit;
+  text-decoration: none;
+}
+.century-grid a:hover {
+  border-color: var(--accent-text);
+}
+.cen-label {
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+}
+.cen-count {
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--text-xl);
+  font-weight: var(--fw-semi);
+}
+.cen-unit {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+
+.ms-list {
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.ms-item {
+  display: grid;
+  padding: var(--space-3) 0;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-4);
+  border-bottom: 1px solid var(--border);
+  color: inherit;
+  grid-template-columns: 8rem 1fr;
+  text-decoration: none;
+}
+.ms-item:hover .ms-title {
+  color: var(--accent-text);
+}
+.ms-date {
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+.ms-title {
+  color: var(--text-primary);
+  font-size: var(--text-base);
+}
+.ms-meta {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  grid-column: 2;
+}
+@media (max-width: 34rem) {
+  .ms-item {
+    grid-template-columns: 1fr;
+  }
+  .ms-meta {
+    grid-column: 1;
+  }
+}
+
+.ms-facts {
+  display: grid;
+  margin: var(--space-6) 0 0;
+  gap: var(--space-1) var(--space-4);
+  grid-template-columns: max-content 1fr;
+}
+.ms-facts dt {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+.ms-facts dd {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+}
+
+.ms-summary {
+  margin: var(--space-3) 0 0;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  line-height: var(--lh-relaxed);
+}
+
+/* Görüntü kısıtı ve eksik veri uyarısı — gizlenmez, açıkça yazılır. */
+.ms-warn {
+  margin: var(--space-3) 0 0;
+  padding: var(--space-3);
+  border-inline-start: 3px solid var(--border);
+  background-color: var(--bg-elevated);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  line-height: var(--lh-normal);
+}
+
+.ms-range-list {
+  display: flex;
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  list-style: none;
+}
+.ms-range-list li {
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+}
+.ms-cross {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+
+.ms-verse-list {
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.ms-verse-item {
+  display: grid;
+  padding: var(--space-2) 0;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+  border-bottom: 1px solid var(--border);
+  color: inherit;
+  grid-template-columns: 7rem 1fr;
+  text-decoration: none;
+}
+.ms-verse-item:hover .ms-title {
+  color: var(--accent-text);
+}
+.ms-verse-item .ms-meta {
+  grid-column: 2;
+}
+@media (max-width: 34rem) {
+  .ms-verse-item {
+    grid-template-columns: 1fr;
+  }
+  .ms-verse-item .ms-meta {
+    grid-column: 1;
+  }
 }

@@ -60,7 +60,26 @@ CREATE TYPE location_confidence AS ENUM ('kesin', 'muhtemel', 'gelenek', 'tartis
 
 CREATE TYPE revelation_type AS ENUM ('mekki', 'medeni');
 
-CREATE TYPE author_source AS ENUM ('acikkuran', 'quran.com', 'tanzil', 'manual');
+CREATE TYPE author_source AS ENUM ('acikkuran', 'quran.com', 'tanzil', 'quranenc', 'manual');
+
+-- Tefsir blogunun turu. Kaynak (quranenc / Sa'dî) bloklari Arapça etiketlerle
+-- veriyor; etiket `tafsir_block.source_type` icinde OLDUGU GIBI saklanir, bu tur
+-- yalnizca arayuzun ayirt edebilmesi icindir. Taninmayan etiket 'diger' olur ve
+-- rapora yazilir — sessizce ayet tefsiri sayilmaz.
+CREATE TYPE tafsir_block_type AS ENUM (
+  'sure_adi',      -- اسم السورة
+  'nuzul_yeri',    -- مكان نزول السورة
+  'pasaj',         -- المقطع — ayet grubunun meal metni
+  'giris',         -- تمهيد للآيات · تمهيد للمقطع
+  'ayet_tefsiri',  -- تفسير آية · تكملة تفسير الآية
+  'besmele',       -- البسملة · تفسير البسملة
+  'fasil',         -- فصل — kıssa sonundaki ders/ibret bölümü
+  'faideler',      -- فوائد للآيات · فوائد للسورة
+  'hatime',        -- خاتمة للآيات السابقة
+  'alinti',        -- اقتباس — başka bir esere yapılan uzun alıntı
+  'sure_sonu',     -- خاتمة السورة
+  'diger'
+);
 
 CREATE TYPE story_type AS ENUM ('prophet', 'people', 'person', 'event');
 
@@ -215,6 +234,111 @@ CREATE TABLE footnote (
   text           text NOT NULL CHECK (btrim(text, blank_trim_set()) <> ''),
   UNIQUE (translation_id, number)
 );
+
+-- -----------------------------------------------------------------------------
+-- Tefsir (plan §3, §12.9)
+--
+-- Meal ile tefsir AYRI tablolardir: meal ayet basinadir, tefsir ayet ARALIGI
+-- basinadir ve bir kismi hic ayete bagli degildir (sure adi, nuzul yeri, sure
+-- sonu). Ikisini tek tabloya sikistirmak ya ayet bagini uydurmayi ya da
+-- kaynagin yapisini bozmayi gerektirirdi.
+-- -----------------------------------------------------------------------------
+
+CREATE TABLE tafsir (
+  id           integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  slug         text NOT NULL UNIQUE CHECK (slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$'),
+  name         text NOT NULL CHECK (length(btrim(name)) > 0),
+  work_title   text,
+  author       text,
+  language     char(2) NOT NULL,
+  -- source.slug — hangi kaynaktan geldigi; atif yukumlulugu oradan okunur
+  source_slug  text NOT NULL REFERENCES source (slug) ON DELETE RESTRICT,
+  -- Telif kurali (CLAUDE.md §6): lisansi belirsiz tefsir import edilmez.
+  license      text NOT NULL CHECK (length(btrim(license)) > 0),
+  license_note text,
+  url          text,
+  -- Kütüphane ≠ yayın (docs/KAYNAK_ENVANTERI.md §0): içe almak ile göstermek
+  -- ayrı kararlardır. false = eser kütüphanede durur, siteye çıkmaz.
+  -- Yayın kararı editoryaldir; statik dışa aktarım bu alanı süzer.
+  publishable  boolean NOT NULL DEFAULT false
+);
+
+COMMENT ON TABLE tafsir IS
+  'Plan §3. Tefsir eserleri. publishable=false olan eser kütüphanede durur, '
+  'siteye çıkarılmaz (docs/KAYNAK_ENVANTERI.md §0).';
+
+CREATE TABLE tafsir_block (
+  id             integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  tafsir_id      integer NOT NULL REFERENCES tafsir (id) ON DELETE CASCADE,
+  surah_id       integer NOT NULL REFERENCES surah (id) ON DELETE CASCADE,
+  -- Kaynaktaki sira; sure icinde blok dizilisini korur
+  sort_number    integer NOT NULL CHECK (sort_number > 0),
+  block_type     tafsir_block_type NOT NULL,
+  -- Kaynagin kendi tur etiketi, ceviri yapilmadan. Tanimadigimiz bir etiket
+  -- gelirse block_type 'diger' olur ama etiket burada durur; veri kaybolmaz.
+  source_type    text,
+  -- Sure geneli bloklarda (sure adi, nuzul yeri, sure sonu) ayet bagi YOKTUR;
+  -- uydurmak yerine NULL birakilir. Ikisi ya birlikte dolu ya birlikte bostur.
+  start_verse_id integer REFERENCES verse (id) ON DELETE CASCADE,
+  end_verse_id   integer REFERENCES verse (id) ON DELETE CASCADE,
+  text           text NOT NULL CHECK (btrim(text, blank_trim_set()) <> ''),
+  UNIQUE (tafsir_id, surah_id, sort_number),
+  CONSTRAINT tafsir_block_verse_pair CHECK (
+    (start_verse_id IS NULL) = (end_verse_id IS NULL)
+  ),
+  CONSTRAINT tafsir_block_verse_order CHECK (
+    start_verse_id IS NULL OR end_verse_id >= start_verse_id
+  )
+);
+
+-- "Bu ayetin tefsiri" sorgusu: start_verse_id <= id <= end_verse_id
+CREATE INDEX tafsir_block_range_idx ON tafsir_block (start_verse_id, end_verse_id)
+  WHERE start_verse_id IS NOT NULL;
+CREATE INDEX tafsir_block_surah_idx ON tafsir_block (tafsir_id, surah_id, sort_number);
+
+-- -----------------------------------------------------------------------------
+-- Eski mushaf yazmaları (Corpus Coranicum)
+--
+-- Kaynak CC BY-SA 4.0'dır; `data/` ağacının CC BY-NC-SA'sıyla birleştirilemez.
+-- Bu yüzden veri `data-external/corpus-coranicum/` altında durur ve buraya
+-- scripts/import/corpus_coranicum.ts ile yüklenir.
+--
+-- GÖRÜNTÜ YOKTUR: taranan 2322 yazmanın hepsinde görüntü izni "restricted".
+-- Yalnızca corpuscoranicum.de'ye derin bağlantı verilir (CLAUDE.md kural 5).
+-- -----------------------------------------------------------------------------
+
+CREATE TABLE manuscript (
+  -- Corpus Coranicum'un kendi kimliği; derin bağlantı bu sayıyla kurulur
+  id          integer PRIMARY KEY,
+  title       text NOT NULL CHECK (length(btrim(title)) > 0),
+  repository  text,
+  idno        text,
+  -- Kaynağın kendi tarihlemesi ("700-800"); yorumlanmadan aktarılır
+  orig_date   text,
+  -- Tarihlemenin başlangıç yılı — sıralama için orig_date'ten çıkarılır.
+  -- Çıkarılamıyorsa NULL; uydurulmaz.
+  date_start  smallint,
+  script      text,
+  summary     text,
+  page_count  integer NOT NULL DEFAULT 0 CHECK (page_count >= 0),
+  url         text NOT NULL
+);
+
+COMMENT ON TABLE manuscript IS
+  'Corpus Coranicum yazma künyeleri. Görüntü taşımaz; yalnızca derin bağlantı.';
+
+-- Bir yazmanın kapsadığı ayet aralıkları (sayfa sayfa değil, birleştirilmiş).
+-- Sayfa düzeyi ayrıntı data-external/corpus-coranicum/pages.json içindedir.
+CREATE TABLE manuscript_range (
+  id             integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  manuscript_id  integer NOT NULL REFERENCES manuscript (id) ON DELETE CASCADE,
+  start_verse_id integer NOT NULL REFERENCES verse (id) ON DELETE CASCADE,
+  end_verse_id   integer NOT NULL REFERENCES verse (id) ON DELETE CASCADE,
+  UNIQUE (manuscript_id, start_verse_id, end_verse_id),
+  CONSTRAINT manuscript_range_order CHECK (end_verse_id >= start_verse_id)
+);
+
+CREATE INDEX manuscript_range_verse_idx ON manuscript_range (start_verse_id, end_verse_id);
 
 -- -----------------------------------------------------------------------------
 -- §4.2 — Kelime / kök

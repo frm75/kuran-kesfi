@@ -33,6 +33,8 @@ import {
   staticStory,
   staticTimeline,
   staticVerseLinks,
+  staticManuscripts,
+  staticVerseManuscripts,
   staticVerseRelations,
   staticSurahSections,
   storyInput,
@@ -41,6 +43,9 @@ import {
   staticRoot,
   staticRootsIndex,
   staticVerseWords,
+  scriptureBooksFile,
+  scriptureQuotesFile,
+  staticScripture,
   staticSources,
   staticSurah,
   staticSurahTranslation,
@@ -378,6 +383,10 @@ function checkStaticOutput(): void {
       const result = staticSources.safeParse(parsed);
       checksRun += 1;
       if (!result.success) errors.push(`${relativePath}: ${result.error.message}`);
+    } else if (relativePath === "scripture.json") {
+      const result = staticScripture.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) errors.push(`${relativePath}: ${result.error.message}`);
     } else if (relativePath === "authors_index.json") {
       const result = staticAuthorsIndex.safeParse(parsed);
       checksRun += 1;
@@ -404,6 +413,7 @@ function checkStaticOutput(): void {
           acikkuran: "acikkuran.com",
           tanzil: "tanzil.net/trans",
           "quran.com": "quran.com",
+          quranenc: "quranenc.com",
         };
         const links = result.data.requiredAttributionLinks.map((l) => l.url).join(" ");
         for (const source of new Set(result.data.authors.map((a) => a.source))) {
@@ -720,6 +730,42 @@ function checkStaticOutput(): void {
           }
         }
       }
+    } else if (relativePath === "manuscripts.json") {
+      const result = staticManuscripts.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) errors.push(`${relativePath}: ${result.error.message}`);
+      else {
+        /*
+         * Yazma verisi CC BY-SA 4.0 ve GORUNTU TASIMAZ: kaynaktaki kayitlarin
+         * hepsinde goruntu izni "restricted". Buraya bir goruntu adresi
+         * sizarsa lisans ihlali olur — build durur.
+         */
+        for (const m of result.data.manuscripts) {
+          if (!m.url.startsWith("https://corpuscoranicum.de/")) {
+            errors.push(`${relativePath}: ${String(m.id)} kaynak disi adres: ${m.url}`);
+            break;
+          }
+          const bad = m.ranges.find(([start, end]) => end < start);
+          if (bad !== undefined) {
+            errors.push(`${relativePath}: ${String(m.id)} ters aralik ${bad[0]}-${bad[1]}`);
+            break;
+          }
+        }
+      }
+    } else if (relativePath === "verse_manuscripts.json") {
+      const result = staticVerseManuscripts.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) errors.push(`${relativePath}: ${result.error.message}`);
+      else {
+        for (const [key, entry] of Object.entries(result.data.verses)) {
+          if (entry.oldest.length > entry.count) {
+            errors.push(
+              `${relativePath}: ${key} icin gosterilen yazma sayisi toplamdan buyuk`,
+            );
+            break;
+          }
+        }
+      }
     } else {
       warn("statik cikti", `${relativePath} icin tanimli sema yok, atlandi`);
     }
@@ -826,7 +872,13 @@ function checkStaticOutput(): void {
    */
   const PAGE_BUDGET = 300 * 1024;
   const BUILD_ONLY_BUDGET = 8 * 1024 * 1024;
-  const buildOnly = new Set(["verse_links.json", "verse_relations.json"]);
+  const buildOnly = new Set([
+    "verse_links.json",
+    "verse_relations.json",
+    // 2322 yazma kunyesi + ayet araliklari; hicbir sayfa indirmez, build okur.
+    "manuscripts.json",
+    "verse_manuscripts.json",
+  ]);
 
   checksRun += 1;
   for (const path of files) {
@@ -891,6 +943,8 @@ async function checkManualData(): Promise<void> {
     | { safeParse: (v: unknown) => { success: boolean; error?: { message: string } } }
     | null => {
     if (rel === "data/sources/content_sources.json") return contentSourcesFile;
+    if (rel === "data/scripture/books.json") return scriptureBooksFile;
+    if (rel === "data/scripture/quotes.json") return scriptureQuotesFile;
     if (rel === "data/locations/locations.json") return locationsFile;
     if (rel === "data/timeline/timeline.json") return timelineFile;
     if (rel === "data/timeline/noldeke_order.json") return noldekeOrderFile;

@@ -326,6 +326,57 @@ export const staticVerseRelations = z.object({
 });
 export type StaticVerseRelations = z.infer<typeof staticVerseRelations>;
 
+// --- Eski mushaf yazmaları -----------------------------------------------------
+
+/**
+ * Yazma künyesi — statik dışa aktarım.
+ *
+ * GÖRÜNTÜ TAŞIMAZ: kaynakta 2322 yazmanın hepsinde görüntü izni "restricted";
+ * `url` yalnızca corpuscoranicum.de'ye derin bağlantıdır (CLAUDE.md kural 5).
+ */
+export const staticManuscript = z.object({
+  id: z.number().int().positive(),
+  title: z.string().min(1),
+  repository: z.string().nullable(),
+  idno: z.string().nullable(),
+  /** Kaynağın kendi tarihlemesi ("700-800"); yorumlanmadan aktarılır */
+  origDate: z.string().nullable(),
+  /** origDate'ten çıkarılan başlangıç yılı; çıkarılamıyorsa null */
+  dateStart: z.number().int().nullable(),
+  script: z.string().nullable(),
+  summary: z.string().nullable(),
+  pageCount: z.number().int().min(0),
+  url: z.string(),
+  /** Kapsadığı ayet aralıkları: [başlangıç verse.id, bitiş verse.id] */
+  ranges: z.array(z.tuple([z.number().int(), z.number().int()])),
+});
+export type StaticManuscript = z.infer<typeof staticManuscript>;
+
+export const staticManuscripts = z.object({
+  manuscripts: z.array(staticManuscript),
+});
+export type StaticManuscripts = z.infer<typeof staticManuscripts>;
+
+/**
+ * Ayet → yazma özeti.
+ *
+ * Ayet başına ortalama 70, en çok 94 yazma düşüyor; hepsini ayet sayfasına
+ * basmak gürültüden başka bir şey olmaz. Bu yüzden yalnızca SAYI ve en eski
+ * birkaç yazmanın kimliği taşınır; tam liste yazma sayfalarındadır.
+ */
+export const staticVerseManuscripts = z.object({
+  verses: z.record(
+    z.string().regex(/^\d+$/),
+    z.object({
+      /** Bu ayeti taşıyan toplam yazma sayısı */
+      count: z.number().int().positive(),
+      /** En eski tarihlenen birkaç yazmanın kimliği */
+      oldest: z.array(z.number().int().positive()),
+    }),
+  ),
+});
+export type StaticVerseManuscripts = z.infer<typeof staticVerseManuscripts>;
+
 // --- Sure içi konu bölümlemesi ------------------------------------------------
 
 /**

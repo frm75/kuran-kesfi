@@ -27,6 +27,7 @@ import type {
   StaticVerseRelations,
   StaticSurahSection,
   StaticSurahSections,
+  StaticScripture,
 } from "@kuran/schema";
 
 /**
@@ -134,6 +135,113 @@ export const getDefaultAuthor = once((): StaticAuthor => {
   if (chosen === undefined) throw new Error("authors_index.json bos: ontanimli meal yok");
   return chosen;
 });
+
+/**
+ * Sure okuma ekraninda secilebilen mealler — Turkce olanlar, gosterim sirasiyla.
+ *
+ * Neden yalnizca Turkce (kullanici karari, 2026-09-06): her ek meal butun
+ * sureyi bastan uretmek demek (114 sayfa, ~7,2 MB HTML — Arapca metin ve
+ * ceviriyazi her sayfada tekrarliyor). 53 mealin hepsi icin sure boyu sayfa
+ * uretmek ~382 MB ve 6042 sayfa ederdi; Ingilizce cevirilerin sure boyu okuma
+ * degeri bunu karsilamiyor. Ingilizce ceviriler kaybolmadi: ayet sayfasinda
+ * 53'unun hepsi duruyor (`/<sure>/<ayet>`).
+ */
+export const getTurkishAuthors = once((): StaticAuthor[] => {
+  const turkish = getAuthorsIndex().authors.filter((author) => author.language === "tr");
+  const bySlug = new Map(turkish.map((author) => [author.slug, author]));
+  return sortAuthorsForDisplay(turkish.map((author) => author.slug)).flatMap((slug) => {
+    const author = bySlug.get(slug);
+    return author === undefined ? [] : [author];
+  });
+});
+
+/**
+ * Bir mealin bir suresi kaynakta var mi.
+ *
+ * `missingSurahs` yazar kaydinin kendi alani (Suleymaniye Vakfi / Tahrim).
+ * Dosya sistemine bakilmiyor: veri zaten linter'dan geciyor ve 114 x 26
+ * `existsSync` cagrisi build'e bedava gelmez.
+ */
+export function authorHasSurah(author: StaticAuthor, surahId: number): boolean {
+  return !author.missingSurahs.includes(surahId);
+}
+
+/** Bir mealin sure okuma adresi. Ontanimli meal kanonik adreste durur. */
+export function surahReadingPath(surahSlug: string, authorSlug: string): string {
+  return authorSlug === getDefaultAuthor().slug
+    ? `/${surahSlug}`
+    : `/${surahSlug}/meal/${authorSlug}`;
+}
+
+/**
+ * Kitab-i Mukaddes kitap sozlugu ve alintilar — plan disi, kullanici karari
+ * (2026-09-06).
+ *
+ * Meal dipnotlari Tevrat ve Incil'e de atif yapiyor. Atif kunyesi ve ayetin
+ * KISA alintisi (en fazla 200 karakter, kaynak linkiyle) burada. Metin
+ * teliflidir ve iktibas edilmistir; sinirlar `data/scripture/LICENSE.md`.
+ *
+ * Dosya yoksa null doner ve dipnotlar eskisi gibi duz metin kalir — icerik
+ * gelmeden de site kurulur.
+ */
+export const getScripture = once((): StaticScripture | null =>
+  readJsonOrNull<StaticScripture>("scripture.json"),
+);
+
+/** OSIS koduna gore kitap kaydi ("Gen" -> Yaratılış). */
+export const getScriptureBooks = once((): ReadonlyMap<string, StaticScripture["books"][number]> => {
+  const map = new Map<string, StaticScripture["books"][number]>();
+  for (const book of getScripture()?.books ?? []) map.set(book.osisId, book);
+  return map;
+});
+
+/**
+ * Bir Kitab-i Mukaddes ayetinin alintisi.
+ *
+ * Alinti yoksa null doner ve arayuz yalnizca kunyeyi gosterir — metin
+ * uydurulmaz. Boyle durumlar var: dipnot olmayan bir ayete atif yapmis
+ * olabilir ya da atif Kur'an atfinin yanlislikla kitap adiyla eslesmesidir.
+ */
+export const getScriptureQuotes = once(
+  (): ReadonlyMap<string, StaticScripture["quotes"][number]> => {
+    const map = new Map<string, StaticScripture["quotes"][number]>();
+    for (const quote of getScripture()?.quotes ?? []) {
+      map.set(`${quote.osisId}.${String(quote.chapter)}.${String(quote.verse)}`, quote);
+    }
+    return map;
+  },
+);
+
+/**
+ * Bir dipnottaki ayet atfinin gidecegi adres.
+ *
+ * Kullanici karari (2026-09-06): atif AYNI MEALDEN acilmali — Mehmet Okuyan'in
+ * dipnotu "Nahl 16:125" diyorsa okuyucu Nahl 16:125'i yine Mehmet Okuyan'in
+ * mealinde gormeli. Turkce meallerin sure sayfasi var, oraya ayet cipasiyla
+ * gidilir.
+ *
+ * Ingilizce ceviriler icin sure boyu sayfa uretilmiyor (bkz. getTurkishAuthors)
+ * — onlarda ayet sayfasina dusulur; o cevirinin metni de orada duruyor.
+ *
+ * Olmayan ayet icin `null` doner ve cagiran taraf metni duz birakir: uydurma
+ * adres uretilmez.
+ */
+export function verseReferenceHref(
+  authorSlug: string,
+  surahId: number,
+  verseNumber: number,
+): string | null {
+  const surah = getSurahMetaById().get(surahId);
+  if (surah === undefined) return null;
+  if (verseNumber < 1 || verseNumber > surah.verseCount) return null;
+
+  const author = getAuthorsIndex().authors.find((item) => item.slug === authorSlug);
+  if (author === undefined || author.language !== "tr") {
+    return `/${surah.slug}/${String(verseNumber)}`;
+  }
+  if (!authorHasSurah(author, surahId)) return `/${surah.slug}/${String(verseNumber)}`;
+  return `${surahReadingPath(surah.slug, authorSlug)}#ayet-${String(verseNumber)}`;
+}
 
 /** Turkce mealler once, sonra digerleri; her grup oncelik/ada gore. */
 export function sortAuthorsForDisplay(slugs: readonly string[]): string[] {

@@ -52,7 +52,7 @@ export const verse = z.object({
 export type Verse = z.infer<typeof verse>;
 
 /** Meal kaynagi (plan 3.1). */
-export const authorSource = z.enum(["acikkuran", "quran.com", "tanzil", "manual"]);
+export const authorSource = z.enum(["acikkuran", "quran.com", "tanzil", "quranenc", "manual"]);
 export type AuthorSource = z.infer<typeof authorSource>;
 
 /**

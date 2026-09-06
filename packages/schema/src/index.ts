@@ -31,3 +31,4 @@ export * from "./user_data.js";
 export * from "./static_data.js";
 export * from "./static_content.js";
 export * from "./content_input.js";
+export * from "./scripture.js";

@@ -1,6 +1,6 @@
 ---
 import Base from "~/layouts/Base.astro";
-import { getAuthorsIndex, getSources, getSurahsIndex } from "~/lib/data";
+import { getAuthorsIndex, getScripture, getSources, getSurahsIndex } from "~/lib/data";
 
 /**
  * Kaynak Şeffaflığı sayfası — plan §9 ve §12.10.
@@ -13,6 +13,7 @@ import { getAuthorsIndex, getSources, getSurahsIndex } from "~/lib/data";
  */
 
 const sources = getSources().sources;
+const scripture = getScripture();
 const { authors, requiredAttributionLinks } = getAuthorsIndex();
 const surahById = new Map(getSurahsIndex().surahs.map((s) => [s.id, s]));
 
@@ -99,7 +100,10 @@ if (sources.length === 0) {
           {
             turkish.map((author) => (
               <tr>
-                <th scope="row">{author.name}</th>
+                <th scope="row">
+                  {author.name}
+                  {author.licenseNote && <span class="author-note">{author.licenseNote}</span>}
+                </th>
                 <td>{author.workTitle ?? "—"}</td>
                 <td>{sourceBySlug.get(author.source)?.name ?? author.source}</td>
                 <td>{author.license}</td>
@@ -169,6 +173,37 @@ if (sources.length === 0) {
         )
       }
     </section>
+
+    {
+      scripture !== null && scripture.quotes.length > 0 && (
+        <section class="mt-12">
+          <h2 class="text-xl">Kitab-ı Mukaddes alıntıları</h2>
+          <p class="text-text-secondary mt-2 text-sm">
+            Bazı meallerin dipnotları Tevrat ve İncil'e atıf yapıyor. Atıf yapılan ayetin
+            metni, okuyucu neye atıf yapıldığını görebilsin diye dipnotta açılır bir kutuda
+            gösteriliyor. Bu metin bize ait değildir ve yeniden lisanslanmamıştır: telifli
+            bir çeviriden, kaynak gösterilerek yapılmış <b>iktibastır</b> (FSEK m. 35).
+          </p>
+          <ul class="mt-4 list-none space-y-1 p-0 text-text-secondary text-sm">
+            <li>
+              <b>{scripture.source.name}</b> — {scripture.source.publisher}
+            </li>
+            <li>{scripture.source.license}</li>
+            <li>
+              Yalnızca dipnotta atıf yapılan <b>{scripture.quotes.length}</b> ayet;
+              her alıntı en fazla <b>{scripture.source.quoteLimit}</b> karakter. Bütün bir
+              bölüm veya kitap alınmaz.
+            </li>
+            <li>
+              <a href={scripture.source.url} rel="noopener noreferrer" target="_blank">
+                Tam metin için yayıncının kendi kaynağı
+                <span class="sr-only"> (yeni sekmede açılır)</span>
+              </a>
+            </li>
+          </ul>
+        </section>
+      )
+    }
 
     <section class="mt-12">
       <h2 class="text-xl">Zorunlu atıf</h2>
@@ -241,6 +276,17 @@ if (sources.length === 0) {
     color: var(--text-primary);
     font-family: var(--font-body);
     font-weight: var(--fw-medium);
+  }
+  /* Lisans notu: QuranEnc kosul 3 SURUM NUMARASININ gosterilmesini sart kosuyor;
+     bu satir o zorunlulugun karsiligidir, sussuz bir metin degildir. */
+  .author-table .author-note {
+    display: block;
+    max-width: 42ch;
+    margin-top: var(--space-1);
+    color: var(--text-muted);
+    font-weight: var(--fw-normal);
+    font-size: var(--text-xs);
+    line-height: var(--lh-normal);
   }
   .author-table td {
     color: var(--text-secondary);

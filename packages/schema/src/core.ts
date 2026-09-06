@@ -22,6 +22,8 @@ export * from "./common.js";
 export * from "./source.js";
 export * from "./quran.js";
 export * from "./word.js";
+export * from "./tafsir.js";
+export * from "./manuscript.js";
 export * from "./story.js";
 export * from "./concept.js";
 export * from "./timeline.js";
