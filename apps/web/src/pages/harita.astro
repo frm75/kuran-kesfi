@@ -110,6 +110,20 @@ const pins = withCoords
   .map((l) => ({ ...l, x: px(l.lng), y: py(l.lat) }))
   .sort((a, b) => a.y - b.y);
 
+/**
+ * Enum degeri ASCII (`tartismali`), kullaniciya gosterilen metin Turkce
+ * (`tartışmalı`). Ikisi ayni sey degil: slug CSS sinifi ve veri anahtari,
+ * etiket ise okunacak kelime. Ilk surumde bu ayrim yapilmamis ve liste
+ * cipinde ham slug goruntulenmisti — kissa sayfasi dogru yaziyordu, harita
+ * sayfasi yanlis. Ayni tablo `pages/kissa/[slug].astro` icinde de var.
+ */
+const confidenceLabel = {
+  kesin: "kesin",
+  muhtemel: "muhtemel",
+  gelenek: "gelenek",
+  tartismali: "tartışmalı",
+} as const;
+
 const byConfidence = {
   kesin: locations.filter((l) => l.confidence === "kesin").length,
   muhtemel: locations.filter((l) => l.confidence === "muhtemel").length,
@@ -217,7 +231,9 @@ const withAlternatives = locations.filter((l) => l.alternatives.length > 0);
             <li id={`konum-${location.slug}`}>
               <div class="lc-head">
                 <h3>{location.name}</h3>
-                <span class:list={["conf", `is-${location.confidence}`]}>{location.confidence}</span>
+                <span class:list={["conf", `is-${location.confidence}`]}>
+                  {confidenceLabel[location.confidence]}
+                </span>
                 {location.modernName !== null && <span class="lc-modern">{location.modernName}</span>}
                 {location.country !== null && <span class="lc-country">{location.country}</span>}
               </div>
