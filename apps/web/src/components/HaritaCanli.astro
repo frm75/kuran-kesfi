@@ -156,13 +156,18 @@ const mapData = {
   }
 
   {/*
-    Kabartma AYRI bir anahtar, katman secicinin bir secenegi degil: katman
-    (harita/uydu) ile kabartma dikey olarak bagimsiz — uydunun uzerinde de
-    arazi kabartmasi anlamli.
+    3D AYRI bir anahtar, katman secicinin bir secenegi degil: katman
+    (harita/uydu) ile egim dikey olarak bagimsiz — uydunun uzerinde de
+    3D arazi anlamli.
+
+    Kabartma GOLGESI burada YOK: o artik stilin parcasi ve her zaman acik
+    (lib/harita/style.ts). Bu anahtar yalnizca araziyi 3D yapip kamerayi
+    egiyor — varsayilan KAPALI, cunku egik acilan harita yon duygusunu
+    bozar (DESIGN.md: sakin).
   */}
   <label class="map-live-relief" data-map-relief>
     <input type="checkbox" />
-    <span>Kabartma</span>
+    <span>3D arazi</span>
   </label>
 
   <div class="map-live-panel" data-map-panel hidden aria-live="polite"></div>
@@ -800,6 +805,8 @@ const mapData = {
          *   rivayet  gri hat fotografta kayboluyor -> beyaz, ama yine EN INCE
          *            ve ici bos; bicim ayrimi (dolu/halka/ince halka) durur
          */
+        // Kabartma golgesi hem vektor altlikta hem uyduda acik kalir:
+        // fotograf duzdur, golge ona da kabartma katar.
         if (map.getLayer("rota-golge")) {
           map.setLayoutProperty("rota-golge", "visibility", uydu ? "visible" : "none");
         }
@@ -827,61 +834,29 @@ const mapData = {
       }
 
       /**
-       * KABARTMA — hillshade + 3D arazi, tek anahtar.
+       * 3D ARAZI — yalnizca yukseklik ve kamera egimi.
        *
-       * Ikisi ayni veriyi (raster-dem) kullaniyor ve ayri ayri sunmak
-       * kullaniciya anlamsiz bir secim yaptirirdi: "golge ama duz mu, egik
-       * ama golgesiz mi". Acildiginda ucu birden olur — golge, yukseklik,
-       * egim.
+       * Kabartma golgesi bu anahtarda DEGIL: o stilin parcasi ve her zaman
+       * acik. Ilk surumde ucu birlikteydi; varsayilan acik yapilmasi
+       * istenince ayrildilar, cunku egik acilan harita yon duygusunu bozuyor.
        *
-       * Yukselti kareleri YALNIZCA burasi acilinca inmeye baslar; kapaliyken
-       * haritanin maliyeti degismez.
+       * Donme yine kapali (DESIGN.md: sakin) — pusulasi kaymis bir kissa
+       * haritasi "kuzey nerede" sorusunu dogurur.
        */
-      function kabartma(ac: boolean): void {
-        const varOlan = map.getLayer("kabartma-golge");
+      function uc3D(ac: boolean): void {
         if (ac) {
-          if (!varOlan) {
-            /**
-             * Golge "etiket-ulke"den ONCE ekleniyor, yani BUTUN etiketlerin
-             * ve pinlerin altinda ama zeminin ustunde.
-             *
-             * Ilk denemede `su` katmanindan once eklenmisti ve UYDU ACIKKEN
-             * KAYBOLUYORDU: uydu rasteri de "etiket-ulke"den once eklenmis
-             * durumda, yani golgenin ustune biniyordu. Bu konum ikisinde de
-             * dogru — vektor altligin da uydunun da uzerinde.
-             */
-            map.addLayer(
-              {
-                id: "kabartma-golge",
-                type: "hillshade",
-                source: "arazi",
-                paint: {
-                  "hillshade-exaggeration": 0.45,
-                  "hillshade-shadow-color": "rgba(0,0,0,0.55)",
-                  "hillshade-highlight-color": "rgba(255,255,255,0.18)",
-                  "hillshade-accent-color": "rgba(0,0,0,0)",
-                },
-              },
-              map.getLayer("etiket-ulke") ? "etiket-ulke" : undefined,
-            );
-          }
           map.setTerrain({ source: "arazi", exaggeration: 1.35 });
-          // Egim olmadan 3D fark edilmez; donme kapali kalir (DESIGN.md:
-          // sakin — pusulasi kaymis harita yon duygusunu bozar).
           map.easeTo({ pitch: 55, duration: hareketAzalt ? 0 : 700 });
         } else {
           map.setTerrain(null);
-          if (varOlan) map.removeLayer("kabartma-golge");
           map.easeTo({ pitch: 0, duration: hareketAzalt ? 0 : 500 });
         }
       }
 
-      const kabartmaKutu = document.querySelector<HTMLInputElement>(
-        "[data-map-relief] input",
-      );
-      if (kabartmaKutu) {
-        kabartmaKutu.addEventListener("change", () => {
-          kabartma(kabartmaKutu.checked);
+      const ucDKutu = document.querySelector<HTMLInputElement>("[data-map-relief] input");
+      if (ucDKutu) {
+        ucDKutu.addEventListener("change", () => {
+          uc3D(ucDKutu.checked);
         });
       }
 

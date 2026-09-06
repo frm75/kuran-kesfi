@@ -90,7 +90,27 @@ const MEDIUM = ["Noto Sans Medium"];
 /** name:tr -> name:en -> name */
 const LABEL = ["coalesce", ["get", "name:tr"], ["get", "name:en"], ["get", "name"]];
 
+/**
+ * Paletten karanlik/acik cikarimi.
+ *
+ * Bilesene "tema" parametresi eklemek yerine RENGIN KENDISINDEN okunuyor:
+ * buildStyle saf kaliyor ve tek gercek kaynak yine global.css oluyor.
+ * Kabartma golgesinin siddeti buna bagli — acik parsomen zeminde 0,18'lik
+ * vurgu yetiyor, koyu lacivertte kaybolyor (olculdu, 2026-09-06).
+ */
+function karanlikMi(renk: string): boolean {
+  const m = /^#?([0-9a-f]{6})$/i.exec(renk.trim());
+  if (m === null) return true; // bilinmiyorsa koyu varsay: site karanlik oncelikli
+  const h = m[1] as string;
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  // Basit algisal parlaklik; WCAG hesabina gerek yok, esik cok uzakta.
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255 < 0.5;
+}
+
 export function buildStyle(p: Palette): StyleSpecification {
+  const karanlik = karanlikMi(p.mapLand);
   return {
     version: 8,
     glyphs: GLYPHS,
@@ -190,6 +210,43 @@ export function buildStyle(p: Palette): StyleSpecification {
         source: "altlik",
         "source-layer": "water",
         paint: { "fill-color": p.mapWater },
+      },
+
+      /**
+       * KABARTMA GOLGESI — 2026-09-06'da varsayilan acik yapildi.
+       *
+       * Onceden bir anahtarin arkasindaydi ve o anahtar golgeyi, 3D araziyi
+       * ve kamera egimini BIRLIKTE aciyordu. Varsayilan acik yapilinca harita
+       * egik aciliyordu: yon duygusunu bozuyor ve DESIGN.md'nin "sakin"
+       * ilkesine aykiri. Ikisi ayrildi:
+       *   golge  — burada, her zaman, harita DUZ kaliyor
+       *   3D     — ayri anahtar, kamerayi egiyor (HaritaCanli.astro)
+       *
+       * Golgenin isi anlatiyi tasimak: Sina'nin daglik, Ahkaf'in kumul,
+       * Kizildeniz'in yarik oldugu ancak boyle goruluyor. Duz dolgu haritada
+       * hepsi ayni renk lekesiydi.
+       *
+       * MALIYET: kaynak stile girdigi icin yukselti kareleri artik her harita
+       * acilisinda iniyor (~10-25 istek). Kareler `.png` ve Cloudflare
+       * kenarinda cachelenıyor (olculdu: MISS -> HIT), yani ikinci ziyaretci
+       * R2'ye hic gitmiyor.
+       */
+      {
+        id: "kabartma-golge",
+        type: "hillshade",
+        source: "arazi",
+        paint: {
+          "hillshade-exaggeration": karanlik ? 0.6 : 0.45,
+          // Karanlik zeminde golgeyi ARTIRMAK ise yaramaz — siyah uzerine
+          // siyah. Okunurlugu veren sey aydinlik yuz; o yuzden karanlikta
+          // vurgu guclenir, golge zayiflar.
+          "hillshade-shadow-color": karanlik ? "rgba(0,0,0,0.35)" : "rgba(0,0,0,0.55)",
+          "hillshade-highlight-color": karanlik
+            ? "rgba(255,255,255,0.34)"
+            : "rgba(255,255,255,0.18)",
+          // Vurgu rengi kapali: acik modda parsomen zemini kirletiyordu.
+          "hillshade-accent-color": "rgba(0,0,0,0)",
+        },
       },
       /**
        * KIYI CIZGISI — z8+ olculerek eklendi.
