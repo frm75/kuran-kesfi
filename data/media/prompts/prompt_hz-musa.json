@@ -1,0 +1,44 @@
+{
+  "//": [
+    "AI prompt kayitlari — spec 49-61, 65. Prompt KODA GOMULMEZ.",
+    "Metinler yalnizca Ingilizce yazilir (plan 20.3): render sadakati icin.",
+    "depictsProphet=true ise prompt metni 'identifiable face' kisitini TASIMAK",
+    "ZORUNDADIR; sema bunu reddederek uygular. Peygamber yuzu gosterilmez —",
+    "yasak yuzedir, insan figuru ve siluet serbesttir (CLAUDE.md, 2026-09-06).",
+    "Bu dosyalar prompt'u tanimlar, GORSEL URETMEZ (spec 71)."
+  ],
+  "prompts": [
+    {
+      "id": "musa-tuva-vadisi",
+      "title": "Mûsâ'nın Tuvâ vadisine gelişi",
+      "promptType": "IMAGE",
+      "prompt": "Cinematic historical visualization inspired by the Quranic account of Prophet Moses\napproaching the sacred valley of Tuwa.\n\nAncient Sinai-like mountainous desert landscape at night, rugged dark mountains,\nrocky valley, distant warm mysterious light, a lone traveler approaching from the distance.\n\nThe environment should feel ancient, remote and realistic.\n\nProphet Moses must not have an identifiable face. Show him as a distant silhouette from behind.\n\nNatural moonlight, subtle atmospheric haze, cinematic wide shot, historical documentary realism.\n\nAI-generated visualization, not a historical photograph.",
+      "negativePrompt": "modern buildings, modern vehicles, modern clothing, fantasy elements, text, watermark, subtitles, fantasy creatures",
+      "model": null,
+      "durationSec": null,
+      "aspectRatio": "16:9",
+      "version": 1,
+      "depictsProphet": true,
+      "storySlug": "hz-musa",
+      "locationSlug": "sina-tur",
+      "timelineOrder": null,
+      "baseImagePromptId": null
+    },
+    {
+      "id": "musa-tuva-vadisi-video",
+      "title": "Mûsâ'nın Tuvâ vadisine gelişi (10 sn)",
+      "promptType": "VIDEO",
+      "prompt": "10-second cinematic historical visualization inspired by the Quranic story of Moses\napproaching the sacred valley.\n\nCamera slowly moves forward through a dark rocky desert valley at night.\nA distant human silhouette approaches a mysterious source of light.\nWind moves the clothing and dust gently.\nLarge ancient mountains surround the valley.\n\nProphet Moses is seen only from behind and at a distance. No identifiable face.\n\nCinematic historical realism. AI-generated historical visualization.",
+      "negativePrompt": "modern buildings, modern vehicles, modern clothing, fantasy elements, text, watermark, subtitles, fantasy creatures",
+      "model": null,
+      "durationSec": 10,
+      "aspectRatio": "16:9",
+      "version": 1,
+      "depictsProphet": true,
+      "storySlug": "hz-musa",
+      "locationSlug": "sina-tur",
+      "timelineOrder": null,
+      "baseImagePromptId": "musa-tuva-vadisi"
+    }
+  ]
+}

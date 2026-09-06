@@ -1,0 +1,121 @@
+{
+  "//": [
+    "Gercek medya kayitlari — spec 32-48. AI gorseli BU DOSYAYA GIRMEZ (spec 32);",
+    "uretilmis AI medyasi data/media/ai_generated.json icindedir.",
+    "license / licenseRaw / author / date / width / height alanlarini ELLE DOLDURMA:",
+    "`pnpm data:wikimedia` Commons API'sinden ceker. Buradaki insan karari sudur —",
+    "hangi dosya, hangi baglam cumlesi (caution), hangi ayet ve kissa bagi.",
+    "Spec §40. Hiçbir yapı 'Hz. Yûsuf'un sarayı' olarak gösterilmez; hepsi tarihsel bağlam görselidir."
+  ],
+  "place": "misir",
+  "note": "Spec §40. Hiçbir yapı 'Hz. Yûsuf'un sarayı' olarak gösterilmez; hepsi tarihsel bağlam görselidir.",
+  "items": [
+    {
+      "id": "karnak-sutunlu-salon",
+      "kind": "ARCHAEOLOGY",
+      "title": "Karnak — Büyük Sütunlu Salon",
+      "description": null,
+      "caution": "Antik Mısır mimarisinden günümüze ulaşan örnektir. Kur'an'da anlatılan herhangi bir yapıyla özdeşleştirilmemiştir.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Luxor%2C_Egypt%2C_Karnak%2C_Great_Hypostyle_Hall%2C_Columns.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/1/10/Luxor%2C_Egypt%2C_Karnak%2C_Great_Hypostyle_Hall%2C_Columns.jpg",
+      "author": "Vyacheslav Argenberg",
+      "institution": null,
+      "date": "2007-05-19 10:03:15",
+      "license": "CC_BY",
+      "licenseRaw": "cc-by-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+      "copyright": "Vyacheslav Argenberg · Own work · CC BY 4.0",
+      "locationName": "Luksor, Mısır",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/karnak-sutunlu-salon.webp",
+      "width": 2000,
+      "height": 1333,
+      "locationSlug": "misir",
+      "storySlugs": [
+        "hz-musa",
+        "firavun"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [
+        "10:87",
+        "43:51"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "nil-nehri",
+      "kind": "REAL_PHOTO",
+      "title": "Nil Nehri",
+      "description": null,
+      "caution": "Yûsuf ve Mûsâ kıssalarının geçtiği Mısır coğrafyasını anlamak için tarihsel bağlam görselidir.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_Great_Nile_River.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d4/The_Great_Nile_River.jpg",
+      "author": "Sarbast.T.Hameed",
+      "institution": null,
+      "date": "2016-08-14 12:32:24",
+      "license": "CC_BY_SA",
+      "licenseRaw": "cc-by-sa-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "copyright": "Sarbast.T.Hameed · Own work · CC BY-SA 4.0",
+      "locationName": "Mısır",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/nil-nehri.webp",
+      "width": 2000,
+      "height": 1333,
+      "locationSlug": "misir",
+      "storySlugs": [
+        "hz-yusuf",
+        "hz-musa"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [
+        "12:21",
+        "20:39"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "misir-manzara-1870",
+      "kind": "DOCUMENT",
+      "title": "Mısır manzarası (1870-1888 fotoğrafı)",
+      "description": "Torino Mısır Müzesi arşivinden 19. yüzyıl fotoğrafı.",
+      "caution": "19. yüzyıl belgesidir; antik dönem görüntüsü değildir.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Miscellanea%2C_Egyptian_landscape%2C_1870-1888%2C_photo_7_of_32_-_Archivio_fotografico_Museo_Egizio%2C_Turin_INV32_010.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/1/1c/Miscellanea%2C_Egyptian_landscape%2C_1870-1888%2C_photo_7_of_32_-_Archivio_fotografico_Museo_Egizio%2C_Turin_INV32_010.jpg",
+      "author": "Antonio Beato",
+      "institution": null,
+      "date": "from 1870 until 1888 date QS:P571,+1850-00-00T00:00:00Z/7,P580,+1870-00-00T00:00:00Z/9,P582,+1888-00-00T00:00:00Z/9",
+      "license": "CC0",
+      "licenseRaw": "cc0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "copyright": "Antonio Beato · Archivio fotografico Museo Egizio, Turin - online catalogue · CC0",
+      "locationName": "Museo Egizio, Torino",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/misir-manzara-1870.webp",
+      "width": 2000,
+      "height": 1355,
+      "locationSlug": "misir",
+      "storySlugs": [
+        "hz-yusuf"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    }
+  ]
+}

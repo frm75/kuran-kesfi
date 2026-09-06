@@ -1,0 +1,149 @@
+{
+  "//": [
+    "Gercek medya kayitlari — spec 32-48. AI gorseli BU DOSYAYA GIRMEZ (spec 32);",
+    "uretilmis AI medyasi data/media/ai_generated.json icindedir.",
+    "license / licenseRaw / author / date / width / height alanlarini ELLE DOLDURMA:",
+    "`pnpm data:wikimedia` Commons API'sinden ceker. Buradaki insan karari sudur —",
+    "hangi dosya, hangi baglam cumlesi (caution), hangi ayet ve kissa bagi.",
+    "Spec §38. DİKKAT: Commons'ta 'Category:Hegra' NORVEÇ'te bir köydür; Suudi alan 'Qasr al-Farid' / 'Madain Salih' başlıkları altındadır. Kategori adına güvenilmez."
+  ],
+  "place": "hicr",
+  "note": "Spec §38. DİKKAT: Commons'ta 'Category:Hegra' NORVEÇ'te bir köydür; Suudi alan 'Qasr al-Farid' / 'Madain Salih' başlıkları altındadır. Kategori adına güvenilmez.",
+  "items": [
+    {
+      "id": "hegra-kasr-el-ferid",
+      "kind": "ARCHAEOLOGY",
+      "title": "Kasru'l-Ferîd kaya mezarı — Hegra",
+      "description": "Hegra'daki tek blok kayaya oyulmuş anıtsal mezar.",
+      "caution": "Hegra'daki mezarlar Nabatî dönemine (MÖ 1 – MS 1. yy) aittir; Semûd kavmine ait oldukları arkeolojik olarak gösterilmiş değildir. Ayetlerdeki 'dağları yontarak ev yapanlar' tasviriyle coğrafi bir yakınlık kurulur, kimlik özdeşliği değil.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Mada%27in_Saleh_2017.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Mada%27in_Saleh_2017.jpg",
+      "author": "Ahmad AlHasanat",
+      "institution": null,
+      "date": "2017-02-16 17:40:03",
+      "license": "CC_BY_SA",
+      "licenseRaw": "cc-by-sa-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "copyright": "Ahmad AlHasanat · Own work · CC BY-SA 4.0",
+      "locationName": "AlUla, Suudi Arabistan",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/hegra-kasr-el-ferid.webp",
+      "width": 2000,
+      "height": 1335,
+      "locationSlug": "hicr",
+      "storySlugs": [
+        "hz-salih"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [
+        "15:80-84",
+        "7:73-79",
+        "26:141-159"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "hegra-kaya-mezarlari",
+      "kind": "ARCHAEOLOGY",
+      "title": "Hegra kaya mezarları",
+      "description": null,
+      "caution": "Nabatî dönemi yapılarıdır; Semûd ile özdeşliği kanıtlanmamıştır.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Madain_Saleh_2017_02.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/1/14/Madain_Saleh_2017_02.jpg",
+      "author": "Ahmad AlHasanat",
+      "institution": null,
+      "date": "2017-02-16 17:38:22",
+      "license": "CC_BY_SA",
+      "licenseRaw": "cc-by-sa-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "copyright": "Ahmad AlHasanat · Own work · CC BY-SA 4.0",
+      "locationName": "AlUla, Suudi Arabistan",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/hegra-kaya-mezarlari.webp",
+      "width": 2000,
+      "height": 1335,
+      "locationSlug": "hicr",
+      "storySlugs": [
+        "hz-salih"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [
+        "15:80-84",
+        "54:23-31"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "hegra-osmanli-kalesi",
+      "kind": "ARCHAEOLOGY",
+      "title": "Hegra'daki Osmanlı kalesi",
+      "description": "Hicaz demiryolu hattı üzerindeki Osmanlı karakolu.",
+      "caution": "Kıssayla ilgisi yoktur; alanın katmanlı tarihini göstermek için eklendi.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ottoman_fort_at_Hegra.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Ottoman_fort_at_Hegra.jpg",
+      "author": "Richard Mortel",
+      "institution": null,
+      "date": "2021-06-01 17:36:45",
+      "license": "CC_BY",
+      "licenseRaw": "cc-by-2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "copyright": "Richard Mortel · https://www.flickr.com/photos/prof_richard/51280723521/ · CC BY 2.0",
+      "locationName": "AlUla, Suudi Arabistan",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/hegra-osmanli-kalesi.webp",
+      "width": 2000,
+      "height": 1333,
+      "locationSlug": "hicr",
+      "storySlugs": [],
+      "timelineOrders": [],
+      "verseRefs": [],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "alula-nabati-kitabe",
+      "kind": "DOCUMENT",
+      "title": "Nabatî–Arap harfli kitabe",
+      "description": "AlUla bölgesinden Nabatî-Arap geçiş yazısı örneği.",
+      "caution": "Kitabe ile kıssa arasında doğrudan bir kanıt ilişkisi yoktur.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Inscription_en_caract%C3%A8res_nabat%C3%A9o-arabes_%28Institut_du_monde_arabe%2C_Paris%29.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/7/71/Inscription_en_caract%C3%A8res_nabat%C3%A9o-arabes_%28Institut_du_monde_arabe%2C_Paris%29.jpg",
+      "author": "Jean-Pierre Dalbéra",
+      "institution": null,
+      "date": "2019-10-09 17:35:52",
+      "license": "CC_BY",
+      "licenseRaw": "cc-by-2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "copyright": "Jean-Pierre Dalbéra · https://www.flickr.com/photos/dalbera/49132077797/ · CC BY 2.0",
+      "locationName": "Institut du monde arabe, Paris",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/alula-nabati-kitabe.webp",
+      "width": 2000,
+      "height": 1323,
+      "locationSlug": "hicr",
+      "storySlugs": [],
+      "timelineOrders": [],
+      "verseRefs": [],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    }
+  ]
+}

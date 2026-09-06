@@ -1,9 +1,12 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 import {
+  aiGeneratedFile,
+  aiPromptsFile,
   computeVerseId,
   conceptInput,
   contentSourcesFile,
+  mediaFile,
   locationsFile,
   noldekeOrderFile,
   parseVerseRef,
@@ -13,8 +16,11 @@ import {
   timelineFile,
 } from "@kuran/schema";
 import type {
+  AiMediaInput,
+  AiPromptInput,
   ConceptInput,
   LocationInput,
+  MediaItemInput,
   NoldekeOrderFile,
   PrincipleInput,
   StoryInput,
@@ -124,6 +130,12 @@ interface Loaded {
   events: TimelineEventInput[];
   sections: SurahSectionsFile[];
   noldeke: NoldekeOrderFile | null;
+  /** Gercek medya — spec 32-48 */
+  media: MediaItemInput[];
+  /** AI prompt'lari — spec 65; medya URETMEZ, yalnizca tanimlar */
+  prompts: AiPromptInput[];
+  /** Uretilmis AI medyasi — kuyruk toplayicisinin yazdigi dosya */
+  aiMedia: AiMediaInput[];
 }
 
 function loadAll(): Loaded {
@@ -194,7 +206,39 @@ function loadAll(): Loaded {
     ? parseWith(noldekeOrderFile, readJson(noldekePath), noldekePath) ?? null
     : null;
 
-  return { sources, locations, stories, concepts, principles, events, sections, noldeke };
+  /*
+   * Medya: cografya basina bir dosya. Dosya adi ile ic alan arasinda kissa/
+   * bolumleme dosyalarindaki gibi bir bag YOKTUR — bir dosya birden fazla
+   * konumun medyasini tasiyabilir (media_medine.json Uhud'u da tasiyor),
+   * bu yuzden ad denetimi yapilmaz.
+   */
+  const media: MediaItemInput[] = [];
+  for (const path of listPrefixed("media", "media")) {
+    const file = parseWith(mediaFile, readJson(path), path);
+    if (file === undefined) continue;
+    media.push(...file.items);
+  }
+
+  const prompts: AiPromptInput[] = [];
+  const promptsDir = join(DATA, "media/prompts");
+  if (existsSync(promptsDir)) {
+    for (const name of readdirSync(promptsDir).filter((n) => n.endsWith(".json")).sort()) {
+      const path = join(promptsDir, name);
+      const file = parseWith(aiPromptsFile, readJson(path), path);
+      if (file === undefined) continue;
+      prompts.push(...file.prompts);
+    }
+  }
+
+  const aiPath = join(DATA, "media/ai_generated.json");
+  const aiMedia = existsSync(aiPath)
+    ? parseWith(aiGeneratedFile, readJson(aiPath), aiPath)?.items ?? []
+    : [];
+
+  return {
+    sources, locations, stories, concepts, principles, events, sections, noldeke,
+    media, prompts, aiMedia,
+  };
 }
 
 // -----------------------------------------------------------------------------
@@ -266,6 +310,46 @@ function crossCheck(data: Loaded, dbSourceSlugs: ReadonlySet<string>): string[] 
   }
   for (const e of data.events) needSource(`olay ${e.order}`, e.sourceSlugs);
   if (data.noldeke !== null) needSource("noldeke", [data.noldeke.sourceSlug]);
+
+  /*
+   * --- medya ---------------------------------------------------------------
+   *
+   * Sema tek DOSYA icinde benzersizligi dogruluyor; burada butun dosyalara
+   * bakilir, cunku media_key veritabaninda UNIQUE'tir ve iki cografya dosyasi
+   * ayni id'yi kullanirsa import transaction'in ortasinda patlardi.
+   */
+  const eventOrders = new Set(data.events.map((e) => e.order));
+  const mediaIds = uniq("medya", data.media.map((m) => m.id));
+  const promptIds = uniq("prompt", data.prompts.map((p) => p.id));
+
+  for (const m of data.media) {
+    needSource(`medya ${m.id}`, m.sourceSlugs);
+    if (m.locationSlug !== null && !locationSlugs.has(m.locationSlug)) {
+      errors.push(`medya ${m.id}: konum '${m.locationSlug}' yok`);
+    }
+    need(`medya ${m.id}`, storySlugs, "kissa", m.storySlugs);
+    for (const o of m.timelineOrders) {
+      if (!eventOrders.has(o)) errors.push(`medya ${m.id}: olay '${String(o)}' yok`);
+    }
+  }
+  for (const p of data.prompts) {
+    if (p.storySlug !== null && !storySlugs.has(p.storySlug)) {
+      errors.push(`prompt ${p.id}: kissa '${p.storySlug}' yok`);
+    }
+    if (p.locationSlug !== null && !locationSlugs.has(p.locationSlug)) {
+      errors.push(`prompt ${p.id}: konum '${p.locationSlug}' yok`);
+    }
+    if (p.timelineOrder !== null && !eventOrders.has(p.timelineOrder)) {
+      errors.push(`prompt ${p.id}: olay '${String(p.timelineOrder)}' yok`);
+    }
+    if (p.baseImagePromptId !== null && !promptIds.has(p.baseImagePromptId)) {
+      errors.push(`prompt ${p.id}: baslangic gorseli '${p.baseImagePromptId}' yok`);
+    }
+  }
+  for (const a of data.aiMedia) {
+    if (mediaIds.has(a.id)) errors.push(`AI medya ${a.id}: id gercek medyayla cakisiyor`);
+    if (!promptIds.has(a.promptId)) errors.push(`AI medya ${a.id}: prompt '${a.promptId}' yok`);
+  }
 
   return errors;
 }
@@ -354,6 +438,7 @@ const CONTENT_TABLES = [
   "timeline_event", "timeline_event_surah", "timeline_event_verse", "timeline_event_source",
   "principle", "principle_source", "principle_verse", "principle_story", "principle_concept",
   "surah_section", "section_verse",
+  "ai_prompt", "media_item", "media_story", "media_verse", "media_timeline_event", "media_source",
   // Turetilmis: elle yazilmaz, her import'ta yeniden hesaplanir (lib/relations.ts)
   "verse_relation",
 ] as const;
@@ -371,7 +456,8 @@ async function main(): Promise<void> {
 
   info(
     `okundu: ${data.sources.length} kaynak, ${data.locations.length} konum, ${data.stories.length} kissa, ` +
-      `${data.concepts.length} kavram, ${data.principles.length} ilke, ${data.events.length} olay` +
+      `${data.concepts.length} kavram, ${data.principles.length} ilke, ${data.events.length} olay, ` +
+      `${data.media.length} medya, ${data.prompts.length} prompt, ${data.aiMedia.length} AI cikti` +
       (data.noldeke !== null ? ", Noldeke siralamasi" : ""),
   );
 
@@ -393,6 +479,7 @@ async function main(): Promise<void> {
     for (const p of data.principles) for (const v of p.verses) allRefs.push(v.ref);
     for (const e of data.events) allRefs.push(...e.verseRefs);
     for (const f of data.sections) for (const x of f.sections) allRefs.push(...x.alsoVerses);
+    for (const m of data.media) allRefs.push(...m.verseRefs);
     const refErrors = await resolveVerseRefs(client, allRefs);
     if (refErrors.length > 0) {
       for (const e of refErrors) console.error(`   x ${e}`);
@@ -735,6 +822,121 @@ async function main(): Promise<void> {
       data.events.flatMap((e) => [...new Set(e.sourceSlugs)].map((s) => [eid(e.order), sid(s)])),
     );
 
+    /*
+     * --- medya (spec 32-71) -------------------------------------------------
+     *
+     * Zaman cizelgesinden SONRA: prompt ve medya kayitlari kissa, konum ve
+     * olay id'lerine baglanir, ucu de yukarida yazildi.
+     *
+     * Prompt'lar once yazilir cunku media_item.ai_prompt_id onlara isaret
+     * eder. `base_image_prompt_id` kendine gonderme oldugu icin ikinci gecise
+     * birakilir — tek INSERT icinde henuz olusmamis bir id'ye baglanamaz.
+     */
+    const promptId = await insertReturning(
+      client,
+      "ai_prompt",
+      [
+        "prompt_key", "title", "prompt_type", "prompt", "negative_prompt", "model",
+        "duration_sec", "aspect_ratio", "version", "depicts_prophet",
+        "story_id", "location_id", "timeline_event_id",
+      ],
+      data.prompts.map((p) => [
+        p.id, p.title, p.promptType, p.prompt, p.negativePrompt, p.model,
+        p.durationSec, p.aspectRatio, p.version, p.depictsProphet,
+        p.storySlug === null ? null : storyId.get(p.storySlug),
+        p.locationSlug === null ? null : locationId.get(p.locationSlug),
+        p.timelineOrder === null ? null : eid(p.timelineOrder),
+      ]),
+      "prompt_key",
+    );
+    for (const p of data.prompts) {
+      if (p.baseImagePromptId === null) continue;
+      await client.query("UPDATE ai_prompt SET base_image_prompt_id = $2 WHERE id = $1", [
+        promptId.get(p.id),
+        promptId.get(p.baseImagePromptId),
+      ]);
+    }
+
+    /*
+     * Gercek medya ve AI medyasi AYNI tabloya yazilir ama alanlari birbirine
+     * karismaz: veritabanindaki media_item_kind_split ve
+     * media_item_ai_has_no_source kisitlari bunu zorlar. Burada iki ayri
+     * satir uretici olmasinin sebebi de bu — tek bir "esnek" nesne kurup
+     * ikisini de ondan turetmek, kisitlarin yakaladigi hatayi kod duzeyinde
+     * mumkun kilardi.
+     *
+     * AI ciktisinda `face_scanned` yayin kapisidir ve dosyadan OLDUGU GIBI
+     * gelir; import onu true yapmaz. Kare kare yuz taramasi insana bagli
+     * (CLAUDE.md "Gorsel ve VIDEO kurali").
+     */
+    const MEDIA_COLUMNS = [
+      "media_key", "kind", "title", "description", "caution",
+      "source_name", "source_url", "original_url", "author", "institution", "source_date",
+      "license", "license_raw", "license_url", "copyright",
+      "location_name", "lat", "lng", "location_id", "manuscript_id",
+      "local_path", "width", "height",
+      "ai_prompt_id", "generator", "model", "sha256", "duration_sec", "created_at",
+      "face_scanned", "face_scan_note",
+    ] as const;
+
+    const mediaRows: unknown[][] = [
+      ...data.media.map((m) => [
+        m.id, m.kind, m.title, m.description, m.caution,
+        m.sourceName, m.sourceUrl, m.originalUrl, m.author, m.institution, m.date,
+        m.license, m.licenseRaw, m.licenseUrl, m.copyright,
+        m.locationName, m.lat, m.lng,
+        m.locationSlug === null ? null : locationId.get(m.locationSlug), m.manuscriptId,
+        m.localPath, m.width, m.height,
+        null, null, null, null, null, null,
+        false, null,
+      ]),
+      ...data.aiMedia.map((a) => [
+        a.id, a.kind, a.title, null, null,
+        null, null, null, null, null, null,
+        null, null, null, null,
+        null, null, null, null, null,
+        a.localPath, a.width, a.height,
+        promptId.get(a.promptId), a.generator, a.model, a.sha256, a.durationSec, a.createdAt,
+        a.faceScanned, a.faceScanNote,
+      ]),
+    ];
+    const mediaId = await insertReturning(client, "media_item", MEDIA_COLUMNS, mediaRows, "media_key");
+
+    await insertPlain(
+      client,
+      "media_story",
+      ["media_item_id", "story_id"],
+      data.media.flatMap((m) => [...new Set(m.storySlugs)].map((s) => [mediaId.get(m.id), storyId.get(s)])),
+    );
+    const mediaVerseRows: unknown[][] = [];
+    for (const m of data.media) {
+      const seen = new Set<number>();
+      for (const ref of m.verseRefs) for (const id of expandRef(ref)) {
+        if (seen.has(id)) continue;
+        seen.add(id);
+        mediaVerseRows.push([mediaId.get(m.id), id]);
+      }
+    }
+    await insertPlain(client, "media_verse", ["media_item_id", "verse_id"], mediaVerseRows);
+    await insertPlain(
+      client,
+      "media_timeline_event",
+      ["media_item_id", "timeline_event_id"],
+      data.media.flatMap((m) => [...new Set(m.timelineOrders)].map((o) => [mediaId.get(m.id), eid(o)])),
+    );
+    await insertPlain(
+      client,
+      "media_source",
+      ["media_item_id", "source_id"],
+      data.media.flatMap((m) => [...new Set(m.sourceSlugs)].map((x) => [mediaId.get(m.id), sid(x)])),
+    );
+
+    const unscanned = data.aiMedia.filter((a) => !a.faceScanned).length;
+    report.note(
+      `Medya: ${data.media.length} gercek · ${data.aiMedia.length} AI cikti ` +
+        `(${unscanned} taranmamis, yayina girmez) · ${data.prompts.length} prompt`,
+    );
+
     // --- Noldeke -----------------------------------------------------------
     if (data.noldeke !== null) {
       let updated = 0;
@@ -875,7 +1077,10 @@ async function main(): Promise<void> {
      UNION ALL SELECT 'principle_verse', count(*)::text FROM principle_verse
      UNION ALL SELECT 'timeline_event', count(*)::text FROM timeline_event
      UNION ALL SELECT 'surah_section', count(*)::text FROM surah_section
-     UNION ALL SELECT 'verse_relation', count(*)::text FROM verse_relation`,
+     UNION ALL SELECT 'verse_relation', count(*)::text FROM verse_relation
+     UNION ALL SELECT 'media_item', count(*)::text FROM media_item
+     UNION ALL SELECT 'media_verse', count(*)::text FROM media_verse
+     UNION ALL SELECT 'ai_prompt', count(*)::text FROM ai_prompt`,
   )).rows;
   for (const c of counts) report.note(`${c.t}: ${c.n}`);
   info(counts.map((c) => `${c.t}=${c.n}`).join(" · "));

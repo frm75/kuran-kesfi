@@ -177,6 +177,9 @@ importers:
       '@kuran/pipeline':
         specifier: workspace:*
         version: link:../../packages/pipeline
+      '@kuran/schema':
+        specifier: workspace:*
+        version: link:../../packages/schema
       sharp:
         specifier: ^0.35.4
         version: 0.35.4(@types/node@20.19.43)

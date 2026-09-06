@@ -165,6 +165,14 @@ yapılmayanlar ve NEDENİ, bir kez yaşanmış tuzaklar, sıradaki adımlar. Bü
   PostgreSQL'e TRUNCATE + yeniden yazımla aktarır (upsert değil — silinen kayıt veritabanında kalmasın).
   Şema: `packages/schema/src/content_input.ts`. İçerik kuralları koda dönüştü: kaynaksız ders, kaynaksız
   konum, kaynaksız kavram ve birincil ayet dayanağı olmayan ilke build'i durdurur (plan §8.1, §8.3, §18.3)
+- **Medya katmanında üç tür asla karıştırılmaz** (plan §24). Gerçek belge kaynak + lisans taşır,
+  AI canlandırması prompt taşır; ikisi ayrı Zod şeması, ayrı CHECK kısıtı ve ayrı panel bölümüdür.
+  **Lisans bir etiket değil kapıdır**: `COPYRIGHT`/`LINK_ONLY`/`UNKNOWN` lisanslı dosya sunucuya
+  kopyalanmaz, yalnızca "Kaynağı görüntüle" bağlantısı gösterilir. Lisans tahmin edilmez —
+  `pnpm data:wikimedia` dosya başına API'den çeker. **AI üretimi otomatik değildir** (spec §71):
+  `pnpm media:ai:queue` prompt'ları diske yazar, üretim lokal makinede yapılır,
+  `pnpm media:ai:collect` toplar. **`faceScanned` yayın kapısıdır ve hiçbir script onu true yapmaz** —
+  kare kare yüz taraması insana bağlı; taranmamış kayıt statik çıktıya girmez
 - **Kavram–ayet eşleştirmesi KÖKTEN hesaplanır, elle seçilmez.** Kavramın kökü ayette geçiyorsa ayet
   kavrama bağlanır; `source_id` NULL kalır (platform derlemesi). Kavramlar arası "birlikte geçer" bağı
   kosinüs benzerliğiyle hesaplanır. Elle yazılan ilişki (contrast/cause/part_of) hesaplananı ezer

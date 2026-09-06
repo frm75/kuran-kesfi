@@ -1,0 +1,87 @@
+{
+  "//": [
+    "Gercek medya kayitlari — spec 32-48. AI gorseli BU DOSYAYA GIRMEZ (spec 32);",
+    "uretilmis AI medyasi data/media/ai_generated.json icindedir.",
+    "license / licenseRaw / author / date / width / height alanlarini ELLE DOLDURMA:",
+    "`pnpm data:wikimedia` Commons API'sinden ceker. Buradaki insan karari sudur —",
+    "hangi dosya, hangi baglam cumlesi (caution), hangi ayet ve kissa bagi.",
+    "Spec §37. Commons'ta Al-Bad' bölgesinin doğrulanmış YER fotoğrafı bulunamadı; elde olan uydu görüntüsü ve bölgedeki kuyu fotoğraflarıdır. Eksik olan eksik gösterilir, benzeri bir coğrafyayla doldurulmaz."
+  ],
+  "place": "medyen",
+  "note": "Spec §37. Commons'ta Al-Bad' bölgesinin doğrulanmış YER fotoğrafı bulunamadı; elde olan uydu görüntüsü ve bölgedeki kuyu fotoğraflarıdır. Eksik olan eksik gösterilir, benzeri bir coğrafyayla doldurulmaz.",
+  "items": [
+    {
+      "id": "al-bad-uydu",
+      "kind": "MAP",
+      "title": "Al-Bad' bölgesi — uydu görüntüsü",
+      "description": "Tebük vilayetindeki Al-Bad' yerleşimi ve çevresi.",
+      "caution": "Medyen'in modern coğrafi konumu için kuzeybatı Arabistan ve Akabe Körfezi çevresinde çeşitli eşleştirmeler bulunmaktadır. Bu görüntü adaylardan birinin bugünkü hâlidir.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Al-Bad%27%2C_Tabuk_Province%2C_Saudi_Arabia_%28wyvern_dragonette-001_20250602T070511_e91048f4%29.png",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/df/Al-Bad%27%2C_Tabuk_Province%2C_Saudi_Arabia_%28wyvern_dragonette-001_20250602T070511_e91048f4%29.png",
+      "author": "Wyvern Inc.",
+      "institution": null,
+      "date": "Taken on 2 June 2025, 07:05:12",
+      "license": "CC_BY",
+      "licenseRaw": "cc-by-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+      "copyright": "Wyvern Inc. · Wyvern Inc. via their AWS S3 Bucket. Further data via STAC API . View in STAC Browser . · CC BY 4.0",
+      "locationName": "Al-Bad', Tebük, Suudi Arabistan",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/al-bad-uydu.webp",
+      "width": 2000,
+      "height": 1550,
+      "locationSlug": "medyen",
+      "storySlugs": [
+        "hz-suayb",
+        "hz-musa"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [
+        "7:85-93",
+        "28:22-28"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "al-suveydani-kuyusu",
+      "kind": "ARCHAEOLOGY",
+      "title": "es-Süveydânî kuyusu",
+      "description": "Al-Bad' çevresindeki tarihî kuyulardan biri.",
+      "caution": "Bu kuyunun Şuayb kıssasındaki kuyu olduğuna dair bir kanıt yoktur; bölgedeki su yapılarının bir örneğidir.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Al-Sauaidani_Well.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Al-Sauaidani_Well.jpg",
+      "author": "Wikkiwooki",
+      "institution": null,
+      "date": "2022-12-12",
+      "license": "CC_BY_SA",
+      "licenseRaw": "cc-by-sa-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "copyright": "Wikkiwooki · Own work · CC BY-SA 4.0",
+      "locationName": "Al-Bad', Tebük, Suudi Arabistan",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/al-suveydani-kuyusu.webp",
+      "width": 638,
+      "height": 478,
+      "locationSlug": "medyen",
+      "storySlugs": [
+        "hz-suayb",
+        "hz-musa"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [
+        "28:23-24"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    }
+  ]
+}

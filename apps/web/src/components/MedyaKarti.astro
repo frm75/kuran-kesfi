@@ -1,0 +1,189 @@
+---
+import type { StaticMediaItem } from "@kuran/schema";
+import { AI_DISCLAIMER_TR } from "@kuran/schema";
+import {
+  MEDIA_KIND_LABEL,
+  MEDIA_LICENSE_LABEL,
+  isAiMedia,
+  mediaUrl,
+} from "~/lib/media";
+
+/**
+ * Tek medya kartı — plan §64.
+ *
+ * ## İki varyant, tek bileşen, karışmayan alanlar
+ *
+ * Gerçek belge künye ve lisans taşır; AI canlandırması taşımaz (spec §32).
+ * Ayrım burada `isAiMedia` ile yapılır ve iki dal ayrı alanlar okur — veri
+ * zaten öyle geliyor, çünkü şema ve veritabanı kısıtları karışmasına izin
+ * vermiyor (packages/schema/src/media.ts, infra/db/schema.sql).
+ *
+ * ## AI ETİKETİ VERİDEN GELMEZ
+ *
+ * "AI ile oluşturulmuştur — tarihsel fotoğraf değildir" cümlesi şemadaki
+ * SABİTTEN basılır (`AI_DISCLAIMER_TR`). Veri alanı açılsaydı bir kayıtta
+ * boş kalabilir ya da değiştirilebilirdi; bu etiketin unutulabilir olması
+ * kabul edilemez (spec §49).
+ *
+ * ## GÖRSEL GELMEYEBİLİR, KART YİNE ÇALIŞIR
+ *
+ * Kısıtlı lisanslı kayıtta dosya sunucumuza kopyalanmaz (spec §34) ve bugün
+ * hiçbir dosya barındırılmıyor — kullanıcı kararı: önce künye ve lisans,
+ * indirme sonra. O yüzden görsel kartın ZORUNLU parçası değil: başlık,
+ * bağlam cümlesi, künye ve "Kaynağı görüntüle" tek başına ayakta durur.
+ * Aynı şey R2 düştüğünde de geçerlidir (CLAUDE.md kural 5).
+ *
+ * JavaScript yok: `<img loading="lazy">` ve düz bağlantı.
+ */
+
+interface Props {
+  item: StaticMediaItem;
+}
+
+const { item } = Astro.props;
+
+const ai = isAiMedia(item);
+const url = mediaUrl(item);
+const kindLabel = MEDIA_KIND_LABEL[item.kind];
+const licenseLabel = item.license === null ? null : MEDIA_LICENSE_LABEL[item.license];
+
+/**
+ * Ayet etiketleri: "A'râf 73-79 · Hicr 80-84".
+ *
+ * Veri ayetleri TEK TEK taşır (`media_verse` satır başına bir ayet), çünkü
+ * ters dizin ayet kimliğiyle çalışıyor. Kartta tek tek yazılınca Semûd
+ * kaydında 31 ayet alt alta sıralanıyordu ve künyeyi bastırıyordu; ardışık
+ * olanlar burada aralığa toplanıyor. Aralık kırılırsa (12:4 ve 12:9) iki ayrı
+ * parça yazılır — birleştirip aradaki ayetleri de varmış gibi göstermez.
+ */
+const runs: { name: string; surahId: number; start: number; end: number }[] = [];
+for (const v of item.verses) {
+  const open = runs[runs.length - 1];
+  if (open !== undefined && open.surahId === v.surahId && open.end + 1 === v.verseNumber) {
+    open.end = v.verseNumber;
+  } else {
+    runs.push({ name: v.surahNameTr, surahId: v.surahId, start: v.verseNumber, end: v.verseNumber });
+  }
+}
+const verseLabels = runs.map((r) =>
+  r.start === r.end ? `${r.name} ${String(r.start)}` : `${r.name} ${String(r.start)}-${String(r.end)}`,
+);
+---
+
+<figure class="medya-kart" data-ai={ai ? "true" : undefined}>
+  {
+    url !== null && item.kind === "AI_VIDEO" && (
+      <video
+        class="medya-kart-gorsel"
+        src={url}
+        width={item.width ?? undefined}
+        height={item.height ?? undefined}
+        controls
+        preload="none"
+        playsinline
+      />
+    )
+  }
+  {
+    url !== null && item.kind !== "AI_VIDEO" && (
+      <img
+        class="medya-kart-gorsel"
+        src={url}
+        width={item.width ?? undefined}
+        height={item.height ?? undefined}
+        alt={item.description ?? item.title}
+        loading="lazy"
+        decoding="async"
+      />
+    )
+  }
+
+  <figcaption class="medya-kart-govde">
+    <p class="medya-kart-tur">{kindLabel}</p>
+    <h3 class="medya-kart-baslik">{item.title}</h3>
+
+    {item.description !== null && <p class="medya-kart-aciklama">{item.description}</p>}
+
+    {
+      /*
+       * Uyarı cümlesi (spec §35, §40, §41). Kesinlik iddiasını dengeler:
+       * "Cûdî, geleneksel olarak … ile ilişkilendirilmektedir." Görselden
+       * ayrı bir tonda duruyor ki başlıkla karışmasın.
+       */
+      item.caution !== null && <p class="medya-kart-uyari">{item.caution}</p>
+    }
+
+    {ai && <p class="medya-kart-uyari medya-kart-ai">{AI_DISCLAIMER_TR}</p>}
+
+    {
+      verseLabels.length > 0 && (
+        <p class="medya-kart-ayet">
+          <span>Ayet:</span> {verseLabels.join(" · ")}
+        </p>
+      )
+    }
+
+    {
+      !ai && (
+        <dl class="medya-kart-kunye">
+          {item.sourceName !== null && (
+            <>
+              <dt>Kaynak</dt>
+              <dd>{item.sourceName}</dd>
+            </>
+          )}
+          {item.author !== null && (
+            <>
+              <dt>Yazar</dt>
+              <dd>{item.author}</dd>
+            </>
+          )}
+          {item.institution !== null && (
+            <>
+              <dt>Kurum</dt>
+              <dd>{item.institution}</dd>
+            </>
+          )}
+          {item.date !== null && (
+            <>
+              <dt>Tarih</dt>
+              <dd>{item.date}</dd>
+            </>
+          )}
+          {licenseLabel !== null && (
+            <>
+              <dt>Lisans</dt>
+              <dd>
+                {item.licenseUrl !== null ? (
+                  <a href={item.licenseUrl} rel="noopener noreferrer license">
+                    {licenseLabel}
+                  </a>
+                ) : (
+                  licenseLabel
+                )}
+              </dd>
+            </>
+          )}
+        </dl>
+      )
+    }
+
+    {
+      /*
+       * Atıf metni lisansın istediği şekilde, olduğu gibi. CC BY / BY-SA /
+       * BY-NC kayıtlarında boş olamaz — şema ve linter ikisi de reddediyor.
+       */
+      !ai && item.copyright !== null && <p class="medya-kart-atif">{item.copyright}</p>
+    }
+
+    {
+      !ai && item.sourceUrl !== null && (
+        <p class="medya-kart-baglanti">
+          <a href={item.sourceUrl} rel="noopener noreferrer">
+            Kaynağı görüntüle
+          </a>
+        </p>
+      )
+    }
+  </figcaption>
+</figure>

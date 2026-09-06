@@ -3,6 +3,8 @@ import type {
   StaticConceptsIndex,
   StaticLocations,
   StaticManuscripts,
+  StaticMedia,
+  StaticVerseMedia,
   StaticPrinciple,
   StaticPrinciplesIndex,
   StaticStoriesIndex,
@@ -19,6 +21,8 @@ import {
   staticConceptsIndex,
   staticLocations,
   staticManuscripts,
+  staticMedia,
+  staticVerseMedia,
   staticPrinciple,
   staticPrinciplesIndex,
   staticStoriesIndex,
@@ -652,6 +656,132 @@ export async function emitContent(
       `Yazma: ${manuscriptRows.length} kunye · ${rangeRows.length} ayet araligi · ` +
         `${byVerse.size} / 6236 ayet · ${dated} tarihlenebilir · goruntu yok, derin baglanti`,
     );
+  }
+
+  /*
+   * --- medya (spec 32-71) ---------------------------------------------------
+   *
+   *   media.json        gercek + AI medya kayitlari
+   *   verse_media.json  ayet -> medya kimlikleri (ters dizin)
+   *
+   * IKI YAYIN KAPISI BURADA ISLER, ikisi de sessiz gecmez:
+   *
+   *   1. `face_scanned = false` olan AI medyasi CIKTIYA GIRMEZ. Kare kare yuz
+   *      taramasi otomatiklestirilemez (bir yuz hash ile denetlenemez), bu
+   *      yuzden tarayan kisi alani elle true yapana kadar medya yayina cikmaz.
+   *   2. Kisitli lisansli kayitta `path` NULL'a zorlanir. Veritabani zaten
+   *      media_item_license_gate ile bunu engelliyor; burada ikinci kez
+   *      bakilmasinin sebebi cikti dosyasinin son soz olmasi — linter de
+   *      ayni sarti cikti uzerinde dogruluyor.
+   */
+  const mediaRows = await q<{
+    id: number; media_key: string; kind: string; title: string;
+    description: string | null; caution: string | null;
+    source_name: string | null; source_url: string | null; author: string | null;
+    institution: string | null; source_date: string | null;
+    license: string | null; license_url: string | null; copyright: string | null;
+    local_path: string | null; width: number | null; height: number | null;
+    duration_sec: number | null;
+    location_name: string | null; location_slug: string | null;
+    prompt_key: string | null; face_scanned: boolean;
+  }>(
+    `SELECT m.id, m.media_key, m.kind::text AS kind, m.title, m.description, m.caution,
+            m.source_name, m.source_url, m.author, m.institution, m.source_date,
+            m.license::text AS license, m.license_url, m.copyright,
+            m.local_path, m.width, m.height, m.duration_sec,
+            m.location_name, l.slug AS location_slug,
+            p.prompt_key, m.face_scanned
+       FROM media_item m
+       LEFT JOIN location  l ON l.id = m.location_id
+       LEFT JOIN ai_prompt p ON p.id = m.ai_prompt_id
+      ORDER BY m.media_key`,
+  );
+
+  if (mediaRows.length > 0) {
+    const isAi = (kind: string): boolean => kind === "AI_IMAGE" || kind === "AI_VIDEO";
+    const HOSTABLE = new Set(["PUBLIC_DOMAIN", "CC0", "CC_BY", "CC_BY_SA", "CC_BY_NC"]);
+
+    const withheld = mediaRows.filter((m) => isAi(m.kind) && !m.face_scanned);
+    const publishable = mediaRows.filter((m) => !isAi(m.kind) || m.face_scanned);
+    const publishableIds = new Set(publishable.map((m) => m.id));
+
+    const storyRows = await q<{ media_item_id: number; slug: string }>(
+      `SELECT ms.media_item_id, s.slug
+         FROM media_story ms JOIN story s ON s.id = ms.story_id
+        ORDER BY ms.media_item_id, s.slug`,
+    );
+    const verseRows = await q<{ media_item_id: number; verse_id: number }>(
+      "SELECT media_item_id, verse_id FROM media_verse ORDER BY media_item_id, verse_id",
+    );
+    const storiesOf = group(storyRows, (r) => r.media_item_id);
+    const versesOf = group(verseRows, (r) => r.media_item_id);
+
+    const mediaPayload: StaticMedia = {
+      media: publishable.map((m) => ({
+        id: m.media_key,
+        kind: m.kind as StaticMedia["media"][number]["kind"],
+        title: m.title,
+        description: m.description,
+        caution: m.caution,
+        sourceName: m.source_name,
+        sourceUrl: m.source_url,
+        author: m.author,
+        institution: m.institution,
+        date: m.source_date,
+        license: m.license as StaticMedia["media"][number]["license"],
+        licenseUrl: m.license_url,
+        copyright: m.copyright,
+        // Kisitli lisansta dosya yolu tasinmaz — kart yalnizca baglanti gosterir
+        path: m.license !== null && !HOSTABLE.has(m.license) ? null : m.local_path,
+        width: m.width,
+        height: m.height,
+        durationSec: m.duration_sec,
+        locationName: m.location_name,
+        locationSlug: m.location_slug,
+        storySlugs: (storiesOf.get(m.id) ?? []).map((r) => r.slug),
+        verses: (versesOf.get(m.id) ?? []).map((r) => pointer(r.verse_id)),
+        promptId: m.prompt_key,
+      })),
+    };
+    verifyOrFail(staticMedia, mediaPayload, "media.json");
+    emitter.write("media.json", mediaPayload);
+
+    const keyById = new Map(publishable.map((m) => [m.id, m.media_key]));
+    const byVerseMedia = new Map<number, string[]>();
+    for (const r of verseRows) {
+      if (!publishableIds.has(r.media_item_id)) continue;
+      const key = keyById.get(r.media_item_id);
+      if (key === undefined) continue;
+      const list = byVerseMedia.get(r.verse_id);
+      if (list === undefined) byVerseMedia.set(r.verse_id, [key]);
+      else list.push(key);
+    }
+    const vmediaPayload: StaticVerseMedia = {
+      verses: Object.fromEntries(
+        [...byVerseMedia].sort(([a], [b]) => a - b).map(([id, keys]) => [String(id), keys.sort()]),
+      ),
+    };
+    verifyOrFail(staticVerseMedia, vmediaPayload, "verse_media.json");
+    emitter.write("verse_media.json", vmediaPayload);
+
+    const real = publishable.filter((m) => !isAi(m.kind)).length;
+    const hosted = publishable.filter((m) => m.local_path !== null).length;
+    info(
+      `medya: ${publishable.length} yayinda (${real} gercek, ${publishable.length - real} AI) · ` +
+        `${hosted} dosya barindiriliyor · ${byVerseMedia.size} ayet · ` +
+        `${withheld.length} AI kaydi taranmadigi icin cikarilmadi`,
+    );
+    report.note(
+      `Medya: ${publishable.length} kayit (${real} gercek, ${publishable.length - real} AI) · ` +
+        `${byVerseMedia.size} ayet bagi · ${withheld.length} taranmamis AI kaydi yayina girmedi`,
+    );
+    if (withheld.length > 0) {
+      report.note(
+        `Taranmamis AI medyasi: ${withheld.map((m) => m.media_key).join(", ")} — ` +
+          `kare kare yuz taramasi yapilip data/media/ai_generated.json icinde ` +
+          `faceScanned=true yapilmadan yayina girmez.`,
+      );
+    }
   }
 
   info(

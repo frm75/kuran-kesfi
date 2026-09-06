@@ -20,7 +20,8 @@
     "qul-word-root": "tsx qul_word_root.ts",
     "qul-matching-ayah": "tsx qul_matching_ayah.ts",
     "scripture": "tsx scripture.ts",
-    "alagas": "tsx alagas.ts"
+    "alagas": "tsx alagas.ts",
+    "wikimedia": "tsx wikimedia.ts"
   },
   "dependencies": {
     "@kuran/pipeline": "workspace:*",

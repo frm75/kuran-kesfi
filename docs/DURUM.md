@@ -672,3 +672,61 @@ ilke 32 → 60. Kalıp yerleşti: `data/**` dosyası yaz → `pnpm content:impor
 
 İlkeler modülü ön koşuluydu, artık hazır. `schedule.json` üretimi (`principle_verse` üzerinden
 yıllık takvim) + `infra/db/bot_schema.sql`. Site statik kalır, bot ayrı küçük servis.
+
+## Medya katmanı (2026-09-06'da kuruldu) — 34 gerçek kayıt, 10 prompt
+
+Plan §24, kaynak spec `tmp/MEDYA-*.md` §32-71. **Yayında:** kıssa sayfalarında
+ve ayet sayfalarında "Keşfet — medya" paneli.
+
+| Katman | Dosya |
+|---|---|
+| Şema | `packages/schema/src/media.ts` + `content_input.ts` (media bölümü) |
+| Girdi | `data/media/media_<coğrafya>.json` × 10 · `data/media/prompts/prompt_<slug>.json` × 6 |
+| Lisans çekimi | `scripts/import/wikimedia.ts` → `pnpm data:wikimedia` |
+| Tablo | `media_item`, `media_story`, `media_verse`, `media_timeline_event`, `media_source`, `ai_prompt` |
+| Dışa aktarım | `media.json` + `verse_media.json` (ikisi de build-only) |
+| Okuma | `apps/web/src/lib/media.ts` |
+| Bileşen | `MedyaPaneli.astro`, `MedyaKarti.astro` · CSS `global.css` "Medya paneli" |
+| AI hattı | `scripts/media/ai_queue.ts` + `ai/provider.ts` + `ai/file_queue.ts` |
+| Testler | `packages/schema/src/__tests__/media.smoke.ts` (38 test) |
+
+**10 coğrafya, 34 kayıt, hepsinin lisansı API'den ölçüldü:** 19 CC BY-SA ·
+8 CC BY · 5 CC0 · 1 kamu malı. Hiçbiri kısıtlı çıkmadı, hiçbiri `UNKNOWN`
+kalmadı. **Dosya indirilmedi** (kullanıcı kararı + spec §71): kartlar künye ve
+"Kaynağı görüntüle" ile duruyor. İndirme kararı verilirse `localPath` doldurulur,
+`pnpm media:r2:push` yükler, arayüz değişmez.
+
+### Bir kez yaşanmış tuzaklar
+
+- **Commons kategori adı yanıltıyor.** `Category:Hegra` NORVEÇ'te bir köydür
+  (25 dosyanın hepsi Trøndelag manzarası). Suudi Hicr alanı `Qasr al-Farid` ve
+  `Madain Salih` başlıkları altında. Kategori adına bakıp dosya seçilmez.
+- **Spec'teki dosya adı yanlıştı.** §35 "Cudi Dağı panorama.jpg" diyor;
+  Commons'ta "Cudi Dağı **panaroma**.jpg". Bu yüzden dosya adları elle
+  kopyalanmaz, `pnpm data:wikimedia --category "<ad>"` ile listelenip doğrulanır.
+- **Commons `imageinfo.url` utm parametresi ekliyor.** Takip parametresi veri
+  dosyasına yazılırsa kalıcılaşır; `withoutTracking` sorgu dizesini atıyor.
+- **`faceScanned` değişikliği import'suz yayına yansımaz.** `data/**` tek
+  kaynak, veritabanı türetilmiş kopya — alanı true yaptıktan sonra
+  `pnpm content:import` şart. Kapı iki yönlü de ölçüldü (2026-09-06):
+  taranmamışken 34 yayında, taranmış işaretlenince 35.
+
+### Yol boyunca düzeltilen ayrı bir kırık
+
+`pnpm lint:refs` **HEAD'de zaten kırıktı** ve medya işiyle ilgisi yok:
+`build.ts` 2026-09-06 kararıyla QuranEnc platform atıf bağlantısını kaldırmış
+(meal atfı yazara verilir), ama `linter.ts` içindeki `requiredLinkBySource`
+hâlâ `quranenc.com` bağlantısını arıyordu. Kaynak `quranenc` olan meal var,
+aranan bağlantı hiç üretilmiyordu → build durum. Kural kaldırıldı, gerekçe
+linter'ın içine yazıldı. QuranEnc'in kendi 3. koşulu bağlantı değil **sürüm
+numarası** istiyor ve o arayüzde gösteriliyor.
+
+### Yapılmayanlar ve nedeni
+
+| İş | Neden |
+|---|---|
+| Gerçek görselleri indirme | Kullanıcı kararı: önce künye + lisans (spec §71 sırası) |
+| AI görsel/video üretimi | Spec §71 açıkça yasaklıyor; hat hazır, `canGenerate=false` |
+| Lightbox / kaydırmalı galeri | JavaScript gerekir, CSP değişmiyor |
+| `/medya` dizin sayfası | Kapsam dışı; panel kıssa ve ayet sayfalarından geliyor |
+| Konum sayfasında panel | `/harita` tek sayfa, konum başına sayfa yok |

@@ -1,0 +1,155 @@
+{
+  "//": [
+    "Gercek medya kayitlari — spec 32-48. AI gorseli BU DOSYAYA GIRMEZ (spec 32);",
+    "uretilmis AI medyasi data/media/ai_generated.json icindedir.",
+    "license / licenseRaw / author / date / width / height alanlarini ELLE DOLDURMA:",
+    "`pnpm data:wikimedia` Commons API'sinden ceker. Buradaki insan karari sudur —",
+    "hangi dosya, hangi baglam cumlesi (caution), hangi ayet ve kissa bagi.",
+    "Spec §43. Modern Mekke fotoğraflarının telifi dosya başına denetlenir; CC0 ve CC BY-SA seçildi."
+  ],
+  "place": "mekke",
+  "note": "Spec §43. Modern Mekke fotoğraflarının telifi dosya başına denetlenir; CC0 ve CC BY-SA seçildi.",
+  "items": [
+    {
+      "id": "mescid-i-haram",
+      "kind": "REAL_PHOTO",
+      "title": "Mescid-i Harâm ve Kâbe",
+      "description": null,
+      "caution": "Günümüz yapısıdır; Peygamber dönemindeki hâli değildir.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Masjid_al-Haram_2022.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/5/51/Masjid_al-Haram_2022.jpg",
+      "author": "مريم محمد الغلبان",
+      "institution": null,
+      "date": "2022-06-06",
+      "license": "CC0",
+      "licenseRaw": "cc0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "copyright": "مريم محمد الغلبان · https://www.aljazeera.com/gallery/2022/7/7/photos-one-million-muslims-start-hajj-pilgrimage-in-mecca · CC0",
+      "locationName": "Mekke, Suudi Arabistan",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/mescid-i-haram.webp",
+      "width": 2000,
+      "height": 1333,
+      "locationSlug": "mekke",
+      "storySlugs": [
+        "hz-ibrahim",
+        "hz-ismail"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [
+        "3:96-97",
+        "2:125-127"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "cebel-i-nur",
+      "kind": "REAL_PHOTO",
+      "title": "Cebel-i Nûr (Hira'nın bulunduğu dağ)",
+      "description": null,
+      "caution": "İlk vahyin Hira mağarasında geldiği bilgisi siyer kaynaklarına dayanır; Kur'an mağaranın adını vermez.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Jabbal_An-Nour_%282024%29.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/5/57/Jabbal_An-Nour_%282024%29.jpg",
+      "author": "Kaliper1",
+      "institution": null,
+      "date": "1 January 2025 (according to Exif data)",
+      "license": "CC_BY_SA",
+      "licenseRaw": "cc-by-sa-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "copyright": "Kaliper1 · Own work · CC BY-SA 4.0",
+      "locationName": "Mekke, Suudi Arabistan",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/cebel-i-nur.webp",
+      "width": 2000,
+      "height": 1500,
+      "locationSlug": "mekke",
+      "storySlugs": [
+        "asr-i-saadet"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [
+        "96:1-5"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "hira-magarasi",
+      "kind": "REAL_PHOTO",
+      "title": "Hira mağarası",
+      "description": null,
+      "caution": "Konum siyer geleneğine dayanır.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Hira_Cave.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Hira_Cave.jpg",
+      "author": "saudipics",
+      "institution": null,
+      "date": "2018-02-20 07:25:46",
+      "license": "CC_BY_SA",
+      "licenseRaw": "cc-by-sa-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "copyright": "saudipics · http://saudipics.com/images/preview/1317 · CC BY-SA 4.0",
+      "locationName": "Mekke, Suudi Arabistan",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/hira-magarasi.webp",
+      "width": 2000,
+      "height": 1335,
+      "locationSlug": "mekke",
+      "storySlugs": [
+        "asr-i-saadet"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [
+        "96:1-5"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "kabe-1886",
+      "kind": "DOCUMENT",
+      "title": "Kâbe — hac mevsimi, 1886",
+      "description": "Mescid-i Harâm'ın genişletmelerden önceki hâlini gösteren erken fotoğraf.",
+      "caution": null,
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Kaaba_during_the_Hajj_-_1886.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Kaaba_during_the_Hajj_-_1886.jpg",
+      "author": "Post of Switzerland",
+      "institution": null,
+      "date": "1886-09",
+      "license": "PUBLIC_DOMAIN",
+      "licenseRaw": "pd",
+      "licenseUrl": null,
+      "copyright": "Post of Switzerland · https://www.picclickimg.com/d/w1600/pict/232772144049_/saudi-arabia-MECCA-MAKKAH-Kaaba-during-the-Hajj.jpg · Public domain",
+      "locationName": "Mekke, Suudi Arabistan",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/kabe-1886.webp",
+      "width": 1000,
+      "height": 639,
+      "locationSlug": "mekke",
+      "storySlugs": [],
+      "timelineOrders": [],
+      "verseRefs": [
+        "2:158",
+        "5:97"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    }
+  ]
+}

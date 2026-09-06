@@ -64,6 +64,16 @@
       "url": "https://developers.arcgis.com/rest/elevation/",
       "license": "ArcGIS Location Platform kullanım şartları; ücretsiz kota içinde, sonuç değer olarak saklanır",
       "note": "Konumların deniz seviyesinden yüksekliği. Editoryal değil ÖLÇÜM verisidir; bir kez çekilip data/locations/locations.json içine yazılır, site build'i bu servise bağlanmaz (CLAUDE.md kural 5)."
+    },
+    {
+      "slug": "wikimedia-commons",
+      "name": "Wikimedia Commons",
+      "workTitle": null,
+      "author": null,
+      "reference": "commons.wikimedia.org — dosya künye sayfaları",
+      "url": "https://commons.wikimedia.org",
+      "license": "Dosya başına değişir; her kaydın kendi lisansı licenseRaw/license alanlarında",
+      "note": "Gerçek görsel katmanının ana kaynağı. Lisans dosya başına API'den çekilir (pnpm data:wikimedia); kategori beyanına güvenilmez."
     }
   ]
 }

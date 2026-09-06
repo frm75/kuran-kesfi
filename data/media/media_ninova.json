@@ -1,0 +1,116 @@
+{
+  "//": [
+    "Gercek medya kayitlari — spec 32-48. AI gorseli BU DOSYAYA GIRMEZ (spec 32);",
+    "uretilmis AI medyasi data/media/ai_generated.json icindedir.",
+    "license / licenseRaw / author / date / width / height alanlarini ELLE DOLDURMA:",
+    "`pnpm data:wikimedia` Commons API'sinden ceker. Buradaki insan karari sudur —",
+    "hangi dosya, hangi baglam cumlesi (caution), hangi ayet ve kissa bagi.",
+    "Spec §41."
+  ],
+  "place": "ninova",
+  "note": "Spec §41.",
+  "items": [
+    {
+      "id": "ninova-adad-kapisi",
+      "kind": "ARCHAEOLOGY",
+      "title": "Nînevâ — Adad Kapısı",
+      "description": null,
+      "caution": "Yûnus kıssası, İslâmî gelenekte Nînevâ ile ilişkilendirilir. Kur'an bir koordinat vermez.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Adad_gate_exterior_entrance_north3.JPG",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/0/07/Adad_gate_exterior_entrance_north3.JPG",
+      "author": "Fredarch",
+      "institution": null,
+      "date": "1990-04",
+      "license": "CC_BY_SA",
+      "licenseRaw": "cc-by-sa-3.0",
+      "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+      "copyright": "Fredarch · http://en.wikipedia.org/wiki/Image:Adad_gate_exterior_entrance_north3.JPG · CC BY-SA 3.0",
+      "locationName": "Musul, Irak",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/ninova-adad-kapisi.webp",
+      "width": 1246,
+      "height": 719,
+      "locationSlug": "ninova",
+      "storySlugs": [
+        "hz-yunus"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [
+        "10:98",
+        "37:139-148"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "ninova-kabartma",
+      "kind": "ARCHAEOLOGY",
+      "title": "Nînevâ kabartmaları (MÖ 668-627)",
+      "description": "Asurbanipal dönemi saray kabartmaları.",
+      "caution": "Asur dönemine ait sanat eserleridir; kıssayla doğrudan kanıt ilişkisi yoktur.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Carved_Reliefs_from_Nineveh_668-627_BCE_from_the_reign_of_Assurbanipal._Birmingham_Museum_and_Art_Gallery.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Carved_Reliefs_from_Nineveh_668-627_BCE_from_the_reign_of_Assurbanipal._Birmingham_Museum_and_Art_Gallery.jpg",
+      "author": "SpeakingArch",
+      "institution": null,
+      "date": "2026-07-15",
+      "license": "CC_BY_SA",
+      "licenseRaw": "cc-by-sa-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "copyright": "SpeakingArch · Own work · CC BY-SA 4.0",
+      "locationName": "Birmingham Museum and Art Gallery",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/ninova-kabartma.webp",
+      "width": 1200,
+      "height": 628,
+      "locationSlug": "ninova",
+      "storySlugs": [
+        "hz-yunus"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "ninova-dususu-tableti",
+      "kind": "DOCUMENT",
+      "title": "Nînevâ'nın Düşüşü Kroniği (BM 21901)",
+      "description": "Nînevâ'nın MÖ 612'de düşüşünü kaydeden Babil kroniği tableti.",
+      "caution": "Tablet Nînevâ'nın yıkılışını kaydeder; Yûnus kıssasıyla doğrudan bir ilişkisi kurulmamıştır.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Fall_of_Nineveh_Chronicle_BM_21901.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/7/72/Fall_of_Nineveh_Chronicle_BM_21901.jpg",
+      "author": "Zunkir",
+      "institution": null,
+      "date": "2022-08-24 11:35:02",
+      "license": "CC_BY_SA",
+      "licenseRaw": "cc-by-sa-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "copyright": "Zunkir · Own work · CC BY-SA 4.0",
+      "locationName": "British Museum, Londra",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/ninova-dususu-tableti.webp",
+      "width": 1182,
+      "height": 2000,
+      "locationSlug": "ninova",
+      "storySlugs": [
+        "hz-yunus"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    }
+  ]
+}

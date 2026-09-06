@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { confidence, locationConfidence, nonEmptyText, slug } from "./common.js";
 import { conceptRelationType } from "./concept.js";
+import { mediaKind, mediaLicense } from "./media.js";
 import { verseRelationType } from "./discovery.js";
 import { origin as contentOrigin } from "./source.js";
 import { principleVerseRole } from "./principle.js";
@@ -24,6 +25,8 @@ import { timelinePeriod } from "./timeline.js";
  *   data/verse_links.json                    ayet → kıssa/ilke/kavram/olay (ters dizin)
  *   data/verse_relations.json                ayet → ayet (türetilmiş ilişki ağı)
  *   data/sections.json                       sure içi konu bölümlemesi
+ *   data/media.json                          medya kayıtları (gerçek + AI)
+ *   data/verse_media.json                    ayet → medya (ters dizin)
  *
  * Kıssa ve ilke dosyaları ayet metni TAŞIMAZ: Musa kıssası 300+ ayet, metinle
  * 150 KB olurdu. Sayfa build zamanında `surah/` ve `translation/` katmanından
@@ -414,3 +417,68 @@ export const staticSurahSections = z.object({
   ),
 });
 export type StaticSurahSections = z.infer<typeof staticSurahSections>;
+
+
+// --- Medya (§32-71) -----------------------------------------------------------
+
+/**
+ * Tek medya kaydı — gerçek belge ya da AI canlandırması.
+ *
+ * ÜÇ TÜR KARIŞMAZ (spec §32). Arayüz ayrımı `kind` üzerinden yapar ve AI
+ * kartına etiketi ŞABLONDAN basar (`AI_DISCLAIMER_TR`), veriden değil —
+ * bir kaydın etiketi unutulabilsin diye veri alanı açılmadı.
+ *
+ * `path` dosyanın `media/` ağacındaki GÖRELİ yoludur; tam adres arayüzde
+ * kurulur. Sebep r2_sync.ts'in gerekçesiyle aynı: sağlayıcı değişimi tek DNS
+ * kaydına inmeli, veri dosyalarına gömülü mutlak adrese değil. Kısıtlı
+ * lisanslı kayıtlarda null'dır ve kart yalnızca "Kaynağı görüntüle" gösterir.
+ */
+export const staticMediaItem = z.object({
+  id: slug,
+  kind: mediaKind,
+  title: nonEmptyText,
+  description: z.string().nullable(),
+  /** Kesinlik iddiasını dengeleyen uyarı cümlesi (§35, §40, §41) */
+  caution: z.string().nullable(),
+
+  // künye — AI kayıtlarında hepsi null
+  sourceName: z.string().nullable(),
+  sourceUrl: z.string().nullable(),
+  author: z.string().nullable(),
+  institution: z.string().nullable(),
+  date: z.string().nullable(),
+  license: mediaLicense.nullable(),
+  licenseUrl: z.string().nullable(),
+  copyright: z.string().nullable(),
+
+  // dosya
+  path: z.string().nullable(),
+  width: z.number().int().positive().nullable(),
+  height: z.number().int().positive().nullable(),
+  durationSec: z.number().int().positive().nullable(),
+
+  // bağlar
+  locationName: z.string().nullable(),
+  locationSlug: slug.nullable(),
+  storySlugs: z.array(slug),
+  verses: z.array(staticVersePointer),
+
+  /** AI kayıtlarında üretildiği prompt; gerçek kayıtlarda null */
+  promptId: slug.nullable(),
+});
+export type StaticMediaItem = z.infer<typeof staticMediaItem>;
+
+export const staticMedia = z.object({ media: z.array(staticMediaItem) });
+export type StaticMedia = z.infer<typeof staticMedia>;
+
+/**
+ * Ayet → medya kimlikleri (ters dizin).
+ *
+ * Yazma dizininden farklı olarak SAYI değil kimlik taşınır: ayet başına en
+ * çok birkaç medya düşüyor (34 kayıt, 139 bağ), kısaltmaya gerek yok.
+ * Medyası olmayan ayet dosyada hiç geçmez.
+ */
+export const staticVerseMedia = z.object({
+  verses: z.record(z.string().regex(/^\d+$/), z.array(slug).min(1)),
+});
+export type StaticVerseMedia = z.infer<typeof staticVerseMedia>;

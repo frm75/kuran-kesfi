@@ -3,6 +3,7 @@ import type { GetStaticPaths } from "astro";
 import Base from "~/layouts/Base.astro";
 import VerseArabic from "~/components/VerseArabic.astro";
 import HaritaCanli from "~/components/HaritaCanli.astro";
+import MedyaPaneli from "~/components/MedyaPaneli.astro";
 import {
   getDefaultAuthor,
   getPassageVerses,
@@ -10,6 +11,7 @@ import {
   getStory,
   verseLabel,
 } from "~/lib/data";
+import { getLocationMedia, getStoryMedia } from "~/lib/media";
 
 /**
  * Tek kıssa — plan §2.1 "anlatı modu".
@@ -56,6 +58,18 @@ const route = [...story.locations].sort((a, b) => a.order - b.order);
  * ne oluyor" sorusuna "Kasas 22-28" diye cevap verebilsin diye.
  * Ayet METNİ panele kopyalanmıyor; o zaten aşağıdaki "Anlatı" bölümünde.
  */
+/*
+ * Kissanin medyasi: dogrudan kissaya bagli kayitlar + duraklarinin konum
+ * medyasi. Ikincisi olmadan Semud kissasi Hegra fotograflarini gormezdi —
+ * kayitlar konuma bagli, kissaya degil. Ayni kayit iki yoldan gelebilir,
+ * bu yuzden id ile tekillestiriliyor.
+ */
+const storyMedia = [
+  ...getStoryMedia(story.slug),
+  ...story.locations.flatMap((place) => getLocationMedia(place.slug)),
+];
+const media = [...new Map(storyMedia.map((m) => [m.id, m])).values()];
+
 const passageByOrder = new Map(story.passages.map((pg) => [pg.order, pg]));
 const mapRoute = route.map((place) => ({
   slug: place.slug,
@@ -289,5 +303,10 @@ const anchorFor = (placeSlug: string): string | undefined => {
         </section>
       )
     }
+    <MedyaPaneli
+      items={media}
+      title="Keşfet — bu kıssanın medyası"
+      headingId="medya"
+    />
   </main>
 </Base>

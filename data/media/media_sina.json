@@ -1,0 +1,120 @@
+{
+  "//": [
+    "Gercek medya kayitlari — spec 32-48. AI gorseli BU DOSYAYA GIRMEZ (spec 32);",
+    "uretilmis AI medyasi data/media/ai_generated.json icindedir.",
+    "license / licenseRaw / author / date / width / height alanlarini ELLE DOLDURMA:",
+    "`pnpm data:wikimedia` Commons API'sinden ceker. Buradaki insan karari sudur —",
+    "hangi dosya, hangi baglam cumlesi (caution), hangi ayet ve kissa bagi.",
+    "Spec §36. Üç dosya da spec'te adıyla verilmişti ve API doğrulamasından geçti."
+  ],
+  "place": "sina-tur",
+  "note": "Spec §36. Üç dosya da spec'te adıyla verilmişti ve API doğrulamasından geçti.",
+  "items": [
+    {
+      "id": "sina-ay-manzarasi",
+      "kind": "REAL_PHOTO",
+      "title": "Sînâ çölü — ay yüzeyini andıran manzara",
+      "description": null,
+      "caution": "Günümüz Sînâ coğrafyasının fotoğrafıdır. Mûsâ'nın yaşadığı dönemin görüntüsü değildir ve AI canlandırmasıyla karıştırılmamalıdır.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sinai_Desert%2C_Egypt%2C_Lunar_landscape_of_Sinai_desert.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/b/bd/Sinai_Desert%2C_Egypt%2C_Lunar_landscape_of_Sinai_desert.jpg",
+      "author": "Vyacheslav Argenberg",
+      "institution": null,
+      "date": "2007-06-09 12:39:43",
+      "license": "CC_BY",
+      "licenseRaw": "cc-by-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+      "copyright": "Vyacheslav Argenberg · Own work · CC BY 4.0",
+      "locationName": "Sînâ, Mısır",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/sina-ay-manzarasi.webp",
+      "width": 2000,
+      "height": 1333,
+      "locationSlug": "sina-tur",
+      "storySlugs": [
+        "hz-musa"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [
+        "20:9-12",
+        "79:15-16"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "sina-kanyon",
+      "kind": "REAL_PHOTO",
+      "title": "Sînâ dağları arasındaki kanyon",
+      "description": null,
+      "caution": "Günümüz Sînâ coğrafyasının fotoğrafıdır; tarihsel sahne değildir.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sinai%2C_Egypt%2C_Canyon_through_the_mountains%2C_majestic_desert_landscape.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/24/Sinai%2C_Egypt%2C_Canyon_through_the_mountains%2C_majestic_desert_landscape.jpg",
+      "author": "Vyacheslav Argenberg",
+      "institution": null,
+      "date": "2007-06-09 14:21:00",
+      "license": "CC_BY",
+      "licenseRaw": "cc-by-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+      "copyright": "Vyacheslav Argenberg · Own work · CC BY 4.0",
+      "locationName": "Sînâ, Mısır",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/sina-kanyon.webp",
+      "width": 2000,
+      "height": 1333,
+      "locationSlug": "sina-tur",
+      "storySlugs": [
+        "hz-musa"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [
+        "20:9-12"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "sina-manzara",
+      "kind": "REAL_PHOTO",
+      "title": "Sînâ — genel manzara",
+      "description": null,
+      "caution": "Günümüz Sînâ coğrafyasının fotoğrafıdır; tarihsel sahne değildir.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sinai_-_Egypt.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Sinai_-_Egypt.jpg",
+      "author": "Mohammed Moussa",
+      "institution": null,
+      "date": "2015-09-20 14:33:06",
+      "license": "CC_BY_SA",
+      "licenseRaw": "cc-by-sa-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "copyright": "Mohammed Moussa · Own work · CC BY-SA 4.0",
+      "locationName": "Sînâ, Mısır",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/sina-manzara.webp",
+      "width": 2000,
+      "height": 1325,
+      "locationSlug": "sina-tur",
+      "storySlugs": [
+        "hz-musa"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [
+        "28:29-30"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    }
+  ]
+}

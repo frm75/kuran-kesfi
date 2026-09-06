@@ -1,0 +1,28 @@
+{
+  "//": [
+    "AI prompt kayitlari — spec 49-61, 65. Prompt KODA GOMULMEZ.",
+    "Metinler yalnizca Ingilizce yazilir (plan 20.3): render sadakati icin.",
+    "depictsProphet=true ise prompt metni 'identifiable face' kisitini TASIMAK",
+    "ZORUNDADIR; sema bunu reddederek uygular. Peygamber yuzu gosterilmez —",
+    "yasak yuzedir, insan figuru ve siluet serbesttir (CLAUDE.md, 2026-09-06).",
+    "Bu dosyalar prompt'u tanimlar, GORSEL URETMEZ (spec 71)."
+  ],
+  "prompts": [
+    {
+      "id": "yusuf-kuyudan-cikarilmasi",
+      "title": "Yûsuf'un kuyudan çıkarılması",
+      "promptType": "IMAGE",
+      "prompt": "Cinematic historical visualization inspired by the Quranic story of Prophet Joseph\nbeing discovered in a well.\n\nAncient Near Eastern desert landscape, deep stone well, several travelers discovering\na young person inside the well, wooden rope and leather water container, dusty caravan\nroute, historically plausible ancient clothing and equipment.\n\nWarm early morning light, cinematic depth, realistic environment,\narchaeological documentary atmosphere.\n\nDo not show Prophet Joseph's identifiable face. Use distant framing or rear view.\n\nAI-generated historical visualization, not a real historical photograph.",
+      "negativePrompt": "modern buildings, modern vehicles, modern clothing, fantasy elements, text, watermark, subtitles",
+      "model": null,
+      "durationSec": null,
+      "aspectRatio": "16:9",
+      "version": 1,
+      "depictsProphet": true,
+      "storySlug": "hz-yusuf",
+      "locationSlug": "kenan",
+      "timelineOrder": null,
+      "baseImagePromptId": null
+    }
+  ]
+}

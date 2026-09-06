@@ -1,0 +1,28 @@
+{
+  "//": [
+    "AI prompt kayitlari — spec 49-61, 65. Prompt KODA GOMULMEZ.",
+    "Metinler yalnizca Ingilizce yazilir (plan 20.3): render sadakati icin.",
+    "depictsProphet=true ise prompt metni 'identifiable face' kisitini TASIMAK",
+    "ZORUNDADIR; sema bunu reddederek uygular. Peygamber yuzu gosterilmez —",
+    "yasak yuzedir, insan figuru ve siluet serbesttir (CLAUDE.md, 2026-09-06).",
+    "Bu dosyalar prompt'u tanimlar, GORSEL URETMEZ (spec 71)."
+  ],
+  "prompts": [
+    {
+      "id": "firavun-sarayi",
+      "title": "Mûsâ ve Firavun dönemi — saray",
+      "promptType": "IMAGE",
+      "prompt": "Cinematic historical visualization of an ancient Egyptian royal court during the era\ntraditionally associated with the Quranic story of Moses and Pharaoh.\n\nAncient Egyptian palace environment, stone columns, painted walls, servants and officials\nwearing historically plausible ancient Egyptian clothing, Nile Valley atmosphere.\n\nThe scene should resemble historically documented New Kingdom Egyptian architecture\nwithout claiming that this is the exact palace of Pharaoh mentioned in the Quran.\n\nProphet Moses must not have an identifiable face.\n\nCinematic natural lighting, realistic materials, archaeological documentary realism.\n\nAI-generated historical visualization, not a historical photograph.",
+      "negativePrompt": "modern buildings, modern vehicles, modern clothing, fantasy elements, text, watermark, subtitles",
+      "model": null,
+      "durationSec": null,
+      "aspectRatio": "16:9",
+      "version": 1,
+      "depictsProphet": true,
+      "storySlug": "firavun",
+      "locationSlug": "misir",
+      "timelineOrder": null,
+      "baseImagePromptId": null
+    }
+  ]
+}

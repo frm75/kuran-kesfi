@@ -1,0 +1,119 @@
+{
+  "//": [
+    "Gercek medya kayitlari — spec 32-48. AI gorseli BU DOSYAYA GIRMEZ (spec 32);",
+    "uretilmis AI medyasi data/media/ai_generated.json icindedir.",
+    "license / licenseRaw / author / date / width / height alanlarini ELLE DOLDURMA:",
+    "`pnpm data:wikimedia` Commons API'sinden ceker. Buradaki insan karari sudur —",
+    "hangi dosya, hangi baglam cumlesi (caution), hangi ayet ve kissa bagi.",
+    "Spec §35. DİKKAT: spec'te yazan dosya adı 'Cudi Dağı panorama.jpg'; Commons'taki gerçek ad 'Cudi Dağı panaroma.jpg' (kaynakta yazım hatası). Dosya adları elle kopyalanmaz, API'den doğrulanır."
+  ],
+  "place": "cudi",
+  "note": "Spec §35. DİKKAT: spec'te yazan dosya adı 'Cudi Dağı panorama.jpg'; Commons'taki gerçek ad 'Cudi Dağı panaroma.jpg' (kaynakta yazım hatası). Dosya adları elle kopyalanmaz, API'den doğrulanır.",
+  "items": [
+    {
+      "id": "cudi-panorama",
+      "kind": "REAL_PHOTO",
+      "title": "Cûdî Dağı panoraması",
+      "description": null,
+      "caution": "Cûdî, geleneksel olarak Şırnak'taki Cudi Dağı ile ilişkilendirilmektedir; coğrafi teyit yoktur.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cudi_Da%C4%9F%C4%B1_panaroma.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Cudi_Da%C4%9F%C4%B1_panaroma.jpg",
+      "author": "KediÇobanı",
+      "institution": null,
+      "date": "2023-04-22 13:02:58",
+      "license": "CC_BY_SA",
+      "licenseRaw": "cc-by-sa-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "copyright": "KediÇobanı · Own work · CC BY-SA 4.0",
+      "locationName": "Şırnak, Türkiye",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/cudi-panorama.webp",
+      "width": 2000,
+      "height": 415,
+      "locationSlug": "cudi",
+      "storySlugs": [
+        "hz-nuh"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [
+        "11:44"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "cudi-dagi",
+      "kind": "REAL_PHOTO",
+      "title": "Cûdî Dağı",
+      "description": null,
+      "caution": "Cûdî, geleneksel olarak Şırnak'taki Cudi Dağı ile ilişkilendirilmektedir; coğrafi teyit yoktur.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cudi_Da%C4%9F%C4%B1.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2a/Cudi_Da%C4%9F%C4%B1.jpg",
+      "author": "KediÇobanı",
+      "institution": null,
+      "date": "2023-12-28 14:06:23",
+      "license": "CC_BY_SA",
+      "licenseRaw": "cc-by-sa-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "copyright": "KediÇobanı · Own work · CC BY-SA 4.0",
+      "locationName": "Şırnak, Türkiye",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/cudi-dagi.webp",
+      "width": 2000,
+      "height": 544,
+      "locationSlug": "cudi",
+      "storySlugs": [
+        "hz-nuh"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [
+        "11:44"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "cudi-manastir-kalintisi-1829",
+      "kind": "DOCUMENT",
+      "title": "Cûdî Dağı'ndaki manastır kalıntısı (1829 gravürü)",
+      "description": "19. yüzyıl seyahat literatüründen gravür; dağın o dönemdeki tasviri.",
+      "caution": "Gravür bir kaynak belgesidir, arkeolojik kanıt değildir.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cudi-dagh-tr-1829.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Cudi-dagh-tr-1829.jpg",
+      "author": "Timo Roller",
+      "institution": null,
+      "date": "2013-09-25",
+      "license": "CC_BY",
+      "licenseRaw": "cc-by-3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+      "copyright": "Timo Roller · Own work · CC BY 3.0",
+      "locationName": "Şırnak, Türkiye",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/cudi-manastir-kalintisi-1829.webp",
+      "width": 2000,
+      "height": 1183,
+      "locationSlug": "cudi",
+      "storySlugs": [
+        "hz-nuh"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [
+        "11:44"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+---
+import type { StaticMediaItem } from "@kuran/schema";
+import MedyaKarti from "~/components/MedyaKarti.astro";
+import { MEDIA_KIND_LABEL, groupByKind, isAiMedia } from "~/lib/media";
+
+/**
+ * Medya paneli — plan §62, §63.
+ *
+ * ## GERÇEK ve AI İKİ AYRI BÖLÜM
+ *
+ * Spec §32'nin tek katı kuralı: üç tür asla karıştırılmaz. Panel bunu düzenle
+ * uygular — gerçek belgeler bir bölümde, AI canlandırmaları başka bir bölümde,
+ * araya "hepsi" diye karışık bir liste konmaz. Aynı ızgarada sıralansalardı
+ * kullanıcı hangi kartın fotoğraf hangisinin canlandırma olduğunu kart
+ * etiketini okuyarak ayırmak zorunda kalırdı; ayrım yapıya girmeli.
+ *
+ * ## FİLTRE `<details>` İLE — JAVASCRIPT YOK
+ *
+ * Spec §63 filtre çipleri istiyor. Site 8200+ sayfada 0 bayt JS ile çalışıyor
+ * ve CSP `script-src` yalnız `/harita` ile `/kissa/*` için açık (CLAUDE.md).
+ * Betikli bir filtre bu sayfaların çoğunda sessizce ölürdü. Bunun yerine her
+ * tür kendi `<details>` grubunda ve sayısı `<summary>` içinde: kullanıcı
+ * istediği türü açar. Klavye ve ekran okuyucu desteği tarayıcıdan bedava
+ * gelir; `:target` tabanlı sahte filtreye göre de daha dürüst — açık olan
+ * grup adres çubuğunda değil ekranda görünür.
+ *
+ * İlk grup açık gelir ki panel boş bir başlık yığını gibi görünmesin.
+ */
+
+interface Props {
+  items: readonly StaticMediaItem[];
+  /** Bölüm başlığı; sayfaya göre değişir ("Bu ayetin medyası") */
+  title?: string;
+  /** Başlık düzeyi — ayet sayfasında h2, kıssa sayfasında h2 */
+  headingId?: string;
+}
+
+const { items, title = "Keşfet — medya", headingId = "medya" } = Astro.props;
+
+const real = items.filter((m) => !isAiMedia(m));
+const ai = items.filter((m) => isAiMedia(m));
+
+const sections = [
+  { key: "gercek", label: "Gerçek belgeler", groups: groupByKind(real) },
+  { key: "ai", label: "AI canlandırmalar", groups: groupByKind(ai) },
+].filter((s) => s.groups.length > 0);
+
+/** Yalnızca ilk grup açık — hangisi olduğu bölümler arasında değil, toplamda. */
+let opened = false;
+const isOpen = (): boolean => {
+  if (opened) return false;
+  opened = true;
+  return true;
+};
+---
+
+{
+  items.length > 0 && (
+    <section class="medya-panel" aria-labelledby={headingId}>
+      <h2 class="medya-panel-baslik" id={headingId}>
+        {title}
+      </h2>
+
+      {sections.map((section) => (
+        <div class="medya-bolum">
+          <h3 class="medya-bolum-baslik">
+            {section.label}
+            <span class="medya-bolum-sayi">
+              {section.groups.reduce((n, g) => n + g.items.length, 0)}
+            </span>
+          </h3>
+
+          {section.key === "ai" && (
+            <p class="medya-bolum-not">
+              Bu bölümdeki görüntüler yapay zekâ ile üretilmiş canlandırmalardır;
+              tarihsel fotoğraf ya da arkeolojik kanıt değildir.
+            </p>
+          )}
+
+          {section.groups.map((group) => (
+            <details class="medya-grup" open={isOpen()}>
+              <summary class="medya-grup-ozet">
+                <span>{MEDIA_KIND_LABEL[group.kind]}</span>
+                <b>{group.items.length}</b>
+              </summary>
+              <ul class="medya-izgara">
+                {group.items.map((item) => (
+                  <li>
+                    <MedyaKarti item={item} />
+                  </li>
+                ))}
+              </ul>
+            </details>
+          ))}
+        </div>
+      ))}
+    </section>
+  )
+}

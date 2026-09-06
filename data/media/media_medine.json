@@ -1,0 +1,185 @@
+{
+  "//": [
+    "Gercek medya kayitlari — spec 32-48. AI gorseli BU DOSYAYA GIRMEZ (spec 32);",
+    "uretilmis AI medyasi data/media/ai_generated.json icindedir.",
+    "license / licenseRaw / author / date / width / height alanlarini ELLE DOLDURMA:",
+    "`pnpm data:wikimedia` Commons API'sinden ceker. Buradaki insan karari sudur —",
+    "hangi dosya, hangi baglam cumlesi (caution), hangi ayet ve kissa bagi.",
+    "Spec §44, §46. Uhud kendi Place kaydına sahiptir (locationSlug 'uhud'); dosya Medine coğrafyasını topluca taşır."
+  ],
+  "place": "medine",
+  "note": "Spec §44, §46. Uhud kendi Place kaydına sahiptir (locationSlug 'uhud'); dosya Medine coğrafyasını topluca taşır.",
+  "items": [
+    {
+      "id": "mescid-i-nebevi",
+      "kind": "REAL_PHOTO",
+      "title": "Mescid-i Nebevî — kuş bakışı",
+      "description": null,
+      "caution": "Günümüz yapısıdır; Peygamber dönemindeki mescit çok daha küçüktü.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Al-Masjid_An-Nabawi_%28Bird%27s_Eye_View%29.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/0/0e/Al-Masjid_An-Nabawi_%28Bird%27s_Eye_View%29.jpg",
+      "author": "Konevi",
+      "institution": null,
+      "date": "2018-04-22 06:14:21",
+      "license": "CC0",
+      "licenseRaw": "cc0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "copyright": "Konevi · https://pixabay.com/en/masjid-nabawi-i-ve-to-medina-medina-3341739/ archive copy at the Wayback Machine · CC0",
+      "locationName": "Medine, Suudi Arabistan",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/mescid-i-nebevi.webp",
+      "width": 2000,
+      "height": 1333,
+      "locationSlug": "medine",
+      "storySlugs": [
+        "asr-i-saadet"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "mescid-i-nebevi-ilk-plan",
+      "kind": "DOCUMENT",
+      "title": "Mescid-i Nebevî'nin ilk yapısının planı (1 h.)",
+      "description": "İlk inşa dönemine ait plan çizimi.",
+      "caution": "Plan bir yeniden kurgu çizimidir, dönemin belgesi değildir.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Al-Masjid_al-Nabaw%C4%AB_al-Shar%C4%ABf_Original_Construction_1_AH.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/0/03/Al-Masjid_al-Nabaw%C4%AB_al-Shar%C4%ABf_Original_Construction_1_AH.jpg",
+      "author": "SPQR10",
+      "institution": null,
+      "date": "2026-03-16",
+      "license": "CC0",
+      "licenseRaw": "cc0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "copyright": "SPQR10 · Own work · CC0",
+      "locationName": "Medine, Suudi Arabistan",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/mescid-i-nebevi-ilk-plan.webp",
+      "width": 1649,
+      "height": 1215,
+      "locationSlug": "medine",
+      "storySlugs": [
+        "asr-i-saadet"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "kuba-mescidi",
+      "kind": "REAL_PHOTO",
+      "title": "Kubâ Mescidi",
+      "description": null,
+      "caution": "Bugünkü yapı moderndir. 9:108'deki 'takvâ üzere kurulan mescit' ifadesinin Kubâ'ya işaret ettiği yorumu tefsir geleneğine dayanır.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Quba_Mosque_Full_Picture_%282024%29.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/98/Quba_Mosque_Full_Picture_%282024%29.jpg",
+      "author": "Kaliper1",
+      "institution": null,
+      "date": "27 December 2024 (according to Exif data)",
+      "license": "CC_BY_SA",
+      "licenseRaw": "cc-by-sa-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "copyright": "Kaliper1 · Own work · CC BY-SA 4.0",
+      "locationName": "Medine, Suudi Arabistan",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/kuba-mescidi.webp",
+      "width": 2000,
+      "height": 1500,
+      "locationSlug": "medine",
+      "storySlugs": [
+        "asr-i-saadet"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [
+        "9:108"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "uhud-panorama",
+      "kind": "REAL_PHOTO",
+      "title": "Uhud Dağı panoraması",
+      "description": null,
+      "caution": "Savaşın geçtiği alan bugün Medine'nin yerleşim dokusu içindedir.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Mount_Uhud_Panorama.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/24/Mount_Uhud_Panorama.jpg",
+      "author": "Ahmed Abdulbasit (Pakistan)",
+      "institution": null,
+      "date": "2019-01-06 15:01:25",
+      "license": "CC_BY_SA",
+      "licenseRaw": "cc-by-sa-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "copyright": "Ahmed Abdulbasit (Pakistan) · Own work · CC BY-SA 4.0",
+      "locationName": "Medine, Suudi Arabistan",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/uhud-panorama.webp",
+      "width": 2000,
+      "height": 468,
+      "locationSlug": "uhud",
+      "storySlugs": [
+        "uhud-gazvesi"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [
+        "3:121-128"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "uhud-okcular-tepesi",
+      "kind": "REAL_PHOTO",
+      "title": "Cebelü'r-Rumât (Okçular Tepesi)",
+      "description": "Uhud'da okçuların yerleştirildiği tepe.",
+      "caution": "Tepenin bu adla anılması siyer geleneğine dayanır.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Jabal_al_Rumah_%D8%AC%D8%A8%D9%84_%D8%A7%D9%84%D8%B1%D9%85%D8%A7%D9%87.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b1/Jabal_al_Rumah_%D8%AC%D8%A8%D9%84_%D8%A7%D9%84%D8%B1%D9%85%D8%A7%D9%87.jpg",
+      "author": "CR Guru PK",
+      "institution": null,
+      "date": "2017-04-05",
+      "license": "CC_BY_SA",
+      "licenseRaw": "cc-by-sa-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "copyright": "CR Guru PK · Own work · CC BY-SA 4.0",
+      "locationName": "Medine, Suudi Arabistan",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/uhud-okcular-tepesi.webp",
+      "width": 2000,
+      "height": 1499,
+      "locationSlug": "uhud",
+      "storySlugs": [
+        "uhud-gazvesi"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [
+        "3:121-128"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    }
+  ]
+}

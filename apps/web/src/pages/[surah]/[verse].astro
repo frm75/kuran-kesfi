@@ -19,6 +19,8 @@ import {
   verseLabel,
 } from "~/lib/data";
 import { dateText, getVerseManuscripts } from "~/lib/manuscripts";
+import MedyaPaneli from "~/components/MedyaPaneli.astro";
+import { getVerseMedia } from "~/lib/media";
 
 /**
  * Tek ayet sayfası — plan §12.4 (ayet paneli) ve §2.3 (meal karşılaştırma).
@@ -89,6 +91,12 @@ const related = getRelatedVerses(surahId, verseNumber);
  * GÖRÜNTÜ YOK: kaynaktaki 2322 yazmanın hepsinde görüntü izni "restricted".
  */
 const manuscripts = getVerseManuscripts(surahId, verseNumber);
+
+/*
+ * Bu ayete bagli medya (plan 62). Ayet basina en cok birkac kayit dusuyor,
+ * yazmalarin aksine kisaltma gerekmiyor — hepsi gosterilir.
+ */
+const verseMedia = getVerseMedia(surahId, verseNumber);
 const defaultAuthor = getDefaultAuthor();
 
 /** Kelime ortasında kesmez; kesildiyse üç nokta koyar. */
@@ -517,6 +525,12 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
         </section>
       )
     }
+
+    <MedyaPaneli
+      items={verseMedia}
+      title="Keşfet — bu ayetin medyası"
+      headingId="ayet-medya"
+    />
 
     {/*
       Meal karşılaştırma.

@@ -35,7 +35,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json",
-    "test:smoke": "tsx src/__tests__/schema.smoke.ts",
+    "test:smoke": "tsx src/__tests__/schema.smoke.ts && tsx src/__tests__/media.smoke.ts",
     "schema:generate": "tsx src/generate/cli.ts"
   },
   "dependencies": {

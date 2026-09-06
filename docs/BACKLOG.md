@@ -307,3 +307,33 @@ sure sure katlamak. Acil değil — gzip'li ağırlık 26 KB.
   `data-external/openiti/` (LICENSE.md + works.json, 9 klasik eserin künyesi, metin yok).
   `pnpm content:import` bu ağacı okumaz. **İlk yayın sonrasına kalan kısım:** buradan
   `data/`'ya kayıt taşıyan onaylı bir hat (şu an elle taşınıyor).
+
+---
+
+## Medya katmanı — ilk yayın sonrası (plan §24, 2026-09-06)
+
+Modülün kendisi yayında; aşağıdakiler bilinçli olarak dışarıda bırakıldı.
+
+- **Gerçek görselleri indirip barındırmak.** Bugün 34 kaydın hepsi künye +
+  "Kaynağı görüntüle" ile duruyor; hiçbir dosya sunucuda değil. Kullanıcı
+  kararı ve spec §71 sırası böyle. Karar değişirse iş: uygun lisanslıları
+  (`isHostableLicense`) indir → `media/gorsel/` → `localPath` doldur →
+  `pnpm media:r2:push` → **nginx CSP'sine `img-src` için `medya.kurankesfi.tr`
+  ekle ve canlıya kopyala** (yoksa görseller sessizce engellenir, bkz. CLAUDE.md
+  CSP notu).
+- **AI üretim hattını açmak.** `fileQueueProvider.canGenerate = false`; kuyruk
+  ve toplayıcı hazır, 10 prompt yazılı. Spec §71 önce gerçek görsel işinin
+  bitmesini şart koşuyor.
+- **Somut AI adaptörü** (ComfyUI / A1111 / API). `scripts/media/ai/provider.ts`
+  arayüzleri hazır; `ai_generator` enum'una yeni değer girer.
+- **Lightbox ve kaydırmalı galeri.** JavaScript gerekir; ayet sayfalarında CSP
+  `script-src` kapalı. Açılırsa panel filtresi de çipe dönebilir (spec §63).
+- **`/medya` dizin sayfası** — bütün medyayı türe ve coğrafyaya göre gezme.
+- **Konum başına medya sayfası.** Bugün `/harita` tek sayfa; konum sayfası yok.
+- **Kalan coğrafyalar.** İlk 10 coğrafya prototipi hazır (spec §70). Kudüs,
+  Eyke, Ahkāf, Lût gölü, Ur/Harran, Kenan, Taif, Habeşistan, Bedir, Hudeybiye,
+  Huneyn ve Hendek için medya kaydı yok.
+- **Medyen'in yer fotoğrafı.** Commons'ta Al-Bad' bölgesinin doğrulanmış yer
+  fotoğrafı bulunamadı; elde uydu görüntüsü ve iki kuyu fotoğrafı var. Başka
+  kaynak (UNESCO, Suudi Turizm Komisyonu arşivleri) araştırılabilir.
+

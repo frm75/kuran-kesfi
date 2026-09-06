@@ -1,0 +1,113 @@
+{
+  "//": [
+    "Gercek medya kayitlari — spec 32-48. AI gorseli BU DOSYAYA GIRMEZ (spec 32);",
+    "uretilmis AI medyasi data/media/ai_generated.json icindedir.",
+    "license / licenseRaw / author / date / width / height alanlarini ELLE DOLDURMA:",
+    "`pnpm data:wikimedia` Commons API'sinden ceker. Buradaki insan karari sudur —",
+    "hangi dosya, hangi baglam cumlesi (caution), hangi ayet ve kissa bagi.",
+    "Spec §42. Kur'an'da Bâbil yalnızca 2:102'de geçer ve Hârût-Mârût bağlamındadır; İbrâhim kıssasıyla doğrudan bir Kur'ânî bağ kurulmaz."
+  ],
+  "place": "babil",
+  "note": "Spec §42. Kur'an'da Bâbil yalnızca 2:102'de geçer ve Hârût-Mârût bağlamındadır; İbrâhim kıssasıyla doğrudan bir Kur'ânî bağ kurulmaz.",
+  "items": [
+    {
+      "id": "babil-kalintilari",
+      "kind": "ARCHAEOLOGY",
+      "title": "Bâbil antik kenti kalıntıları",
+      "description": null,
+      "caution": "Kur'an'da Bâbil 2:102'de geçer. İbrâhim kıssasının Bâbil'de geçtiği bilgisi Kur'an metninden değil tefsir ve tarih literatüründen gelir; ikisi ayrı tutulmalıdır.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ancient_city_of_Babylon_in_December_2016.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/1/1b/Ancient_city_of_Babylon_in_December_2016.jpg",
+      "author": "MohammadHuzam",
+      "institution": null,
+      "date": "2016-12-30 14:41:43",
+      "license": "CC_BY_SA",
+      "licenseRaw": "cc-by-sa-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "copyright": "MohammadHuzam · Own work · CC BY-SA 4.0",
+      "locationName": "Hille, Irak",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/babil-kalintilari.webp",
+      "width": 2000,
+      "height": 995,
+      "locationSlug": "babil",
+      "storySlugs": [],
+      "timelineOrders": [],
+      "verseRefs": [
+        "2:102"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "babil-kalinti-2",
+      "kind": "ARCHAEOLOGY",
+      "title": "Bâbil'de ayakta kalan yapılar",
+      "description": null,
+      "caution": "Görülen duvarların önemli bölümü 20. yüzyıl restorasyonudur.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ancient_Remains_in_Babylon.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/7/76/Ancient_Remains_in_Babylon.jpg",
+      "author": "Osama Sarm",
+      "institution": null,
+      "date": "2016-02-26 02:27:08",
+      "license": "CC_BY_SA",
+      "licenseRaw": "cc-by-sa-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "copyright": "Osama Sarm · Own work · CC BY-SA 4.0",
+      "locationName": "Hille, Irak",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/babil-kalinti-2.webp",
+      "width": 2000,
+      "height": 1333,
+      "locationSlug": "babil",
+      "storySlugs": [],
+      "timelineOrders": [],
+      "verseRefs": [
+        "2:102"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "istar-kapisi",
+      "kind": "ARCHAEOLOGY",
+      "title": "İştar Kapısı (Pergamon Müzesi)",
+      "description": "MÖ 6. yüzyıl Bâbil'inden sırlı tuğla kapı; Berlin'e taşınmıştır.",
+      "caution": "Kapı Yeni Bâbil dönemine (MÖ 575) aittir; Kur'an'daki Bâbil atfıyla doğrudan bir kanıt ilişkisi yoktur.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Pergamon_Museum_Ishtar_Gate_from_Babylon_third_phase_8134.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/1/14/Pergamon_Museum_Ishtar_Gate_from_Babylon_third_phase_8134.jpg",
+      "author": "Dosseman",
+      "institution": null,
+      "date": "2021-09-17 13:28:23",
+      "license": "CC_BY_SA",
+      "licenseRaw": "cc-by-sa-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "copyright": "Dosseman · Own work · CC BY-SA 4.0",
+      "locationName": "Pergamonmuseum, Berlin",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/istar-kapisi.webp",
+      "width": 2000,
+      "height": 1333,
+      "locationSlug": "babil",
+      "storySlugs": [],
+      "timelineOrders": [],
+      "verseRefs": [
+        "2:102"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    }
+  ]
+}

@@ -104,6 +104,36 @@ CREATE TYPE verse_relation_type AS ENUM (
 
 CREATE TYPE reason_ref_type AS ENUM ('concept', 'root', 'section', 'story', 'event');
 
+-- Medya türü (plan §32-71, spec §63 filtre listesi). Gerçek dünyaya ait belge
+-- ile AI canlandırması ASLA karıştırılmaz; ayrım bu türle başlar ve
+-- media_item üzerindeki CHECK kısıtlarıyla tamamlanır.
+CREATE TYPE media_kind AS ENUM (
+  'REAL_PHOTO',   -- günümüz fotoğrafı
+  'ARCHAEOLOGY',  -- kazı alanı, kaya mezarı, müze objesi
+  'DOCUMENT',     -- kitabe, yazıt, papirüs, eski harita, tarihî belge
+  'MANUSCRIPT',   -- eski mushaf görüntüsü
+  'MAP',          -- harita görüntüsü
+  'AI_IMAGE',     -- AI ile üretilmiş görsel
+  'AI_VIDEO'      -- AI ile üretilmiş ~10 sn video
+);
+
+-- Kullanım durumu (spec §34). Bu bir etiket DEĞİL kapıdır: COPYRIGHT,
+-- LINK_ONLY ve UNKNOWN lisanslı dosya sunucuya kopyalanmaz — yalnızca
+-- "Kaynağı görüntüle" bağlantısı verilir. Kural media_item_license_gate
+-- kısıtıyla veritabanı düzeyinde uygulanır.
+CREATE TYPE media_license AS ENUM (
+  'PUBLIC_DOMAIN', 'CC0', 'CC_BY', 'CC_BY_SA', 'CC_BY_NC',
+  'COPYRIGHT', 'LINK_ONLY', 'UNKNOWN'
+);
+
+CREATE TYPE ai_prompt_type AS ENUM ('IMAGE', 'VIDEO');
+
+-- AI üreteci (spec §66 — sağlayıcıya kilitlenme yok). Bugün tek değer:
+-- prompt'lar media/ai/kuyruk/ altına yazılır, üretim lokal makinede yapılır,
+-- çıktı media/ai/cikti/ altından toplanır. Somut bir API adaptörü eklenirse
+-- buraya yeni değer girer; eski satırlar hangi hatla üretildiğini kaybetmez.
+CREATE TYPE ai_generator AS ENUM ('file-queue');
+
 -- -----------------------------------------------------------------------------
 -- §12.10 — Kaynak şeffaflığı
 --
@@ -706,5 +736,193 @@ COMMENT ON COLUMN verse_relation.reason_ref_id IS
   'reason_ref_type''a göre concept / root / surah_section / story / '
   'timeline_event id''si. Çoklu hedef tablo olduğundan yabancı anahtar '
   'konulamaz; referans linter doğrular (plan §20.1).';
+
+
+-- -----------------------------------------------------------------------------
+-- §32-71 — Medya katmanı: gerçek görsel, arkeoloji, belge, harita, AI canlandırma
+--
+-- ÜÇ TÜR ASLA KARIŞTIRILMAZ (spec §32). Bir satır ya gerçek dünyaya ait bir
+-- belgedir (kaynak + lisans taşır, prompt taşımaz) ya da AI ile üretilmiş bir
+-- canlandırmadır (prompt taşır, kaynak/lisans taşımaz). Ayrım `kind` alanına
+-- BIRAKILMAZ; media_item_kind_split kısıtı iki yarıyı birbirine kapatır.
+-- Girdi tarafında aynı ayrım iki ayrı Zod şemasıdır
+-- (packages/schema/src/content_input.ts: mediaItemInput / aiMediaInput).
+-- -----------------------------------------------------------------------------
+
+-- AI prompt'ları (spec §65). Prompt KODA GÖMÜLMEZ: model, süre ve en/boy oranı
+-- da burada durur ki üretici değiştiğinde kod değil veri değişsin (spec §66).
+CREATE TABLE ai_prompt (
+  id                   integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  -- data/media/prompts/ içindeki iş anahtarı
+  prompt_key           text NOT NULL UNIQUE CHECK (prompt_key ~ '^[a-z0-9]+(-[a-z0-9]+)*$'),
+  -- Sahne adı — Türkçe, arayüzde görünür
+  title                text NOT NULL CHECK (btrim(title, blank_trim_set()) <> ''),
+  prompt_type          ai_prompt_type NOT NULL,
+  -- Yalnızca İngilizce (plan §20.3) — render sadakati için
+  prompt               text NOT NULL CHECK (btrim(prompt, blank_trim_set()) <> ''),
+  negative_prompt      text,
+  model                text,
+  duration_sec         smallint CHECK (duration_sec BETWEEN 1 AND 60),
+  aspect_ratio         text CHECK (aspect_ratio ~ '^[0-9]{1,2}:[0-9]{1,2}$'),
+  version              smallint NOT NULL CHECK (version > 0),
+  -- Prompt bir peygamberi tasvir ediyor mu?
+  depicts_prophet      boolean NOT NULL,
+  story_id             integer REFERENCES story (id) ON DELETE CASCADE,
+  location_id          integer REFERENCES location (id) ON DELETE CASCADE,
+  timeline_event_id    integer REFERENCES timeline_event (id) ON DELETE CASCADE,
+  -- Image-to-video zinciri (spec §67): bu videonun başlangıç görseli
+  base_image_prompt_id integer REFERENCES ai_prompt (id) ON DELETE SET NULL,
+  created_at           timestamptz NOT NULL DEFAULT now(),
+
+  -- Süre yalnızca videoda, videoda ise zorunlu (spec §57 ~10 sn)
+  CONSTRAINT ai_prompt_duration_only_video
+    CHECK ((prompt_type = 'VIDEO') = (duration_sec IS NOT NULL)),
+  CONSTRAINT ai_prompt_base_only_video
+    CHECK (prompt_type = 'VIDEO' OR base_image_prompt_id IS NULL),
+  CONSTRAINT ai_prompt_base_not_self
+    CHECK (base_image_prompt_id IS NULL OR base_image_prompt_id <> id),
+  -- Bağsız prompt olmaz: hangi kıssaya/konuma/olaya ait olduğu bilinmeli
+  CONSTRAINT ai_prompt_has_anchor
+    CHECK (story_id IS NOT NULL OR location_id IS NOT NULL OR timeline_event_id IS NOT NULL),
+  -- PEYGAMBER YÜZÜ KAPISI (plan §20.3). Yasak yüzedir: figür ve siluet
+  -- serbesttir. Bir peygamberi tasvir eden prompt kısıtı METNİNDE taşımak
+  -- zorundadır, çünkü üretici modele giden tek talimat prompt'un kendisidir —
+  -- arayüzdeki etiket üretimi etkilemez. Aynı kural Zod tarafında da var;
+  -- burada da duruyor çünkü veritabanına import dışından da yazılabilir.
+  CONSTRAINT ai_prompt_prophet_face_constraint
+    CHECK (NOT depicts_prophet OR prompt ILIKE '%identifiable face%')
+);
+
+CREATE INDEX ai_prompt_story_idx ON ai_prompt (story_id);
+CREATE INDEX ai_prompt_location_idx ON ai_prompt (location_id);
+
+COMMENT ON TABLE ai_prompt IS
+  'AI görsel/video prompt''ları (spec §65). Prompt kod içine gömülmez.';
+
+-- Medya kaydı — gerçek ve AI, tek tablo, iki ayrı kısıt kümesi.
+CREATE TABLE media_item (
+  id             integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  media_key      text NOT NULL UNIQUE CHECK (media_key ~ '^[a-z0-9]+(-[a-z0-9]+)*$'),
+  kind           media_kind NOT NULL,
+  title          text NOT NULL CHECK (btrim(title, blank_trim_set()) <> ''),
+  description    text,
+  -- Kesinlik iddiasını dengeleyen uyarı cümlesi (spec §35, §40, §41):
+  -- "Cûdî, geleneksel olarak Şırnak'taki Cudi Dağı ile ilişkilendirilmektedir."
+  caution        text,
+
+  -- --- gerçek medya künyesi (AI satırlarında NULL) ---
+  source_name    text,
+  -- Dosyanın künye sayfası — "Kaynağı görüntüle" buraya gider
+  source_url     text,
+  original_url   text,
+  author         text,
+  institution    text,
+  -- Kaynağın kendi tarihlemesi; yorumlanmadan aktarılır
+  source_date    text,
+  license        media_license,
+  -- Kaynağın KENDİ lisans etiketi, olduğu gibi ("cc-by-nc-sa-3.0").
+  -- `license` sekiz değerli enum'a indirgenmiş halidir ve bilgi kaybeder;
+  -- ham etiket saklanır (tafsir_block.source_type ile aynı gerekçe).
+  license_raw    text,
+  license_url    text,
+  copyright      text,
+
+  -- --- konum ---
+  location_name  text,
+  lat            double precision CHECK (lat BETWEEN -90 AND 90),
+  lng            double precision CHECK (lng BETWEEN -180 AND 180),
+  location_id    integer REFERENCES location (id) ON DELETE SET NULL,
+  manuscript_id  integer REFERENCES manuscript (id) ON DELETE SET NULL,
+
+  -- --- dosya ---
+  -- media/ altındaki göreli yol; R2'ye çıkar ve medya.kurankesfi.tr'den
+  -- servis edilir (CLAUDE.md kural 5). Kısıtlı lisansta zorunlu olarak NULL.
+  local_path     text,
+  width          integer CHECK (width > 0),
+  height         integer CHECK (height > 0),
+
+  -- --- AI satırları (gerçek satırlarda NULL) ---
+  ai_prompt_id   integer REFERENCES ai_prompt (id) ON DELETE CASCADE,
+  generator      ai_generator,
+  model          text,
+  sha256         text CHECK (sha256 ~ '^[0-9a-f]{64}$'),
+  duration_sec   smallint CHECK (duration_sec BETWEEN 1 AND 60),
+  created_at     timestamptz,
+  -- YAYIN KAPISI. Kare kare yüz taraması otomatikleştirilemez (bir yüz hash
+  -- ile denetlenemez), bu yüzden kod otomatik onay vermez: tarayan kişi bu
+  -- alanı elle true yapana kadar medya statik çıktıya girmez. 2026-09-05'te
+  -- sahne notuna güvenilip kareye bakılmamıştı ve hatalı kesim yayına
+  -- çıkmıştı; kapı o yüzden var (CLAUDE.md "Görsel ve VİDEO kuralı").
+  face_scanned   boolean NOT NULL DEFAULT false,
+  face_scan_note text,
+
+  -- ÜÇ TÜR KARIŞMAZ: AI satırı prompt taşır, gerçek satırı taşımaz.
+  CONSTRAINT media_item_kind_split
+    CHECK ((kind IN ('AI_IMAGE', 'AI_VIDEO')) = (ai_prompt_id IS NOT NULL)),
+  -- Gerçek medya kaynaksız ve lisanssız olamaz (spec §33)
+  CONSTRAINT media_item_real_has_source
+    CHECK (kind IN ('AI_IMAGE', 'AI_VIDEO')
+           OR (license IS NOT NULL AND source_name IS NOT NULL AND source_url IS NOT NULL)),
+  -- AI satırı kaynak/lisans alanı taşımaz — "Wikimedia Commons kaynaklı AI
+  -- görseli" diye bir şey olamaz
+  CONSTRAINT media_item_ai_has_no_source
+    CHECK (kind NOT IN ('AI_IMAGE', 'AI_VIDEO')
+           OR (license IS NULL AND source_name IS NULL AND source_url IS NULL
+               AND author IS NULL AND copyright IS NULL)),
+  -- AI çıktısını biz barındırırız: dosya, hash, üreteç ve model zorunlu
+  CONSTRAINT media_item_ai_is_hosted
+    CHECK (kind NOT IN ('AI_IMAGE', 'AI_VIDEO')
+           OR (local_path IS NOT NULL AND sha256 IS NOT NULL
+               AND generator IS NOT NULL AND model IS NOT NULL AND created_at IS NOT NULL)),
+  -- LİSANS KAPISI (spec §34): kısıtlı lisanslı dosya sunucuya kopyalanmaz
+  CONSTRAINT media_item_license_gate
+    CHECK (license IS NULL
+           OR license NOT IN ('COPYRIGHT', 'LINK_ONLY', 'UNKNOWN')
+           OR local_path IS NULL),
+  -- Süre yalnızca videoda
+  CONSTRAINT media_item_duration_only_video
+    CHECK ((kind = 'AI_VIDEO') = (duration_sec IS NOT NULL)),
+  CONSTRAINT media_item_coords_together CHECK ((lat IS NULL) = (lng IS NULL)),
+  CONSTRAINT media_item_size_together CHECK ((width IS NULL) = (height IS NULL))
+);
+
+CREATE INDEX media_item_location_idx ON media_item (location_id);
+CREATE INDEX media_item_kind_idx ON media_item (kind);
+CREATE INDEX media_item_prompt_idx ON media_item (ai_prompt_id);
+
+COMMENT ON TABLE media_item IS
+  'Medya kaydı (spec §32-48). Gerçek belge ile AI canlandırması aynı tabloda '
+  'durur ama CHECK kısıtlarıyla ayrılır; alanları birbirine karışamaz.';
+COMMENT ON COLUMN media_item.face_scanned IS
+  'Yayın kapısı: kare kare yüz taraması yapıldı mı? Kod otomatik onay vermez.';
+
+CREATE TABLE media_story (
+  media_item_id integer NOT NULL REFERENCES media_item (id) ON DELETE CASCADE,
+  story_id      integer NOT NULL REFERENCES story (id) ON DELETE CASCADE,
+  PRIMARY KEY (media_item_id, story_id)
+);
+
+CREATE TABLE media_verse (
+  media_item_id integer NOT NULL REFERENCES media_item (id) ON DELETE CASCADE,
+  verse_id      integer NOT NULL REFERENCES verse (id) ON DELETE CASCADE,
+  PRIMARY KEY (media_item_id, verse_id)
+);
+
+CREATE INDEX media_verse_verse_idx ON media_verse (verse_id);
+
+CREATE TABLE media_timeline_event (
+  media_item_id     integer NOT NULL REFERENCES media_item (id) ON DELETE CASCADE,
+  timeline_event_id integer NOT NULL REFERENCES timeline_event (id) ON DELETE CASCADE,
+  PRIMARY KEY (media_item_id, timeline_event_id)
+);
+
+-- Kaynak şeffaflığı (plan §12.10): gerçek medya en az bir kayıtlı kaynağa
+-- bağlanır. AI satırlarında bu tablo boştur — üreten biziz.
+CREATE TABLE media_source (
+  media_item_id integer NOT NULL REFERENCES media_item (id) ON DELETE CASCADE,
+  source_id     integer NOT NULL REFERENCES source (id) ON DELETE CASCADE,
+  PRIMARY KEY (media_item_id, source_id)
+);
+
 
 COMMIT;

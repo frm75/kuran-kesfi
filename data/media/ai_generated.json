@@ -1,0 +1,8 @@
+{
+  "//": [
+    "URETILMIS AI medyasi. BU DOSYAYI ELLE YAZMA — `pnpm media:ai:collect` yazar.",
+    "faceScanned=false olan kayit statik ciktiya GIRMEZ: kare kare yuz taramasi",
+    "otomatiklestirilemez, tarayan kisi alani elle true yapar (CLAUDE.md)."
+  ],
+  "items": []
+}

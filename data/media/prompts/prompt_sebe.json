@@ -1,0 +1,44 @@
+{
+  "//": [
+    "AI prompt kayitlari — spec 49-61, 65. Prompt KODA GOMULMEZ.",
+    "Metinler yalnizca Ingilizce yazilir (plan 20.3): render sadakati icin.",
+    "depictsProphet=true ise prompt metni 'identifiable face' kisitini TASIMAK",
+    "ZORUNDADIR; sema bunu reddederek uygular. Peygamber yuzu gosterilmez —",
+    "yasak yuzedir, insan figuru ve siluet serbesttir (CLAUDE.md, 2026-09-06).",
+    "Bu dosyalar prompt'u tanimlar, GORSEL URETMEZ (spec 71)."
+  ],
+  "prompts": [
+    {
+      "id": "sebe-marib-kenti",
+      "title": "Sebe ve Me'rib",
+      "promptType": "IMAGE",
+      "prompt": "Cinematic historical visualization of an ancient South Arabian kingdom inspired by\nthe Quranic account of the people of Sheba.\n\nAncient South Arabian settlement near Marib, monumental stone architecture, irrigation\nchannels, palm trees, agricultural fields, desert mountains in the distance,\nancient dam infrastructure.\n\nHistorically plausible South Arabian architecture and clothing.\n\nWarm desert sunlight, cinematic wide shot, realistic archaeological atmosphere,\nhighly detailed environment.\n\nDo not depict the Queen of Sheba as a fantasy character.\nDo not invent historically unsupported architecture.\n\nAI-generated historical visualization, not a real historical photograph.",
+      "negativePrompt": "modern buildings, modern vehicles, modern clothing, fantasy elements, text, watermark, subtitles",
+      "model": null,
+      "durationSec": null,
+      "aspectRatio": "16:9",
+      "version": 1,
+      "depictsProphet": false,
+      "storySlug": "sebe",
+      "locationSlug": "sebe-marib",
+      "timelineOrder": null,
+      "baseImagePromptId": null
+    },
+    {
+      "id": "sebe-marib-kenti-video",
+      "title": "Sebe ve Me'rib (10 sn)",
+      "promptType": "VIDEO",
+      "prompt": "10-second cinematic visualization of an ancient South Arabian settlement near Marib.\n\nCamera slowly moves toward an ancient irrigation system and monumental stone architecture.\nPalm trees move gently in the wind.\nAgricultural fields stretch into the desert.\nAncient South Arabian inhabitants move naturally through the settlement.\n\nHistorically plausible architecture and clothing.\n\nCinematic historical documentary realism. AI-generated historical visualization.",
+      "negativePrompt": "modern buildings, modern vehicles, modern clothing, fantasy elements, text, watermark, subtitles",
+      "model": null,
+      "durationSec": 10,
+      "aspectRatio": "16:9",
+      "version": 1,
+      "depictsProphet": false,
+      "storySlug": "sebe",
+      "locationSlug": "sebe-marib",
+      "timelineOrder": null,
+      "baseImagePromptId": "sebe-marib-kenti"
+    }
+  ]
+}

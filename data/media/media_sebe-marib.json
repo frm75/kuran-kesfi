@@ -1,0 +1,154 @@
+{
+  "//": [
+    "Gercek medya kayitlari — spec 32-48. AI gorseli BU DOSYAYA GIRMEZ (spec 32);",
+    "uretilmis AI medyasi data/media/ai_generated.json icindedir.",
+    "license / licenseRaw / author / date / width / height alanlarini ELLE DOLDURMA:",
+    "`pnpm data:wikimedia` Commons API'sinden ceker. Buradaki insan karari sudur —",
+    "hangi dosya, hangi baglam cumlesi (caution), hangi ayet ve kissa bagi.",
+    "Spec §39."
+  ],
+  "place": "sebe-marib",
+  "note": "Spec §39.",
+  "items": [
+    {
+      "id": "marib-eski-baraj",
+      "kind": "ARCHAEOLOGY",
+      "title": "Târihî Me'rib Barajı kalıntısı",
+      "description": "Sebe krallığının sulama düzenini taşıyan antik baraj yapısı.",
+      "caution": "Baraj kalıntıları Sebe dönemine aittir; 34:16'daki 'Arim seli' ile ilişkilendirilmesi tefsir geleneğine dayanır.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Jemen1988-022_hg.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/27/Jemen1988-022_hg.jpg",
+      "author": "H. Grobe",
+      "institution": null,
+      "date": "1988",
+      "license": "CC_BY_SA",
+      "licenseRaw": "cc-by-sa-3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "copyright": "H. Grobe · Own work · CC BY-SA 3.0",
+      "locationName": "Me'rib, Yemen",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/marib-eski-baraj.webp",
+      "width": 2000,
+      "height": 957,
+      "locationSlug": "sebe-marib",
+      "storySlugs": [
+        "sebe",
+        "belkis"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [
+        "34:15-17"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "marib-tapinak",
+      "kind": "ARCHAEOLOGY",
+      "title": "Me'rib antik kentinde tapınak",
+      "description": null,
+      "caution": "Güney Arabistan'ın kendi çok tanrılı dönemine ait yapıdır.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Temple_in_Ancient_city_of_Marib.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b9/Temple_in_Ancient_city_of_Marib.jpg",
+      "author": "Ali Mohamed",
+      "institution": null,
+      "date": "2021-07-10 06:02:43",
+      "license": "CC_BY_SA",
+      "licenseRaw": "cc-by-sa-2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "copyright": "Ali Mohamed · https://www.flickr.com/photos/196476764@N04/52649808718/ · CC BY-SA 2.0",
+      "locationName": "Me'rib, Yemen",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/marib-tapinak.webp",
+      "width": 2000,
+      "height": 1333,
+      "locationSlug": "sebe-marib",
+      "storySlugs": [
+        "sebe",
+        "belkis"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [
+        "27:22-24"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "eski-marib",
+      "kind": "ARCHAEOLOGY",
+      "title": "Eski Me'rib yerleşimi",
+      "description": null,
+      "caution": null,
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Old_Marib.JPG",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/1/14/Old_Marib.JPG",
+      "author": "Tapatio at en.wikipedia",
+      "institution": null,
+      "date": "27 February 2008 (original upload date)",
+      "license": "CC_BY_SA",
+      "licenseRaw": "cc-by-sa-3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "copyright": "Tapatio at en.wikipedia · Transferred from en.wikipedia (Original text : self-made ) · CC BY-SA 3.0",
+      "locationName": "Me'rib, Yemen",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/eski-marib.webp",
+      "width": 1600,
+      "height": 1200,
+      "locationSlug": "sebe-marib",
+      "storySlugs": [
+        "sebe"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [
+        "34:15-17"
+      ],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    },
+    {
+      "id": "marib-baraj-kitabesi",
+      "kind": "DOCUMENT",
+      "title": "Me'rib Barajı kitabesi",
+      "description": "Baraj alanındaki yazıt.",
+      "caution": "Yazıt ile kıssa arasında doğrudan bir kanıt ilişkisi kurulmamıştır.",
+      "sourceName": "Wikimedia Commons",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:New-Marib-Dam-inscription.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/0/01/New-Marib-Dam-inscription.jpg",
+      "author": "C. Robin",
+      "institution": null,
+      "date": "2024-02-03 00:03:28",
+      "license": "CC_BY_SA",
+      "licenseRaw": "cc-by-sa-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "copyright": "C. Robin · Robin, C. (1988, January). LE TEXTE DE FONDATION, EN LANGUE SABEENNE, DE LA NOUVELLE DIGUE DE MA'RIB, INAUGUREE EN 1986. In Proceedings of the Seminar for Arabian Studies (pp. 115-122). Seminar for Arabian Studies. · CC BY-SA 4.0",
+      "locationName": "Me'rib, Yemen",
+      "lat": null,
+      "lng": null,
+      "localPath": "gorsel/marib-baraj-kitabesi.webp",
+      "width": 2000,
+      "height": 1400,
+      "locationSlug": "sebe-marib",
+      "storySlugs": [
+        "sebe"
+      ],
+      "timelineOrders": [],
+      "verseRefs": [],
+      "manuscriptId": null,
+      "sourceSlugs": [
+        "wikimedia-commons"
+      ]
+    }
+  ]
+}

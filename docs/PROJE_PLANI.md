@@ -1145,3 +1145,102 @@ Bu maddeler tamamlanmadan hiçbir hoca notu yayınlanmaz.
 `import_notes.ts` hiçbir notu `published` yazmaz, `reviewed`'e düşürür ve
 sebebini rapora yazar. Böylece kapı bir insanın hatırlamasına değil
 yapılandırmaya bağlıdır. Ayrıntı: `scripts/sync/README.md`.
+
+---
+
+# 24. Medya Katmanı — Gerçek Görsel, Belge ve AI Canlandırma
+
+Kaynak: `tmp/MEDYA-Peygamberler, Kıssalar ve Coğrafi Harita Modülü.md` §32-71.
+Uygulama 2026-09-06'da yapıldı; §20.3 (Görsel Üretim Kuralları) yürürlükte kalır
+ve bu bölüm onu genişletir.
+
+## 24.1 Üç tür asla karıştırılmaz
+
+Modülün tek katı kuralı (§32). Bir kayıt ya gerçek dünyaya ait bir belgedir
+(kaynak + lisans taşır) ya da AI ile üretilmiş bir canlandırmadır (prompt
+taşır). Ayrım `kind` alanına bırakılmadı, **üç katmanda birden zorlanıyor**:
+
+| Katman | Nasıl |
+|---|---|
+| Girdi şeması | İki ayrı Zod şeması: `mediaItemInput` / `aiMediaInput` |
+| Veritabanı | `media_item_kind_split`, `media_item_ai_has_no_source` CHECK'leri |
+| Çıktı linteri | `media.json` üzerinde aynı iki kural |
+| Arayüz | Panelde iki ayrı bölüm; karışık tek ızgara yok |
+
+Bir AI görseline "Wikimedia Commons kaynaklı" yazmak bu yüzden imkânsızdır.
+
+## 24.2 Lisans bir etiket değil kapıdır
+
+`COPYRIGHT`, `LINK_ONLY`, `UNKNOWN` lisanslı dosya sunucuya **kopyalanmaz**
+(§34); yalnızca "Kaynağı görüntüle" bağlantısı gösterilir. Kural şemada,
+veritabanında (`media_item_license_gate`) ve linterde ayrı ayrı duruyor.
+
+**Lisans tahmin edilmez, ölçülür.** `pnpm data:wikimedia` Commons API'sinden
+dosya başına lisans/yazar/tarih/ölçü çeker ve `data/media/*.json` içine yazar.
+Kategori beyanına ve spec'te yazan dosya adına güvenilmez — spec §35'teki
+"Cudi Dağı panorama.jpg" Commons'ta "Cudi Dağı **panaroma**.jpg" olarak
+duruyordu; elle kopyalansa kayıt sessizce boş kalırdı.
+
+Eşleştirilemeyen lisans `UNKNOWN` olur (yani indirilmez), ham etiket
+`licenseRaw` içinde saklanır ve rapora düşer. `tafsir_block.source_type` ile
+aynı gerekçe: kaybolmaz, insan karar verir.
+
+## 24.3 AI üretimi — araç bağımsız dosya kuyruğu
+
+Üretim kullanıcının **lokal makinesindeki** resim/video düzenleyicide yapılır
+(kullanıcı kararı 2026-09-06). Kod hiçbir API'ye bağlanmaz:
+
+```
+pnpm media:ai:queue     data/media/prompts/ → media/ai/kuyruk/<id>.json + .txt
+   ↓  (lokal makinede üretim)
+media/ai/cikti/<promptId>.png|mp4
+   ↓
+pnpm media:ai:collect   → data/media/ai_generated.json
+```
+
+`scripts/media/ai/provider.ts` §66'nın istediği arayüzleri tanımlar
+(`AIProvider`, `ImageGenerator`, `VideoGenerator`, `PromptGenerator`); somut
+bir adaptör (ComfyUI, A1111, API) eklenirse yalnızca o arayüzler uygulanır,
+veri katmanı ve CLI değişmez. `ai_generator` enum'una yeni değer girer, eski
+kayıtlar hangi hatla üretildiğini kaybetmez.
+
+**Prompt'lar koda gömülmez** (§65): `data/media/prompts/prompt_<slug>.json`.
+Yalnızca İngilizce yazılır (§20.3) ve şema Türkçe/Arapça harf taşıyan prompt'u
+reddeder.
+
+## 24.4 İki kapı otomatikleştirilmez
+
+1. **Üretim** (§71). Önce gerçek görsel kaynakları, lisanslar, konumlar ve
+   prompt'lar; AI üretimi ondan sonra. `fileQueueProvider.canGenerate = false`.
+2. **Yüz taraması.** Bir yüz karma ile denetlenemez. `faceScanned` alanı `false`
+   yazılır ve **hiçbir script onu true yapmaz**; tarayan kişi elle işaretleyene
+   kadar kayıt statik çıktıya girmez (`scripts/build/lib/content.ts`).
+   Onay dosya karmasına bağlıdır: aynı kimlikle yeni dosya bırakılırsa
+   `collect` onayı düşürür — yeni dosya eskisinin onayını devralamaz.
+
+Yasak **yüzedir**: figür, siluet ve uzaktan kalabalık serbesttir (§20.3,
+2026-09-06 kullanıcı kararı). Peygamber tasvir eden prompt `identifiable face`
+kısıtını metninde taşımak zorundadır; şema ve `ai_prompt_prophet_face_constraint`
+CHECK'i bunu birlikte zorlar.
+
+## 24.5 Kesinlik iddiası dengelenir
+
+Her kayıt `caution` alanı taşıyabilir ve prototip verisinin çoğu taşıyor
+(§35, §37, §40, §41): "Cûdî, geleneksel olarak Şırnak'taki Cudi Dağı ile
+ilişkilendirilmektedir." Konumun güven derecesi zaten
+`data/locations/locations.json` içinde ve `<ConfidenceBadge>` ile gösteriliyor;
+`caution` o dereceyi **görsele özel** bir cümleyle tamamlar. Hegra kayıtlarında
+Nabatî dönemi ile Semûd özdeşliğinin kanıtlanmadığı; Mısır kayıtlarında hiçbir
+yapının "Hz. Yûsuf'un sarayı" olmadığı orada yazılıdır.
+
+## 24.6 Arayüz — JavaScript'siz
+
+Panel `<details>` grupları kullanır; §63'ün filtre çipleri betikle değil
+tarayıcının kendi açılır öğesiyle karşılanır. Sebep CLAUDE.md: site 8200+
+sayfada 0 bayt JS ile çalışıyor ve CSP `script-src` yalnız `/harita` ile
+`/kissa/*` için açık. Betikli filtre ayet sayfalarında sessizce ölürdü.
+
+AI kartı firuze çerçeve taşır (DESIGN.md §1 "alternatif görüş" rengi) **ve**
+tür adı **ve** sabit uyarı cümlesi — renk tek başına anlam taşımaz, gri baskıda
+ayrım kalır. Uyarı cümlesi şemadaki `AI_DISCLAIMER_TR` sabitinden basılır,
+veriden değil: bu etiketin unutulabilir olması kabul edilemez (§49).

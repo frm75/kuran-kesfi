@@ -18,7 +18,10 @@ import { readFileSync, readdirSync, statSync } from "node:fs";
 import { extname, join, relative } from "node:path";
 import {
   conceptInput,
+  aiGeneratedFile,
+  aiPromptsFile,
   contentSourcesFile,
+  mediaFile,
   locationsFile,
   noldekeOrderFile,
   parseVerseRef,
@@ -34,6 +37,8 @@ import {
   staticTimeline,
   staticVerseLinks,
   staticManuscripts,
+  staticMedia,
+  staticVerseMedia,
   staticVerseManuscripts,
   staticVerseRelations,
   staticSurahSections,
@@ -327,6 +332,9 @@ function checkStaticOutput(): void {
   const principleFileSlugs = new Set<string>();
   let conceptsIndexSlugs = new Set<string>();
   const conceptFileSlugs = new Set<string>();
+  /** Medya: media.json'daki kimlikler ve ters dizinin gosterdikleri */
+  const mediaIds = new Set<string>();
+  const verseMediaIds = new Set<string>();
 
   for (const path of files) {
     const relativePath = relative(dataRoot, path);
@@ -413,7 +421,16 @@ function checkStaticOutput(): void {
           acikkuran: "acikkuran.com",
           tanzil: "tanzil.net/trans",
           "quran.com": "quran.com",
-          quranenc: "quranenc.com",
+          /*
+           * `quranenc` BILEREK YOK (kullanici karari 2026-09-06). Meal bir
+           * platformun degil onu yapan YAZARIN eseridir; atif yazar adiyla
+           * verilir (Rowwad Tercume Merkezi, Saban Britch, Ali Ozek ve
+           * heyeti). build.ts o platform baglantisini ayni kararla kaldirdi
+           * ama bu kural guncellenmemisti ve build KIRIK kaldi — kaynak
+           * "quranenc" olan meal var, aranan baglanti hicbir zaman
+           * uretilmiyordu. QuranEnc'in kendi 3. kosulu baglanti degil SURUM
+           * NUMARASI istiyor; o arayuzde gosteriliyor.
+           */
         };
         const links = result.data.requiredAttributionLinks.map((l) => l.url).join(" ");
         for (const source of new Set(result.data.authors.map((a) => a.source))) {
@@ -766,8 +783,104 @@ function checkStaticOutput(): void {
           }
         }
       }
+    } else if (relativePath === "media.json") {
+      const result = staticMedia.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) errors.push(`${relativePath}: ${result.error.message}`);
+      else {
+        /*
+         * Medya katmaninin uc kurali cikti uzerinde bir daha dogrulanir.
+         * Veritabani kisitlari (media_item_license_gate, media_item_kind_split)
+         * zaten ayni seyi soyluyor; buradaki tekrar bilincli, cunku cikti
+         * dosyasi son sozdur ve yayina giden odur.
+         *
+         *   1. LISANS KAPISI (spec 34): kisitli lisansli kayit dosya yolu
+         *      tasiyamaz — tasirsa sunucuya kopyalanmis olurdu.
+         *   2. UC TUR KARISMAZ (spec 32): AI kaydi prompt tasir ve kaynak/
+         *      lisans tasimaz; gercek kayit tam tersi.
+         *   3. ATIF: CC atif lisanslarinda copyright bos birakilamaz.
+         */
+        const HOSTABLE = new Set([
+          "PUBLIC_DOMAIN", "CC0", "CC_BY", "CC_BY_SA", "CC_BY_NC",
+        ]);
+        const ATTRIBUTION = new Set(["CC_BY", "CC_BY_SA", "CC_BY_NC"]);
+        const seen = new Set<string>();
+        for (const m of result.data.media) {
+          if (seen.has(m.id)) {
+            errors.push(`${relativePath}: '${m.id}' iki kez gecmis`);
+            break;
+          }
+          seen.add(m.id);
+
+          const isAi = m.kind === "AI_IMAGE" || m.kind === "AI_VIDEO";
+          if (isAi) {
+            if (m.promptId === null) {
+              errors.push(`${relativePath}: ${m.id} AI kaydi ama prompt tasimiyor`);
+              break;
+            }
+            if (m.license !== null || m.sourceName !== null || m.sourceUrl !== null) {
+              errors.push(
+                `${relativePath}: ${m.id} AI kaydinda kaynak/lisans alani var (spec 32)`,
+              );
+              break;
+            }
+          } else {
+            if (m.promptId !== null) {
+              errors.push(`${relativePath}: ${m.id} gercek medya ama AI prompt'u tasiyor`);
+              break;
+            }
+            if (m.license === null || m.sourceName === null || m.sourceUrl === null) {
+              errors.push(`${relativePath}: ${m.id} gercek medya kaynaksiz ya da lisanssiz`);
+              break;
+            }
+            if (!HOSTABLE.has(m.license) && m.path !== null) {
+              errors.push(
+                `${relativePath}: ${m.id} lisansi '${m.license}' ama dosya yolu tasiyor — ` +
+                  `kisitli lisansli gorsel sunucuya kopyalanmaz (spec 34)`,
+              );
+              break;
+            }
+            if (ATTRIBUTION.has(m.license) && (m.copyright ?? "").trim() === "") {
+              errors.push(`${relativePath}: ${m.id} lisansi atif zorunlu kiliyor, copyright bos`);
+              break;
+            }
+          }
+          if ((m.kind === "AI_VIDEO") !== (m.durationSec !== null)) {
+            errors.push(`${relativePath}: ${m.id} sure alani turuyle uyusmuyor`);
+            break;
+          }
+          mediaIds.add(m.id);
+        }
+      }
+    } else if (relativePath === "verse_media.json") {
+      const result = staticVerseMedia.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) errors.push(`${relativePath}: ${result.error.message}`);
+      else {
+        for (const [key, ids] of Object.entries(result.data.verses)) {
+          const id = Number(key);
+          const surahId = Math.floor(id / 1000);
+          if (surahId < 1 || surahId > 114 || id % 1000 === 0) {
+            errors.push(`${relativePath}: gecersiz ayet anahtari ${key}`);
+            break;
+          }
+          for (const mid of ids) verseMediaIds.add(mid);
+        }
+      }
     } else {
       warn("statik cikti", `${relativePath} icin tanimli sema yok, atlandi`);
+    }
+  }
+
+  /*
+   * verse_media.json icindeki her kimlik media.json'da olmali. Ters dizin
+   * ayri uretiliyor; kopmasi ayet sayfasinda sessizce bos bir bolum birakirdi.
+   */
+  checksRun += 1;
+  {
+    const orphan = [...verseMediaIds].filter((id) => !mediaIds.has(id));
+    if (orphan.length > 0) {
+      errors.push(`verse_media.json: media.json'da olmayan kimlik: ${orphan.join(", ")}`);
     }
   }
 
@@ -878,6 +991,9 @@ function checkStaticOutput(): void {
     // 2322 yazma kunyesi + ayet araliklari; hicbir sayfa indirmez, build okur.
     "manuscripts.json",
     "verse_manuscripts.json",
+    // Medya kunyeleri; build okur, sayfaya kunye degil HTML iner.
+    "media.json",
+    "verse_media.json",
   ]);
 
   checksRun += 1;
@@ -954,6 +1070,9 @@ async function checkManualData(): Promise<void> {
     if (/^data\/sections\/sections_(?:[1-9]|[1-9][0-9]|10[0-9]|11[0-4])\.json$/.test(rel)) {
       return surahSectionsFile;
     }
+    if (/^data\/media\/media_[a-z0-9-]+\.json$/.test(rel)) return mediaFile;
+    if (/^data\/media\/prompts\/prompt_[a-z0-9-]+\.json$/.test(rel)) return aiPromptsFile;
+    if (rel === "data/media/ai_generated.json") return aiGeneratedFile;
     return null;
   };
 

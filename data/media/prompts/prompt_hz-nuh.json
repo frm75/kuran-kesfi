@@ -1,0 +1,44 @@
+{
+  "//": [
+    "AI prompt kayitlari — spec 49-61, 65. Prompt KODA GOMULMEZ.",
+    "Metinler yalnizca Ingilizce yazilir (plan 20.3): render sadakati icin.",
+    "depictsProphet=true ise prompt metni 'identifiable face' kisitini TASIMAK",
+    "ZORUNDADIR; sema bunu reddederek uygular. Peygamber yuzu gosterilmez —",
+    "yasak yuzedir, insan figuru ve siluet serbesttir (CLAUDE.md, 2026-09-06).",
+    "Bu dosyalar prompt'u tanimlar, GORSEL URETMEZ (spec 71)."
+  ],
+  "prompts": [
+    {
+      "id": "nuh-gemi-hazirlik",
+      "title": "Nûh'un gemisinin hazırlanması",
+      "promptType": "IMAGE",
+      "prompt": "Cinematic historical visualization of the construction of a large ancient wooden vessel\nin an arid Near Eastern landscape, inspired by the Quranic story of Prophet Noah.\n\nLarge wooden beams, primitive ancient woodworking tools, unfinished wooden vessel,\ndry landscape, distant mountains, small groups of people working around the structure.\n\nAncient Near Eastern environment, historically plausible materials and construction techniques.\n\nWide cinematic composition, realistic natural sunlight, atmospheric dust,\ndocumentary-style historical realism, highly detailed environment.\n\nProphet Noah must not have an identifiable face. Show him only from behind or at a distance.\n\nThis is an AI-generated historical visualization, not a real historical photograph.",
+      "negativePrompt": "modern buildings, modern vehicles, modern clothing, fantasy elements, text, watermark, subtitles",
+      "model": null,
+      "durationSec": null,
+      "aspectRatio": "16:9",
+      "version": 1,
+      "depictsProphet": true,
+      "storySlug": "hz-nuh",
+      "locationSlug": "cudi",
+      "timelineOrder": null,
+      "baseImagePromptId": null
+    },
+    {
+      "id": "nuh-gemi-hazirlik-video",
+      "title": "Nûh'un gemisinin hazırlanması (10 sn)",
+      "promptType": "VIDEO",
+      "prompt": "10-second cinematic historical visualization of a large ancient wooden vessel being\nconstructed in an arid Near Eastern landscape.\n\nCamera slowly moves sideways around the unfinished wooden vessel.\n\nWorkers carry large wooden beams while dust moves gently through the air.\nAncient tools and historically plausible materials.\n\nWide cinematic shot, warm natural sunlight, realistic environmental movement.\n\nProphet Noah is only visible from a distance and from behind. No identifiable face.\n\nAI-generated historical visualization.",
+      "negativePrompt": "modern buildings, modern vehicles, modern clothing, fantasy elements, text, watermark, subtitles",
+      "model": null,
+      "durationSec": 10,
+      "aspectRatio": "16:9",
+      "version": 1,
+      "depictsProphet": true,
+      "storySlug": "hz-nuh",
+      "locationSlug": "cudi",
+      "timelineOrder": null,
+      "baseImagePromptId": "nuh-gemi-hazirlik"
+    }
+  ]
+}
