@@ -96,6 +96,13 @@ Kur'an'daki kıssaların coğrafi ve kronolojik keşfi.
 | Ses (Türkçe meal) | audio.acikkuran.com | CC BY-NC-SA 4.0 |
 | Ses (Arapça kıraat) | everyayah.com, Quran.com açık kârî kayıtları | Her kârî için tek tek yazılı lisans kontrolü; belirsiz olan eklenmez |
 | Kavram verisi | Kendi üretimimiz: Diyanet konu fihristi + kök verisi temelli | Açık lisansla yayınlanacak |
+| Ek Türkçe meal (Rowwad, Şaban Britch, Ali Özek/heyet) | quranenc.com (Kral Fahd Kompleksi) — SQLite/JSON doğrudan indirme | Davet amaçlı açık dağıtım; her meal tek tek okunur |
+| Türkçe **kelime-kelime** meal + Diyanet/Elmalılı meal + 3 Türkçe tefsir | QUL — Quranic Universal Library (`TarteelAI/quranic-universal-library`) | Kod MIT; her kaynak kaydının lisansı ayrı |
+| Klasik Arapça külliyat (İbn Hişâm, Taberî, Vâkıdî, İbn Sa'd, Vâhidî *Esbâbü'n-Nüzûl*, Süyûtî *Lübâbü'n-Nükûl*, Yâkût *Mu'cemü'l-Büldân*) | OpenITI/RELEASE | Eserler kamu malı; **depoda LICENSE yok** → metin indirilmez, yalnız atıf hedefi |
+| Eski mushaf yazmaları (2323 nüsha, TEI/msDesc) | Corpus Coranicum (`telota/corpus-coranicum-tei`, BBAW) | CC BY-SA 4.0 → `data/`(BY-NC-SA) ile **karıştırılamaz**; `data-external/` ayrı ağaç. Görseller `restricted`, yalnız derin bağlantı |
+
+> Doğrulanmış kaynak envanteri, reddedilen kaynaklar ve gerekçeleri, kapalı olduğu
+> kanıtlanmış boşluklar: **`docs/KAYNAK_ENVANTERI.md`** (2026-09-06).
 
 ### 3.1 Meal Listesi
 
@@ -119,6 +126,14 @@ Celal Yıldırım, Bekir Sadak, Ahmet Tekin, Ahmet Varol, Abdullah Parlıyan, Ha
 Seyyid Kutub (Fî Zılâl-il Kur'an meal kısmı).
 
 **Hedef:** 25-30 Türkçe meal.
+
+**Öncelikli 4 mealin durumu (2026-09-06 doğrulaması):** Okuyan, İslamoğlu ve Esed
+**hiçbir açık lisanslı sette yok**; üçü de yürürlükte telifli. Erişilebilir tek resmî
+dijital kaynak `hayatkitabikuran.com` (İslamoğlu) ve o da API'siz/lisanssız → kazınmaz.
+Yol: yazılı izin (`docs/BACKLOG.md` → "İzin / iletişim bekleyen").
+Diyanet meali için QUL üzerinden yasal yol açık. Ayrıntı: `docs/KAYNAK_ENVANTERI.md` §6.
+Bu üç meal gelene kadar `author.priority` 2-4 boş kalır; varsayılan set Diyanet + Elmalılı +
+Çantay + Ateş ile doldurulur.
 
 **Varsayılan seçim kuralı:** İlk açılışta 4 öncelikli meal karşılaştırmalı görünür. Kullanıcı istediğini
 ekler/çıkarır; seçim yerel olarak (IndexedDB `settings.selected_authors`) saklanır. `author.is_default`

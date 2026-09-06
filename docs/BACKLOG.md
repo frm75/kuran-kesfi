@@ -122,9 +122,18 @@ Doğrulandı: dördü de artık **HTTP 404**. Web kökü deploy için temiz.
 - **Açık Kuran** — API'nin geri dönüp dönmeyeceği ve veri dump'ı paylaşılıp paylaşılmayacağı.
   Kullanıcı kendisi iletişim kuracak (karar: 2026-09-03). Yanıt gelirse plan §3 güncellenir.
 - **Diyanet Kur'an Yolu tefsiri** — kullanım şartları, yazılı izin gerekip gerekmediği.
-
-## Eksik veri — okuma ekranı yazılırken bulundu (2026-09-03)
-
+- **Mehmet Alagaş meali** (karar 2026-09-06) — `insandergisi.com/kuran-meali.pdf` ücretsiz
+  indiriliyor ama lisans metni yok; Alagaş v. 2004 → 2075'e kadar kamu malı değil.
+  İnsan Dergisi'ne (`insandergisi.com/iletisim.php`) yazılı kullanım izni başvurusu gerekiyor.
+  İzin gelmeden `data/` altına girmez. Ayrıntı: `docs/KAYNAK_ENVANTERI.md` §5.
+- **Mustafa İslamoğlu — Hayat Kitabı Kur'an**: `hayatkitabikuran.com` çalışıyor ve mealin
+  tamamı ayet ayet çevrimiçi, ama API ve lisans yok. Kazıma yapılmaz (CLAUDE.md §6).
+  İzin muhatabı Düşün Yayıncılık.
+- **OpenITI / RELEASE** — depoda `LICENSE` dosyası yok. Klasik metinler kamu malı olsa da
+  derlemenin kendisi için yazılı teyit alınacak; teyit gelene kadar yalnız atıf hedefi
+  olarak kullanılır, metin indirilmez. Durum: `data-external/openiti/LICENSE.md`.
+- ~~**QUL (qul.tarteel.ai)**~~ — **KAPANDI 2026-09-06.** Hesap açıldı, el-Muhtasar Türkçe
+  indirilip içe alındı (6222 blok). QUL'dan alınacak başka bir şey yok.
 - ~~**Çeviriyazı (transkripsiyon) yok: 0/6236.**~~ **ÇÖZÜLDÜ 2026-09-04**:
   `scripts/import/transcription.ts` eklendi, 6236/6236 dolu. Ayrıntı commit
   a9df4f2. Aşağıdaki özgün kayıt tarihsel olarak duruyor.
@@ -219,6 +228,82 @@ Doğrulandı: yeniden import sonrası kalan bozuk karakter **yok**.
   Metin verisi için gerekmiyor: `cache/` 3,9 MB, tam veri setiyle en kötü ~100 MB
   (ölçüm: `docs/DEPLOY_REPORT.md` §3.4).
 
+## Tefsir arayüzü — veri hazır, ekran yok (2026-09-06)
+
+`tafsir` + `tafsir_block` dolu: **iki eser, 13 208 blok** (Sa'dî 6986 + el-Muhtasar 6222),
+ikisi de 6236 ayetin %100'ünü kapsıyor.
+Sitede görünmüyor çünkü statik dışa aktarım ve ayet sayfası bölümü yapılmadı.
+Bilinçli bırakıldı — `docs/KAYNAK_ENVANTERI.md` §0 (kütüphane ≠ yayın) + o sırada başka bir
+oturum `[surah].astro` / `lib/data.ts` üzerinde çalışıyordu.
+
+Kalan iş:
+1. `scripts/build/build.ts` → `tafsir_index.json` + sure başına blok dosyaları
+2. `packages/schema/src/static_data.ts` → statik şema
+3. Ayet sayfasında "Tefsir" bölümü — `<SourceBadge>` zorunlu, **sürüm numarası görünmeli**
+   (QuranEnc koşul 3), tek tefsir olduğu için "bu bir yorumdur, tek görüş değildir" uyarısı
+   (plan §12.9)
+4. Performans: bir blok 3-5 KB; Bakara'nın 433 bloğu var → sure sayfasına toptan konmaz,
+   ayet başına veya ayrı `/tefsir/...` sayfası (plan §20.4 bütçesi)
+
+## Kök sayfası ağırlığı — QUL doldurmasından sonra (2026-09-06)
+
+`root/اله.json` 490 KB oldu (eşik 300 KB, plan §20.4); sayfa `/kok/اله` 622 KB ham /
+**25,7 KB gzip**. Sebep bir hata değil, bir **düzeltme**: QUL kelime-kök verisi eklenince
+`اله` kökü 2850 kelimeye çıktı — yani "Allah" kelimesinin geçtiği yerlerin çoğu daha önce
+köke bağlı değildi. Veri doğru, sayfa uzun.
+
+Yapılacak: en kalabalık köklerde (اله, قول, كون) sayfayı bölmek ya da ayet listesini
+sure sure katlamak. Acil değil — gzip'li ağırlık 26 KB.
+
 ## Özellik önerileri
 
-*(henüz yok)*
+> Hepsi **ilk yayın sonrası**. Kaynağı: kullanıcının 2026-09-06 tarihli
+> "Kur'an Bilgi Ağı — Görsel, Harita, Kıssa ve Mushaf Sistemi" belgesi.
+> Plan §12.4, §12.9, §12.10, §12.12 ve §20.3 ile **çakışan** maddeler buraya alınmadı;
+> aşağıdakiler planda karşılığı olmayanlardır.
+
+- **`Media` varlığı ve şeması** (ilk yayın sonrası) — `packages/schema/src/media.ts`.
+  Zorunlu alan: `mediaType` (`photo` | `illustration` | `video` | `diagram` | `map`),
+  `origin` (`real_photo` | `ai_generated` | `hand_drawn` | `archive`), `license`,
+  `attribution`, `verseIds[]`, `placeId?`.
+  Kural: `origin != real_photo` olan her medya **görünür etikette** "yapay zekâ üretimi /
+  temsilîdir" yazısı taşır; etiket CSS ile gizlenemez (statik HTML'de metin olarak).
+  Gerekçe: plan §13'ün "yorumcu değil, kütüphaneci" ilkesi görsel katmana da uygulanmalı.
+
+- **Gerçek fotoğraf ↔ AI görsel ayrımı** (ilk yayın sonrası) — aynı sayfada yan yana
+  gösterilirse çerçeve rengi + rozet farklı olur. Plan §12.10 (kaynak şeffaflığı) metin
+  için ne diyorsa görsel için de aynısı.
+
+- **AI illüstrasyon üretim hattı** (ilk yayın sonrası) — `scripts/media/` altında prompt
+  üretici. CLAUDE.md §8 gereği **peygamber yüzü üretilmez**; üretilen her kare yayından
+  önce taranır ve **çıktı da** taranır, yalnız kaynak değil.
+
+- **10 saniyelik AI video hattı** (ilk yayın sonrası) — kıssa sayfaları için. Ağır medya
+  R2/`medya.kurankesfi.tr` üzerinde (CLAUDE.md §5). `poster` + `<video>` etiketi JS'siz;
+  `/kissa/*` zaten CSP'de betiğe açık. Kare taraması zorunlu.
+
+- ~~**Mushaf/yazma şeması ve arayüzü**~~ — **BİTTİ 2026-09-06.** `manuscript` +
+  `manuscript_range` tabloları, `packages/schema/src/manuscript.ts`,
+  `apps/web/src/lib/manuscripts.ts`, sayfalar `/yazmalar`, `/yazmalar/<yüzyıl>`,
+  `/yazma/<id>` (2322) ve ayet sayfasında "Bu ayeti taşıyan yazmalar".
+  Görüntü yok; linter `corpuscoranicum.de` dışı adres görürse build'i durduruyor.
+  Ayrıntı: `docs/DURUM.md` → "Yazma modülü".
+
+- **Corpus Coranicum'un diğer 5 veri seti** (ilk yayın sonrası) — aynı depo, aynı CC BY-SA 4.0:
+  `quran_variants` (kıraat farkları; daha önce reddedilen qiraat depolarının lisanslı karşılığı),
+  `quran_intertexts` (714 dosya — Kur'an ile geç antik metinler arası ilişki; kıssa katmanına
+  doğrudan denk), `quran_concordance` (Talmon, tam gramer çözümü), `quran_commentary`
+  (85 dosya, sure sure kronolojik-edebî şerh), `cairo_quran` (1924 Kahire baskısı + EN/DE/FR).
+  Kıraat ve şerh hassas alanlar (plan §12.9); yayın kararı ayrı verilir.
+
+- **Yazma zaman çizelgesi modülü** (ilk yayın sonrası) — mevcut `/zaman` siyer çizelgesinin
+  yanına mushaf nüshalarının tarihlenmesi. Ön koşul: yukarıdaki şema.
+
+- ~~**Ayet → yazma çift yönlü gezinme**~~ — **BİTTİ 2026-09-06.** Ayet sayfasından
+  "bu ayeti taşıyan yazmalar" (sayı + en eski 5), yazma sayfasından "taşıdığı ayetler"
+  (aralıklar, ayet sayfalarına bağlı).
+
+- ~~**`data-external/` ağacı**~~ — **KURULDU 2026-09-06.** `data-external/README.md` +
+  `data-external/openiti/` (LICENSE.md + works.json, 9 klasik eserin künyesi, metin yok).
+  `pnpm content:import` bu ağacı okumaz. **İlk yayın sonrasına kalan kısım:** buradan
+  `data/`'ya kayıt taşıyan onaylı bir hat (şu an elle taşınıyor).
