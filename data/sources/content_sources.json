@@ -54,6 +54,16 @@
       "url": null,
       "license": "Metin Tanzil'den (bkz. tanzil kaynağı); burada yalnızca 'bu bilgi doğrudan ayetlerde geçiyor' anlamında referans",
       "note": "Kıssa parçalarının hangi ayetlerde geçtiği, olayların hangi surelerle ilişkilendirildiği gibi doğrudan metinden okunan olgular için."
+    },
+    {
+      "slug": "esri-elevation",
+      "name": "Esri ArcGIS Elevation Service",
+      "workTitle": "ArcGIS Location Platform — Elevation (at-point)",
+      "author": "Esri ve veri ortakları (USGS, NASA, SRTM ve ulusal kurumlar)",
+      "reference": "elevation-api.arcgis.com/.../elevation/at-point — sorgu tarihi kayıtta",
+      "url": "https://developers.arcgis.com/rest/elevation/",
+      "license": "ArcGIS Location Platform kullanım şartları; ücretsiz kota içinde, sonuç değer olarak saklanır",
+      "note": "Konumların deniz seviyesinden yüksekliği. Editoryal değil ÖLÇÜM verisidir; bir kez çekilip data/locations/locations.json içine yazılır, site build'i bu servise bağlanmaz (CLAUDE.md kural 5)."
     }
   ]
 }

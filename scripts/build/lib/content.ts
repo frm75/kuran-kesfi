@@ -100,6 +100,7 @@ export async function emitContent(
     id: number; slug: string; name: string; modern_name: string | null; country: string | null;
     lat: number | null; lng: number | null;
     confidence: "kesin" | "muhtemel" | "gelenek" | "tartismali";
+    elevation_m: number | null;
     source_note: string; alternatives: unknown;
   }>("SELECT * FROM location ORDER BY slug");
 
@@ -299,7 +300,7 @@ export async function emitContent(
     const payload: StaticLocations = {
       locations: locations.map((l) => ({
         slug: l.slug, name: l.name, modernName: l.modern_name, country: l.country, lat: l.lat, lng: l.lng,
-        confidence: l.confidence, sourceNote: l.source_note,
+        confidence: l.confidence, elevationM: l.elevation_m, sourceNote: l.source_note,
         alternatives: (l.alternatives as StaticLocations["locations"][number]["alternatives"]) ?? [],
         sourceSlugs: (locationSources.get(l.id) ?? []).map((x) => sslug(x.source_id)),
         stories: [...storyLocations.values()].flat()

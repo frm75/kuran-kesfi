@@ -440,9 +440,9 @@ async function main(): Promise<void> {
     const locationId = await insertReturning(
       client,
       "location",
-      ["slug", "name", "modern_name", "country", "lat", "lng", "confidence", "source_note", "alternatives"],
+      ["slug", "name", "modern_name", "country", "lat", "lng", "confidence", "elevation_m", "source_note", "alternatives"],
       data.locations.map((l) => [
-        l.slug, l.name, l.modernName, l.country, l.lat, l.lng, l.confidence, l.sourceNote,
+        l.slug, l.name, l.modernName, l.country, l.lat, l.lng, l.confidence, l.elevationM, l.sourceNote,
         JSON.stringify(l.alternatives),
       ]),
       "slug",

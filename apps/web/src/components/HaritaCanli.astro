@@ -58,6 +58,8 @@ interface MapLocation {
   lat: number | null;
   lng: number | null;
   confidence: "kesin" | "muhtemel" | "gelenek" | "tartismali";
+  /** Deniz seviyesinden yükseklik (m); ölçüm, Esri Elevation. */
+  elevationM?: number | null;
 }
 
 interface RouteStop {
@@ -123,6 +125,7 @@ const mapData = {
       lng: l.lng as number,
       confidence: l.confidence,
       modernName: l.modernName,
+      elevationM: l.elevationM ?? null,
     })),
   route: [...route].sort((a, b) => a.order - b.order),
 };
@@ -181,6 +184,7 @@ const mapData = {
     lng: number;
     confidence: "kesin" | "muhtemel" | "gelenek" | "tartismali";
     modernName: string | null;
+    elevationM: number | null;
   }
   interface RouteStop {
     slug: string;
@@ -629,6 +633,19 @@ const mapData = {
             m.className = "mlp-modern";
             m.textContent = pr.modernName;
             panel.append(m);
+          }
+
+          /**
+           * Yukseklik — olcum verisi (Esri Elevation), build zamaninda
+           * cekilip veriye yazildi; burada ag istegi yok.
+           * Negatif deger gizlenmez: Lut golu -415 m.
+           */
+          if (typeof pr.elevationM === "number") {
+            const e = document.createElement("p");
+            e.className = "mlp-elev";
+            const mutlak = new Intl.NumberFormat("tr-TR").format(Math.abs(pr.elevationM));
+            e.textContent = `${pr.elevationM < 0 ? "\u2212" : ""}${mutlak} m — deniz seviyesinden`;
+            panel.append(e);
           }
 
           /**

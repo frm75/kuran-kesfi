@@ -11,7 +11,8 @@
     "acikkuran": "tsx acikkuran.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "transcription": "tsx transcription.ts",
-    "content": "tsx content.ts"
+    "content": "tsx content.ts",
+    "elevation": "tsx elevation.ts"
   },
   "dependencies": {
     "@kuran/pipeline": "workspace:*",

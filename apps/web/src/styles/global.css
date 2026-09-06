@@ -2571,6 +2571,12 @@ a.ctx-num:hover {
   color: var(--text-muted);
   font-size: var(--text-xs);
 }
+.map-live-panel .mlp-elev {
+  margin: var(--space-1) 0 0;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
 .map-live-panel .mlp-desc {
   margin: var(--space-2) 0 0;
   color: var(--text-secondary);
@@ -2628,6 +2634,16 @@ a.ctx-num:hover {
   padding: 0;
   list-style: none;
 }
+/* Yükseklik rozeti — ölçüm verisi, editoryal değil. Sayılar tabular ki
+   liste alt alta okununca hizalansın. */
+.lc-elev {
+  margin-inline-start: 0.5em;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
 .location-list > li {
   padding-block: var(--space-4);
   border-top: 1px solid var(--border);

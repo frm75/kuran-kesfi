@@ -117,6 +117,17 @@ const pins = withCoords
  * cipinde ham slug goruntulenmisti — kissa sayfasi dogru yaziyordu, harita
  * sayfasi yanlis. Ayni tablo `pages/kissa/[slug].astro` icinde de var.
  */
+/**
+ * Yükseklik metni. Ölçüm verisi (Esri Elevation), editoryal değil.
+ * Negatif değer anlamlıdır ve gizlenmez — Lût gölü −415 m, kıssanın kendisi
+ * "alçalmış şehir" anlatısıyla ilgili. Türkçe eksi işareti U+2212.
+ */
+function metre(m: number | null): string | null {
+  if (m === null) return null;
+  const s = new Intl.NumberFormat("tr-TR").format(Math.abs(m));
+  return `${m < 0 ? "\u2212" : ""}${s} m`;
+}
+
 const confidenceLabel = {
   kesin: "kesin",
   muhtemel: "muhtemel",
@@ -236,6 +247,11 @@ const withAlternatives = locations.filter((l) => l.alternatives.length > 0);
                 </span>
                 {location.modernName !== null && <span class="lc-modern">{location.modernName}</span>}
                 {location.country !== null && <span class="lc-country">{location.country}</span>}
+                {metre(location.elevationM) !== null && (
+                  <span class="lc-elev" title="Deniz seviyesinden yükseklik">
+                    {metre(location.elevationM)}
+                  </span>
+                )}
               </div>
               <p class="lc-note">{location.sourceNote}</p>
               {location.alternatives.length > 0 && (
@@ -244,7 +260,12 @@ const withAlternatives = locations.filter((l) => l.alternatives.length > 0);
                   <ul>
                     {location.alternatives.map((alt) => (
                       <li>
-                        <strong>{alt.name}</strong> — {alt.note}
+                        <strong>{alt.name}</strong>
+                        {metre(alt.elevationM) !== null && (
+                          <span class="lc-elev">{metre(alt.elevationM)}</span>
+                        )}
+                        {" — "}
+                        {alt.note}
                       </li>
                     ))}
                   </ul>

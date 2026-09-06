@@ -135,6 +135,8 @@ export const staticLocation = z.object({
   lat: z.number().nullable(),
   lng: z.number().nullable(),
   confidence: locationConfidence,
+  /** Deniz seviyesinden yükseklik (m). Ölçüm; Esri Elevation, bir kez çekilir. */
+  elevationM: z.number().int().nullable(),
   sourceNote: nonEmptyText,
   alternatives: z.array(
     z.object({
@@ -142,6 +144,7 @@ export const staticLocation = z.object({
       lat: z.number().nullable(),
       lng: z.number().nullable(),
       note: nonEmptyText,
+      elevationM: z.number().int().nullable(),
       sourceSlugs: z.array(slug),
     }),
   ),

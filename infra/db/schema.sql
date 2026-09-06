@@ -333,6 +333,11 @@ CREATE TABLE location (
   -- Zorunlu (plan §8.3). Arayüzde pin biçimini belirler: dolu / kesikli halkalı
   -- / şeffaf (plan §7).
   confidence  location_confidence NOT NULL,
+  -- Deniz seviyesinden yukseklik (m). OLCUM verisi, editoryal degil:
+  -- Esri Elevation servisinden bir kez cekilir (`pnpm data:elevation`) ve
+  -- data/locations/locations.json icinde saklanir; site build'i servise
+  -- baglanmaz (CLAUDE.md kural 5). Negatif olabilir — Lut golu -415 m.
+  elevation_m integer,
   source_note text NOT NULL,
   -- Farklı görüşler burada saklanır; ihtilaf gizlenmez (plan §1.5, §8.3)
   alternatives jsonb NOT NULL DEFAULT '[]'::jsonb,

@@ -61,6 +61,8 @@ export const locationAlternativeInput = z.object({
   lat: z.number().min(-90).max(90).nullable(),
   lng: z.number().min(-180).max(180).nullable(),
   note: nonEmptyText,
+  /** Esri Elevation; bkz. konum kaydındaki not. */
+  elevationM: z.number().int().nullable(),
   sourceSlugs: slugList,
 });
 
@@ -73,6 +75,14 @@ export const locationInput = z
     lat: z.number().min(-90).max(90).nullable(),
     lng: z.number().min(-180).max(180).nullable(),
     confidence: locationConfidence,
+    /**
+     * Deniz seviyesinden yükseklik (metre, tam sayı).
+     *
+     * ÖLÇÜM verisidir, editoryal değil: Esri Elevation servisinden bir kez
+     * çekilip buraya yazılır (`pnpm data:elevation`). Site build'i o servise
+     * bağlanmaz. Negatif olabilir — Lût gölü −415 m.
+     */
+    elevationM: z.number().int().nullable(),
     /** Neden bu güven derecesi — kullanıcıya gösterilir */
     sourceNote: nonEmptyText,
     alternatives: z.array(locationAlternativeInput),

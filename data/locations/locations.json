@@ -25,8 +25,10 @@
       "alternatives": [],
       "sourceSlugs": [
         "tdv-islam-ansiklopedisi",
-        "kuran-metni"
-      ]
+        "kuran-metni",
+        "esri-elevation"
+      ],
+      "elevationM": 299
     },
     {
       "slug": "medine",
@@ -39,8 +41,10 @@
       "sourceNote": "Hicret yurdu; yeri tartışmasızdır. DİA 'MEDİNE' maddesi.",
       "alternatives": [],
       "sourceSlugs": [
-        "tdv-islam-ansiklopedisi"
-      ]
+        "tdv-islam-ansiklopedisi",
+        "esri-elevation"
+      ],
+      "elevationM": 606
     },
     {
       "slug": "kudus",
@@ -53,8 +57,10 @@
       "sourceNote": "İsrâ 17:1'deki Mescid-i Aksâ'nın Kudüs'te olduğu klasik tefsirlerde ve tarih kaynaklarında ittifakla kabul edilir. DİA 'MESCİD-i AKSÂ' ve 'KUDÜS' maddeleri.",
       "alternatives": [],
       "sourceSlugs": [
-        "tdv-islam-ansiklopedisi"
-      ]
+        "tdv-islam-ansiklopedisi",
+        "esri-elevation"
+      ],
+      "elevationM": 735
     },
     {
       "slug": "misir",
@@ -73,7 +79,8 @@
           "note": "Eski Krallık başkenti; bazı araştırmacılar Yusuf dönemini buraya bağlar.",
           "sourceSlugs": [
             "tdv-islam-ansiklopedisi"
-          ]
+          ],
+          "elevationM": 24
         },
         {
           "name": "Pi-Ramesse (Kantir)",
@@ -82,13 +89,16 @@
           "note": "Ramses dönemi başkenti; Musa dönemi için sık anılan aday.",
           "sourceSlugs": [
             "tdv-islam-ansiklopedisi"
-          ]
+          ],
+          "elevationM": 5
         }
       ],
       "sourceSlugs": [
         "tdv-islam-ansiklopedisi",
-        "kuran-metni"
-      ]
+        "kuran-metni",
+        "esri-elevation"
+      ],
+      "elevationM": 22
     },
     {
       "slug": "sina-tur",
@@ -107,13 +117,16 @@
           "note": "Kuzeybatı Arabistan tezi; azınlık görüşü.",
           "sourceSlugs": [
             "tdv-islam-ansiklopedisi"
-          ]
+          ],
+          "elevationM": 2486
         }
       ],
       "sourceSlugs": [
         "tdv-islam-ansiklopedisi",
-        "kuran-metni"
-      ]
+        "kuran-metni",
+        "esri-elevation"
+      ],
+      "elevationM": 2221
     },
     {
       "slug": "babil",
@@ -127,8 +140,10 @@
       "alternatives": [],
       "sourceSlugs": [
         "tdv-islam-ansiklopedisi",
-        "kuran-metni"
-      ]
+        "kuran-metni",
+        "esri-elevation"
+      ],
+      "elevationM": 35
     },
     {
       "slug": "cudi",
@@ -147,13 +162,16 @@
           "note": "Kitâb-ı Mukaddes geleneği; İslam kaynaklarında yaygın değil.",
           "sourceSlugs": [
             "tdv-islam-ansiklopedisi"
-          ]
+          ],
+          "elevationM": 5105
         }
       ],
       "sourceSlugs": [
         "tdv-islam-ansiklopedisi",
-        "kuran-metni"
-      ]
+        "kuran-metni",
+        "esri-elevation"
+      ],
+      "elevationM": 1909
     },
     {
       "slug": "sebe-marib",
@@ -167,8 +185,10 @@
       "alternatives": [],
       "sourceSlugs": [
         "tdv-islam-ansiklopedisi",
-        "kuran-metni"
-      ]
+        "kuran-metni",
+        "esri-elevation"
+      ],
+      "elevationM": 1091
     },
     {
       "slug": "medyen",
@@ -182,8 +202,10 @@
       "alternatives": [],
       "sourceSlugs": [
         "tdv-islam-ansiklopedisi",
-        "kuran-metni"
-      ]
+        "kuran-metni",
+        "esri-elevation"
+      ],
+      "elevationM": 217
     },
     {
       "slug": "hicr",
@@ -197,8 +219,10 @@
       "alternatives": [],
       "sourceSlugs": [
         "tdv-islam-ansiklopedisi",
-        "kuran-metni"
-      ]
+        "kuran-metni",
+        "esri-elevation"
+      ],
+      "elevationM": 772
     },
     {
       "slug": "ahkaf",
@@ -212,8 +236,10 @@
       "alternatives": [],
       "sourceSlugs": [
         "tdv-islam-ansiklopedisi",
-        "kuran-metni"
-      ]
+        "kuran-metni",
+        "esri-elevation"
+      ],
+      "elevationM": 624
     },
     {
       "slug": "eyke",
@@ -226,8 +252,10 @@
       "sourceNote": "Ashâb-ı Eyke (Hicr 15:78, Şuarâ 26:176). Tefsirlerde Medyen'e yakın, ağaçlık bir bölge olarak anlatılır; Tebük civarı denir, coğrafi teyit yoktur. DİA 'EYKE' maddesi. Derece 'gelenek': kaynaklar tek bir yeri gösteriyor, rakip bir tez yok; eksik olan coğrafi teyit.",
       "alternatives": [],
       "sourceSlugs": [
-        "tdv-islam-ansiklopedisi"
-      ]
+        "tdv-islam-ansiklopedisi",
+        "esri-elevation"
+      ],
+      "elevationM": 762
     },
     {
       "slug": "lut-golu",
@@ -246,7 +274,8 @@
           "note": "Ölü Deniz'in güneydoğusu; arkeolojik aday.",
           "sourceSlugs": [
             "tdv-islam-ansiklopedisi"
-          ]
+          ],
+          "elevationM": -261
         },
         {
           "name": "Tell el-Hammâm",
@@ -255,13 +284,16 @@
           "note": "Kuzeydoğu havza tezi.",
           "sourceSlugs": [
             "tdv-islam-ansiklopedisi"
-          ]
+          ],
+          "elevationM": -168
         }
       ],
       "sourceSlugs": [
         "tdv-islam-ansiklopedisi",
-        "kuran-metni"
-      ]
+        "kuran-metni",
+        "esri-elevation"
+      ],
+      "elevationM": -415
     },
     {
       "slug": "ninova",
@@ -274,8 +306,10 @@
       "sourceNote": "Yunus'un gönderildiği 'yüz bin ve daha fazla' kişilik şehir (Sâffât 37:147). Kur'an ad vermez; tefsir ve tarih kaynakları Nînevâ'yı gösterir. DİA 'YÛNUS' ve 'NÎNOVA' maddeleri. Derece 'gelenek': Kur'an ad vermez, yeri tefsir ve tarih geleneği söyler; rakip bir aday öne sürülmez.",
       "alternatives": [],
       "sourceSlugs": [
-        "tdv-islam-ansiklopedisi"
-      ]
+        "tdv-islam-ansiklopedisi",
+        "esri-elevation"
+      ],
+      "elevationM": 239
     },
     {
       "slug": "ur-harran",
@@ -294,7 +328,8 @@
           "note": "Kitâb-ı Mukaddes'te aile durağı; bazı İslam kaynaklarında doğum yeri.",
           "sourceSlugs": [
             "tdv-islam-ansiklopedisi"
-          ]
+          ],
+          "elevationM": 370
         },
         {
           "name": "Kûsâ (Kûfe yakını)",
@@ -303,12 +338,15 @@
           "note": "Bâbil bölgesi rivayeti.",
           "sourceSlugs": [
             "tdv-islam-ansiklopedisi"
-          ]
+          ],
+          "elevationM": 27
         }
       ],
       "sourceSlugs": [
-        "tdv-islam-ansiklopedisi"
-      ]
+        "tdv-islam-ansiklopedisi",
+        "esri-elevation"
+      ],
+      "elevationM": 21
     },
     {
       "slug": "kenan",
@@ -322,8 +360,10 @@
       "alternatives": [],
       "sourceSlugs": [
         "tdv-islam-ansiklopedisi",
-        "kuran-metni"
-      ]
+        "kuran-metni",
+        "esri-elevation"
+      ],
+      "elevationM": 940
     },
     {
       "slug": "kizildeniz-gecis",
@@ -342,13 +382,16 @@
           "note": "Sina'nın doğusundan geçiş tezi.",
           "sourceSlugs": [
             "tdv-islam-ansiklopedisi"
-          ]
+          ],
+          "elevationM": 14
         }
       ],
       "sourceSlugs": [
         "tdv-islam-ansiklopedisi",
-        "kuran-metni"
-      ]
+        "kuran-metni",
+        "esri-elevation"
+      ],
+      "elevationM": -9
     },
     {
       "slug": "bedir",
@@ -362,8 +405,10 @@
       "alternatives": [],
       "sourceSlugs": [
         "tdv-islam-ansiklopedisi",
-        "kuran-metni"
-      ]
+        "kuran-metni",
+        "esri-elevation"
+      ],
+      "elevationM": 119
     },
     {
       "slug": "uhud",
@@ -376,8 +421,10 @@
       "sourceNote": "Medine'nin kuzeyindeki dağ; Âl-i İmrân 3:121-179 savaşı anlatır. DİA 'UHUD GAZVESİ' maddesi.",
       "alternatives": [],
       "sourceSlugs": [
-        "tdv-islam-ansiklopedisi"
-      ]
+        "tdv-islam-ansiklopedisi",
+        "esri-elevation"
+      ],
+      "elevationM": 596
     },
     {
       "slug": "hudeybiye",
@@ -390,8 +437,10 @@
       "sourceNote": "Fetih 48:24 'Mekke'nin göbeğinde' der; Hudeybiye kuyusu ve antlaşma yeri bugün eş-Şümeysî'dir. DİA 'HUDEYBİYE ANTLAŞMASI' maddesi.",
       "alternatives": [],
       "sourceSlugs": [
-        "tdv-islam-ansiklopedisi"
-      ]
+        "tdv-islam-ansiklopedisi",
+        "esri-elevation"
+      ],
+      "elevationM": 193
     },
     {
       "slug": "taif",
@@ -404,8 +453,10 @@
       "sourceNote": "Sakîf kabilesinin şehri; Hz. Peygamber'in 620'deki davet yolculuğu ve Zuhruf 43:31'deki 'iki şehir'den biri sayılması. DİA 'TÂİF' maddesi.",
       "alternatives": [],
       "sourceSlugs": [
-        "tdv-islam-ansiklopedisi"
-      ]
+        "tdv-islam-ansiklopedisi",
+        "esri-elevation"
+      ],
+      "elevationM": 1674
     },
     {
       "slug": "habesistan",
@@ -418,8 +469,10 @@
       "sourceNote": "İlk müslümanların hicret ettiği Necâşî'nin ülkesi; Aksum krallığının merkezi bilinir. DİA 'HABEŞİSTAN' maddesi.",
       "alternatives": [],
       "sourceSlugs": [
-        "tdv-islam-ansiklopedisi"
-      ]
+        "tdv-islam-ansiklopedisi",
+        "esri-elevation"
+      ],
+      "elevationM": 2133
     },
     {
       "slug": "kehf-magarasi",
@@ -438,7 +491,8 @@
           "note": "Ürdün'de mağara ve kilise kalıntısı.",
           "sourceSlugs": [
             "tdv-islam-ansiklopedisi"
-          ]
+          ],
+          "elevationM": 931
         },
         {
           "name": "Tarsus",
@@ -447,7 +501,8 @@
           "note": "Anadolu geleneği.",
           "sourceSlugs": [
             "tdv-islam-ansiklopedisi"
-          ]
+          ],
+          "elevationM": 25
         },
         {
           "name": "Afşin (Eshâb-ı Kehf)",
@@ -456,12 +511,15 @@
           "note": "Anadolu geleneği; Selçuklu külliyesi.",
           "sourceSlugs": [
             "tdv-islam-ansiklopedisi"
-          ]
+          ],
+          "elevationM": 1219
         }
       ],
       "sourceSlugs": [
-        "tdv-islam-ansiklopedisi"
-      ]
+        "tdv-islam-ansiklopedisi",
+        "esri-elevation"
+      ],
+      "elevationM": 16
     },
     {
       "slug": "zulkarneyn-seddi",
@@ -480,12 +538,15 @@
           "note": "Kafkasya'nın orta geçidi.",
           "sourceSlugs": [
             "tdv-islam-ansiklopedisi"
-          ]
+          ],
+          "elevationM": 1406
         }
       ],
       "sourceSlugs": [
-        "tdv-islam-ansiklopedisi"
-      ]
+        "tdv-islam-ansiklopedisi",
+        "esri-elevation"
+      ],
+      "elevationM": 8
     },
     {
       "slug": "hendek-medine",
@@ -498,8 +559,10 @@
       "sourceNote": "Ahzâb 33:9-27'de anlatılan kuşatma; hendek Medine'nin açık kuzey cephesinde kazıldı. DİA 'HENDEK GAZVESİ' maddesi.",
       "alternatives": [],
       "sourceSlugs": [
-        "tdv-islam-ansiklopedisi"
-      ]
+        "tdv-islam-ansiklopedisi",
+        "esri-elevation"
+      ],
+      "elevationM": 611
     },
     {
       "slug": "huneyn",
@@ -513,8 +576,10 @@
       "alternatives": [],
       "sourceSlugs": [
         "tdv-islam-ansiklopedisi",
-        "kuran-metni"
-      ]
+        "kuran-metni",
+        "esri-elevation"
+      ],
+      "elevationM": 1023
     }
   ]
 }
