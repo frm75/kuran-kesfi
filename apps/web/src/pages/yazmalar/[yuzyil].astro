@@ -1,0 +1,95 @@
+---
+import type { GetStaticPaths } from "astro";
+import Base from "~/layouts/Base.astro";
+import {
+  dateText,
+  getCenturyBuckets,
+  getManuscriptsByCentury,
+} from "~/lib/manuscripts";
+
+/**
+ * Bir yüzyılın yazmaları.
+ *
+ * 2322 kaydı tek sayfaya basmak sayfa bütçesini (plan §20.4) katlıyordu;
+ * yüzyıl kovaları hem sayfayı küçültüyor hem de kronolojiyi görünür kılıyor.
+ */
+
+export const getStaticPaths: GetStaticPaths = () =>
+  getCenturyBuckets().map((b) => ({
+    params: { yuzyil: b.slug },
+    props: { century: b.century, label: b.label },
+  }));
+
+interface Props {
+  century: number | null;
+  label: string;
+}
+
+const { century, label } = Astro.props;
+const manuscripts = getManuscriptsByCentury(century);
+const withRanges = manuscripts.filter((m) => m.ranges.length > 0).length;
+---
+
+<Base
+  title={`${label} yazmaları — Kur'an-ı Kerim Keşfi`}
+  description={`Corpus Coranicum kataloğunda ${label.toLocaleLowerCase("tr")} tarihlenen ${manuscripts.length} Kur'an yazması.`}
+>
+  <main id="icerik" class="pg pg-wide">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <a href="/yazmalar">Yazmalar</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">{label}</span>
+    </nav>
+
+    <header class="pg-head">
+      <p class="pg-kicker">Mushaf tarihi</p>
+      <h1 class="pg-title">{label}</h1>
+      <p class="pg-lede">
+        {
+          century === null
+            ? "Kaynağın tarihleme vermediği yazmalar. Tarih uydurulmaz; olduğu gibi bırakılır."
+            : `Kaynağın tarihlemesine göre bu yüzyıla düşen yazmalar. Tarihleme bir aralıktır ve başlangıcına göre gruplanmıştır.`
+        }
+      </p>
+      <ul class="fact-row">
+        <li><b>{manuscripts.length}</b><span>yazma</span></li>
+        <li><b>{withRanges}</b><span>ayet aralığı kayıtlı</span></li>
+      </ul>
+    </header>
+
+    <ol class="ms-list mt-6">
+      {
+        manuscripts.map((m) => (
+          <li>
+            <a class="ms-item" href={`/yazma/${String(m.id)}`}>
+              <span class="ms-date">{dateText(m)}</span>
+              <span class="ms-title">{m.title}</span>
+              <span class="ms-meta">
+                {m.script !== null && <>{m.script}<span aria-hidden="true"> · </span></>}
+                {m.ranges.length > 0
+                  ? `${m.ranges.length} ayet aralığı`
+                  : "ayet aralığı kayıtlı değil"}
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+
+    <nav class="mt-10 sec-note" aria-label="Diğer yüzyıllar">
+      Diğer yüzyıllar:{" "}
+      {
+        getCenturyBuckets().map((b, index) => (
+          <>
+            {index > 0 && <span aria-hidden="true"> · </span>}
+            {b.slug === Astro.params.yuzyil ? (
+              <b>{b.label}</b>
+            ) : (
+              <a href={`/yazmalar/${b.slug}`}>{b.label}</a>
+            )}
+          </>
+        ))
+      }
+    </nav>
+  </main>
+</Base>

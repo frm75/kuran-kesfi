@@ -1,0 +1,155 @@
+---
+import type { GetStaticPaths } from "astro";
+import Base from "~/layouts/Base.astro";
+import {
+  centuryOf,
+  dateText,
+  getManuscripts,
+  labelRange,
+} from "~/lib/manuscripts";
+
+/**
+ * Tek yazma sayfası.
+ *
+ * GÖRÜNTÜ YOK — kaynakta bu yazmanın görüntü izni "restricted" (kataloğun
+ * tamamında öyle). Görüntü için Corpus Coranicum'a bağlantı verilir; site
+ * üretimde üçüncü tarafa bağlanmaz (CLAUDE.md kural 5).
+ *
+ * Sayfanın asıl işi: bu yazmanın HANGİ AYETLERİ taşıdığını göstermek ve o
+ * ayetlere bağlamak. Sayfa/varak düzeyindeki ayrıntı kaynakta durur.
+ */
+
+export const getStaticPaths: GetStaticPaths = () =>
+  getManuscripts().map((m) => ({
+    params: { id: String(m.id) },
+    props: { manuscript: m },
+  }));
+
+interface Props {
+  manuscript: ReturnType<typeof getManuscripts>[number];
+}
+
+const { manuscript } = Astro.props;
+const century = centuryOf(manuscript);
+const ranges = manuscript.ranges.map(([start, end]) => labelRange(start, end));
+/** Kaynağın kendi derin bağlantısı; ilk aralığın suresi/ayeti ile açılır. */
+const firstRange = manuscript.ranges[0];
+const deepLink =
+  firstRange === undefined
+    ? manuscript.url
+    : `${manuscript.url}?sura=${String(Math.floor(firstRange[0] / 1000)).padStart(3, "0")}` +
+      `&verse=${String(firstRange[0] % 1000).padStart(3, "0")}`;
+---
+
+<Base
+  title={`${manuscript.title} — Yazma — Kur'an-ı Kerim Keşfi`}
+  description={`${manuscript.title}. ${dateText(manuscript)}. ${manuscript.ranges.length} ayet aralığı kayıtlı.`}
+>
+  <main id="icerik" class="pg pg-normal">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <a href="/yazmalar">Yazmalar</a>
+      {
+        century !== null && (
+          <>
+            <span aria-hidden="true"> › </span>
+            <a href={`/yazmalar/${String(century)}-yuzyil`}>{century}. yüzyıl</a>
+          </>
+        )
+      }
+      <span aria-hidden="true"> › </span>
+      <span aria-current="page">{manuscript.idno ?? `Yazma ${manuscript.id}`}</span>
+    </nav>
+
+    <header class="pg-head">
+      <p class="pg-kicker">Mushaf yazması</p>
+      <h1 class="pg-title">{manuscript.title}</h1>
+      <ul class="fact-row">
+        <li><b>{dateText(manuscript)}</b><span>tarihleme</span></li>
+        {manuscript.script !== null && <li><b>{manuscript.script}</b><span>yazı türü</span></li>}
+        <li><b>{manuscript.ranges.length}</b><span>ayet aralığı</span></li>
+        {manuscript.pageCount > 0 && <li><b>{manuscript.pageCount}</b><span>kayıtlı sayfa</span></li>}
+      </ul>
+    </header>
+
+    <dl class="ms-facts">
+      {
+        manuscript.repository !== null && (
+          <>
+            <dt>Bulunduğu yer</dt>
+            <dd>{manuscript.repository}</dd>
+          </>
+        )
+      }
+      {
+        manuscript.idno !== null && (
+          <>
+            <dt>Yer numarası</dt>
+            <dd>{manuscript.idno}</dd>
+          </>
+        )
+      }
+    </dl>
+
+    {
+      manuscript.summary !== null && (
+        <section class="mt-8">
+          <div class="sec-head">
+            <h2>Kaynağın notu</h2>
+            <span class="sec-note">Corpus Coranicum'un kendi tanımı; çevrilmemiş, kısaltılmıştır.</span>
+          </div>
+          <p class="ms-summary">{manuscript.summary}</p>
+        </section>
+      )
+    }
+
+    <section class="mt-8">
+      <div class="sec-head">
+        <h2>Taşıdığı ayetler</h2>
+        <span class="sec-note">
+          Aralıklar kaynağın sayfa kayıtlarından birleştirildi. Ayete tıklayınca
+          metin açılır.
+        </span>
+      </div>
+      {
+        ranges.length === 0 ? (
+          <p class="ms-warn">
+            Bu yazma için kaynakta ayet aralığı kayıtlı değil. Bilgi
+            uydurulmaz; kaynağın sayfasında daha fazlası olabilir.
+          </p>
+        ) : (
+          <ul class="ms-range-list">
+            {ranges.map((r) => (
+              <li>
+                <a href={r.href}>{r.label}</a>
+                {r.crossesSurah && <span class="ms-cross"> (sure sınırını aşıyor)</span>}
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </section>
+
+    <section class="mt-8">
+      <div class="sec-head">
+        <h2>Görüntüler</h2>
+      </div>
+      <p class="ms-warn">
+        Bu yazmanın görüntüleri kullanım kısıtlıdır (kaynakta
+        <i>restricted</i> işaretli), bu yüzden burada gösterilmez. Kaynağın kendi
+        sayfasında görülebilir:
+      </p>
+      <p class="mt-3">
+        <a href={deepLink} rel="noopener noreferrer" target="_blank">
+          Corpus Coranicum'da aç
+          <span class="sr-only"> (yeni sekmede açılır)</span>
+        </a>
+      </p>
+    </section>
+
+    <p class="sec-note mt-8">
+      Kaynak: Corpus Coranicum Project, ed. Michael Marx. TEI Data.
+      Berlin-Brandenburg Academy of Sciences and Humanities. CC BY-SA 4.0.
+    </p>
+  </main>
+</Base>

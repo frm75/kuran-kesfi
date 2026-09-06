@@ -1,0 +1,126 @@
+---
+import Base from "~/layouts/Base.astro";
+import {
+  centuryOf,
+  dateText,
+  getCenturyBuckets,
+  getManuscripts,
+} from "~/lib/manuscripts";
+
+/**
+ * Yazma listesi — genel bakış.
+ *
+ * 2322 yazmanın tamamı tek sayfaya sığmaz (plan §20.4, 300 KB sayfa bütçesi);
+ * bu sayfa özet ve giriş kapısıdır, tam liste yüzyıl sayfalarındadır.
+ *
+ * GÖRÜNTÜ YOK: kaynaktaki 2322 yazmanın hepsinde görüntü izni "restricted".
+ * Her kayıt corpuscoranicum.de'ye derin bağlantı taşır.
+ */
+
+const manuscripts = getManuscripts();
+const buckets = getCenturyBuckets();
+const oldest = manuscripts.filter((m) => m.dateStart !== null).slice(0, 40);
+const dated = manuscripts.filter((m) => m.dateStart !== null).length;
+const withRanges = manuscripts.filter((m) => m.ranges.length > 0).length;
+---
+
+<Base
+  title="Eski Mushaf Yazmaları — Kur'an-ı Kerim Keşfi"
+  description={`Corpus Coranicum kataloğundaki ${manuscripts.length} Kur'an yazmasının künyesi; hangi ayetleri taşıdıklarıyla birlikte.`}
+>
+  <main id="icerik" class="pg pg-wide">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">Yazmalar</span>
+    </nav>
+
+    <header class="pg-head">
+      <p class="pg-kicker">Mushaf tarihi</p>
+      <h1 class="pg-title">Eski Mushaf Yazmaları</h1>
+      <p class="pg-lede">
+        Berlin-Brandenburg Bilimler Akademisi'nin Corpus Coranicum kataloğunda
+        {manuscripts.length} Kur'an yazmasının künyesi var; en eskileri hicrî
+        birinci yüzyıla tarihleniyor. Her yazmanın hangi ayetleri taşıdığı
+        kayıtlı — bu sayede her ayet sayfası kendi yazmalarına bağlanıyor.
+      </p>
+      <ul class="fact-row">
+        <li><b>{manuscripts.length}</b><span>yazma</span></li>
+        <li><b>{dated}</b><span>tarihlenebilen</span></li>
+        <li><b>{withRanges}</b><span>ayet aralığı kayıtlı</span></li>
+        <li><b>6236</b><span>ayetin tamamı kapsanıyor</span></li>
+      </ul>
+    </header>
+
+    <section class="mt-8">
+      <div class="sec-head">
+        <h2>Görüntüler burada yok</h2>
+      </div>
+      <p class="ms-warn">
+        Yazmaların fotoğrafları telif ve kullanım kısıtlıdır: kataloğun
+        {manuscripts.length} kaydının <b>tamamında</b> görüntü izni
+        <i>restricted</i> olarak işaretli. Bu yüzden burada hiçbir yazma görüntüsü
+        kopyalanmaz. Her kayıt kaynağın kendi sayfasına bağlanır; görüntüyü orada
+        görebilirsiniz.
+      </p>
+    </section>
+
+    <section class="mt-8">
+      <div class="sec-head">
+        <h2>Yüzyıllara göre</h2>
+        <span class="sec-note">
+          Tarihleme kaynağın kendi verdiği aralığın başlangıcına göre gruplanır
+          ("700-800" → 8. yüzyıl). Kesin bir iddia değil, sıralama aracıdır.
+        </span>
+      </div>
+      <ul class="century-grid">
+        {
+          buckets.map((b) => (
+            <li>
+              <a href={`/yazmalar/${b.slug}`}>
+                <span class="cen-label">{b.label}</span>
+                <span class="cen-count">{b.count}</span>
+                <span class="cen-unit">yazma</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="mt-10">
+      <div class="sec-head">
+        <h2>En eski {oldest.length} yazma</h2>
+        <span class="sec-note">Kaynağın tarihlemesine göre; tam liste yüzyıl sayfalarında.</span>
+      </div>
+      <ol class="ms-list">
+        {
+          oldest.map((m) => (
+            <li>
+              <a class="ms-item" href={`/yazma/${String(m.id)}`}>
+                <span class="ms-date">{dateText(m)}</span>
+                <span class="ms-title">{m.title}</span>
+                <span class="ms-meta">
+                  {m.script !== null && <>{m.script}<span aria-hidden="true"> · </span></>}
+                  {m.ranges.length > 0
+                    ? `${m.ranges.length} ayet aralığı`
+                    : "ayet aralığı kayıtlı değil"}
+                  {centuryOf(m) !== null && (
+                    <>
+                      <span aria-hidden="true"> · </span>
+                      {centuryOf(m)}. yüzyıl
+                    </>
+                  )}
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <p class="sec-note mt-8">
+      Kaynak: Corpus Coranicum Project, ed. Michael Marx. TEI Data.
+      Berlin-Brandenburg Academy of Sciences and Humanities. CC BY-SA 4.0.
+    </p>
+  </main>
+</Base>
