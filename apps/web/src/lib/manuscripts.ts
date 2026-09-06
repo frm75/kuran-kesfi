@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
+import { DATA_DIR } from "~/lib/data-dir";
 import type { StaticManuscript, StaticManuscripts, StaticVerseManuscripts } from "@kuran/schema";
 import { getSurahsIndex } from "~/lib/data";
 
@@ -16,8 +16,6 @@ import { getSurahsIndex } from "~/lib/data";
  * `data.ts` ile aynı kalıp: dosya bir kez okunur, tarayıcıya gitmez.
  * Ayrı dosyada durmasının nedeni `data.ts`'in zaten 600 satır olması.
  */
-
-const DATA_DIR = resolve(dirname(fileURLToPath(import.meta.url)), "../../public/data");
 
 function readJsonOrNull<T>(relativePath: string): T | null {
   const path = resolve(DATA_DIR, relativePath);

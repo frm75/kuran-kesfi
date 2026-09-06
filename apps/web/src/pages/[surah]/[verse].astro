@@ -15,10 +15,13 @@ import {
   getVerseText,
   getVerseWords,
   getVerseConnections,
+  getSourceBySlug,
   sortAuthorsForDisplay,
   verseLabel,
 } from "~/lib/data";
 import { dateText, getVerseManuscripts } from "~/lib/manuscripts";
+import SourceBadge from "~/components/SourceBadge.astro";
+import { blockRangeLabel, getVerseTafsir, paragraphs } from "~/lib/tafsir";
 import MedyaPaneli from "~/components/MedyaPaneli.astro";
 import { getVerseMedia } from "~/lib/media";
 
@@ -91,6 +94,17 @@ const related = getRelatedVerses(surahId, verseNumber);
  * GÖRÜNTÜ YOK: kaynaktaki 2322 yazmanın hepsinde görüntü izni "restricted".
  */
 const manuscripts = getVerseManuscripts(surahId, verseNumber);
+
+/**
+ * Bu ayetin tefsiri (plan §3, §12.9).
+ *
+ * İki eser de 6236 ayetin tamamını kapsıyor, yani bu bölüm her ayet sayfasında
+ * çıkar. Ayet başına ortalama 1,5 KB metin ekliyor (en büyüğü 19,7 KB, 8 KB
+ * üstü 49 ayet) — sayfa ortalaması zaten 64 KB.
+ *
+ * Yalnızca `ayet_tefsiri` blokları gelir; gerekçe `lib/tafsir.ts` içinde.
+ */
+const tafsirs = getVerseTafsir(surahId, verseNumber);
 
 /*
  * Bu ayete bagli medya (plan 62). Ayet basina en cok birkac kayit dusuyor,
@@ -373,6 +387,61 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
             mealleri aşağıdadır. Birleşik numaralar ({defaultAuthor.name} bu
             ayetleri tek metin olarak veriyor) aralık olarak yazılır.
           </p>
+        </section>
+      )
+    }
+
+    {
+      tafsirs.length > 0 && (
+        <section id="tefsir">
+          <div class="sec-head">
+            <h2>Tefsir</h2>
+            <span class="sec-note">
+              Tefsir ayetin kendisi değil, ona getirilmiş bir YORUMDUR; her eser
+              kendi geleneğinden konuşur ve aralarında fark olabilir. Aşağıdaki
+              {tafsirs.length === 1 ? " eser tek görüş" : ` ${String(tafsirs.length)} eser tek doğru`}
+              olarak değil, kaynağıyla birlikte verilir (plan §12.9).
+            </span>
+          </div>
+          {tafsirs.map(({ work, blocks }) => (
+            <article class="tafsir-work">
+              <div class="tafsir-head">
+                <h3 class="tafsir-name">{work.name}</h3>
+                {work.workTitle !== null && <p class="tafsir-worktitle">{work.workTitle}</p>}
+                {work.author !== null && <p class="tafsir-author">{work.author}</p>}
+              </div>
+              <SourceBadge
+                contentClass="kaynakli"
+                sources={[getSourceBySlug(work.sourceSlug)]}
+                label={`${label} tefsiri — ${work.name}`}
+                compact
+              />
+              {blocks.map((block) => {
+                const range = blockRangeLabel(block);
+                return (
+                  <div class="tafsir-block">
+                    {range !== null && (
+                      <p class="tafsir-range">
+                        Bu metin {range} için yazılmıştır.
+                      </p>
+                    )}
+                    {paragraphs(block.text).map((para) => (
+                      <p class="tafsir-para">{para}</p>
+                    ))}
+                  </div>
+                );
+              })}
+              {/*
+                Sürüm numarası burada görünür. QuranEnc'in yeniden yayın
+                koşullarından 3'ü sürümün belirtilmesini istiyor ve numara bu
+                notun içinde duruyor ("QuranEnc.com · sürüm 1.0.0 · ...").
+                Bu satır kısaltılamaz, gizlenemez.
+              */}
+              {work.licenseNote !== null && (
+                <p class="sec-note tafsir-license">{work.licenseNote}</p>
+              )}
+            </article>
+          ))}
         </section>
       )
     }

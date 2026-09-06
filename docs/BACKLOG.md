@@ -228,22 +228,37 @@ Doğrulandı: yeniden import sonrası kalan bozuk karakter **yok**.
   Metin verisi için gerekmiyor: `cache/` 3,9 MB, tam veri setiyle en kötü ~100 MB
   (ölçüm: `docs/DEPLOY_REPORT.md` §3.4).
 
-## Tefsir arayüzü — veri hazır, ekran yok (2026-09-06)
+## ~~Tefsir arayüzü — veri hazır, ekran yok~~ → **BİTTİ 2026-09-06**
 
 `tafsir` + `tafsir_block` dolu: **iki eser, 13 208 blok** (Sa'dî 6986 + el-Muhtasar 6222),
-ikisi de 6236 ayetin %100'ünü kapsıyor.
-Sitede görünmüyor çünkü statik dışa aktarım ve ayet sayfası bölümü yapılmadı.
-Bilinçli bırakıldı — `docs/KAYNAK_ENVANTERI.md` §0 (kütüphane ≠ yayın) + o sırada başka bir
-oturum `[surah].astro` / `lib/data.ts` üzerinde çalışıyordu.
+ikisi de 6236 ayetin %100'ünü kapsıyor. **İkisi de artık yayında:** her ayet sayfasında
+"Tefsir" bölümü var (6236/6236 sayfa doğrulandı).
 
-Kalan iş:
-1. `scripts/build/build.ts` → `tafsir_index.json` + sure başına blok dosyaları
-2. `packages/schema/src/static_data.ts` → statik şema
-3. Ayet sayfasında "Tefsir" bölümü — `<SourceBadge>` zorunlu, **sürüm numarası görünmeli**
-   (QuranEnc koşul 3), tek tefsir olduğu için "bu bir yorumdur, tek görüş değildir" uyarısı
-   (plan §12.9)
-4. Performans: bir blok 3-5 KB; Bakara'nın 433 bloğu var → sure sayfasına toptan konmaz,
-   ayet başına veya ayrı `/tefsir/...` sayfası (plan §20.4 bütçesi)
+Yapılanlar:
+1. `scripts/build/lib/content.ts` → `tafsir_index.json` + `tafsir/<eser>/surah_<id>.json`
+   (228 dosya). Yayın kapısı build tarafında: `tafsir.publishable = false` olan eser
+   çıktıya hiç girmez.
+2. `packages/schema/src/static_data.ts` → `staticTafsirIndex`, `staticTafsirSurah`
+3. Ayet sayfasında "Tefsir" bölümü: `<SourceBadge>` + eser künyesi + **sürüm numarası**
+   (`licenseNote` içinde, QuranEnc koşul 3) + "tefsir bir yorumdur" uyarısı (plan §12.9)
+4. `scripts/build/linter.ts`: sürümsüz QuranEnc tefsiri **build'i durdurur**; indeks ↔
+   dosya çift yönlü kontrol edilir; `tafsir/` build-zamanı bütçesine alındı
+
+Ayet başına ortalama 1,5 KB metin ekledi (sayfa ortalaması 64,3 → 67,9 KB, en ağır ayet
+sayfası 215 KB ham / 44 KB gzip).
+
+### Tefsirden kalanlar
+
+- **`pasaj` blokları ayet sayfasında gösterilmiyor.** Kaynakta "المقطع" tefsir değil, ayet
+  grubunun MEAL metnidir; ayet sayfası zaten aynı çeviriyi (Rowwad/QuranEnc) gösteriyor.
+  Blok veri dosyasında duruyor, sure düzeyinde tefsir okuma ekranı yapılırsa oradan gelir.
+- **Sure düzeyinde tefsir okuma ekranı yok.** Ayete bağlı olmayan bloklar (sure adı, nüzul
+  yeri, giriş, besmele, fasıl, faideler, hâtime, alıntı, sure sonu — 510 blok) hiçbir yerde
+  görünmüyor. Ekran yapılırsa sayfa bütçesi bölmeyi zorunlu kılar: Sa'dî'nin Bakara
+  bloklarının toplamı 582 KB.
+- **`tafsir/sadi-tefsiri/surah_2.json` 582 KB, `surah_4.json` 398 KB** — plan §20.4'ün
+  300 KB eşiğinin üstünde ama linter uyarmıyor, çünkü bunlar build-zamanı VERİ dosyaları:
+  site JS'siz, hiçbir sayfa bu JSON'u indirmiyor.
 
 ## Kök sayfası ağırlığı — QUL doldurmasından sonra (2026-09-06)
 

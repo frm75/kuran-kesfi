@@ -730,3 +730,75 @@ numarası** istiyor ve o arayüzde gösteriliyor.
 | Lightbox / kaydırmalı galeri | JavaScript gerekir, CSP değişmiyor |
 | `/medya` dizin sayfası | Kapsam dışı; panel kıssa ve ayet sayfalarından geliyor |
 | Konum sayfasında panel | `/harita` tek sayfa, konum başına sayfa yok |
+
+## Tefsir arayüzü (2026-09-06) — YAYINDA
+
+`tafsir` + `tafsir_block` içindeki **13 208 blok** artık siteye çıkıyor. Her ayet
+sayfasında "Tefsir" bölümü var; **6236/6236 sayfada** iki eser birden görünüyor
+(Sa'dî 6986 blok, el-Muhtasar 6222 blok — ikisi de Kur'an'ın tamamını kapsıyor).
+
+| Katman | Dosya |
+|---|---|
+| Şema | `packages/schema/src/static_data.ts` → `staticTafsirIndex`, `staticTafsirSurah` |
+| Çıktı | `tafsir_index.json` + `tafsir/<eser>/surah_<id>.json` (228 dosya) |
+| Üretim | `scripts/build/lib/content.ts` |
+| Okuma | `apps/web/src/lib/tafsir.ts` |
+| Arayüz | `apps/web/src/pages/[surah]/[verse].astro` → `<section id="tefsir">` |
+| Stil | `global.css` "Tefsir (ayet sayfası)" |
+| Kural | `scripts/build/linter.ts` — sürümsüz QuranEnc tefsiri build'i DURDURUR |
+
+**Yayın kapısı build tarafındadır.** `tafsir.publishable = false` olan eser çıktı
+dosyalarına hiç girmez (kütüphane ≠ yayın, `KAYNAK_ENVANTERI.md` §0) — kütüphanede
+duran bir eserin metni `dist/` içine de düşmez, arayüzde süzülmez.
+
+**Sürüm numarası görünür.** QuranEnc'in yeniden yayın koşullarından 3'ü sürümün
+belirtilmesini istiyor; numara `tafsir.license_note` içinde duruyor ("QuranEnc.com ·
+sürüm 1.0.0 · …") ve bölümün altında olduğu gibi basılıyor. Linter bunu **hata**
+seviyesinde denetliyor: kaynağı `quranenc` olan bir tefsirin notunda sürüm numarası
+yoksa build durur. Uyarı değil, çünkü sürüm kaybolursa yayın izni koşulu düşer.
+
+Sayfa ağırlığı: ayet başına ortalama +1,5 KB metin. Sayfa ortalaması 64,3 → 67,9 KB,
+en ağır ayet sayfası 215 KB ham / **44 KB gzip**.
+
+### Ayet sayfasında `pasaj` blokları GÖSTERİLMEZ
+
+Ayete bağlı iki blok türü var: `ayet_tefsiri` (11 956 blok) ve `pasaj` (1742 blok).
+`pasaj` — kaynakta "المقطع" — tefsir değil, **ayet grubunun meal metnidir**; Sa'dî
+yayınında her tefsir bloğunun önüne konmuş. Ayet sayfası zaten aynı çevirinin
+(Rowwad, QuranEnc) kendisini gösteriyor; pasajı ikinci kez basmak aynı meali "tefsir"
+başlığı altında tekrarlamak olurdu. Blok veri dosyasında duruyor.
+
+### Bir kez yaşanmış tuzak — `import.meta.url` ile veri dizini bulmak
+
+Bölüm ilk build'de **sessizce hiç basılmadı**: hata yok, uyarı yok, dev sunucusunda
+sorunsuz görünüyor, üretim çıktısında bölüm yok.
+
+Sebep: okuma kütüphanelerindeki şu satır.
+
+```ts
+const DATA_DIR = resolve(dirname(fileURLToPath(import.meta.url)), "../../public/data");
+```
+
+Astro üretim build'inde modüller Vite tarafından paketleniyor ve `import.meta.url`
+kaynak dosyanın değil **paketin** yolunu veriyor. Paketin yeri modülün kaç yerden
+import edildiğine göre değişiyor:
+
+| Modül | Paket yeri | `../../public/data` |
+|---|---|---|
+| `manuscripts.ts` (iki+ sayfadan) | `dist/chunks/manuscripts_*.mjs` | `apps/web/public/data` ✓ |
+| `tafsir.ts` (tek sayfadan) | `dist/pages/_surah_/_verse_.astro.mjs` | `dist/public/data` ✗ |
+
+`existsSync` false döndü, `getTafsirs()` boş dizi verdi, `tafsirs.length > 0` false
+oldu, bölüm hiç render edilmedi. **`data.ts`, `manuscripts.ts` ve `media.ts` de aynı
+tuzağın üzerindeydi**; bugün çalışmalarının tek sebebi birden fazla sayfadan import
+edilmeleriydi. Bir sayfa silinse aynı sessiz kayıp orada da olurdu.
+
+Çözüm: `apps/web/src/lib/data-dir.ts`. Yukarı doğru yürüyüp
+`public/data/surahs_index.json` işaretini taşıyan ilk dizini bulur; bulamazsa **hata
+verir**. Dört kütüphane de artık oradan okuyor. Ölçüm yordamı: modül başına
+`console.error(DATA_DIR, import.meta.url)` koyup build çıktısında karşılaştırmak —
+tek build'de kesin sonuç verdi.
+
+**Ders:** bir bölüm "boş veri" ile "veriyi bulamama" arasında ayrım yapmıyorsa,
+ikincisi birincisi gibi görünür. Dev sunucusunda doğrulamak yetmez; bölümün üretim
+çıktısında sayılması gerekir (`grep -rl "tafsir-work" dist/*-suresi/*.html | wc -l`).

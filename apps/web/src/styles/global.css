@@ -3379,3 +3379,80 @@ a.ctx-num:hover {
     grid-template-columns: 4rem 1fr;
   }
 }
+
+/* --- Tefsir (ayet sayfası) ------------------------------------------------
+ *
+ * İki eser alt alta durur, aralarında görünür bir sınır olur: okur hangi
+ * cümlenin hangi müellife ait olduğunu ayırt edemezse bölüm zarar verir
+ * (CLAUDE.md kural 4). Ayrım yalnız renkle değil, kenarlık + başlık + kaynak
+ * rozetiyle yapılır (DESIGN.md §1: renk tek başına anlam taşımaz).
+ *
+ * Metin okuma yazı tipiyle ve geniş satır aralığıyla dizilir; bir blok
+ * ortalama 1,1 KB, en büyüğü 19,7 KB — burası kısa bir not alanı değil,
+ * gerçek bir okuma alanıdır.
+ */
+.tafsir-work {
+  margin: var(--space-6) 0 0;
+  padding: var(--space-4) 0 0;
+  border-top: 1px solid var(--border);
+}
+.tafsir-work:first-of-type {
+  margin-top: var(--space-4);
+  padding-top: 0;
+  border-top: 0;
+}
+
+.tafsir-head {
+  margin: 0 0 var(--space-3);
+}
+.tafsir-name {
+  margin: 0;
+  color: var(--text-primary);
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-tight);
+}
+.tafsir-worktitle {
+  margin: var(--space-1) 0 0;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  line-height: var(--lh-normal);
+}
+.tafsir-author {
+  margin: var(--space-1) 0 0;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  line-height: var(--lh-normal);
+}
+
+.tafsir-block {
+  margin: var(--space-4) 0 0;
+  max-width: var(--content-narrow);
+}
+
+/* Aralık uyarısı: metin tek ayete değil bir ayet GRUBUNA aitse okur bunu
+ * okumadan önce görmeli — yoksa grup yorumunu tek ayetin yorumu sanır. */
+.tafsir-range {
+  margin: 0 0 var(--space-2);
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  line-height: var(--lh-normal);
+}
+
+.tafsir-para {
+  margin: 0 0 var(--space-3);
+  color: var(--text-primary);
+  font-family: var(--font-reading);
+  font-size: var(--text-base);
+  line-height: var(--lh-relaxed);
+}
+.tafsir-para:last-child {
+  margin-bottom: 0;
+}
+
+/* Sürüm numarası bu satırın içinde durur (QuranEnc koşul 3); gizlenmez. */
+.tafsir-license {
+  margin: var(--space-3) 0 0;
+  max-width: var(--content-narrow);
+}

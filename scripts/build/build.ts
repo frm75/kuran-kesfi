@@ -27,6 +27,8 @@
  *   concepts_index.json · concept/concept_<slug>.json         KAVRAMLAR
  *   verse_links.json                                 ayet -> icerik ters dizini
  *   scripture.json                                   Kitab-i Mukaddes atiflari (kunye + alinti)
+ *   tafsir_index.json · tafsir/<eser>/surah_<id>.json         TEFSIR (yayin kapisi:
+ *                                                    tafsir.publishable)
  *
  * Icerik katmani lib/content.ts icinde; tablolar bossa hic dosya yazmaz.
  */

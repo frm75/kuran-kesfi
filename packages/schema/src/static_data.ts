@@ -271,3 +271,81 @@ export const staticRootsIndex = z.object({
   }),
 });
 export type StaticRootsIndex = z.infer<typeof staticRootsIndex>;
+
+// --- Tefsir (plan 3, 12.9) ----------------------------------------------------
+
+/**
+ * Tefsir cikti semasi.
+ *
+ * Kutuphane != yayin (docs/KAYNAK_ENVANTERI.md 0): `tafsir.publishable = false`
+ * olan eser bu dosyalara HIC girmez. Suzme build tarafinda yapilir, arayuz
+ * tarafinda degil — yayina cikmayan metin dist/ icine de dusmez.
+ *
+ * Iki dosya cikar:
+ *
+ *   data/tafsir_index.json               eser kunyeleri + kapsam sayilari
+ *   data/tafsir/{slug}/surah_{id}.json   bir eserin bir suredeki butun bloklari
+ *
+ * Neden sure basina: Sa'di'nin Bakara bloklari 582 KB. Ayet basina ayri dosya
+ * yazmak `pasaj` bloklarini aralik boyunca kopyalar (9 MB -> 16 MB) ve 6236 yeni
+ * dosya acar. Sure dosyasi build'de bir kez okunup o surenin butun ayet
+ * sayfalarina hizmet eder. Bakara ve Nisa dosyalari plan 20.4'un 300 KB esigini
+ * asar; linter uyarir, build durmaz — bunlar sayfa degil VERI dosyalaridir ve
+ * tarayiciya gitmezler (site JS'siz, JSON'u yalnizca build okur).
+ */
+export const staticTafsirBlock = z.object({
+  /** Kaynaktaki sira; sure icinde blok dizilisini korur */
+  sortNumber: z.number().int().positive(),
+  /** packages/schema/src/tafsir.ts -> tafsirBlockType */
+  blockType: nonEmptyText,
+  /** Kaynagin kendi tur etiketi, cevrilmeden ("تفسير آية") */
+  sourceType: z.string().nullable(),
+  /**
+   * Blogun kapsadigi ayet araligi, SURE ICI numaralarla (verse.id degil).
+   * Ikisi ya birlikte dolu ya birlikte bostur: bos olmasi "bu blok belirli bir
+   * ayete bagli degil" demektir (sure adi, nuzul yeri, sure sonu) ve ayet bagi
+   * UYDURULMAZ. Blok hicbir zaman sure sinirini asmaz (dogrulandi 2026-09-06).
+   */
+  startVerse: z.number().int().positive().nullable(),
+  endVerse: z.number().int().positive().nullable(),
+  text: nonEmptyText,
+});
+export type StaticTafsirBlock = z.infer<typeof staticTafsirBlock>;
+
+/** data/tafsir/{slug}/surah_{id}.json */
+export const staticTafsirSurah = z.object({
+  tafsirSlug: slug,
+  surahId: z.number().int().min(1).max(114),
+  blocks: z.array(staticTafsirBlock).min(1),
+});
+export type StaticTafsirSurah = z.infer<typeof staticTafsirSurah>;
+
+/** data/tafsir_index.json */
+export const staticTafsirIndex = z.object({
+  tafsirs: z.array(
+    z.object({
+      slug,
+      name: nonEmptyText,
+      workTitle: z.string().nullable(),
+      author: z.string().nullable(),
+      /** ISO 639-1: "tr" */
+      language: z.string().length(2),
+      /** source.slug — atif yukumlulugu bu kayittan okunur */
+      sourceSlug: slug,
+      license: nonEmptyText,
+      /**
+       * Lisans notu. QuranEnc kosul 3 SURUM NUMARASI istiyor ve numara bu
+       * metnin icinde durur ("QuranEnc.com · surum 1.0.0 · ..."); bu yuzden
+       * arayuzde gosterilmesi zorunludur, kisaltilamaz.
+       */
+      licenseNote: z.string().nullable(),
+      url: z.string().nullable(),
+      /** Bu eserde blok tasiyan sureler — dosya var mi diye bakmaya gerek kalmasin */
+      surahIds: z.array(z.number().int().min(1).max(114)),
+      blockCount: z.number().int().positive(),
+      /** Ayete bagli blogu olan ayet sayisi (6236 uzerinden kapsam) */
+      verseCount: z.number().int().nonnegative(),
+    }),
+  ),
+});
+export type StaticTafsirIndex = z.infer<typeof staticTafsirIndex>;

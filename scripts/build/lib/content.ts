@@ -15,6 +15,9 @@ import type {
   StaticVerseManuscripts,
   StaticVerseRelations,
   StaticSurahSections,
+  StaticTafsirBlock,
+  StaticTafsirIndex,
+  StaticTafsirSurah,
 } from "@kuran/schema";
 import {
   staticConcept,
@@ -32,6 +35,8 @@ import {
   staticVerseManuscripts,
   staticVerseRelations,
   staticSurahSections,
+  staticTafsirIndex,
+  staticTafsirSurah,
 } from "@kuran/schema";
 import { fail, info, pool } from "@kuran/pipeline";
 import type { Report } from "@kuran/pipeline";
@@ -548,6 +553,129 @@ export async function emitContent(
     const linked = Object.keys(relPayload.verses).length;
     info(`ayet iliskisi: ${relationRows.length.toLocaleString("tr-TR")} bag · ${linked} ayet`);
     report.note(`Ayet iliskisi: ${relationRows.length.toLocaleString("tr-TR")} bag · ${linked} / 6236 ayet`);
+  }
+
+  /*
+   * --- tefsir (plan 3, 12.9) -------------------------------------------------
+   *
+   * YAYIN KAPISI: `tafsir.publishable = false` olan eser HIC okunmaz. Ice almak
+   * ile gostermek ayri kararlardir (docs/KAYNAK_ENVANTERI.md 0) — kutuphanede
+   * duran bir eserin metni dist/ icine de dusmez.
+   *
+   *   tafsir_index.json               eser kunyeleri + kapsam sayilari
+   *   tafsir/{slug}/surah_{id}.json   bir eserin bir suredeki BUTUN bloklari
+   *
+   * Blok araliklari sure ICI numaraya cevrilir; ayet sayfasi (surahId,
+   * verseNumber) ile bakiyor ve verse.id aritmetigini tekrarlamasi gerekmiyor.
+   * Blogun sure sinirini asmadigi 2026-09-06'da olculdu (0 satir).
+   */
+  const tafsirRows = await q<{
+    id: number; slug: string; name: string; work_title: string | null;
+    author: string | null; language: string; source_slug: string;
+    license: string; license_note: string | null; url: string | null;
+  }>(
+    `SELECT id, slug, name, work_title, author, language, source_slug,
+            license, license_note, url
+       FROM tafsir
+      WHERE publishable
+      ORDER BY id`,
+  );
+
+  if (tafsirRows.length > 0) {
+    const tafsirBlockRows = await q<{
+      tafsir_id: number; surah_id: number; sort_number: number; block_type: string;
+      source_type: string | null; start_verse_id: number | null;
+      end_verse_id: number | null; text: string;
+    }>(
+      `SELECT b.tafsir_id, b.surah_id, b.sort_number, b.block_type, b.source_type,
+              b.start_verse_id, b.end_verse_id, b.text
+         FROM tafsir_block b
+         JOIN tafsir t ON t.id = b.tafsir_id
+        WHERE t.publishable
+        ORDER BY b.tafsir_id, b.surah_id, b.sort_number`,
+    );
+
+    /** tafsir_id -> surah_id -> bloklar (sirasi korunur) */
+    const bySurah = new Map<number, Map<number, StaticTafsirBlock[]>>();
+    /** tafsir_id -> ayete bagli blogu olan verse.id kumesi */
+    const coveredVerses = new Map<number, Set<number>>();
+
+    for (const b of tafsirBlockRows) {
+      let surahs = bySurah.get(b.tafsir_id);
+      if (surahs === undefined) {
+        surahs = new Map();
+        bySurah.set(b.tafsir_id, surahs);
+      }
+      let list = surahs.get(b.surah_id);
+      if (list === undefined) {
+        list = [];
+        surahs.set(b.surah_id, list);
+      }
+      list.push({
+        sortNumber: b.sort_number,
+        blockType: b.block_type,
+        sourceType: b.source_type,
+        startVerse: b.start_verse_id === null ? null : b.start_verse_id % 1000,
+        endVerse: b.end_verse_id === null ? null : b.end_verse_id % 1000,
+        text: b.text,
+      });
+
+      if (b.start_verse_id !== null && b.end_verse_id !== null) {
+        let covered = coveredVerses.get(b.tafsir_id);
+        if (covered === undefined) {
+          covered = new Set();
+          coveredVerses.set(b.tafsir_id, covered);
+        }
+        for (let id = b.start_verse_id; id <= b.end_verse_id; id += 1) covered.add(id);
+      }
+    }
+
+    const tafsirIndex: StaticTafsirIndex = { tafsirs: [] };
+    for (const t of tafsirRows) {
+      const surahs = bySurah.get(t.id);
+      // Kaydi olan ama tek blogu olmayan eser kunye olarak da cikmaz: arayuzde
+      // acilip bos duran bir bolum, olmayan bir bolumden kotudur.
+      if (surahs === undefined || surahs.size === 0) continue;
+
+      let blockCount = 0;
+      for (const [surahId, blocks] of [...surahs].sort((a, b) => a[0] - b[0])) {
+        const payload: StaticTafsirSurah = { tafsirSlug: t.slug, surahId, blocks };
+        verifyOrFail(staticTafsirSurah, payload, `tafsir/${t.slug}/surah_${String(surahId)}.json`);
+        emitter.write(`tafsir/${t.slug}/surah_${String(surahId)}.json`, payload);
+        blockCount += blocks.length;
+      }
+
+      tafsirIndex.tafsirs.push({
+        slug: t.slug,
+        name: t.name,
+        workTitle: t.work_title,
+        author: t.author,
+        language: t.language,
+        sourceSlug: t.source_slug,
+        license: t.license,
+        licenseNote: t.license_note,
+        url: t.url,
+        surahIds: [...surahs.keys()].sort((a, b) => a - b),
+        blockCount,
+        verseCount: coveredVerses.get(t.id)?.size ?? 0,
+      });
+    }
+
+    if (tafsirIndex.tafsirs.length > 0) {
+      verifyOrFail(staticTafsirIndex, tafsirIndex, "tafsir_index.json");
+      emitter.write("tafsir_index.json", tafsirIndex);
+
+      for (const t of tafsirIndex.tafsirs) {
+        info(
+          `tefsir: ${t.name} — ${t.blockCount.toLocaleString("tr-TR")} blok · ` +
+            `${t.surahIds.length} sure · ${t.verseCount.toLocaleString("tr-TR")} / 6236 ayet`,
+        );
+        report.note(
+          `Tefsir: ${t.name} — ${t.blockCount.toLocaleString("tr-TR")} blok · ` +
+            `${t.verseCount.toLocaleString("tr-TR")} / 6236 ayet · kaynak ${t.sourceSlug}`,
+        );
+      }
+    }
   }
 
   /*

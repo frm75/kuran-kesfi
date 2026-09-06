@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
+import { DATA_DIR } from "~/lib/data-dir";
 import type {
   StaticAuthor,
   StaticRoot,
@@ -43,8 +43,6 @@ import type {
  * Beklenmedik bir sey olursa (dosya yok, JSON bozuk) build patlar — sessizce
  * bos sayfa uretmez.
  */
-
-const DATA_DIR = resolve(dirname(fileURLToPath(import.meta.url)), "../../public/data");
 
 function readJson<T>(relativePath: string): T {
   const path = resolve(DATA_DIR, relativePath);
@@ -277,6 +275,17 @@ function requireSource(slug: string): StaticSource {
     );
   }
   return source;
+}
+
+/**
+ * Slug ile kaynak kaydi — tefsir gibi kendi `sourceSlug`ini tasiyan icerik icin.
+ *
+ * `requireSource` disari acilmiyor cunku cagiran yerin kaynagin NEREDEN
+ * geldigini bilmesi gerekiyor; bu sarmalayici o niyeti adiyla soyluyor ve
+ * eslesmezse yine build'i durduruyor (plan 12.10).
+ */
+export function getSourceBySlug(slug: string): StaticSource {
+  return requireSource(slug);
 }
 
 /** Arapca metnin kaynagi — her sayfada ayni. */

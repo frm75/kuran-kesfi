@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
+import { DATA_DIR } from "~/lib/data-dir";
 import type { StaticMedia, StaticMediaItem, StaticVerseMedia } from "@kuran/schema";
 
 /**
@@ -30,8 +30,6 @@ import type { StaticMedia, StaticMediaItem, StaticVerseMedia } from "@kuran/sche
 
 /** Ağır medyanın servis edildiği alan adı (CLAUDE.md kural 5). */
 export const MEDIA_BASE = "https://medya.kurankesfi.tr";
-
-const DATA_DIR = resolve(dirname(fileURLToPath(import.meta.url)), "../../public/data");
 
 function readJsonOrNull<T>(relativePath: string): T | null {
   const path = resolve(DATA_DIR, relativePath);

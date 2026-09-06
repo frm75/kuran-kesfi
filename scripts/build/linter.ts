@@ -40,6 +40,8 @@ import {
   staticMedia,
   staticVerseMedia,
   staticVerseManuscripts,
+  staticTafsirIndex,
+  staticTafsirSurah,
   staticVerseRelations,
   staticSurahSections,
   storyInput,
@@ -335,6 +337,10 @@ function checkStaticOutput(): void {
   /** Medya: media.json'daki kimlikler ve ters dizinin gosterdikleri */
   const mediaIds = new Set<string>();
   const verseMediaIds = new Set<string>();
+
+  /** Tefsir: yazilan sure dosyalari ve indeksin iddia ettikleri */
+  const tafsirFiles = new Set<string>();
+  const tafsirIndexClaims = new Set<string>();
 
   for (const path of files) {
     const relativePath = relative(dataRoot, path);
@@ -783,6 +789,74 @@ function checkStaticOutput(): void {
           }
         }
       }
+    } else if (relativePath === "tafsir_index.json") {
+      const result = staticTafsirIndex.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) errors.push(`${relativePath}: ${result.error.message}`);
+      else {
+        const seen = new Set<string>();
+        for (const t of result.data.tafsirs) {
+          if (seen.has(t.slug)) {
+            errors.push(`${relativePath}: '${t.slug}' iki kez gecmis`);
+            break;
+          }
+          seen.add(t.slug);
+
+          /*
+           * QURANENC KOSUL 3 — SURUM NUMARASI.
+           *
+           * Kaynagin yeniden yayin izni yedi kosula bagli; ucuncusu surumun
+           * belirtilmesini istiyor. Numara `licenseNote` icinde durur
+           * ("QuranEnc.com · surum 1.0.0 · ...") ve ayet sayfasinda o not
+           * oldugu gibi basilir. Not kaybolursa izin kosulu duser — bu yuzden
+           * uyari degil HATA: surumsuz yayina cikilmaz.
+           */
+          if (t.sourceSlug === "quranenc" && !/s[uü]r[uü]m\s+\d/i.test(t.licenseNote ?? "")) {
+            errors.push(
+              `${relativePath}: ${t.slug} kaynagi quranenc ama licenseNote surum ` +
+                "numarasi tasimiyor (QuranEnc yeniden yayin kosulu 3)",
+            );
+            break;
+          }
+          if (t.verseCount > 6236) {
+            errors.push(`${relativePath}: ${t.slug} kapsami 6236 ayeti asiyor`);
+            break;
+          }
+          for (const surahId of t.surahIds) {
+            tafsirIndexClaims.add(`tafsir/${t.slug}/surah_${String(surahId)}.json`);
+          }
+        }
+      }
+    } else if (relativePath.startsWith("tafsir/")) {
+      const result = staticTafsirSurah.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) errors.push(`${relativePath}: ${result.error.message}`);
+      else {
+        tafsirFiles.add(relativePath);
+        const expected = `tafsir/${result.data.tafsirSlug}/surah_${String(result.data.surahId)}.json`;
+        if (expected !== relativePath) {
+          errors.push(`${relativePath}: dosya adi icerikle uyusmuyor (${expected} bekleniyordu)`);
+        } else {
+          for (const b of result.data.blocks) {
+            /*
+             * Aralik ya tam ya bos. Yarim bir aralik "bu blok su ayete ait"
+             * demenin uydurulmus hali olurdu; kaynak bagi olmayan blok
+             * (sure adi, nuzul yeri, sure sonu) ayete BAGLANMAZ.
+             */
+            if ((b.startVerse === null) !== (b.endVerse === null)) {
+              errors.push(`${relativePath}: ${String(b.sortNumber)} yarim ayet araligi`);
+              break;
+            }
+            if (b.startVerse !== null && b.endVerse !== null && b.endVerse < b.startVerse) {
+              errors.push(
+                `${relativePath}: ${String(b.sortNumber)} ters aralik ` +
+                  `${String(b.startVerse)}-${String(b.endVerse)}`,
+              );
+              break;
+            }
+          }
+        }
+      }
     } else if (relativePath === "media.json") {
       const result = staticMedia.safeParse(parsed);
       checksRun += 1;
@@ -876,6 +950,23 @@ function checkStaticOutput(): void {
    * verse_media.json icindeki her kimlik media.json'da olmali. Ters dizin
    * ayri uretiliyor; kopmasi ayet sayfasinda sessizce bos bir bolum birakirdi.
    */
+  /*
+   * Tefsir indeksi ile dosyalar birbirini tutmali. Indeks bir sure vaat edip
+   * dosya yoksa ayet sayfasi o eseri sessizce atlar; dosya var ama indekste
+   * yoksa metin hic okunmaz. Iki yon de sessiz kayiptir.
+   */
+  checksRun += 1;
+  {
+    const missing = [...tafsirIndexClaims].filter((f) => !tafsirFiles.has(f));
+    if (missing.length > 0) {
+      errors.push(`tafsir_index.json dosyasi olmayan sure vaat ediyor: ${missing.slice(0, 5).join(", ")}`);
+    }
+    const unclaimed = [...tafsirFiles].filter((f) => !tafsirIndexClaims.has(f));
+    if (unclaimed.length > 0) {
+      errors.push(`tafsir dosyasi indekste yok: ${unclaimed.slice(0, 5).join(", ")}`);
+    }
+  }
+
   checksRun += 1;
   {
     const orphan = [...verseMediaIds].filter((id) => !mediaIds.has(id));
@@ -995,12 +1086,19 @@ function checkStaticOutput(): void {
     "media.json",
     "verse_media.json",
   ]);
+  /*
+   * Tefsir sure dosyalari da build-zamani girdisidir: site JS'siz, hicbir
+   * sayfa bu JSON'u indirmiyor — Astro build'de okuyup HTML'e basiyor.
+   * Sa'di'nin Bakara dosyasi 582 KB; sayfa butcesiyle olculmesi yanlis olurdu.
+   */
+  const buildOnlyPrefixes = ["tafsir/"];
 
   checksRun += 1;
   for (const path of files) {
     const rel = relative(dataRoot, path);
     const size = statSync(path).size;
-    const isBuildOnly = buildOnly.has(rel);
+    const isBuildOnly =
+      buildOnly.has(rel) || buildOnlyPrefixes.some((prefix) => rel.startsWith(prefix));
     const budget = isBuildOnly ? BUILD_ONLY_BUDGET : PAGE_BUDGET;
     if (size <= budget) continue;
     warn(
