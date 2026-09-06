@@ -801,15 +801,21 @@ Telegram botu Faz 3; WhatsApp Faz 5 (yayın sonrası). İlkeler modülü (Bölü
 - Dil: kod ve tanımlayıcılar İngilizce, kullanıcıya görünen metin Türkçe
 
 ## 20.3 Görsel Üretim Kuralları
-- Peygamber, sahabe, melek ve insan figürü tasvir edilmez. Kıssa kapakları ve tüm görseller: manzara, mimari,
-  doğa, hat sanatı, geometrik/soyut desenle sınırlıdır.
-- AI ile üretilecek görsellerin promptları yalnızca İngilizce yazılır (render sadakati için); prompt'a "no human
-  figures, no faces, no text" kısıtı her zaman eklenir.
+
+**2026-09-06 kullanıcı kararı: figür yasağı kaldırıldı.** Kural artık yalnızca yüzedir.
+
+- **Peygamberlerin yüzü gösterilmez.** İnsan figürü, siluet, uzaktan kalabalık serbesttir;
+  yasaklanan şey bir peygamberin yüzünün seçilir hâlde gösterilmesidir. Aşağıdaki eski maddeler
+  bu kararın öncesine aittir ve **artık geçerli değildir**; kayıt olarak bırakıldı, çünkü
+  `scripts/media/build_media.ts` içindeki kesim kararlarının tarihçesi onlara dayanıyor.
+- AI ile üretilecek görsellerin promptları yalnızca İngilizce yazılır (render sadakati için);
+  prompt'a **"no depicted prophet faces"** kısıtı eklenir. Eski "no human figures" kısıtı kalktı.
 - Üretilen görseller `data/images/` altında kaynak/prompt notuyla saklanır; lisansı belirsiz stok görsel kullanılmaz.
-- **Kural videoyu da kapsar.** Tanıtım sayfasının hero videosu kaynağında beş peygamber insan figürü olarak
-  görünüyordu; o aralıklar kare kare taranıp çıkarıldı ve karar `scripts/media/build_media.ts` içinde
-  saniye saniye kayıt altına alındı. Yeni bir video/görsel geldiğinde **yayına almadan önce aynı tarama
-  yapılır**; "yüzü görünmüyor" yeterli değildir, figürün kendisi yasaktır.
+- **Kural videoyu da kapsar.** Yeni bir video/görsel geldiğinde **yayına almadan önce kare kare
+  taranır** ve **üretilen çıktı da** taranır, yalnızca kaynak değil. Tarama alışkanlığı figür
+  yasağı kalktıktan sonra da duruyor, çünkü 2026-09-05'te sahne notuna güvenilip kareye
+  bakılmamıştı ve hatalı kesim yayına çıkmıştı. Aranan şey artık figür değil YÜZDÜR.
+  _(Aşağıdaki 2026-09-05 kaydı eski yasak dönemine aittir.)_
 - **2026-09-05 düzeltmesi.** İlk kesim (2026-09-04) üç yerde figür kaçırmıştı ve yayına çıkmıştı:
   gemi önünde küçük figür (7,20 sn), kıyıda ayakta figür (8,50–9,00), Hz. Yunus suya batarken
   (11,45–12,00) ve aynı figür balinanın üstünde (13,50–13,80). Sebep: aralıklar sahne notuna göre

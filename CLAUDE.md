@@ -34,7 +34,10 @@ bilgisayarda çalışır (`kuran-extract`) ve buraya JSON dosyalarıyla veri akt
 6. **Lisans:** Kod MIT, `data/` CC BY-NC-SA 4.0. Lisansı belirsiz meal, ses, görsel veya tefsir eklenmez.
 7. **Kapsam dondurulmuştur.** Planda olmayan özellik önerilmez; öneri varsa "ilk yayın sonrası" notuyla
    `docs/BACKLOG.md`'ye yazılır.
-8. **Figür yok.** Peygamber, sahabe, insan tasviri içeren görsel üretilmez/eklenmez.
+8. **Peygamberlerin yüzü gösterilmez.** Kural budur, fazlası değil (kullanıcı kararı 2026-09-06).
+   Önceki "hiç figür olmasın" yasağı **kaldırıldı**: insan figürü, siluet ve uzaktan kalabalık
+   serbesttir. Yasak yüzedir — bir peygamberin yüzü seçilir hâlde gösterilmez. Ayrıntı ve
+   tarama alışkanlığı için Arayüz bölümündeki "Görsel ve VİDEO kuralı" maddesine bak.
 
 ## Stack
 - Astro + TypeScript + Tailwind (statik export, island mimarisi, ilk yükleme < 100 KB JS)
@@ -131,15 +134,19 @@ yapılmayanlar ve NEDENİ, bir kez yaşanmış tuzaklar, sıradaki adımlar. Bü
 - **CSP değişirse canlıya da uygulanır.** `infra/nginx/*.conf` repoda güncellenip
   `/www/server/panel/vhost/nginx/` altına kopyalanmazsa hiçbir şey hata vermez — dosyalar 200 döner,
   yalnızca `<video>` sessizce engellenir. Duman testi artık CSP başlığının kendisini okuyor
-- **Görsel ve VİDEO kuralı: figür yok.** "Yüzü görünmüyor" yeterli değil (plan §20.3). Hero videosunun
-  kaynağında beş peygamber figür olarak vardı; aralıklar çıkarıldı, karar `scripts/media/build_media.ts`
-  içinde. **2026-09-05: ilk kesim üç yerde figür kaçırmıştı** (7,20 · 8,50–9,00 · 11,45–12,00 ·
-  13,50–13,80 sn) — sahne notuna güvenilmişti, kareye bakılmamıştı. Yeni medya yayına alınmadan önce
-  0,05 sn adımla kare kare taranır ve **çıktı da** taranır, yalnızca kaynak değil.
-  **Kapı artık yapılandırmaya bağlı, hatırlamaya değil** (2026-09-05): R2'ye yüklemek yayına almaktır,
-  bu yüzden `pnpm media:r2:push` görsel bir dosyayı `media/FIGUR_TARAMASI.json` içinde **aynı sha256 ile**
-  kayıtlı bulamazsa hiçbir şey yüklemez ve durur. Dosya bir bayt değişirse hash tutmaz, tarama yenilenir.
-  Ses, PMTiles, font ve metin muaftır — figür taşıyamazlar
+- **Görsel ve VİDEO kuralı: peygamberlerin yüzü gösterilmez.** Kural budur, fazlası değil
+  (kullanıcı kararı 2026-09-06). Önceki "hiç figür olmasın, yüzü görünmemesi yeterli değil"
+  kuralı **kaldırıldı**: uzaktan, küçük ve sırtı dönük siluetler serbesttir. Yasak yüzedir —
+  peygamberin yüzü seçilir hâlde gösterilmez. Hero videosunda bu karar sonrası kesmeye gerek
+  kalmadı, gövde tek parça oldu (`scripts/media/build_media.ts`).
+  **Yeni medya yayına alınmadan önce yine kare kare taranır** — bu sefer yüz aranır — ve
+  **çıktı da** taranır, yalnızca kaynak değil. 2026-09-05'te sahne notuna güvenilip kareye
+  bakılmamıştı ve hatalı kesim yayına çıkmıştı; tarama alışkanlığı o yüzden duruyor.
+  **R2 figür kapısı kaldırıldı** (kullanıcı kararı 2026-09-06). `pnpm media:r2:push` eskiden
+  görsel bir dosyayı `media/FIGUR_TARAMASI.json` içinde aynı sha256 ile bulamazsa hiçbir şey
+  yüklemiyordu; figür yasağı kalkınca kapının dayanağı da kalktı. **Tarama artık otomatik
+  değil, insana bağlı**: yeni medyayı yayına almadan önce kare kare bakmak senin işin — kod
+  artık hatırlatmıyor
 - **Kaynak kutusu (`<SourceBadge>`) içerik sayfalarında yok** (kullanıcı kararı 2026-09-04 tanıtım,
   2026-09-05 bütün sayfalar): yalnızca mealin/tefsirin kime ait olduğu yazılır. Bu bir sunum kararıdır,
   atıf yükümlülüğü kalkmadı — atıf üç yerde durur ve üçü de zorunlu: mealin üstündeki yazar adı,

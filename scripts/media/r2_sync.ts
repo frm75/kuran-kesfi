@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { createReadStream, existsSync, readFileSync, statSync } from "node:fs";
+import { createReadStream, existsSync, statSync } from "node:fs";
 import { readdir } from "node:fs/promises";
 import { extname, join, relative, resolve, sep } from "node:path";
 import {
@@ -38,23 +38,19 @@ import { env, fail, info, repoRoot, warn } from "@kuran/pipeline";
  * S3 uyumlu API oldugu icin bucket bir gun baska saglayiciya tasinabilir.
  *
  * ============================================================================
- * FIGUR KAPISI — bu dosyanin en onemli kismi
+ * FIGUR KAPISI KALDIRILDI (2026-09-06)
  * ============================================================================
  *
- * Plan 20.3: peygamber, sahabe, melek ve insan figuru tasvir edilmez.
- * 2026-09-05'te hero videosunun ILK KESIMI uc yerde figur gecirmisti ve
- * YAYINA CIKMISTI; sahne notuna guvenilmis, kareye bakilmamisti
- * (bkz. build_media.ts basi).
+ * Bu script gorsel bir dosyayi `media/FIGUR_TARAMASI.json` icinde ayni sha256
+ * ile bulamazsa HICBIR SEY yuklemiyordu. Kapinin dayanagi plan 20.3'un
+ * "figur yok" yasagiydi; kullanici o yasagi 2026-09-06'da kaldirdi ve kural
+ * yalnizca PEYGAMBER YUZUNE indi. Yuz, hash ile denetlenemez — kapinin
+ * otomatiklestirebilecegi bir sey kalmadi.
  *
- * R2'ye yuklemek "yayina aldim" demektir. Bu yuzden kapi bir insanin
- * hatirlamasina degil YAPILANDIRMAYA baglandi — `.env` TAKEDOWN_EMAIL
- * kapisiyla ayni mantik:
- *
- *   Gorsel bir dosya (video/resim), media/FIGUR_TARAMASI.json icinde
- *   AYNI sha256 ile kayitli degilse yuklenmez. Dosya bir bayt degisirse
- *   hash tutmaz ve tarama yeniden istenir.
- *
- * Ses, PMTiles, font ve metin dosyalari kapidan muaftir: figur tasiyamazlar.
+ * SONUC: tarama artik koda degil INSANA bagli. Yeni medyayi yayina almadan
+ * once kare kare bakmak yukleyenin isi; bu script hatirlatmiyor.
+ * Alisknligin gerekcesi duruyor: 2026-09-05'te sahne notuna guvenilip kareye
+ * bakilmamisti ve hatali kesim yayina cikmisti.
  *
  * ============================================================================
  * KULLANIM
@@ -71,22 +67,6 @@ import { env, fail, info, repoRoot, warn } from "@kuran/pipeline";
 // --- sabitler ----------------------------------------------------------------
 
 const stagingDir = resolve(repoRoot, "media");
-const scanManifestPath = resolve(stagingDir, "FIGUR_TARAMASI.json");
-
-/** Figur tasiyabilen uzantilar — tarama kaydi olmadan yuklenmez. */
-const VISUAL = new Set([
-  ".mp4",
-  ".webm",
-  ".mov",
-  ".m4v",
-  ".gif",
-  ".jpg",
-  ".jpeg",
-  ".png",
-  ".webp",
-  ".avif",
-  ".svg",
-]);
 
 const CONTENT_TYPE: Record<string, string> = {
   ".mp4": "video/mp4",
@@ -160,22 +140,6 @@ function human(bytes: number): string {
     unit += 1;
   }
   return `${value.toFixed(value >= 100 || unit === 0 ? 0 : 1)} ${units[unit]}`;
-}
-
-interface ScanEntry {
-  path: string;
-  sha256: string;
-  scannedAt: string;
-  note: string;
-}
-
-/** media/FIGUR_TARAMASI.json — yoksa bos harita doner, kapi kapali kalir. */
-function readScanManifest(): Map<string, ScanEntry> {
-  if (!existsSync(scanManifestPath)) return new Map();
-  const raw = JSON.parse(readFileSync(scanManifestPath, "utf8")) as {
-    scanned?: ScanEntry[];
-  };
-  return new Map((raw.scanned ?? []).map((e) => [e.path, e]));
 }
 
 function r2OrFail() {
@@ -277,39 +241,16 @@ async function push(dryRun: boolean): Promise<void> {
     );
   }
 
-  const files = (await walk(stagingDir)).filter((f) => f !== scanManifestPath);
+  const files = await walk(stagingDir);
   if (files.length === 0) fail(`${stagingDir} bos — yuklenecek dosya yok.`);
 
-  const scans = readScanManifest();
   const s3 = client(r2);
 
-  // --- once FIGUR KAPISI: tek dosya bile gecemezse hicbiri yuklenmez --------
-  const blocked: string[] = [];
+  // sha256 tek seferde hesaplanir: hem degisiklik tespiti hem nesne
+  // ustverisi ayni degeri kullanir (ETag cok parcali yuklemede MD5 degil).
   const hashes = new Map<string, string>();
   for (const file of files) {
-    const key = relative(stagingDir, file).split(sep).join("/");
-    const hash = await sha256File(file);
-    hashes.set(file, hash);
-    if (!VISUAL.has(extname(file).toLowerCase())) continue;
-
-    const entry = scans.get(key);
-    if (!entry) {
-      blocked.push(`${key} — FIGUR_TARAMASI.json icinde kayit yok`);
-    } else if (entry.sha256 !== hash) {
-      blocked.push(
-        `${key} — dosya taramadan sonra degismis (kayitli ${entry.sha256.slice(0, 12)}, ` +
-          `simdiki ${hash.slice(0, 12)})`,
-      );
-    }
-  }
-  if (blocked.length > 0) {
-    fail(
-      `FIGUR KAPISI ${blocked.length} dosyayi durdurdu (plan 20.3):\n` +
-        blocked.map((b) => `  - ${b}`).join("\n") +
-        "\n\nGorsel dosya, 0,05 sn adimla kare kare taranmadan ve sonucu " +
-        "media/FIGUR_TARAMASI.json'a yazilmadan yuklenmez. Kaynak DA cikti DA " +
-        "taranir — 2026-09-05'te ilk hero kesimi uc yerde figur gecirmisti.",
-    );
+    hashes.set(file, await sha256File(file));
   }
 
   // --- degismeyenleri atla --------------------------------------------------

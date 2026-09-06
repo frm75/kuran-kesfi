@@ -58,11 +58,10 @@ pnpm-debug.log*
 *.bak.[0-9]*
 
 # R2 hazirlik alani — ses, video, PMTiles altligi. Dosyalar git'e girmez
-# (gigabaytlar), ama FIGUR TARAMASI KAYDI girer: hangi gorselin ne zaman ve
-# hangi hash ile figur taramasindan gectigi surum gecmisinde durmalidir.
+# (gigabaytlar). Figur tarama kaydi 2026-09-06'da kaldirildi: figur yasagi
+# kalkinca kapinin dayanagi da kalkti (CLAUDE.md kural 8).
 media/*
 !media/.gitkeep
-!media/FIGUR_TARAMASI.json
 
 # MapLibre isci dosyalari — build oncesi node_modules'tan kopyalanir
 # (apps/web/scripts/prepare-harita.mjs). Kaynagi pnpm-lock.yaml; ikinci bir
