@@ -1091,3 +1091,35 @@ değil). Doldurunca `pm2 restart kuran-iletisim` yeter — kod değişmez. `pnpm
 içindeki `onlyBuiltDependencies` listesine alındı (pnpm 10 kurulum betiklerini
 varsayılan olarak çalıştırmıyor; izin verilmezse modül "better_sqlite3.node
 bulunamadı" ile düşüyor).
+
+## Yayın — 2026-09-07 (`20260907T063508Z`)
+
+Tefsir, okuma günlüğü, kıraat, iletişim formu ve diğer oturumun harita/AI medya
+işi birlikte canlıya çıktı. Nginx yapılandırması da kopyalandı ve yeniden yüklendi
+(`/gunluk` ve `/iletisim` CSP kayıtları olmadan ikisi de sessizce ölü kalırdı).
+
+Canlıda doğrulandı: ayet sayfasında 2 tefsir + sürüm numarası + kıraat oynatıcısı +
+günlük bağlantısı, `/gunluk` betiği iniyor, `/iletisim` formu POST ediyor,
+`medya.kurankesfi.tr/ses/alafasy/002255.mp3` 200 dönüyor. Form uçtan uca denendi:
+nginx → servis → SQLite → Brevo → mail geldi; `GET /api/iletisim` 403.
+
+### Duman testi yanlış alarm verdi — düzeltildi
+
+Yayın sonrası duman testi `og:image mutlak BULUNAMADI` diyerek düştü, ama sayfa
+doğruydu. Tekrar çalıştırınca bu kez **kanonik adres** düştü; sonraki çalıştırmada
+ikisi de geçti. Sayfa elle 100 kez çekildiğinde **hiç** düşmedi (100/100 tam boyut,
+200) — yani içerik değil, testin kendi ağ çağrısı kararsızdı.
+
+Asıl kusur teşhis edilemez olmasıydı: `contains()` içindeki `2>/dev/null` curl'ün
+hatasını yutuyor, `|| body=""` de boş gövdeyi "dizge bulunamadı" diye raporluyordu.
+**Ağ hatası ile içerik hatası aynı çıktıyı veriyordu.** Bir yayın bu yüzden
+başarısız işaretlendi, oysa site sağlamdı.
+
+Şimdi gövde en fazla üç kez denenir; düşen denetim curl'ün çıkış kodunu, gelen bayt
+sayısını ve hata metnini yazar. Dört ardışık çalıştırma temiz geçti, biri
+"(3. denemede)" notuyla — yani kırılganlık gerçek ve retry onu yakalıyor.
+
+**Açık kalan:** kırılganlığın kök sebebi bulunamadı. İzole ölçümde hiç tekrarlanmıyor
+(100/100, 60/60, 50/50 temiz), yalnızca duman testinin ~50 isteklik yığını içinde
+çıkıyor. Ziyaretçiye yansıdığına dair bir belirti yok; yansırsa artık çıkış kodu
+kayda geçecek.

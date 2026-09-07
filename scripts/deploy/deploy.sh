@@ -137,17 +137,43 @@ smoke_test() {
   #
   # og:image goreli yazilirsa sayfa yine 200 doner ama paylasim onizlemesi
   # gorselsiz cikar — kimse fark etmez. Bu yuzden metnin kendisi okunur.
+  # 2026-09-07: bu kontrol YANLIS ALARM verdi ve teshis edilemedi.
+  #
+  # Ayni sayfada iki denetim var (og:image ve kanonik adres); duman testi
+  # arka arkaya calistirildiginda her seferinde BIRI dusuyordu, hangisinin
+  # dustugu de degisiyordu. Sayfa elle 30 kez cekildiginde hic dusmuyordu —
+  # yani icerik dogruydu, curl arada bir bos donuyordu.
+  #
+  # Eski surum bunu gorunmez kiliyordu: `2>/dev/null` curl'un hatasini
+  # yutuyor, `|| body=""` de bos govdeyi "dizge bulunamadi" diye
+  # raporluyordu. Yani AG HATASI ile ICERIK HATASI ayni cikti veriyordu.
+  # Bir yayin bu yuzden basarisiz isaretlendi, oysa site saglamdi.
+  #
+  # Simdi: govde en fazla uc kez denenir ve dusen denetim curl'un cikis
+  # kodunu, gelen bayt sayisini ve hata metnini yazar.
   contains() {
     local path="$1" needle="$2" label="$3"
-    local body
-    body="$(curl -sS --max-time 20 --retry 3 --retry-delay 1 --retry-all-errors \
-      --resolve "kurankesfi.tr:443:127.0.0.1" "https://kurankesfi.tr$path" 2>/dev/null)" || body=""
-    if printf '%s' "$body" | grep -qF -- "$needle"; then
-      printf '    %-34s %s\n' "$path" "$label"
-    else
-      printf '    %-34s %s BULUNAMADI\n' "$path" "$label"
-      fail=1
-    fi
+    local body status attempt err
+    err="$(mktemp)"
+    for attempt in 1 2 3; do
+      body="$(curl -sS --max-time 20 \
+        --resolve "kurankesfi.tr:443:127.0.0.1" "https://kurankesfi.tr$path" 2>"$err")"
+      status=$?
+      if [ "$status" -eq 0 ] && printf '%s' "$body" | grep -qF -- "$needle"; then
+        if [ "$attempt" -gt 1 ]; then
+          printf '    %-34s %s (%s. denemede)\n' "$path" "$label" "$attempt"
+        else
+          printf '    %-34s %s\n' "$path" "$label"
+        fi
+        rm -f "$err"
+        return
+      fi
+      sleep 1
+    done
+    printf '    %-34s %s BULUNAMADI (curl %s, %s bayt) %s\n' \
+      "$path" "$label" "$status" "${#body}" "$(head -c 120 "$err" | tr '\n' ' ')"
+    rm -f "$err"
+    fail=1
   }
   contains "/bakara-suresi/153" \
     'property="og:image" content="https://kurankesfi.tr/brand/og-image.png"' "og:image mutlak"
