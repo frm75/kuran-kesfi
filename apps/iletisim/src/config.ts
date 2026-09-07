@@ -55,7 +55,11 @@ export const config = {
     user: env("SMTP_USER"),
     pass: env("SMTP_PASS"),
   },
-  /** Zarfin gonderen adresi. Bos ise SMTP_USER kullanilir. */
+  /**
+   * Zarfin gonderen adresi. Brevo bunun DOGRULANMIS bir gonderen olmasini
+   * sart kosar; SMTP_USER (9xxxxx@smtp-brevo.com) gonderen olarak calismaz,
+   * bu yuzden CONTACT_FROM doldurulmali.
+   */
   from: env("CONTACT_FROM") || env("SMTP_USER"),
   to: env("CONTACT_TO", "admin@esfasoft.com.tr"),
   /** 303 ile gonderilecek adresler; sayfalar statik sitede duruyor. */

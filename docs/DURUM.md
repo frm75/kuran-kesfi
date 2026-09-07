@@ -1040,11 +1040,21 @@ alıcı reddeder) ve o gün form "gönderildi" deyip mesajı hiçbir yere yazmam
 Gönderilemeyen satır sayısı `/api/iletisim/durum` ucunda görünür; deploy duman testi
 arka ucun ayakta olduğunu da denetliyor.
 
-### Mail neden esfasoft SMTP'sinden
+### Mail neden Brevo üzerinden
 
 `kurankesfi.tr`'nin **SPF kaydı ve MX'i yok** (ölçüldü 2026-09-07). Sunucudaki
 sendmail ile o alan adından gönderilen mail alıcı tarafında büyük olasılıkla spam'e
-düşerdi. `mail.esfasoft.com.tr` kendi sunucumuz; SPF/DKIM zaten orada.
+düşerdi. Gönderim **Brevo**'ya (`smtp-relay.brevo.com`) alındı — proje sahibinin
+zaten kullandığı sağlayıcı; teslimat onun altyapısıyla imzalanıyor ve takip
+edilebiliyor.
+
+Sunucudan çıkış ölçüldü: **25 kapalı** (barındırıcı engelliyor, olağan), **465, 587
+ve 2525 açık**. 587 + STARTTLS seçildi (Brevo'nun önerdiği).
+
+**Brevo'nun şart koştuğu şey:** `CONTACT_FROM` adresi Brevo panelinde *doğrulanmış
+gönderen* olmalı (Senders & IP → Senders). `SMTP_USER` (`9xxxxx@smtp-brevo.com`)
+gönderen olarak çalışmaz. Doğrulanmamış adresle gönderim reddedilir ve hata
+`mail_error` sütununa düşer — mesaj yine veritabanında durur, kaybolmaz.
 
 Ziyaretçinin yazdığı adres **gönderen yapılmaz** — doğrulanmamıştır ve başkası adına
 mail göndermek olurdu. Yalnızca `Reply-To` olur.
@@ -1073,10 +1083,11 @@ yakalandığını öğretmenin anlamı yok. Mesaj hiçbir yere yazılmaz.
 
 ### Açık kalan
 
-**SMTP kullanıcı adı ve şifresi `.env` içinde boş.** Servis çalışıyor ve mesajları
-kaydediyor, ama mail gönderemiyor; satırlara "SMTP yapılandırılmamış" düşüyor.
-`SMTP_USER` / `SMTP_PASS` dolduğunda `pm2 restart kuran-iletisim` yeter — kod
-değişmez. `pnpm approve-builds` gereği `better-sqlite3` `pnpm-workspace.yaml`
+**Brevo SMTP kullanıcı adı ve anahtarı `.env` içinde boş.** Servis çalışıyor ve
+mesajları kaydediyor, ama mail gönderemiyor; satırlara "SMTP yapılandırılmamış"
+düşüyor. Brevo → SMTP & API → SMTP ekranındaki **Login** değeri `SMTP_USER`,
+**SMTP key** değeri `SMTP_PASS` olur (hesabın giriş e-postası ve API anahtarı
+değil). Doldurunca `pm2 restart kuran-iletisim` yeter — kod değişmez. `pnpm approve-builds` gereği `better-sqlite3` `pnpm-workspace.yaml`
 içindeki `onlyBuiltDependencies` listesine alındı (pnpm 10 kurulum betiklerini
 varsayılan olarak çalıştırmıyor; izin verilmezse modül "better_sqlite3.node
 bulunamadı" ile düşüyor).

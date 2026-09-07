@@ -9,8 +9,14 @@ import type { NewMessage } from "./store.js";
  * ## Neden sunucudaki sendmail degil
  *
  * kurankesfi.tr'nin SPF kaydi yok ve MX'i yok; o alan adindan cikan mail alici
- * tarafinda buyuk olasilikla spam'e duser. mail.esfasoft.com.tr kendi
- * sunucumuz: SPF/DKIM zaten orada, mail kendi alanindan cikiyor.
+ * tarafinda buyuk olasilikla spam'e duser. Gonderim Brevo (smtp-relay.brevo.com)
+ * uzerinden yapiliyor: teslimat onun altyapisiyla imzalaniyor ve takip
+ * edilebiliyor.
+ *
+ * BREVO'NUN SART KOSTUGU SEY: `CONTACT_FROM` adresi Brevo panelinde
+ * DOGRULANMIS bir gonderen olmali (Senders & IP > Senders). Dogrulanmamis
+ * adresle gonderim reddedilir ve hata `mail_error` sutununa duser — mesaj
+ * yine de veritabaninda durur, kaybolmaz.
  *
  * ## Gonderen ve yanitlama
  *
