@@ -1222,3 +1222,53 @@ tanıtım sayfası ve 6236 ayet sayfası için hâlâ doğru (JS yalnızca `/har
 okuma) gerçekten hazır değil.
 
 Yayın: `20260907T090647Z`.
+
+## Sayfa metni denetimi — eskimiş "hazır değil" cümleleri (2026-09-07)
+
+`pnpm lint:refs` artık tanıtım metinlerini de denetliyor: **yayında olan bir şey
+hakkında "hazır değil" diyen cümle build'i DURDURUR.**
+
+Gerekçe aynı gün iki kez yaşandı ve **ikisini de kullanıcı fark etti**:
+
+1. Bülten bölümü *"Henüz açılmadı… arkasında çalışan bir sunucu yok"* diyordu —
+   Telegram botu o gün yayına girmişti.
+2. Kapılar bölümü *"Şu an Kelime kapısı açık; diğer dördünün altyapısı
+   hazırlanıyor"* diyordu — beş kapının beşi de açıktı.
+
+Dürüstlük kuralının **birinci** yönünü kod zaten koruyordu: "hazır/yakında"
+rozetleri `href` dolu mu diye **hesaplanıyor**. **İkinci** yönünü hiçbir şey
+korumuyordu: rozetin yanındaki düzyazı elle yazılmış ve modül yayına girdiğinde
+kimse o cümleyi güncellemiyor, kimse de hata almıyor.
+
+### Nasıl çalışıyor
+
+`scripts/build/linter.ts` → `checkPageClaims()`. İki kademe:
+
+| Durum | Sonuç |
+|---|---|
+| Cümle "hazır değil" diyor **ve** yayındaki bir şeyi anıyor | **HATA** — build durur |
+| Cümle "hazır değil" diyor, yayındaki bir şeyi anmıyor | uyarı — insan gözden geçirir |
+
+`LIVE_FEATURES` listesi **elle** güncellenir ve bu kasıtlı: bir modül yayına
+girdiğinde oraya bir satır eklenir, linter o andan itibaren o modül hakkında
+"hazır değil" diyen her cümlede build'i durdurur. Yani **listeyi güncellemek,
+metni güncellemeyi zorunlu kılar**.
+
+### İki tuzak, ikisi de çözüldü
+
+- **Yorumlar taranmaz.** Bu dosyalardaki açıklama notları eski *yanlış* metni
+  bilerek alıntılıyor; yorumu taramak hatanın kaydını tutmayı imkânsız kılardı.
+- **Makine üreten satırlar elenir.** "yakında" kelimesi sayfada iki yerde geçiyor:
+  insanın yazdığı cümlelerde ve rozeti **üreten** kodda
+  (`gate.href === undefined ? "yakında" : "hazır"`). İkincisi veriden
+  hesaplandığı için zaten doğru. Ayrım: etiketler ve `{...}` ifadeleri
+  silindikten sonra geriye 4 kelimeden uzun gerçek bir cümle kalıyor mu?
+  Bu filtre olmadan denetim 5 uyarı veriyordu, 4'ü gürültüydü — **gürültülü bir
+  denetim görmezden gelinir**, o yüzden filtre denetimin kendisi kadar önemli.
+
+### Doğrulandı
+
+İki eski cümle geçici olarak geri konup linter çalıştırıldı: ikisini de yakaladı
+ve build'i durdurdu. Dosya geri alındı, denetim temiz — geriye yalnızca gerçek ve
+hâlâ doğru olan bir uyarı kalıyor (`/kaynaklar`: "İngilizce dil seçeneği henüz
+açılmadı").
