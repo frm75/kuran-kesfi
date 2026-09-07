@@ -1,6 +1,7 @@
 ---
 import "~/styles/global.css";
 import Attribution from "~/components/Attribution.astro";
+import SiteNav from "~/components/SiteNav.astro";
 import { absoluteUrl, routePath } from "~/lib/site";
 
 interface Props {
@@ -33,7 +34,6 @@ const {
   reading = false,
 } = Astro.props;
 const path = routePath(Astro.url.pathname);
-const isCurrent = (href: string): boolean => path === href;
 
 /**
  * Kanonik adres.
@@ -132,41 +132,7 @@ const canonical = absoluteUrl(path);
               />
               Kur'an-ı Kerim Keşfi
             </a>
-            <nav aria-label="Ana gezinme" class="site-nav">
-              <a href="/sureler" aria-current={isCurrent("/sureler") ? "page" : undefined}>
-                Sureler
-              </a>
-              <a href="/kissalar" aria-current={isCurrent("/kissalar") ? "page" : undefined}>
-                Kıssalar
-              </a>
-              <a href="/zaman" aria-current={isCurrent("/zaman") ? "page" : undefined}>
-                Zaman
-              </a>
-              <a href="/kavramlar" aria-current={isCurrent("/kavramlar") ? "page" : undefined}>
-                Kavramlar
-              </a>
-              <a href="/kok" aria-current={isCurrent("/kok") ? "page" : undefined}>
-                Kökler
-              </a>
-              <a href="/ilkeler" aria-current={isCurrent("/ilkeler") ? "page" : undefined}>
-                İlkeler
-              </a>
-              <a href="/yazmalar" aria-current={isCurrent("/yazmalar") ? "page" : undefined}>
-                Yazmalar
-              </a>
-              <a href="/harita" aria-current={isCurrent("/harita") ? "page" : undefined}>
-                Harita
-              </a>
-              <a href="/gunluk" aria-current={isCurrent("/gunluk") ? "page" : undefined}>
-                Günlük
-              </a>
-              <a href="/kaynaklar" aria-current={isCurrent("/kaynaklar") ? "page" : undefined}>
-                Kaynaklar
-              </a>
-              <a href="/iletisim" aria-current={isCurrent("/iletisim") ? "page" : undefined}>
-                İletişim
-              </a>
-            </nav>
+            <SiteNav path={path} />
           </div>
         </div>
       )

@@ -1098,14 +1098,33 @@
   width: 34px;
   height: 34px;
 }
+/* --- Ana gezinme -------------------------------------------------------- */
+/*
+ * Dört üst başlık, altlarında açılır liste. BETİK YOK: açılma :hover ve
+ * :focus-within ile olur, ikisi de tarayıcının kendi işi.
+ *
+ * Dokunmatikte "hover kilitlenmesi" tuzağı (menü açılıyor, kapanmıyor,
+ * arkadaki bağlantı tıklanamıyor) hiç doğmuyor çünkü 48rem altında alt liste
+ * BASILMIYOR. Orada üst başlığa dokunmak hub sayfasına götürür ve gezinme
+ * oradan sürer.
+ */
 .site-header .site-nav {
-  display: flex;
-  gap: var(--space-6);
   margin-inline-start: auto;
   font-size: var(--text-sm);
   letter-spacing: 0.02em;
 }
+.site-header .nav-root {
+  display: flex;
+  gap: var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.site-header .nav-item {
+  position: relative;
+}
 .site-header .site-nav a {
+  display: block;
   padding-block: var(--space-1);
   color: var(--text-secondary);
   text-decoration: none;
@@ -1113,12 +1132,42 @@
 .site-header .site-nav a:hover {
   color: var(--accent-text);
 }
-/* Bulunulan sayfa: renk + alt çizgi. Renk tek başına anlam taşımaz. */
-.site-header .site-nav a[aria-current="page"] {
+/* Bulunulan sayfa: renk + alt çizgi. Renk tek başına anlam taşımaz.
+   data-active: o daldayız ama hub sayfasında değiliz — yalnızca görsel. */
+.site-header .site-nav a[aria-current="page"],
+.site-header .nav-item[data-active] > a {
   color: var(--accent-text);
   text-decoration: underline;
   text-underline-offset: 0.45em;
   text-decoration-color: var(--accent);
+}
+.site-header .nav-sub {
+  display: none;
+  position: absolute;
+  inset-inline-start: calc(var(--space-4) * -1);
+  top: 100%;
+  z-index: 110;
+  min-width: 13rem;
+  margin: 0;
+  padding-block: var(--space-2);
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-primary);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.18);
+}
+.site-header .nav-item:hover > .nav-sub,
+.site-header .nav-item:focus-within > .nav-sub {
+  display: block;
+}
+.site-header .nav-sub a {
+  padding-inline: var(--space-4);
+  white-space: nowrap;
+}
+@media (max-width: 48rem) {
+  .site-header .nav-sub {
+    display: none !important;
+  }
 }
 
 /* --- Atlama bağlantısı --------------------------------------------------- */

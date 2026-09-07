@@ -1,0 +1,47 @@
+---
+import { NAV, findHub } from "~/lib/nav";
+
+interface Props {
+  /** routePath(Astro.url.pathname) sonucu — uzantısız yayın adresi */
+  path: string;
+}
+
+const { path } = Astro.props;
+
+/*
+ * Aktif işaretleme iki ayrı şey:
+ *
+ *   aria-current="page"  — TAM olarak bulunulan sayfa. Sayfa başına en fazla
+ *                          bir kez basılır; ekran okuyucu "bulunduğunuz sayfa"
+ *                          der. İki kez basmak yalan olur.
+ *   data-active          — o dalın içindeyiz ama hub sayfasında değiliz.
+ *                          Yalnızca görsel; ekran okuyucuya bir şey söylemez.
+ */
+const activeHub = findHub(path);
+---
+
+<nav aria-label="Ana gezinme" class="site-nav">
+  <ul class="nav-root">
+    {
+      NAV.map((hub) => (
+        <li class="nav-item" data-active={activeHub === hub && hub.href !== path ? "" : undefined}>
+          <a href={hub.href} aria-current={hub.href === path ? "page" : undefined}>
+            {hub.label}
+          </a>
+          <ul class="nav-sub">
+            {hub.children.map((child) => (
+              <li>
+                <a
+                  href={child.href}
+                  aria-current={child.href === path && hub.href !== path ? "page" : undefined}
+                >
+                  {child.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
