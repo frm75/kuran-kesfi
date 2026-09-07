@@ -3,7 +3,7 @@
   "nameTr": "Ölüm",
   "nameAr": "الموت",
   "definition": "Hayatın sonu ve âhiret hayatının başlangıcı.",
-  "parentSlug": null,
+  "parentSlug": "insan-ve-nefs",
   "roots": [
     "mwt"
   ],

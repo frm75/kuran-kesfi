@@ -3,7 +3,7 @@
   "nameTr": "İşitme ve görme",
   "nameAr": "السمع والبصر",
   "definition": "Kur'an'ın en çok tekrarladığı iki idrak aracı. Hem Allah'ın sıfatı olarak, hem de insanın sorumlu tutulduğu yeti olarak geçer; kalp ile birlikte anılır.",
-  "parentSlug": null,
+  "parentSlug": "insan-ve-nefs",
   "roots": [
     "smE",
     "bSr"

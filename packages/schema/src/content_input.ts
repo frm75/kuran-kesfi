@@ -215,10 +215,13 @@ export const conceptInput = z
     relations: z.array(conceptRelationInput),
     verses: z.array(z.object({ ref: verseRef, weight: z.number().int().min(1).max(3) })),
   })
-  .refine((c) => c.roots.length > 0 || c.verses.length > 0, {
-    message: "kavramin en az bir koku ya da elle ayet eslestirmesi olmali",
-    path: ["roots"],
-  })
+  /*
+   * "En az bir kök ya da elle ayet eşleştirmesi" kuralı buradan KALDIRILDI
+   * (2026-09-07): üst kavramların kendi kökü yok, sayıları çocuklarından
+   * toplanıyor. Kural kaybolmadı, küme düzeyine taşındı — tek dosyanın şeması
+   * "bu kavramın çocuğu var mı" sorusunu göremez.
+   * Bkz. scripts/import/content.ts, kavram denetimleri.
+   */
   .refine((c) => c.parentSlug !== c.slug, {
     message: "kavram kendi ebeveyni olamaz",
     path: ["parentSlug"],

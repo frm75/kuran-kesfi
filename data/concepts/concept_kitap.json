@@ -3,7 +3,7 @@
   "nameTr": "Kitap",
   "nameAr": "الكتاب",
   "definition": "Yazılmış olan; Kur'an, önceki vahiyler ve amel defteri için kullanılır.",
-  "parentSlug": null,
+  "parentSlug": "vahiy-ve-peygamberlik",
   "roots": [
     "ktb"
   ],

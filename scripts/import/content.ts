@@ -295,6 +295,19 @@ function crossCheck(data: Loaded, dbSourceSlugs: ReadonlySet<string>): string[] 
     need(`kavram ${c.slug}`, conceptSlugs, "iliski hedefi", c.relations.map((r) => r.target));
     needSource(`kavram ${c.slug}`, c.sourceSlugs);
   }
+  const conceptChildCount = new Map<string, number>();
+  for (const c of data.concepts) {
+    if (c.parentSlug !== null) {
+      conceptChildCount.set(c.parentSlug, (conceptChildCount.get(c.parentSlug) ?? 0) + 1);
+    }
+  }
+  for (const c of data.concepts) {
+    // Koku ve elle ayet eslestirmesi olmayan kavram ancak UST BASLIK olabilir:
+    // sayilari cocuklarindan toplanir. Cocugu da yoksa sayfasi bos cikardi.
+    if (c.roots.length === 0 && c.verses.length === 0 && (conceptChildCount.get(c.slug) ?? 0) === 0) {
+      errors.push(`kavram ${c.slug}: kok, ayet ve cocuk yok — bos kavram sayfasi uretilemez`);
+    }
+  }
   for (const p of data.principles) {
     if (p.oppositeSlug !== null && !principleSlugs.has(p.oppositeSlug)) {
       errors.push(`ilke ${p.slug}: karsit ilke '${p.oppositeSlug}' yok`);
