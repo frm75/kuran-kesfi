@@ -32,11 +32,20 @@ import { TELEGRAM } from "~/lib/site";
  * gibi gösterilmez. Menüde de yalnızca var olan sayfalar bağlantıdır; gerisi
  * "yakında" etiketiyle, tıklanamaz durur (plan §1.5, CLAUDE.md kural 5).
  *
- * Kural İKİ YÖNLÜ çalışır ve ikinci yönü 2026-09-07'de kaçırıldı: bülten
- * bölümü "henüz açılmadı, arkasında çalışan bir sunucu yok" diyordu, oysa
- * Telegram botu o gün yayına girmişti. Hazır olmayanı hazır göstermek kadar
- * HAZIR OLANI YOK GÖSTERMEK de yalandır — bu sayfa bir modül yayına girdiğinde
- * de güncellenir.
+ * Kural İKİ YÖNLÜ çalışır ve ikinci yönü 2026-09-07'de İKİ KEZ kaçırıldı:
+ *   1. Bülten bölümü "henüz açılmadı, arkasında çalışan bir sunucu yok"
+ *      diyordu; Telegram botu o gün yayına girmişti.
+ *   2. Kapılar bölümü "şu an Kelime kapısı açık, diğer dördünün altyapısı
+ *      hazırlanıyor" diyordu; beşi de çoktan açılmıştı.
+ * İkisini de kullanıcı fark etti. Hazır olmayanı hazır göstermek kadar
+ * HAZIR OLANI YOK GÖSTERMEK de yalandır. Bir modül yayına girdiğinde bu
+ * sayfadaki durum cümleleri de aranır — "yakında" etiketi kadar metnin kendisi
+ * de eskiyebilir ve eskidiğinde kimse hata almaz.
+ *
+ * BÖLÜM SIRASI (2026-09-07, kullanıcı kararı): hero'dan hemen sonra "Keşfe
+ * başlayın" gelir. Gerekçe: hero'nun düğmesi zaten #kapilar'a gönderiyor;
+ * ziyaretçiyi önce manifestoyla karşılamak, girmek isteyeni bir ekran
+ * bekletiyordu. "Neden farklı" bir kademe aşağı indi.
  *
  * KAYNAK BÖLÜMLERİ KALDIRILDI (kullanıcı kararı 2026-09-04): "Kaynaklar" ve
  * "Kaynak Şeffaflığı" bölümleri aynı şeyi sayfanın dört yerinde tekrar
@@ -482,7 +491,49 @@ const menu = [
       </div>
     </header>
 
-    {/* --- 2. Neden Farklı ----------------------------------------------- */}
+    {/* --- 2. Keşfe Başla ------------------------------------------------ */}
+    <section class="lp-sec" id="kapilar" aria-labelledby="kapilar-baslik">
+      <div class="lp-wrap">
+        <p class="rule-ornament" aria-hidden="true"><span></span></p>
+        <h2 id="kapilar-baslik" class="lp-h2">Keşfe başlayın</h2>
+        {/*
+          2026-09-07: burada "Şu an Kelime kapısı açık; diğer dördünün altyapısı
+          hazırlanıyor" yazıyordu. Beşi de açıldığı hâlde metin öyle kalmıştı —
+          bülten bölümüyle aynı hata (bkz. dosyanın başındaki dürüstlük notu).
+          Kapılardan birinin durumu değişirse bu cümle de değişir.
+        */}
+        <p class="lp-lead">
+          Beş kapının beşi de açık. Hangisinden girerseniz girin aynı yere —
+          ayete — çıkarsınız; yolu siz seçersiniz: bir yer adından, bir tarihten,
+          bir kavramdan, bir kelimenin kökünden ya da bir ilkeden.
+        </p>
+
+        <ul class="lp-gates">
+          {
+            gates.map((gate) => (
+              <li class:list={["lp-gate", gate.href === undefined && "is-soon"]}>
+                <span class="lp-gate-num" aria-hidden="true">
+                  {gate.numeral}
+                </span>
+                {/* Bağlantı başlıkta, tık alanı kartın tamamı (.lp-stretch).
+                    Hazır olmayan kapı "Kullanacağınız araçlar"a iner. */}
+                <h3>
+                  <a href={gate.to} class="lp-stretch">
+                    {gate.name}
+                  </a>
+                </h3>
+                <p>{gate.note}</p>
+                <p class:list={["state", gate.href === undefined ? "state-yakinda" : "state-hazir"]}>
+                  {gate.href === undefined ? "yakında" : "hazır"}
+                </p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    {/* --- 3. Neden Farklı ----------------------------------------------- */}
     <section class="lp-manifesto" id="neden-farkli" aria-labelledby="neden-farkli-baslik">
       <h2 id="neden-farkli-baslik" class="sr-only">Neden farklı</h2>
       <div class="lp-wrap lp-man-grid">
@@ -508,41 +559,6 @@ const menu = [
             varsa ikisi de yazar. Kesin olmayan hiçbir şey kesinmiş gibi sunulmaz.
           </p>
         </div>
-      </div>
-    </section>
-
-    {/* --- 3. Beş Keşif Kapısı ------------------------------------------- */}
-    <section class="lp-sec" id="kapilar" aria-labelledby="kapilar-baslik">
-      <div class="lp-wrap">
-        <p class="rule-ornament" aria-hidden="true"><span></span></p>
-        <h2 id="kapilar-baslik" class="lp-h2">Beş ayrı yoldan girin</h2>
-        <p class="lp-lead">
-          Her kapı sizi aynı yere, ayete götürür. Nereden başlayacağınızı siz seçersiniz.
-          Şu an Kelime kapısı açık; diğer dördünün altyapısı hazırlanıyor.
-        </p>
-
-        <ul class="lp-gates">
-          {
-            gates.map((gate) => (
-              <li class:list={["lp-gate", gate.href === undefined && "is-soon"]}>
-                <span class="lp-gate-num" aria-hidden="true">
-                  {gate.numeral}
-                </span>
-                {/* Bağlantı başlıkta, tık alanı kartın tamamı (.lp-stretch).
-                    Hazır olmayan kapı "Kullanacağınız araçlar"a iner. */}
-                <h3>
-                  <a href={gate.to} class="lp-stretch">
-                    {gate.name}
-                  </a>
-                </h3>
-                <p>{gate.note}</p>
-                <p class:list={["state", gate.href === undefined ? "state-yakinda" : "state-hazir"]}>
-                  {gate.href === undefined ? "yakında" : "hazır"}
-                </p>
-              </li>
-            ))
-          }
-        </ul>
       </div>
     </section>
 
