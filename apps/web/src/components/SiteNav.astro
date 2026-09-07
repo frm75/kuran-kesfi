@@ -11,9 +11,11 @@ const { path } = Astro.props;
 /*
  * Aktif işaretleme iki ayrı şey:
  *
- *   aria-current="page"  — TAM olarak bulunulan sayfa. Sayfa başına en fazla
- *                          bir kez basılır; ekran okuyucu "bulunduğunuz sayfa"
- *                          der. İki kez basmak yalan olur.
+ *   aria-current="page"  — TAM olarak bulunulan sayfa. Her gezinme bölgesinde
+ *                          (her `<nav>`) en fazla bir kez basılır; ekran
+ *                          okuyucu "bulunduğunuz sayfa" der. Aynı bölgede iki
+ *                          kez basmak yalan olur — sayfada iki ayrı bölge
+ *                          (bu şerit + breadcrumb) birer kez basması doğrudur.
  *   data-active          — o dalın içindeyiz ama hub sayfasında değiliz.
  *                          Yalnızca görsel; ekran okuyucuya bir şey söylemez.
  */

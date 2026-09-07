@@ -6,7 +6,7 @@
  *
  * ## Bu dosya hiçbir şey IMPORT ETMEZ
  *
- * Base.astro her sayfada bunu çekiyor. İçeri `~/lib/data` girseydi 8138
+ * Base.astro her sayfada bunu çekiyor. İçeri `~/lib/data` girseydi 13516
  * sayfanın hepsi, yalnızca menüyü basmak için `surahs_index.json`,
  * `concepts_index.json` ve arkadaşlarını okurdu. Sayılar hub sayfalarında
  * ayrıca çözülür — orada zaten okunuyorlar.
