@@ -277,11 +277,13 @@ export const staticConceptsIndex = z.object({
         verseCount: z.number().int().nonnegative(),
         rootCount: z.number().int().nonnegative(),
         /*
-         * Atlas sayfasi icin. Kavram basina EN AZ 6, ama elle yazilan bag
-         * hepsi: tam liste concept_<slug>.json icinde duruyor, dizin dosyasi
-         * grafigi cizebilecek kadarini tasiyor. Olculen derece medyani 9,
-         * maksimum 90 (ilah) — sinirsiz tasisak dizin dosyasi uc katina
-         * cikardi. Curated hicbir zaman kesilmez (bkz. build/lib/content.ts).
+         * Atlas sayfasi icin. Kural "EN AZ 6" DEGIL: curated'in HEPSI (kac
+         * olursa olsun, kesilmez) + kalan yeri 6'ya tamamlayan computed
+         * (bkz. build/lib/content.ts) — curated+computed toplami 6'nin
+         * altindaysa dizi 6'dan KISA kalabilir. Tam liste concept_<slug>.json
+         * icinde duruyor, dizin dosyasi grafigi cizebilecek kadarini tasiyor.
+         * Olculen derece medyani 9, maksimum 90 (ilah) — sinirsiz tasisak
+         * dizin dosyasi uc katina cikardi.
          */
         relations: z.array(
           z.object({

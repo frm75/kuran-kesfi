@@ -467,10 +467,21 @@ export async function emitContent(
        * VERIYE BAGLI bir tesaduf: iki ucu da 6'yi asan bir cift eklenirse
        * kenar SESSIZCE kaybolur ve kimse fark etmez. Insan karari istatistige
        * feda edilmez; kural veriden bagimsiz olsun.
+       *
+       * `computed` slice'tan ONCE agirliga gore acikca siralanir (M10).
+       * `rel` zaten tipe gore sirali geliyor (yukarida, once tip sonra
+       * agirlik) ve bugun bu yeterli cunku olculen tum computed iliskiler
+       * `co_occurrence` — ama bu VERIYE BAGLI bir tesaduf, `rel`'in sira
+       * garantisi degil. Ikinci bir computed tipi eklenirse tipe-once sira
+       * "en guclu 6"yi degil "alfabetik ilk tipin en gucluleri"ni verirdi
+       * (bkz. [slug].astro'daki ayni sinifin ego-graf duzeltmesi). Acik
+       * siralama bu garantiyi `rel`'in sira davranisindan bagimsizlastirir.
        */
       relations: (() => {
         const curated = rel.filter((r) => r.origin === "curated");
-        const computed = rel.filter((r) => r.origin === "computed");
+        const computed = rel
+          .filter((r) => r.origin === "computed")
+          .sort((a, b) => b.weight - a.weight || a.slug.localeCompare(b.slug));
         return [...curated, ...computed.slice(0, Math.max(0, 6 - curated.length))].map((r) => ({
           slug: r.slug,
           type: r.type,

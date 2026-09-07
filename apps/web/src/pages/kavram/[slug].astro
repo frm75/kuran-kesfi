@@ -66,12 +66,32 @@ const maxCount = topSurahs[0]?.count ?? 1;
  * (belirlilik için). İlk 6 bu sıradan alınır. `adalet` için sonuç artık
  * `zulum`'u içeriyor; `iman` için `sirk`/`takva`/`emanet` de giriyor.
  */
-const komsular = [...concept.relations]
-  .sort((a, b) => {
-    if (a.origin !== b.origin) return a.origin === "curated" ? -1 : 1;
-    return b.weight - a.weight || a.slug.localeCompare(b.slug);
-  })
-  .slice(0, 6);
+const komsularSirali = [...concept.relations].sort((a, b) => {
+  if (a.origin !== b.origin) return a.origin === "curated" ? -1 : 1;
+  return b.weight - a.weight || a.slug.localeCompare(b.slug);
+});
+
+/*
+ * Slug'a göre tekilleştir. İki kavram BİRDEN FAZLA ilişki tipiyle bağlı
+ * olabilir — ölçüldü: `infak` ↔ `zekat` hem `co_occurrence` (w2, curated)
+ * hem `part_of` (w2, curated) ile bağlı, ikisi de meşru veri. Tekilleştirme
+ * olmadan `komsular` bu ilişki listesinden düz `.slice(0, 6)` ile düğüme
+ * çevrilince aynı slug İKİ düğüm oluyordu: `dugumBySlug` (RadyalAtlas.astro)
+ * son kopyayı tuttuğu için ilk düğüme hiçbir kenar bağlanmıyor, havada duran
+ * bir daire kalıyordu, üstelik iki özdeş kenar aynı hedefe çiziliyordu.
+ *
+ * Sıralı listede yürüyüp ilk (yukarıdaki sıraya göre en öncelikli) görülen
+ * tipi tutuyoruz; boşalan yuva sıradaki gerçek komşuya gidiyor. Alttaki
+ * `rel-list`'e DOKUNULMADI — o liste tam kalmalı, iki tip de orada görünür.
+ */
+const komsular: typeof concept.relations = [];
+const gorulenSlug = new Set<string>();
+for (const r of komsularSirali) {
+  if (gorulenSlug.has(r.slug)) continue;
+  gorulenSlug.add(r.slug);
+  komsular.push(r);
+  if (komsular.length === 6) break;
+}
 
 const egoGruplar: RadyalGrup[] = [
   {
@@ -120,6 +140,15 @@ const egoYerlesim = radyalYerlesim({ boyut: 420, gruplar: egoGruplar, kenarlar: 
         )}
       </h1>
       <p class="pg-lede">{concept.definition}</p>
+      {
+        concept.parent === null && (
+          <p class="pg-head-link">
+            <a href={`/kavram/grup/${concept.slug}`}>
+              Bu üst başlığın haritası ve tam listesi <span aria-hidden="true">→</span>
+            </a>
+          </p>
+        )
+      }
       <ul class="chip-row">
         <li class="chip is-accent"><b>{concept.stats.verseCount}</b> ayet</li>
         <li class="chip"><b>{concept.stats.surahCount}</b> sure</li>
@@ -175,8 +204,8 @@ const egoYerlesim = radyalYerlesim({ boyut: 420, gruplar: egoGruplar, kenarlar: 
           </div>
           <RadyalAtlas
             yerlesim={egoYerlesim}
-            baslik={`${concept.nameTr} ve en güçlü ${String(komsular.length)} komşusu`}
-            aciklama={`Merkezde ${concept.nameTr}, çevresinde en güçlü ${String(komsular.length)} bağlı kavram; elle yazılmış bağlar ağırlığından bağımsız önce gelir, kalan yer en ağırlıklı hesaplananlarla doldurulur. Aynı veri altta liste hâlinde de var.`}
+            baslik={`${concept.nameTr} ve bağlı ${String(komsular.length)} kavram`}
+            aciklama={`Merkezde ${concept.nameTr}, çevresinde bağlı ${String(komsular.length)} kavram; elle yazılmış bağlar ağırlığından bağımsız önce gelir, kalan yer en ağırlıklı hesaplananlarla doldurulur. Aynı veri altta liste hâlinde de var.`}
             hrefOnEk="/kavram/"
           />
           <ul class="rel-list">

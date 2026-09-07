@@ -13,6 +13,14 @@
  * `ALT_YELPAZE_CARPANI`) burada dogrulanmazsa gercek atlasta sessizce
  * cakisma cikar.
  *
+ * ASGARI BOSLUK PAYI: dort cakisma denetimi `mesafe > (r1+r2) * 1.05`
+ * kullanir, DUZ `> r1+r2` degil. Olculdu: `MAKS_YARICAP` brief'teki ilk
+ * degerine (0.018) geri donulurse `> r1+r2` esigiyle test GECIYORDU ama
+ * gercek veride `ilah`-`izzet` cifti mesafe/(r1+r2) = 1.010 ile teslim
+ * ediliyordu — pratikte deger iki daire, %1 pay goz farkedilmez. `* 1.05`
+ * esigi bugunku yerlesimi (en dar oran 1.678, MAKS_YARICAP=0.01) rahat
+ * gecirirken bu sessiz gerilemeyi yakalar (bkz. gorev raporu, tablo).
+ *
  * Calistirma:  pnpm --filter @kuran/web test:smoke
  */
 
@@ -70,9 +78,9 @@ check(
   }),
 );
 check(
-  "hicbir dugum cifti cakismiyor",
+  "hicbir dugum ciftinin arasinda yeterli bosluk var (cakismiyor)",
   bir.dugumler.every((d1, i) =>
-    bir.dugumler.slice(i + 1).every((d2) => Math.hypot(d1.x - d2.x, d1.y - d2.y) > d1.r + d2.r - 0.01),
+    bir.dugumler.slice(i + 1).every((d2) => Math.hypot(d1.x - d2.x, d1.y - d2.y) > (d1.r + d2.r) * 1.05),
   ),
 );
 
@@ -90,9 +98,9 @@ check(
     }),
 );
 check(
-  "alt dugumler birbiriyle ve ebeveynleriyle cakismiyor",
+  "alt dugumler birbiriyle ve ebeveynleriyle arasinda yeterli bosluk var (cakismiyor)",
   altDugumler.every((d1) =>
-    bir.dugumler.every((d2) => d1 === d2 || Math.hypot(d1.x - d2.x, d1.y - d2.y) > d1.r + d2.r - 0.01),
+    bir.dugumler.every((d2) => d1 === d2 || Math.hypot(d1.x - d2.x, d1.y - d2.y) > (d1.r + d2.r) * 1.05),
   ),
 );
 
@@ -162,9 +170,9 @@ if (!existsSync(idxYolu)) {
     ),
   );
   check(
-    "gercek veride hicbir dugum cifti cakismiyor",
+    "gercek veride hicbir dugum ciftinin arasinda yeterli bosluk var (cakismiyor)",
     gercekBir.dugumler.every((d1, i) =>
-      gercekBir.dugumler.slice(i + 1).every((d2) => Math.hypot(d1.x - d2.x, d1.y - d2.y) > d1.r + d2.r - 0.01),
+      gercekBir.dugumler.slice(i + 1).every((d2) => Math.hypot(d1.x - d2.x, d1.y - d2.y) > (d1.r + d2.r) * 1.05),
     ),
   );
   check("gercek veride ayni girdi ayni ciktiyi verir", JSON.stringify(gercekBir) === JSON.stringify(gercekIki));
@@ -212,9 +220,9 @@ check(
   tekUzakliklar.length === 6 && tekUzakliklar.every((u) => Math.abs(u - (tekUzakliklar[0] ?? 0)) < 0.01),
 );
 check(
-  "tek grupta hicbir dugum cifti cakismiyor",
+  "tek grupta hicbir dugum ciftinin arasinda yeterli bosluk var (cakismiyor)",
   tekGrupYerlesim.dugumler.every((d1, i) =>
-    tekGrupYerlesim.dugumler.slice(i + 1).every((d2) => Math.hypot(d1.x - d2.x, d1.y - d2.y) > d1.r + d2.r - 0.01),
+    tekGrupYerlesim.dugumler.slice(i + 1).every((d2) => Math.hypot(d1.x - d2.x, d1.y - d2.y) > (d1.r + d2.r) * 1.05),
   ),
 );
 check(

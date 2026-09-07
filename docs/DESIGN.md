@@ -174,21 +174,28 @@ ilke burada da geçerli, grup zaten konumla (kendi dilimi) ve derinlik farkıyla
 ayırt edilebiliyor, renk yalnızca göz için ek bir ipucu.
 
 ```
-        karanlık   açık       kontrast (--bg-primary'ye karşı, WCAG 1.4.11 ≥3:1)
---gr-1  #CB4D4D    #B82E2E    4,26:1 / 4,90:1
---gr-2  #CBAC4D    #8F7424    8,62:1 / 3,61:1
---gr-3  #8CCB4D    #598F24    9,76:1 / 3,15:1
---gr-4  #4DCB6D    #248F3E    9,13:1 / 3,34:1
---gr-5  #4DCBCB    #248F8F    9,72:1 / 3,14:1
---gr-6  #4D6DCB    #2E50B8    3,93:1 / 5,72:1
---gr-7  #8C4DCB    #732EB8    3,66:1 / 6,04:1
---gr-8  #CB4DAC    #B82E95    4,70:1 / 4,39:1
+        karanlık   açık       kontrast (--bg-elevated'e karşı, WCAG 1.4.11 ≥3:1)
+--gr-1  #CB4D4D    #B82E2E    3,86:1 / 5,65:1
+--gr-2  #CBAC4D    #8F7424    7,82:1 / 4,18:1
+--gr-3  #8CCB4D    #598F24    8,82:1 / 3,64:1
+--gr-4  #4DCB6D    #248F3E    8,26:1 / 3,86:1
+--gr-5  #4DCBCB    #248F8F    8,79:1 / 3,63:1
+--gr-6  #4D6DCB    #2E50B8    3,58:1 / 6,63:1
+--gr-7  #8C4DCB    #732EB8    3,31:1 / 6,97:1
+--gr-8  #CB4DAC    #B82E95    4,26:1 / 5,07:1
 ```
 
 Eşik metin değil **grafik nesne** eşiğidir (WCAG 1.4.11, 3:1) — düğümler kart üzerinde
-duran renkli daireler, okunacak metin değil. Her hex, kendi temasının `--bg-elevated`
-zemininde (atlas'ın kendi arka planı) bu eşiği geçiyor; en düşük oran karanlıkta
-`--gr-7` (3,66:1), aydınlıkta `--gr-5` (3,14:1).
+duran renkli daireler, okunacak metin değil. Tablodaki sayılar düğümlerin GERÇEKTEN
+üstünde durduğu zemine, `--bg-elevated`'e karşı ölçüldü (`.atlas svg { background-color:
+var(--bg-elevated) }`, `global.css`) — `--bg-primary`'ye karşı değil, çünkü atlas kartı
+sayfa zemininin üstünde kendi (daha açık) zeminini taşıyor ve gerçek kontrast oradaki
+zemine göre belirleniyor. Yöntem: sRGB göreli parlaklık (relative luminance) formülü
+(WCAG 2.x); iki rengin parlaklığından büyüğü L1, küçüğü L2 ise oran `(L1 + 0,05) /
+(L2 + 0,05)`. Her hex bu zeminde de 3:1 eşiğini geçiyor; en
+düşük oran karanlıkta `--gr-7` (3,31:1), aydınlıkta `--gr-5` (3,63:1). Erişilebilirlik
+açığı yok — sorun yalnızca önceki sürümün `--bg-primary`'ye karşı ölçülmüş sayıları
+`--bg-elevated` zeminine atfetmesiydi.
 
 Sekiz grup slug'ı sabit bir renge bağlıdır (`RadyalAtlas.astro` içindeki
 `KAVRAM_GRUP_RENGI` eşlemesi), dizideki sıraya değil — aksi hâlde tek grup içeren

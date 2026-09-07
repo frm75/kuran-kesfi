@@ -17,7 +17,15 @@
 export interface RadyalCocuk {
   slug: string;
   label: string;
-  /** Düğüm büyüklüğünü belirler — kavramda ayet sayısı, ilkede dayanak sayısı */
+  /**
+   * Düğüm büyüklüğünü belirler. Aynı görsel kanal, çağırana göre FARKLI bir
+   * ölçek taşır: ana atlasta ve grup sayfasında kavramda ayet sayısı (3-879),
+   * ilkede dayanak sayısı; kavram sayfasındaki ego-grafta (`[slug].astro`)
+   * ise merkez kavramla komşu arasındaki İLİŞKİNİN ağırlığı (1-3, `weight`
+   * alanı) — komşunun kendi ayet sayısı değil. İkisi karıştırılmamalı: ego-
+   * grafta büyük daire "bu komşuyla bağ güçlü" demektir, "bu komşu çok
+   * geçiyor" değil.
+   */
   agirlik: number;
   /** Üçüncü seviye: bu çocuğun da çocukları varsa */
   altlar?: readonly RadyalCocuk[];

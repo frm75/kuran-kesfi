@@ -117,13 +117,22 @@ const yerlesim = radyalYerlesim({ boyut: 900, gruplar, kenarlar });
     <RadyalAtlas
       yerlesim={yerlesim}
       baslik="Kavram atlası"
-      aciklama={`${String(concepts.length)} kavram, ${String(gruplar.length)} üst başlık altında; çemberin içinden geçen çizgiler kavramlar arası bağlardır. Aynı veri aşağıda liste hâlinde de var.`}
+      aciklama={`${String(concepts.length)} kavram, ${String(gruplar.length)} üst başlık altında; çemberin içinden geçen çizgiler kavramlar arası bağlardır. Kavramların tamamı aşağıda liste hâlinde var; aralarındaki bağlar burada değil, her kavramın kendi sayfasındaki "Bağlı kavramlar" bölümünde listelenir.`}
       hrefOnEk="/kavram/"
     />
+    {/*
+      "Grafik listenin yerine geçmez" — ama liste de grafiğin yerine
+      geçtiğini İDDİA ETMEMELİ. Eskiden burada "aynı veri aşağıda liste
+      hâlindedir" yazıyordu: yanlıştı, atlas 125 kenar çiziyor ama alttaki
+      <ol> hiç kenar taşımıyor (yalnızca düğüm + hiyerarşi). Doğrusu:
+      kavramların TAMAMI aşağıda var, bağlar İSE aşağıda değil — her
+      kavramın kendi sayfasında.
+    */}
     <p class="atlas-not">
       Bu bölümleme platform derlemesidir; kavramların kendisi ve ayet bağları
-      kök verisinden hesaplanır. Grafiği okuyamıyorsanız aynı veri aşağıda
-      liste hâlindedir.
+      kök verisinden hesaplanır. Kavramların tamamı aşağıda liste hâlinde
+      var; aralarındaki bağlar burada gösterilmez, her kavramın kendi
+      sayfasındaki "Bağlı kavramlar" bölümünde listelenir.
     </p>
 
     <ol class="concept-grid">
@@ -142,7 +151,19 @@ const yerlesim = radyalYerlesim({ boyut: 900, gruplar, kenarlar });
                   )}
                 </span>
                 <span class="cn-def">{concept.definition}</span>
-                <span class="cn-meta">{concept.verseCount} ayet</span>
+                {/*
+                  Kök kavramın kendi ayeti yok (üst başlık, kökü kendisi
+                  taşımaz) — verseCount burada hep 0 çıkıyordu, "bu kavramın
+                  ayeti yok" gibi okunuyordu. toplamAyet() zaten çocuk
+                  toplamını hesaplıyordu (sıralama için), burada gösterime
+                  açıldı; üst başlık olduğu "alt kavram" sayısıyla belirtilir.
+                */}
+                <span class="cn-meta">
+                  {kids.length} alt kavram · {toplamAyet(concept.slug).toLocaleString("tr-TR")} ayet
+                </span>
+              </a>
+              <a class="cn-map-link" href={`/kavram/grup/${concept.slug}`}>
+                Haritası ve tam listesi <span aria-hidden="true">→</span>
               </a>
               {kids.length > 0 && (
                 <ul class="cn-kids">

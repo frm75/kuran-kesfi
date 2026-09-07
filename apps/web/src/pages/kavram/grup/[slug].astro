@@ -96,6 +96,21 @@ const totalVerses = children.reduce(
   (a, c) => a + c.verseCount + (grandchildrenOf.get(c.slug) ?? []).reduce((x, y) => x + y.verseCount, 0),
   0,
 );
+
+/*
+ * I4 — "grafik listenin yerine geçmez" grup sayfasında da tutsun diye.
+ * `kenarlar` grafikte çizilenle BİREBİR aynı dizi (yukarıda kurulan); burada
+ * yalnızca insan okuyabilsin diye slug'lar isme çevriliyor. `concepts`
+ * (tam dizin) her slug'ı kapsar, üye olmayan bir uca düşme riski yok çünkü
+ * `kenarlar` zaten yalnızca `members` içindeki çiftlerden kuruldu.
+ */
+const nameBySlug = new Map(concepts.map((c) => [c.slug, c.nameTr]));
+const relationLabel: Record<string, string> = {
+  co_occurrence: "birlikte geçer",
+  cause: "sebep-sonuç",
+  contrast: "zıt",
+  part_of: "parçası",
+};
 ---
 
 <Base
@@ -130,7 +145,7 @@ const totalVerses = children.reduce(
     <RadyalAtlas
       yerlesim={yerlesim}
       baslik={`${grup.nameTr} grubunun kavram grafiği`}
-      aciklama={`${String(children.length)} kavram ve aralarındaki ${String(kenarlar.length)} bağ; elle yazılmış bağlar ağırlığından bağımsız, hesaplanan bağlardan ağırlığı 2 ve üzeri olanlar çizilir. Aynı veri aşağıda liste hâlinde de var.`}
+      aciklama={`${String(children.length)} kavram ve aralarındaki ${String(kenarlar.length)} bağ; elle yazılmış bağlar ağırlığından bağımsız, hesaplanan bağlardan ağırlığı 2 ve üzeri olanlar çizilir. Aynı ${String(kenarlar.length)} bağın tam listesi aşağıdaki "İç bağlar" bölümünde de var.`}
       hrefOnEk="/kavram/"
     />
     <p class="atlas-not">
@@ -138,8 +153,41 @@ const totalVerses = children.reduce(
       ve aralarındaki bağları gösterir; elle yazılmış (kaynağa dayalı) bağlar ağırlığından
       bağımsız hep çizilir, hesaplanan bağlardan yalnızca ağırlığı 2 ve üzeri olanlar
       girer — ana atlasta bu eşik 3'tür, grup ölçeği daha küçük olduğu için burada bir
-      basamak gevşetildi. Grafiği okuyamıyorsanız aynı veri aşağıda liste hâlindedir.
+      basamak gevşetildi. Grafiği okuyamıyorsanız aynı bağların tam listesi aşağıdaki
+      "İç bağlar" bölümünde satır satır var.
     </p>
+
+    {
+      kenarlar.length > 0 && (
+        <section>
+          <div class="sec-head">
+            <h2>İç bağlar</h2>
+            <span class="sec-note">
+              Yukarıdaki grafikte çizilen {kenarlar.length} bağın tam listesi — grafik
+              burada listenin yerine geçmiyor, ikisi aynı veriyi taşıyor. Hesaplananlar{" "}
+              <em>hesaplanmış</em> etiketiyle işaretlidir; etiketsiz olanlar kaynağa dayanır.
+            </span>
+          </div>
+          <ul class="rel-list kenar-list">
+            {kenarlar.map((k) => (
+              <li>
+                <a href={`/kavram/${k.a}`}>{nameBySlug.get(k.a) ?? k.a}</a>
+                <span class:list={["rel-type", `is-${k.type}`]}>{relationLabel[k.type] ?? k.type}</span>
+                <a href={`/kavram/${k.b}`}>{nameBySlug.get(k.b) ?? k.b}</a>
+                {k.origin === "computed" && (
+                  <span
+                    class="rel-origin"
+                    title="Bu bağ iki kavramın ortak ayetlerinden hesaplandı; bir kaynağın kurduğu bağ değildir."
+                  >
+                    hesaplanmış
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
 
     <ol class="concept-grid">
       {

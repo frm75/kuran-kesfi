@@ -1308,6 +1308,25 @@
 }
 
 /*
+ * Üst kavramdan (parent === null) kendi grup sayfasına bağ — plan 2 son
+ * düzeltme dalgası, I3. Grup sayfası (/kavram/grup/<slug>) tanım, alt graf
+ * ve tam listeyi taşır ama siteden hiçbir yerden bağlanmıyordu; kullanıcı
+ * hep bu köke (kendi ayeti/sayısı olmayan bir kütüğe) düşüyordu. Yalnızca
+ * kök kavramlarda görünür.
+ */
+.pg-head-link {
+  margin: var(--space-2) 0 0;
+}
+.pg-head-link a {
+  color: var(--accent-text);
+  font-size: var(--text-sm);
+  text-decoration: none;
+}
+.pg-head-link a:hover {
+  text-decoration: underline;
+}
+
+/*
  * Sayı şeridi.
  *
  * Eski hâli `<dl>` içinde "Ayet sayısı: 286" gibi cümlelerdi; dört tanesi
@@ -2146,6 +2165,23 @@
 }
 .concept-grid .cn-main:hover .cn-name {
   color: var(--accent-text);
+}
+/*
+ * Üst kavram kartından kendi grup sayfasına ikinci bağ — I3. Kartın kendisi
+ * zaten `/kavram/<slug>`'a gidiyor (`.cn-main`); grup sayfası
+ * (`/kavram/grup/<slug>`, tanım + alt graf + tam liste) SVG/HTML kuralı
+ * gereği o `<a>`'nın İÇİNE alınamaz, bu yüzden ayrı bir kardeş bağ.
+ * Yalnızca kök kartlarda basılır (kavramlar.astro, `sorted.map`).
+ */
+.concept-grid .cn-map-link {
+  display: block;
+  padding: 0 var(--space-4) var(--space-3);
+  color: var(--accent-text);
+  font-size: var(--text-xs);
+  text-decoration: none;
+}
+.concept-grid .cn-map-link:hover {
+  text-decoration: underline;
 }
 .concept-grid .cn-head {
   display: flex;
@@ -4136,11 +4172,6 @@ a.ctx-num:hover {
   stroke-width: 1.4;
   opacity: 0.8;
 }
-.atlas .kn-co_occurrence {
-  stroke: var(--text-muted);
-  stroke-width: 1;
-  opacity: 0.35;
-}
 .atlas .kn-hesap {
   stroke-dasharray: 3 3;
 }
@@ -4245,9 +4276,12 @@ a.ctx-num:hover {
 /* Küçük ekranda atlas gizlenir, liste birincil içerik olarak kalır (plan
    §12 "grafik listenin yerine geçmez" — dekoratife düşmesin diye gizleme
    noktası listeyi TEK içerik yapan bir genişlikte, yarım okunur bir grafik
-   değil). */
+   değil). `.atlas-not` da birlikte gizlenir: yalnızca `.atlas` gizlenip bu
+   metin kalsaydı, 48rem altındaki kullanıcı görünmeyen bir grafik hakkında
+   paragraf okurdu (ölçüldü — I4). */
 @media (max-width: 48rem) {
-  .atlas {
+  .atlas,
+  .atlas-not {
     display: none;
   }
 }
