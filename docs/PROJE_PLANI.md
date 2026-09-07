@@ -366,9 +366,15 @@ Tüm import scriptleri tekrar çalıştırılabilir (upsert), kaynak bazlı ayr�
   kökten hesaplanıyor, elle seçilmiyor — sayılar doğrulanabilir
 - **İlkeler modülü (§18) de tamamlandı:** 32 ilke, 116 birincil + 113 ikincil ayet dayanağı
 
-**Faz 4 — Günlük, PWA, Ses (2 hafta)**
-- IndexedDB notlar, ezber tekrar, dışa/içe aktarma
-- Çevrimdışı destek, ses oynatıcı
+**Faz 4 — Günlük, PWA, Ses (2 hafta)** — *günlük ve ses yayında (2026-09-07)*
+- ~~IndexedDB notlar, ezber tekrar, dışa/içe aktarma~~ → **BİTTİ.** `/gunluk`:
+  not, yer imi, okuma ilerlemesi, FSRS ezber tekrarı, JSON dışa/içe aktarma.
+  Dexie alınmadı (gerekçe `docs/DURUM.md`); şemadaki `ease` alanı FSRS'in
+  gerçek alanlarıyla (`stability` + `difficulty`) değiştirildi.
+- ~~ses oynatıcı~~ → **BİTTİ.** Mishary Alafasy, 6236/6236 ayet, ayet sayfasında
+  `<audio controls>`. Ayet başına ayrı dosya olduğu için zaman damgası ve
+  JavaScript gerekmedi.
+- Çevrimdışı destek (PWA) — kaldı
 
 **Faz 5 — Yayın ve Topluluk**
 - Açık kaynak yayın, katkı rehberi, veri giriş rehberi
@@ -397,7 +403,7 @@ Tüm import scriptleri tekrar çalıştırılabilir (upsert), kaynak bazlı ayr�
 - Diyanet Kur'an Yolu tefsirinin kullanım şartları — yazılı izin gerekip gerekmediği
 - Nüzul sırasında ana referans: Mısır/Ezher mi, Nöldeke mi (öneri: Ezher ana, Nöldeke alternatif)
 - Kavram setinin ilk kaynağı: Diyanet konu fihristi mi, özgün derleme mi
-- Arapça kıraat için hangi kârîler (lisans uyumlu olanlar arasından)
+- ~~Arapça kıraat için hangi kârîler~~ → KARAR (2026-09-07): **Mishary Alafasy** (murattal, everyayah.com, ayet başına MP3). el-Husarî tanımı kodda hazır, ikinci kârî istenirse tek komutla iner.
 - ~~Katkı lisansı~~ → KARAR: çift lisans — kod MIT, `data/` klasörü CC BY-NC-SA 4.0 (Açık Kuran verisiyle uyum için zorunlu); elle üretilen kıssa/konum/ilke verisi de aynı lisansla
 - Bağış/sunucu masrafı yaklaşımı: tamamen kişisel karşılama mı, şeffaf bağış sayfası mı
 - Sure içi konu başlıkları (`surah_section`) için kaynak: Diyanet Kur'an Yolu bölümlemesi mi, başka bir tefsirin bölümlemesi mi, yoksa kaynaklı kendi derlememiz mi — kullanım izni ve atıf biçimi netleştirilecek

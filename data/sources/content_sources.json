@@ -74,6 +74,16 @@
       "url": "https://commons.wikimedia.org",
       "license": "Dosya başına değişir; her kaydın kendi lisansı licenseRaw/license alanlarında",
       "note": "Gerçek görsel katmanının ana kaynağı. Lisans dosya başına API'den çekilir (pnpm data:wikimedia); kategori beyanına güvenilmez."
+    },
+    {
+      "slug": "everyayah",
+      "name": "EveryAyah — ayet ayet kıraat arşivi",
+      "workTitle": null,
+      "author": null,
+      "reference": "everyayah.com/data/<kârî>/<sure><ayet>.mp3",
+      "url": "https://everyayah.com/",
+      "license": "Kayıtlar kârîlere aittir; arşiv ücretsiz dağıtım için yayımlanır. İzin proje sahibi tarafından yürütülür (karar 2026-09-06).",
+      "note": "Arapça kıraat kaynağı. Ayet başına ayrı MP3 verdiği için zaman damgası gerekmiyor — QUL paketi tam bu yüzden atlanmıştı (sure düzeyi MP3 + boş segments.json). Dosyalar bir kez indirilip R2'ye çıkarılır; üretimde everyayah.com'a bağlanılmaz (CLAUDE.md kural 5)."
     }
   ]
 }

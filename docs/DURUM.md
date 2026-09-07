@@ -512,6 +512,46 @@ sayfalarında **hiç betik yok** (`HaritaCanli` oraya import edilmiyor) — öl�
 satır kaldırılmalı; eklenecekse olduğu gibi kalsın. Karar kullanıcıya ait, tek taraflı
 değiştirilmedi.
 
+## Ana sayfada harita + meal sayısı (2026-09-07) — YAYINDA
+
+Kullanıcı: *"ana sayfaya da harita modülünü koyalım, ordan gitmek isteyen olabilir."*
+Ana sayfada `/harita`ya **dört metin bağlantısı zaten vardı**; eksik olan haritanın
+görünmesiydi.
+
+**Statik SVG bileşene çıkarıldı.** Projeksiyon + Natural Earth kara halkaları +
+pin yerleri `apps/web/src/lib/harita/statik.ts`, çizim
+`apps/web/src/components/HaritaStatik.astro`. İki varyant:
+
+| varyant | nerede | fark |
+|---|---|---|
+| `tam` | `/harita` | etiketli pinler + kaynak alt yazısı, MapLibre üstüne biner |
+| `onizleme` | ana sayfa `#harita` | etiket yok, kart tamamı `/harita`ya gider |
+
+`/harita` çıktısı **birebir aynı** kaldı (deploy öncesi canlı sürümle diff'lendi).
+
+**MapLibre ana sayfaya KONMADI.** ~970 KB betik ve ana sayfanın CSP'sinde
+`script-src` açmak demekti; ikisi de plan §20.4'ü (LCP < 2 sn / 3G) ve
+"8200+ sayfa 0 bayt JS" kuralını kırardı. Ana sayfa hâlâ **0 `<script>`**,
+CSP'sinde `script-src` yok — duman testi bunu her yayında doğruluyor.
+
+Maliyet: ana sayfa 6,5 KB → 16,1 KB gzip. Artışın tamamı kara çizgileri
+(7,7 KB gzip); ayrı istek değil, HTML'in içinde.
+
+**Önizleme YÜKSEKLİKTEN boyutlandırılır.** Kadraj portre (1000×1371 — Habeşistan
+–Anadolu arası enlem, boylamdan geniş). `width:100%` + `max-height` denendi ve
+yanlıştı: viewBox'lı SVG'de genişlik kaba yayılır, çizim `meet` ile ortalanır ve
+iki yanında boş deniz şeridi kalır. `width:auto; height:34rem` tam oturuyor.
+
+**Meal sayısı düzeltildi.** Ana sayfa aynı anda iki farklı sayı basıyordu:
+hero'da veriden gelen `54`, modül listesinde elle yazılmış `26` (Mehmet Alagaş
+mealı eklenmeden önceden kalma). Ayrıca `54` bir Türkçe okura "54 Türkçe meal"
+diye okunuyordu; gerçek dağılım **27 Türkçe + 27 İngilizce**. Üç yer de artık
+dili ayırarak `turkishAuthors.length` / `englishAuthors.length` basıyor.
+
+Ölçüm (2026-09-07): 6029 ayette 54 meal, 207 ayette 53. Eksikler
+`mehmet-alagas` 168 ayet, `suleymaniye-vakfi` 34 ayet (66. sure tamamen),
+3 İngilizce yazarda 1-2 ayet.
+
 ## Tuzaklar (hepsi bir kez yaşandı)
 
 1. `pnpm deploy` pnpm'in yerleşiği — sessizce hiçbir şey yapmaz. **`pnpm run deploy`** kullan.
@@ -536,6 +576,14 @@ değiştirilmedi.
 7. Türetilmiş ilişkilerde **puan tek başına yetmez, çeşitlilik sınırı şart**. İlk sürümde
    Bakara 153'ün sekiz bağının sekizi de tek bir nadir kökten (عون) geliyordu; sabır bağı
    listeye hiç giremiyordu. `MAX_PER_REF = 3` bunu çözdü — bkz. `scripts/import/lib/relations.ts`.
+11. **Ana sayfada elle yazılmış sayı bırakma.** 2026-09-07'de aynı sayfa hem `54` hem `26`
+   meal yazıyordu; biri veriden geliyordu, öteki koda gömülüydü ve yazar eklenince bayatladı.
+   Sayı daima `authors_index.json`'dan hesaplanır.
+12. **Sayfa dosyasındaki `import.meta.url` taşınırken kırılır.** `harita.astro` içindeki
+   `dirname(fileURLToPath(import.meta.url)) + "../../../../"` şans eseri doğruydu; kütüphaneye
+   taşınınca paket `dist/chunks/` altına düşer ve derinlik değişir. Yeni kod `DATA_DIR`
+   üzerinden kök buluyor (bkz. `lib/data-dir.ts`, aynı tuzak tefsiri sessizce yayından
+   düşürmüştü).
 
 ## Hero videosu (2026-09-06 durumu)
 
@@ -802,3 +850,100 @@ tek build'de kesin sonuç verdi.
 **Ders:** bir bölüm "boş veri" ile "veriyi bulamama" arasında ayrım yapmıyorsa,
 ikincisi birincisi gibi görünür. Dev sunucusunda doğrulamak yetmez; bölümün üretim
 çıktısında sayılması gerekir (`grep -rl "tafsir-work" dist/*-suresi/*.html | wc -l`).
+
+## Okuma günlüğü — YAYINDA (2026-09-07)
+
+Ana sayfadaki "yakında" kartlarından biriydi; artık `/gunluk` adresinde çalışıyor.
+Plan §4.6'nın tamamı: **not, yer imi, okuma ilerlemesi, FSRS ezber tekrarı, ayarlar,
+JSON dışa/içe aktarma.**
+
+| Katman | Dosya |
+|---|---|
+| Depo (IndexedDB) | `apps/web/src/lib/gunluk/store.ts` |
+| Zamanlayıcı | `apps/web/src/lib/gunluk/fsrs.ts` |
+| Arayüz mantığı | `apps/web/src/lib/gunluk/app.ts` |
+| Sayfa | `apps/web/src/pages/gunluk.astro` |
+| Stil | `global.css` "Okuma günlüğü (/gunluk)" |
+| Test | `apps/web/src/lib/gunluk/__tests__/fsrs.smoke.ts` (20 test) · `pnpm test` |
+| CSP | `infra/nginx/kurankesfi.tr.conf` — `~^/gunluk(\.html)?$` |
+
+### JavaScript yalnızca bu sayfada
+
+Karar kullanıcıyla alındı (2026-09-07): **6236 ayet sayfası JS'siz kalır.** Ayet
+sayfası yalnızca düz bir bağlantı taşır — `/gunluk?ekle=2:255` — ve orada
+`default-src 'none'` CSP'si değişmedi. Açılan tek yer `/gunluk`:
+
+- `script-src 'self'` — günlük uygulaması (kendi sunucumuzdan, CDN yok)
+- `connect-src 'self'` — not satırının yanında ayet metnini göstermek için
+  `/data/verse/verse_<s>_<v>.json` okunur
+
+`unsafe-inline` ve `unsafe-eval` açılmadı. Paket **14 KB ham / 5 KB gzip**
+(plan §20.4 bütçesi 100 KB).
+
+### Dexie kurulmadı
+
+Plan §6 "Dexie.js (IndexedDB)" diyor; alınmadı. Altı basit depo ve anahtar bazlı
+okuma için 25 KB'lık bir bağımlılık gerekmiyordu — `store.ts` ~120 satırda aynı işi
+yapıyor. Proje D3'ü ve Cytoscape'i de aynı gerekçeyle almamıştı. Sorgu ihtiyacı
+büyürse (çok alanlı indeks, canlı sorgu) karar gözden geçirilir.
+
+### Şema düzeltildi: `ease` → `stability` + `difficulty`
+
+`packages/schema/src/user_data.ts` FSRS'i adıyla anıyor ama **SM-2 alanlarıyla**
+yazılmıştı (tek bir `ease` çarpanı). FSRS'in bütün farkı kararlılık ile zorluğu
+ayrı tutmasıdır: "zor ama hatırladım" SM-2'de yalnızca aralığı kısaltır, FSRS'te
+o ayetin zorluğunu **kalıcı olarak** yükseltir. Kimsede veri yoktu, göç gerekmedi.
+Duman testleri tam bu ayrımı koruyor — biri dosyayı "sadeleştirip" SM-2'ye
+döndürürse testler düşer.
+
+### Bilinçli olarak yapılmayanlar
+
+- **Okuma ilerlemesi kendiliğinden işaretlenmiyor.** Ayet sayfalarında JS
+  çalışmadığı için hangi ayetin okunduğu izlenemiyor; kaydı kullanıcı "Buraya
+  kadar okudum" ile koyuyor. Sayfada bu açıkça yazıyor.
+- **Ayarlar (`selectedAuthors`, `fontSize`, `theme`) arayüzde yok.** Depoda ve
+  dışa aktarma dosyasında var, ama onları okuyacak sayfa yok (diğer sayfalarda JS
+  yok). Etkisi olmayan denetim göstermek yerine boş bırakıldı.
+- **Keşif yolu ve karşılaştırma sepeti** (plan §12.8) günlüğün işi değil. İçe
+  aktarılan dosyada gelirlerse `passthrough` deposunda **olduğu gibi saklanır** —
+  bir sürüm atlaması kullanıcının verisini silmemeli.
+
+## Arapça kıraat — YAYINDA (2026-09-07)
+
+Ana sayfadaki ikinci "yakında" kartı. **Mishary Alafasy** kaydı (kullanıcı seçimi),
+6236/6236 ayet, 1,59 GB, eksik yok.
+
+| Katman | Dosya |
+|---|---|
+| İndirme | `scripts/media/fetch_recitation.ts` · `pnpm media:recitation` |
+| Künye | `data/recitation/reciter_alafasy.json` (script ÜRETİR, elle yazılmaz) |
+| Şema | `packages/schema/src/recitation.ts` |
+| Çıktı | `recitation.json` (`scripts/build/build.ts` → `emitRecitation`) |
+| Okuma | `apps/web/src/lib/recitation.ts` |
+| Arayüz | ayet sayfasında `<audio controls preload="none">` |
+| Barındırma | R2 → `medya.kurankesfi.tr/ses/alafasy/<sss><vvv>.mp3` |
+
+### Zaman damgası sorunu ortadan kalktı
+
+QUL'un kıraat paketi **atlanmıştı**: yalnızca sure düzeyinde MP3 adresi veriyor ve
+`segments.json` boş geliyordu — ayet zaman damgası olmadan "bu ayeti dinle"
+yapılamaz. everyayah.com ayet başına **ayrı dosya** veriyor; dosya adı ayetin
+kendisi (`002255.mp3`). Damgaya gerek kalmadı.
+
+İkinci sonucu daha önemli: **oynatma JavaScript istemiyor.** `<audio controls>`
+yetiyor. Ayet sayfalarının `default-src 'none'` CSP'si değişmedi; `media-src`
+zaten medya.kurankesfi.tr'ye açıktı (medya katmanı, 2026-09-06).
+
+### Veritabanı tablosu açılmadı
+
+Bir kârî = **tek satır künye**; ayet başına satır yok, çünkü dosya adı ayetten
+hesaplanıyor. İlişki, birleştirme ve tekillik sorusu olmayan tek satır için tablo
+açmak, migration yazmak ve import adımı eklemek hiçbir şey kazandırmazdı.
+`data/scripture` ile aynı gerekçe: build dosyayı doğrudan okur ve şemayla doğrular.
+
+### `missingVerses` bir tahmin değil, ölçüm
+
+İndirme bittikten sonra **elde gerçekten duran** dosyalar sayılır. O listedeki
+ayetlerde oynatıcı hiç basılmaz — çalmayan bir oynatıcı göstermek sessiz kırılmadır.
+Linter kapsamı denetliyor: `verseCount + missingVerses.length = 6236` tutmuyorsa
+build durur (manifest indirmeden sonra yeniden yazılmamış demektir).

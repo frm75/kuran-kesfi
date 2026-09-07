@@ -1,9 +1,11 @@
 ---
 import Base from "~/layouts/Base.astro";
+import HaritaStatik from "~/components/HaritaStatik.astro";
 import Translation from "~/components/Translation.astro";
 import {
   getAuthorsIndex,
   getDefaultAuthor,
+  getLocations,
   getSurahsIndex,
   getVerseDetail,
   verseLabel,
@@ -43,6 +45,21 @@ const authors = getAuthorsIndex().authors;
 const turkishAuthors = authors.filter((a) => a.language === "tr");
 const englishAuthors = authors.filter((a) => a.language === "en");
 const defaultAuthor = getDefaultAuthor();
+
+/**
+ * Harita onizlemesi icin konum sayilari.
+ *
+ * Sayilar VERIDEN gelir, koda yazilmaz. Ana sayfada elle yazilmis bir sayinin
+ * ne oldugu 2026-09-07'de goruldu: modul listesinde "26 meal" yaziyordu, ayni
+ * sayfanin hero'su ise veriden gelen 54'u basiyordu. Iki sayi tek sayfada.
+ */
+const locations = getLocations();
+const locationsByConfidence = {
+  kesin: locations.filter((l) => l.confidence === "kesin").length,
+  muhtemel: locations.filter((l) => l.confidence === "muhtemel").length,
+  gelenek: locations.filter((l) => l.confidence === "gelenek").length,
+  tartismali: locations.filter((l) => l.confidence === "tartismali").length,
+};
 
 /**
  * Hero ayeti: Âl-i İmrân 103. Sabit seçim — sayfanın "ağ" fikrini taşıyan
@@ -172,7 +189,9 @@ const modules = [
     name: "Meal karşılaştırma",
     state: "hazir",
     to: heroVerseHref,
-    note: `${authors.length} meal yan yana. Aynı ayetin farklı karşılanışını görün.`,
+    note:
+      `${turkishAuthors.length} Türkçe ve ${englishAuthors.length} İngilizce meal yan yana. ` +
+      "Aynı ayetin farklı karşılanışını görün.",
   },
   {
     name: "Çeviriyazı",
@@ -217,13 +236,15 @@ const modules = [
   },
   {
     name: "Okuma günlüğü",
-    state: "yakinda",
+    state: "hazir",
+    to: "/gunluk",
     note: "Notlarınız ve ezber tekrarınız; sunucuda değil, cihazınızda.",
   },
   {
     name: "Ses (kıraat)",
-    state: "yakinda",
-    note: "Lisans uyumlu kârîler arasından.",
+    state: "hazir",
+    to: heroVerseHref,
+    note: "Her ayetin kıraati ayet sayfasında; Mishary Alafasy kaydı.",
   },
   {
     name: "Çevrimdışı okuma",
@@ -273,14 +294,14 @@ const menu = [
     href: "/sureler",
     items: [
       { name: "Sure Listesi", note: `${totals.surahs} sure`, href: "/sureler" },
-      // Karşılaştırma AYET sayfasında yaşıyor: 26 Türkçe meal aynı anda,
+      // Karşılaştırma AYET sayfasında yaşıyor: bütün Türkçe mealler aynı anda,
       // üstünde hangilerinin görüneceğini seçen JS'siz bir panel. Menü
       // buraya, Fâtiha'nın ilk ayetine açılıyor — sabit ve tanıdık bir
       // başlangıç. Eskiden `/sureler`e gidiyordu, yani "Sure Listesi" ile
       // aynı yere; iki madde tek hedefti (kullanıcı bildirdi 2026-09-06).
       {
         name: "Meal Karşılaştırma",
-        note: "26 meal yan yana; istediğinizi seçin",
+        note: `${String(turkishAuthors.length)} Türkçe meal yan yana; istediğinizi seçin`,
         href: "/fatiha-suresi/1#mealler",
       },
       { name: "Mushaf Modu", note: "Sayfa düzeninde Arapça metin", href: undefined },
@@ -423,8 +444,8 @@ const menu = [
 
         <p class="lp-hero-lede">
           Bir ayeti açın; geçtiği kıssa, bağlı olduğu kavram, kökü, indiği dönem ve
-          anlatıldığı yer aynı anda önünüze gelsin. {authors.length} meal ve kaynağı
-          gösterilen açıklamalarla.
+          anlatıldığı yer aynı anda önünüze gelsin. {turkishAuthors.length} Türkçe,
+          {" "}{englishAuthors.length} İngilizce meal ve kaynağı gösterilen açıklamalarla.
         </p>
 
         <p class="lp-hero-acts">
@@ -577,7 +598,53 @@ const menu = [
       </div>
     </section>
 
-    {/* --- 5. Modüller ---------------------------------------------------- */}
+    {/* --- 5. Harita ------------------------------------------------------ */}
+    {/*
+      HARITA ANA SAYFAYA NEDEN STATIK GIRIYOR (2026-09-07, kullanici istegi:
+      "ana sayfaya da harita modulunu koyalim, ordan gitmek isteyen olabilir")
+
+      Ana sayfada `/harita`ya dort METIN baglantisi zaten vardi; eksik olan
+      haritanin GORUNMESIYDI. Etkilesimli MapLibre'yi buraya koymak ~970 KB
+      betik ve ana sayfanin CSP'sinde `script-src` acmak demekti; ikisi de
+      plan 20.4 basari olcutunu (LCP < 2 sn / 3G) ve "8200+ sayfa 0 bayt JS"
+      kuralini kirardi — ustelik ana sayfa sitenin en cok acilan sayfasi.
+
+      Statik SVG ayni veriyi, ayni kadraji, ayni pin bicimlerini kullaniyor.
+      Etkilesim isteyen bir tik otede: kartin tamami /harita'ya gidiyor.
+    */}
+    <section class="lp-sec lp-harita" id="harita" aria-labelledby="harita-baslik">
+      <div class="lp-wrap lp-harita-grid">
+        <div class="lp-harita-metin">
+          <p class="rule-ornament" aria-hidden="true"><span></span></p>
+          <h2 id="harita-baslik" class="lp-h2">Kıssalar bir yerde geçti</h2>
+          <p class="lp-lead">
+            Nûh'un gemisi, Mûsâ'nın vadisi, Ashâb-ı Kehf'in mağarası — hepsinin bir
+            coğrafyası var. Harita <strong>"işte tam burası" demez</strong>: her konumun
+            ne kadar kesin olduğu yanında yazılı, farklı görüşler gizlenmiyor.
+          </p>
+          <ul class="fact-row">
+            <li><b>{locations.length}</b><span>konum</span></li>
+            <li><b>{locationsByConfidence.kesin}</b><span>kesin</span></li>
+            <li><b>{locationsByConfidence.muhtemel}</b><span>muhtemel</span></li>
+            <li><b>{locationsByConfidence.gelenek}</b><span>gelenek</span></li>
+            <li><b>{locationsByConfidence.tartismali}</b><span>tartışmalı</span></li>
+          </ul>
+          <p class="lp-hero-acts">
+            <a href="/harita" class="lp-btn lp-btn-s">Haritayı aç</a>
+          </p>
+        </div>
+
+        {/*
+          Baglanti haritayi SARIYOR; `lp-stretch` degil, cunku esneyecek bir
+          metin baglantisi yok — haritanin kendisi tiklanan sey.
+        */}
+        <a href="/harita" class="lp-harita-vis" aria-label={`Kıssa haritası — ${String(locations.length)} konum`}>
+          <HaritaStatik variant="onizleme" />
+        </a>
+      </div>
+    </section>
+
+    {/* --- 6. Modüller ---------------------------------------------------- */}
     <section class="lp-sec" id="moduller" aria-labelledby="moduller-baslik">
       <div class="lp-wrap">
         <p class="rule-ornament" aria-hidden="true"><span></span></p>
@@ -609,7 +676,7 @@ const menu = [
       </div>
     </section>
 
-    {/* --- 6. Mealler -----------------------------------------------------
+    {/* --- 7. Mealler -----------------------------------------------------
         Eskiden burada iki ayrı bölüm vardı: "Kaynaklar" (lisans kartlarıyla)
         ve "Kaynak Şeffaflığı" (rozet gösterimiyle). İkisi de kaldırıldı —
         aynı şey sayfanın dört yerinde tekrarlanıyordu (kullanıcı kararı
@@ -1638,6 +1705,70 @@ const menu = [
     fill: var(--text-secondary);
     font-family: var(--font-body);
     font-size: 11.5px;
+  }
+
+  /* --- Harita ------------------------------------------------------------ */
+
+  /* Metin solda, harita sağda; dar ekranda harita metnin ALTINA iner. Haritayı
+     üste almak dar ekranda başlıksız bir görselle karşılamak olurdu — ne
+     olduğu okunmadan görünürdü. */
+  .lp-harita-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-10);
+    align-items: center;
+  }
+  /* Metin sütunu daha geniş: harita PORTRE (kadraj Habeşistan–Anadolu, yani
+     boylamdan çok enlem kaplıyor). Geniş sütuna koymak iki yanında boş deniz
+     bırakırdı. */
+  @media (min-width: 64rem) {
+    .lp-harita-grid {
+      grid-template-columns: 1.25fr 1fr;
+    }
+  }
+  .lp-harita-metin .fact-row {
+    margin-top: var(--space-8);
+  }
+
+  /* Tıklanan şey haritanın kendisi. Odak halkası tarayıcıdan gelir; `outline`
+     sıfırlanmıyor (DESIGN.md: klavye kullanıcısı nerede olduğunu görmeli). */
+  .lp-harita-vis {
+    display: block;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+  }
+  .lp-harita-vis:hover .map-svg,
+  .lp-harita-vis:focus-visible .map-svg {
+    border-color: var(--accent);
+  }
+
+  /* Önizleme: /harita ile AYNI kadraj, aynı pin biçimleri (components/
+     HaritaStatik.astro). Fark yalnızca ölçekte — etiketler burada basılmıyor,
+     26 yer adı bu boyutta üst üste biner ve okunmaz. */
+  /* YÜKSEKLİKTEN boyutlandırılıyor, genişlikten değil.
+
+     `width:100%` + `max-height` denendi ve yanlıştı: viewBox'lı bir SVG'de
+     genişlik kabın tamamına yayılır, yükseklik kırpılır ve çizim `meet`
+     kuralıyla ortaya oturur — haritanın iki yanında boş deniz şeridi kalır.
+     Yükseklik sabit, genişlik oranından geldiğinde tam oturuyor. */
+  .map-svg.is-onizleme {
+    width: auto;
+    height: 28rem;
+    max-width: 100%;
+    margin-inline: auto;
+    transition: border-color var(--duration-fast) var(--ease-out);
+  }
+  @media (min-width: 64rem) {
+    .map-svg.is-onizleme {
+      height: 34rem;
+    }
+  }
+  /* Pin çizgileri küçük ölçekte kaybolmasın: aynı biçim, kalın kontur. */
+  .map-svg.is-onizleme .pin circle {
+    stroke-width: 3;
+  }
+  .map-svg.is-onizleme .pin.is-tartismali circle {
+    stroke-width: 2;
   }
 
   /* --- Modüller ---------------------------------------------------------- */

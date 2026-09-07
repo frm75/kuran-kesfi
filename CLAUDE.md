@@ -134,7 +134,10 @@ yapılmayanlar ve NEDENİ, bir kez yaşanmış tuzaklar, sıradaki adımlar. Bü
   HarfBuzz ile yakalar — bu komut geçmeden font değişikliği birleştirilmez
 - **JavaScript 0 bayt.** Sunucu CSP'si `default-src 'none'`; betik sessizce engellenir. Betik gerektiren
   bir tasarım öğesi JS'siz karşılığıyla kurulur (statik SVG, `<details>`, CSS `:focus-within`).
-  Gerçekten gerekiyorsa önce CSP'ye `script-src 'self'` girer ve bu ayrıca onaylanır
+  Gerçekten gerekiyorsa önce CSP'ye `script-src 'self'` girer ve bu ayrıca onaylanır.
+  Bugüne kadar üç sayfada açıldı: `/harita`, `/kissa/*` ve `/gunluk`. **6236 ayet sayfası dahil
+  kalan her şey 0 bayt JS** — okuma günlüğü tam bu yüzden tek sayfada döner ve ayet sayfası ona
+  yalnızca düz bir bağlantı verir (`/gunluk?ekle=2:255`, kullanıcı kararı 2026-09-07)
 - **CSP değişirse canlıya da uygulanır.** `infra/nginx/*.conf` repoda güncellenip
   `/www/server/panel/vhost/nginx/` altına kopyalanmazsa hiçbir şey hata vermez — dosyalar 200 döner,
   yalnızca `<video>` sessizce engellenir. Duman testi artık CSP başlığının kendisini okuyor
@@ -177,7 +180,7 @@ yapılmayanlar ve NEDENİ, bir kez yaşanmış tuzaklar, sıradaki adımlar. Bü
   kavrama bağlanır; `source_id` NULL kalır (platform derlemesi). Kavramlar arası "birlikte geçer" bağı
   kosinüs benzerliğiyle hesaplanır. Elle yazılan ilişki (contrast/cause/part_of) hesaplananı ezer
 - **Harita MapLibre GL JS + PMTiles (2026-09-05'te değişti); kavram grafı hâlâ JavaScript'siz.**
-  CSP artık **sayfaya göre**: `script-src 'self'` yalnız `/harita` ve `/kissa/*` için açık
+  CSP artık **sayfaya göre**: `script-src 'self'` yalnız `/harita`, `/kissa/*` ve `/gunluk` için açık
   (`infra/nginx` içindeki `map $uri $kesif_csp` bloğu), kalan 8100+ sayfa 0 bayt JS.
   Altlık kendi sunucumuzdan: R2'de PMTiles (OSM/Protomaps), üçüncü taraf tile yok.
   **Statik SVG silinmedi** — betik çalışmazsa veya altlık gelmezse yerinde kalır; devir teslim

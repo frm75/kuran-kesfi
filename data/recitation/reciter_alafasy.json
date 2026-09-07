@@ -1,0 +1,16 @@
+{
+  "reciters": [
+    {
+      "slug": "alafasy",
+      "name": "Mishary Rashid Alafasy",
+      "nameAr": "مشاري راشد العفاسي",
+      "style": "murattal",
+      "bitrateKbps": 128,
+      "sourceSlug": "everyayah",
+      "basePath": "ses/alafasy",
+      "verseCount": 6236,
+      "missingVerses": [],
+      "totalBytes": 1706672026
+    }
+  ]
+}

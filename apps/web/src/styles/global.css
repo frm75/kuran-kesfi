@@ -3456,3 +3456,287 @@ a.ctx-num:hover {
   margin: var(--space-3) 0 0;
   max-width: var(--content-narrow);
 }
+
+/* --- Okuma günlüğü (/gunluk) ----------------------------------------------
+ *
+ * Sitenin JavaScript çalışan ikinci sayfası (diğeri /harita). Bütün veri
+ * tarayıcıda; bu yüzden arayüz "kaydedildi / silindi" gibi her sonucu
+ * GÖRÜNÜR söyler (`.g-toast`) — sessiz başarı sessiz başarısızlıktan
+ * ayırt edilemez.
+ */
+.g-toast {
+  position: sticky;
+  top: var(--space-2);
+  z-index: 5;
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+}
+.g-toast[data-kind="err"] {
+  border-color: var(--danger);
+}
+
+.g-warn {
+  margin: var(--space-6) 0;
+  padding: var(--space-4);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  line-height: var(--lh-normal);
+}
+
+/* --- ekleme kutusu --- */
+.g-add {
+  margin: var(--space-6) 0;
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+}
+.g-add h2 {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-heading);
+  font-size: var(--text-base);
+  font-weight: var(--fw-medium);
+}
+.g-add-grid {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: 8rem 1fr;
+}
+.g-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+}
+.g-field span {
+  color: var(--text-muted);
+}
+.g-field input,
+.g-field textarea {
+  padding: var(--space-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+}
+.g-add-actions {
+  display: flex;
+  margin-top: var(--space-3);
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.g-btn {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+}
+.g-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+.g-btn-quiet {
+  border-color: transparent;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+.g-btn-danger:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+/* --- sekmeler --- */
+.g-tabs {
+  display: flex;
+  margin: var(--space-6) 0 var(--space-4);
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  border-bottom: 1px solid var(--border);
+}
+.g-tab {
+  padding: var(--space-2) var(--space-3);
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+}
+.g-tab[aria-selected="true"] {
+  border-bottom-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.g-panel h2 {
+  margin: var(--space-6) 0 var(--space-2);
+  font-family: var(--font-heading);
+  font-size: var(--text-base);
+  font-weight: var(--fw-medium);
+}
+.g-summary {
+  margin: 0 0 var(--space-3);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+}
+.g-empty {
+  margin: var(--space-4) 0;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+/* --- listeler --- */
+.g-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.g-row {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border);
+}
+.g-row-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+.g-row-verse {
+  color: var(--accent-text);
+  font-family: var(--font-heading);
+  font-size: var(--text-base);
+  text-decoration: none;
+}
+.g-row-verse:hover {
+  text-decoration: underline;
+}
+.g-row-meal {
+  margin: var(--space-1) 0 0;
+  color: var(--text-muted);
+  font-family: var(--font-reading);
+  font-size: var(--text-sm);
+  line-height: var(--lh-normal);
+}
+.g-row-text {
+  margin: var(--space-2) 0 0;
+  color: var(--text-primary);
+  font-family: var(--font-reading);
+  font-size: var(--text-base);
+  line-height: var(--lh-relaxed);
+  white-space: pre-wrap;
+}
+.g-row-meta {
+  margin: var(--space-1) 0 0;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+.g-row-actions {
+  display: flex;
+  margin-top: var(--space-2);
+  gap: var(--space-2);
+}
+
+/* --- tekrar kartı --- */
+.g-review {
+  margin: var(--space-4) 0;
+  padding: var(--space-4);
+  border: 1px solid var(--accent-muted);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+}
+.g-review-verse {
+  color: var(--accent-text);
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  text-decoration: none;
+}
+.g-review-arabic {
+  margin: var(--space-4) 0;
+  font-family: var(--font-arabic);
+  font-size: var(--text-ar-md);
+  line-height: var(--lh-arabic);
+  text-align: right;
+}
+.g-review-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+/* Dört değerlendirme yalnız renkle ayrılmaz — metni de farklıdır
+ * (DESIGN.md §1: renk tek başına anlam taşımaz). */
+.g-rate-1:hover {
+  border-color: var(--danger);
+}
+.g-rate-4:hover {
+  border-color: var(--success);
+}
+
+@media (max-width: 34rem) {
+  .g-add-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Ayet sayfasındaki günlük bağlantısı. Düz bağlantıdır: o sayfada betik
+ * çalışmaz, iş /gunluk'te döner. */
+.verse-journal {
+  margin: var(--space-4) 0 0;
+  font-size: var(--text-sm);
+}
+.verse-journal a {
+  color: var(--accent-text);
+  text-decoration: none;
+}
+.verse-journal a:hover {
+  text-decoration: underline;
+}
+.verse-journal-note {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+
+/* --- Kıraat (ayet sayfası) -------------------------------------------------
+ *
+ * Oynatıcı tarayıcının kendi <audio> denetimidir: JavaScript yok, kütüphane
+ * yok, tema uyumu tarayıcıya bırakıldı. Kayıt ayet başına ayrı dosya olduğu
+ * için zaman damgası da gerekmiyor.
+ */
+.verse-audio {
+  margin: var(--space-6) 0 0;
+}
+.verse-audio-row + .verse-audio-row {
+  margin-top: var(--space-4);
+}
+.verse-audio-head {
+  display: flex;
+  margin: 0 0 var(--space-2);
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.verse-audio-name {
+  color: var(--text-primary);
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+}
+.verse-audio-style {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+.verse-audio audio {
+  width: 100%;
+  max-width: var(--content-narrow);
+}

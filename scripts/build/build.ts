@@ -49,8 +49,10 @@ import {
   staticRoot,
   staticRootsIndex,
   staticSources,
+  recitationFile,
   scriptureBooksFile,
   scriptureQuotesFile,
+  staticRecitation,
   staticScripture,
   staticSurah,
   staticSurahTranslation,
@@ -58,7 +60,7 @@ import {
   staticVerseDetail,
   staticVerseWords,
 } from "@kuran/schema";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { Report, closePool, fail, info, pool, repoRoot, stripSourceHtml } from "@kuran/pipeline";
 import { Emitter, dataRoot } from "./lib/emit.js";
@@ -200,6 +202,56 @@ function emitScripture(emitter: Emitter, report: Report): void {
       `en uzun ${String(longest)}/${String(payload.source.quoteLimit)} karakter — ` +
       "telifli metin, iktibas (data/scripture/LICENSE.md)",
   );
+}
+
+/**
+ * Arapca kiraat kunyesi — data/recitation/reciter_*.json -> recitation.json
+ *
+ * `data/scripture` ile ayni gerekce (yukarida): bir kari TEK satir kunyedir,
+ * ayet basina satiri yoktur cunku dosya adi ayetten hesaplanir. Iliski ve
+ * tekillik sorusu olmayan tek satir icin tablo acmak hicbir sey kazandirmazdi.
+ *
+ * Dosya `pnpm media:recitation` tarafindan URETILIR: indirme bittikten sonra
+ * elde GERCEKTEN duran dosyalar sayilip yazilir. Bu yuzden `missingVerses`
+ * bir tahmin degil olcumdur ve arayuz o ayetlerde oynatici gostermez.
+ *
+ * Dizin yoksa hic dosya yazilmaz — ses olmadan da site kurulabilmeli.
+ */
+function emitRecitation(emitter: Emitter, report: Report): void {
+  const dir = resolve(repoRoot, "data/recitation");
+  if (!existsSync(dir)) return;
+  const files = readdirSync(dir)
+    .filter((name) => /^reciter_[a-z0-9-]+\.json$/.test(name))
+    .sort();
+  if (files.length === 0) return;
+
+  const reciters = [];
+  for (const name of files) {
+    const path = resolve(dir, name);
+    const parsed = recitationFile.safeParse(JSON.parse(readFileSync(path, "utf8")));
+    if (!parsed.success) {
+      fail(`data/recitation/${name} sema dogrulamasi basarisiz:\n${parsed.error.message}`);
+    }
+    reciters.push(...parsed.data.reciters);
+  }
+
+  const payload = { reciters };
+  const checked = staticRecitation.safeParse(payload);
+  if (!checked.success) {
+    fail(`recitation.json sema dogrulamasi basarisiz:\n${checked.error.message}`);
+  }
+  emitter.write("recitation.json", payload);
+
+  for (const r of reciters) {
+    info(
+      `kiraat: ${r.name} — ${r.verseCount.toLocaleString("tr-TR")} / 6236 ayet · ` +
+        `${(r.totalBytes / 1024 / 1024 / 1024).toFixed(2)} GB · ${String(r.missingVerses.length)} eksik`,
+    );
+    report.note(
+      `Kiraat: ${r.name} (${r.style}) — ${r.verseCount.toLocaleString("tr-TR")} / 6236 ayet · ` +
+        `kaynak ${r.sourceSlug} · medya.kurankesfi.tr/${r.basePath}/`,
+    );
+  }
 }
 
 async function main(): Promise<void> {
@@ -713,6 +765,8 @@ async function main(): Promise<void> {
   emitter.write("sources.json", sourcesPayload);
 
   emitScripture(emitter, report);
+
+  emitRecitation(emitter, report);
 
   const { files, bytes } = emitter.stats;
   info(

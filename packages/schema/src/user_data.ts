@@ -41,7 +41,18 @@ export const memorizationReview = z.object({
 
 export const memorization = z.object({
   verseKey: verseKeyRef,
-  ease: z.number(),
+  /**
+   * FSRS kararliligi — gun cinsinden. Hafizanin kac gunde bir basa donecegi.
+   *
+   * 2026-09-07: burada once tek bir `ease` alani vardi, yani SM-2 sekli.
+   * Sema FSRS'i adiyla aniyor ama SM-2 alanlariyla yazilmisti; FSRS'in butun
+   * farki KARARLILIK ile ZORLUGU ayri tutmasidir ("zor ama hatirladim" SM-2'de
+   * yalnizca araligi kisaltir, FSRS'te zorlugu kalici olarak yukseltir).
+   * Kimsede veri yoktu, gocu gerekmedi.
+   */
+  stability: z.number().positive(),
+  /** FSRS zorlugu — 1 (kolay) ile 10 (zor) arasi. */
+  difficulty: z.number().min(1).max(10),
   intervalDays: z.number().nonnegative(),
   nextReviewAt: isoTimestamp,
   history: z.array(memorizationReview),

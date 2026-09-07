@@ -13,7 +13,8 @@
     "terrain": "tsx fetch_terrain.ts",
     "ai:queue": "tsx ai_queue.ts queue",
     "ai:collect": "tsx ai_queue.ts collect",
-    "fetch": "tsx fetch_images.ts"
+    "fetch": "tsx fetch_images.ts",
+    "recitation": "tsx fetch_recitation.ts"
   },
   "dependencies": {
     "@kuran/pipeline": "workspace:*",

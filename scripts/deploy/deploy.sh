@@ -98,6 +98,10 @@ smoke_test() {
   check "/kavram/sabir"            200
   check "/zaman"                   200
   check "/harita"                  200
+  # Okuma gunlugu (2026-09-07): tek sayfada donen JS uygulamasi. Sayfa 200
+  # dondugu halde CSP'de script-src yoksa gunluk SESSIZCE bos kalir — asagida
+  # CSP'si de ayrica denetleniyor.
+  check "/gunluk"                  200
   # Kok adresleri Arap harfi tasiyor; nginx'in yuzde kodlu istegi cozdugu
   # her yayinda dogrulanir (bir kez elle test edildi, sonra buraya alindi).
   check "/kok/%D9%82%D9%88%D9%84"  200
@@ -204,9 +208,16 @@ smoke_test() {
   # Uydu katmani: eksikse dugme goruntlenir ama tile'lar sessizce engellenir.
   csp_must_have "/harita"          "ibasemaps-api.arcgis.com"
   csp_must_have "/kissa/hz-musa"   "script-src 'self'"
+  # Gunluk: betik olmadan sayfa acilir ama hicbir sey yapmaz; connect-src
+  # olmadan not satirinin yanindaki ayet metni sessizce gelmez.
+  csp_must_have "/gunluk"          "script-src 'self'"
+  csp_must_have "/gunluk"          "connect-src 'self'"
   # Geri kalan her sey: 0 bayt JS garantisini sunucu tarafinda zorlayan sey bu.
   csp_must_not_have "/"                  "script-src"
   csp_must_not_have "/bakara-suresi/153" "script-src"
+  # Kiraat (2026-09-07): ayet sayfasindaki <audio> R2'den caliyor. media-src
+  # duserse oynatici gorunur ama SES GELMEZ, hata da vermez.
+  header_contains "/bakara-suresi/153" "medya.kurankesfi.tr" "CSP kiraat media-src"
   csp_must_not_have "/kissalar"          "script-src"
   csp_must_not_have "/sureler"           "script-src"
 

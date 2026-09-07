@@ -22,6 +22,7 @@ import {
 import { dateText, getVerseManuscripts } from "~/lib/manuscripts";
 import SourceBadge from "~/components/SourceBadge.astro";
 import { blockRangeLabel, getVerseTafsir, paragraphs } from "~/lib/tafsir";
+import { STYLE_LABEL, getVerseAudio } from "~/lib/recitation";
 import MedyaPaneli from "~/components/MedyaPaneli.astro";
 import { getVerseMedia } from "~/lib/media";
 
@@ -105,6 +106,14 @@ const manuscripts = getVerseManuscripts(surahId, verseNumber);
  * Yalnızca `ayet_tefsiri` blokları gelir; gerekçe `lib/tafsir.ts` içinde.
  */
 const tafsirs = getVerseTafsir(surahId, verseNumber);
+
+/**
+ * Arapça kıraat (plan §2.4).
+ *
+ * Kayıt ayet başına ayrı bir MP3 olduğu için oynatma JavaScript istemiyor:
+ * `<audio controls>` yetiyor. Dosyası olmayan ayette oynatıcı hiç basılmaz.
+ */
+const verseAudio = getVerseAudio(surahId, verseNumber);
 
 /*
  * Bu ayete bagli medya (plan 62). Ayet basina en cok birkac kayit dusuyor,
@@ -286,6 +295,24 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
         {other.length > 0 && <li class="chip"><b>{other.length}</b> İngilizce çeviri</li>}
       </ul>
 
+      {/*
+        Günlüğe ekleme DÜZ BİR BAĞLANTIDIR, JavaScript değil.
+
+        Ayet sayfalarında `script-src` kapalı (`default-src 'none'`) ve öyle
+        kalıyor — 6236 sayfanın hepsine betik açmak sitenin en sıkı güvenlik
+        sözünü gevşetirdi (karar 2026-09-07). Not alma, ezber ve yer imi işi
+        /gunluk sayfasında döner; bu bağlantı yalnızca ayet numarasını
+        oraya taşır.
+      */}
+      <p class="verse-journal">
+        <a href={`/gunluk?ekle=${String(surahId)}:${String(verseNumber)}`}>
+          Bu ayeti okuma günlüğüne ekle
+        </a>
+        <span class="verse-journal-note">
+          — not, yer imi ya da ezber; kayıt sunucuya değil cihazınıza yazılır
+        </span>
+      </p>
+
       <div class="mt-6">
         <VerseArabic
           text={verse.textUthmani}
@@ -295,6 +322,40 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
           large
         />
       </div>
+
+      {
+        verseAudio.length > 0 && (
+          <div class="verse-audio">
+            {verseAudio.map(({ reciter, url }) => (
+              <div class="verse-audio-row">
+                <p class="verse-audio-head">
+                  <span class="verse-audio-name">{reciter.name}</span>
+                  <span class="verse-audio-style">{STYLE_LABEL[reciter.style]}</span>
+                </p>
+                {/*
+                  JavaScript YOK: dosya adı ayetin kendisi olduğu için
+                  <audio> etiketi tek başına yetiyor. preload="none" —
+                  6236 sayfanın hiçbiri açılışta ses indirmesin.
+                */}
+                <audio
+                  controls
+                  preload="none"
+                  src={url}
+                  aria-label={`${label} — ${reciter.name} kıraati`}
+                >
+                  <a href={url}>Ses dosyasını indir</a>
+                </audio>
+                <SourceBadge
+                  contentClass="kaynakli"
+                  sources={[getSourceBySlug(reciter.sourceSlug)]}
+                  label={`${label} kıraati — ${reciter.name}`}
+                  compact
+                />
+              </div>
+            ))}
+          </div>
+        )
+      }
 
       {
         /* Kaynakta eksikse satır hiç çizilmez — boş başlık gösterilmez. */

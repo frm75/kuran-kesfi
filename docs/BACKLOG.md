@@ -270,6 +270,37 @@ köke bağlı değildi. Veri doğru, sayfa uzun.
 Yapılacak: en kalabalık köklerde (اله, قول, كون) sayfayı bölmek ya da ayet listesini
 sure sure katlamak. Acil değil — gzip'li ağırlık 26 KB.
 
+## Okuma günlüğü ve kıraat — kalanlar (2026-09-07)
+
+İkisi de yayında (`docs/DURUM.md`). Bilinçli olarak dışarıda bırakılanlar:
+
+### Okuma günlüğü
+
+- **Okuma ilerlemesi elle işaretleniyor.** Ayet sayfalarında JS olmadığı için
+  hangi ayetin okunduğu izlenemiyor. Otomatik takip ancak ayet sayfalarına betik
+  açmakla olur — o karar verilmedi ve verilmemesi bilinçli.
+- **Ayarlar (`selectedAuthors`, `fontSize`, `theme`) arayüzde yok.** Depoda ve dışa
+  aktarma dosyasında duruyor ama okuyacak sayfa yok; diğer sayfalarda JS
+  çalışmıyor. Meal seçimi bugün CSS ile yapılıyor (`MealSecici`) ve kalıcı değil.
+- **Keşif yolu / karşılaştırma sepeti** (plan §12.8) günlüğe bağlanmadı. İçe
+  aktarılan dosyada gelirse saklanıyor, gösterilmiyor.
+- **Çoklu cihaz eşitleme yok ve olmayacak** — plan §1.2: hesap yok, sunucuya veri
+  gitmez. Taşıma kullanıcının indirdiği JSON dosyasıyla.
+- **PWA / çevrimdışı okuma** hâlâ "yakında" kartında. Service worker + kademeli
+  önbellek işi; günlükten bağımsız.
+
+### Kıraat
+
+- **Tek kârî var** (Mishary Alafasy, murattal). `fetch_recitation.ts` içinde
+  el-Husarî tanımı hazır duruyor: `pnpm media:recitation --reciter husary`
+  yeter, arayüz iki kârîyi de kendiliğinden yan yana gösterir. Depolama +1,6 GB.
+- **Kârî seçimi kalıcı değil.** Birden fazla kârî gelirse ayet sayfasında ikisi de
+  basılır; "hep bunu çal" tercihi ayarlar arayüzü olmadığı için tutulamıyor.
+- **Sure boyunca sürekli çalma yok.** Her ayet ayrı `<audio>`; sıradaki ayete
+  kendiliğinden geçmek JavaScript ister, ayet sayfalarında betik kapalı.
+- **Meal sesi (Türkçe) yok.** Plan §2.4 "Türkçe meal sesi"ni de sayıyor; açık
+  lisanslı bir Türkçe meal kaydı araştırılmadı.
+
 ## Özellik önerileri
 
 > Hepsi **ilk yayın sonrası**. Kaynağı: kullanıcının 2026-09-06 tarihli

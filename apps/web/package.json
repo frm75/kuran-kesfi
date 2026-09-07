@@ -10,7 +10,8 @@
     "build": "pnpm prepare:harita && ASTRO_TELEMETRY_DISABLED=1 astro build",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview --port ${SITE_PORT:-4321}",
     "typecheck": "ASTRO_TELEMETRY_DISABLED=1 astro check",
-    "prepare:harita": "node scripts/prepare-harita.mjs"
+    "prepare:harita": "node scripts/prepare-harita.mjs",
+    "test:smoke": "tsx src/lib/gunluk/__tests__/fsrs.smoke.ts"
   },
   "dependencies": {
     "@kuran/schema": "workspace:*",

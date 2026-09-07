@@ -40,6 +40,8 @@ import {
   staticMedia,
   staticVerseMedia,
   staticVerseManuscripts,
+  recitationFile,
+  staticRecitation,
   staticTafsirIndex,
   staticTafsirSurah,
   staticVerseRelations,
@@ -789,6 +791,31 @@ function checkStaticOutput(): void {
           }
         }
       }
+    } else if (relativePath === "recitation.json") {
+      const result = staticRecitation.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) errors.push(`${relativePath}: ${result.error.message}`);
+      else {
+        for (const r of result.data.reciters) {
+          /*
+           * Kapsam hesabi kendi icinde tutarli olmali: elde duran + eksik = 6236.
+           * Tutmuyorsa manifest indirmeden SONRA yeniden yazilmamis demektir ve
+           * arayuz olmayan bir dosyaya oynatici basar (sessiz kirilma).
+           */
+          if (r.verseCount + r.missingVerses.length !== 6236) {
+            errors.push(
+              `${relativePath}: ${r.slug} kapsami tutmuyor — ` +
+                `${String(r.verseCount)} elde + ${String(r.missingVerses.length)} eksik ` +
+                "= 6236 olmali (manifest indirmeden sonra yeniden yazilmali)",
+            );
+            break;
+          }
+          if (r.verseCount > 0 && r.totalBytes === 0) {
+            errors.push(`${relativePath}: ${r.slug} dosyalari var ama toplam boyut sifir`);
+            break;
+          }
+        }
+      }
     } else if (relativePath === "tafsir_index.json") {
       const result = staticTafsirIndex.safeParse(parsed);
       checksRun += 1;
@@ -1171,6 +1198,7 @@ async function checkManualData(): Promise<void> {
     if (/^data\/media\/media_[a-z0-9-]+\.json$/.test(rel)) return mediaFile;
     if (/^data\/media\/prompts\/prompt_[a-z0-9-]+\.json$/.test(rel)) return aiPromptsFile;
     if (rel === "data/media/ai_generated.json") return aiGeneratedFile;
+    if (/^data\/recitation\/reciter_[a-z0-9-]+\.json$/.test(rel)) return recitationFile;
     return null;
   };
 

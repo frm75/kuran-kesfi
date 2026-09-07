@@ -1,0 +1,201 @@
+---
+import Base from "~/layouts/Base.astro";
+import { getSurahsIndex } from "~/lib/data";
+
+/**
+ * Okuma günlüğü — plan §4.6, Faz 4.
+ *
+ * ## Sitenin JavaScript çalışan ikinci sayfası
+ *
+ * Diğeri `/harita` (MapLibre). Karar 2026-09-07'de kullanıcıyla alındı:
+ * 6236 ayet sayfası JS'siz kalsın, günlük tek sayfada dönsün. Ayet sayfası
+ * yalnızca düz bir bağlantı taşır (`/gunluk?ekle=2:255`); orada
+ * `default-src 'none'` CSP'si değişmedi. Nginx'te bu sayfa için
+ * `script-src 'self'` ve `connect-src 'self'` açıldı — ikincisi ayet
+ * metinlerini `/data/verse/*.json`'dan okumak için.
+ *
+ * ## Veri sunucuya gitmez
+ *
+ * Site statik; yazacak bir uç yok. Notlar, yer imleri, okuma ilerlemesi ve
+ * ezber durumu tarayıcının IndexedDB'sinde durur (plan §1.2, §1.3, §12.7).
+ * Cihazlar arası taşıma kullanıcının kendi indirdiği JSON dosyasıyla olur.
+ *
+ * Sure dizini sayfaya GÖMÜLÜ gelir (114 satır, ~8 KB): ayet numarası
+ * doğrulaması ve sure adları için ağa çıkmaya değmez.
+ */
+const surahs = getSurahsIndex().surahs.map((s) => ({
+  id: s.id,
+  slug: s.slug,
+  nameTr: s.nameTr,
+  verseCount: s.verseCount,
+}));
+
+const TABS = [
+  { key: "bugun", label: "Bugün" },
+  { key: "notlar", label: "Notlar" },
+  { key: "yer-imleri", label: "Yer imleri" },
+  { key: "ezber", label: "Ezber" },
+  { key: "ilerleme", label: "İlerleme" },
+  { key: "veri", label: "Veri" },
+] as const;
+---
+
+<Base
+  title="Okuma günlüğü — Kur'an-ı Kerim Keşfi"
+  description="Notlarınız, yer imleriniz ve ezber tekrarınız. Sunucuda değil, cihazınızda."
+  arabic
+  reading
+>
+  <main id="icerik" class="pg pg-normal">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">Okuma günlüğü</span>
+    </nav>
+
+    <header class="pg-head">
+      <p class="pg-kicker">Cihazınızda</p>
+      <h1 class="pg-title">Okuma günlüğü</h1>
+      <p class="pg-lede">
+        Notlarınız, yer imleriniz, okuma ilerlemeniz ve ezber tekrarınız
+        <strong>bu cihazın tarayıcısında</strong> durur. Sunucuya gönderilmez,
+        hesap açılmaz, kimlik istenmez — site zaten tamamen statiktir, yazacağı
+        bir yer yoktur. Başka bir cihaza taşımak için “Veri” sekmesinden
+        dosya olarak indirip oradan geri yükleyin.
+      </p>
+    </header>
+
+    <p class="g-warn" id="gunluk-unavailable" hidden>
+      Tarayıcınız yerel depolamaya (IndexedDB) izin vermiyor. Gizli sekmede ya
+      da site verilerinin kapalı olduğu bir ayarda bu sayfa çalışmaz.
+    </p>
+
+    <div id="gunluk-app" hidden>
+      <p class="g-toast" id="gunluk-toast" role="status" hidden></p>
+
+      <section class="g-add" aria-labelledby="g-add-baslik">
+        <h2 id="g-add-baslik">Ekle</h2>
+        <div class="g-add-grid">
+          <label class="g-field">
+            <span>Ayet</span>
+            <input
+              type="text"
+              id="g-add-verse"
+              inputmode="numeric"
+              placeholder="2:255"
+              autocomplete="off"
+            />
+          </label>
+          <label class="g-field g-field-wide">
+            <span>Not / etiket</span>
+            <textarea id="g-add-text" rows="2" placeholder="İsteğe bağlı"></textarea>
+          </label>
+        </div>
+        <div class="g-add-actions">
+          <button type="button" class="g-btn" id="g-add-note">Not olarak kaydet</button>
+          <button type="button" class="g-btn" id="g-add-bookmark">Yer imi ekle</button>
+          <button type="button" class="g-btn" id="g-add-memo">Ezbere ekle</button>
+          <button type="button" class="g-btn" id="g-add-progress">Buraya kadar okudum</button>
+        </div>
+      </section>
+
+      <div class="g-tabs" role="tablist" aria-label="Günlük bölümleri">
+        {
+          TABS.map((tab) => (
+            <button
+              type="button"
+              class="g-tab"
+              role="tab"
+              data-g-tab={tab.key}
+              aria-selected={tab.key === "bugun" ? "true" : "false"}
+            >
+              {tab.label}
+            </button>
+          ))
+        }
+      </div>
+
+      <section class="g-panel" data-g-panel="bugun" role="tabpanel" aria-label="Bugün">
+        <p class="g-summary" id="g-today-summary">Yükleniyor…</p>
+        <div class="g-review" id="g-review-card" hidden></div>
+        <p class="sec-note">
+          Tekrar aralıkları <strong>FSRS</strong> ile hesaplanır: her ayet için
+          kararlılık (kaç günde bir başa döndüğü) ve zorluk ayrı tutulur. “Zor
+          ama hatırladım” demek aralığı yalnızca kısaltmaz, o ayetin zorluğunu
+          kalıcı olarak yükseltir.
+        </p>
+      </section>
+
+      <section class="g-panel" data-g-panel="notlar" role="tabpanel" aria-label="Notlar" hidden>
+        <p class="g-summary"><span id="g-notes-count">0</span> not</p>
+        <ul class="g-list" id="g-notes-list"></ul>
+      </section>
+
+      <section
+        class="g-panel"
+        data-g-panel="yer-imleri"
+        role="tabpanel"
+        aria-label="Yer imleri"
+        hidden
+      >
+        <p class="g-summary"><span id="g-bookmarks-count">0</span> yer imi</p>
+        <ul class="g-list" id="g-bookmarks-list"></ul>
+      </section>
+
+      <section class="g-panel" data-g-panel="ezber" role="tabpanel" aria-label="Ezber" hidden>
+        <p class="g-summary">
+          <span id="g-memo-count">0</span> ayet takipte · <span id="g-due-count">0</span> tanesi
+          bugün
+        </p>
+        <ul class="g-list" id="g-memo-list"></ul>
+      </section>
+
+      <section class="g-panel" data-g-panel="ilerleme" role="tabpanel" aria-label="İlerleme" hidden>
+        <p class="g-summary"><span id="g-progress-count">0</span> surede okuma kaydı</p>
+        <ul class="g-list" id="g-progress-list"></ul>
+        <p class="sec-note">
+          Okuma ilerlemesi kendiliğinden işaretlenmez: ayet sayfalarında
+          JavaScript çalışmadığı için hangi ayeti okuduğunuz izlenmiyor. Kaydı
+          yukarıdaki “Buraya kadar okudum” ile siz koyarsınız.
+        </p>
+      </section>
+
+      <section class="g-panel" data-g-panel="veri" role="tabpanel" aria-label="Veri" hidden>
+        <h2>Dışa aktar</h2>
+        <p class="sec-note">
+          Bütün günlük tek bir JSON dosyasına iner. Başka bir cihazda aynı
+          sayfadan geri yükleyebilirsiniz.
+        </p>
+        <button type="button" class="g-btn" id="g-export">Dosya olarak indir</button>
+
+        <h2>İçe aktar</h2>
+        <input type="file" id="g-import-file" accept="application/json,.json" />
+        <div class="g-add-actions">
+          <button type="button" class="g-btn" id="g-import-merge">Ekleyerek yükle</button>
+          <button type="button" class="g-btn" id="g-import-replace">Değiştirerek yükle</button>
+        </div>
+        <p class="sec-note">
+          “Ekleyerek” mevcut kayıtları korur, aynı ayetin kaydını dosyadakiyle
+          değiştirir. “Değiştirerek” bu cihazdaki günlüğü tamamen siler.
+        </p>
+
+        <h2>Sil</h2>
+        <p class="sec-note">
+          Bu cihazdaki bütün günlük verisini siler. Geri alınamaz; önce dışa
+          aktarmanız önerilir.
+        </p>
+        <button type="button" class="g-btn g-btn-danger" id="g-wipe">Bütün verileri sil</button>
+      </section>
+    </div>
+
+    <script
+      type="application/json"
+      id="gunluk-sureler"
+      is:inline
+      set:html={JSON.stringify(surahs)}
+    />
+  </main>
+</Base>
+
+<script>
+  import "~/lib/gunluk/app";
+</script>
