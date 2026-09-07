@@ -1,13 +1,18 @@
 ---
 import Base from "~/layouts/Base.astro";
+import RadyalAtlas from "~/components/RadyalAtlas.astro";
 import { getConceptsIndex } from "~/lib/data";
+import { radyalYerlesim } from "~/lib/graf";
+import type { RadyalGrup, RadyalKenar } from "~/lib/graf";
 
 /**
  * Kavram listesi — plan §2.4.
  *
  * Graf görünümü (force-directed) JavaScript ister; CSP `script-src` kapalı ve
  * plan §12 graf için liste alternatifini zorunlu kılıyor. Bu sayfa o listedir:
- * kavramlar ağaç yapısıyla (üst kavram → alt kavram) gruplanmış.
+ * kavramlar ağaç yapısıyla (üst kavram → alt kavram) gruplanmış. Liste ile
+ * aynı verinin görsel özeti olan radyal atlas listenin ÜSTÜNDE durur, onun
+ * yerine geçmez (bkz. `.atlas` @media kuralı, 48rem altında gizlenir).
  */
 
 const concepts = getConceptsIndex();
@@ -21,7 +26,65 @@ for (const c of concepts) {
 }
 
 const totalVerses = concepts.reduce((a, c) => a + c.verseCount, 0);
-const sorted = [...roots].sort((a, b) => b.verseCount - a.verseCount);
+
+/*
+ * Ust kavramlarin kendi koku yok, verseCount'lari 0. Ayet sayisina gore
+ * siralamak sekiz sifiri siralamak olurdu ve grup dizilimi dosya okuma
+ * sirasina kalirdi — atlas her veri degisiminde baska acida donerdi.
+ * Cocuklarin toplamina gore siralaniyor; esitlikte slug ile sabitleniyor.
+ */
+const toplamAyet = (slug: string): number =>
+  (childrenOf.get(slug) ?? []).reduce(
+    (a, c) => a + c.verseCount + (childrenOf.get(c.slug) ?? []).reduce((x, y) => x + y.verseCount, 0),
+    0,
+  );
+const sorted = [...roots].sort(
+  (a, b) => toplamAyet(b.slug) - toplamAyet(a.slug) || a.slug.localeCompare(b.slug, "tr"),
+);
+
+const gruplar: RadyalGrup[] = sorted.map((ust) => ({
+  slug: ust.slug,
+  label: ust.nameTr,
+  cocuklar: (childrenOf.get(ust.slug) ?? []).map((c) => ({
+    slug: c.slug,
+    label: c.nameTr,
+    agirlik: c.verseCount,
+    altlar: (childrenOf.get(c.slug) ?? []).map((a) => ({
+      slug: a.slug, label: a.nameTr, agirlik: a.verseCount,
+    })),
+  })),
+}));
+
+/*
+ * Atlas cizim butcesi — spec B.2, `origin` sutunu eklendikten SONRA olculdu.
+ *
+ * curated 117 cift (contrast 25, cause 12, part_of 14, co_occurrence 66) HEP
+ * cizilir: insan karari istatistige feda edilmez. Hesaplanandan yalnizca
+ * agirlik 3 (8 cift) girer; agirlik 2 (125) ve 1 (293) atlasi sac yumagina
+ * cevirirdi, onlar grup sayfasinda ve ego-grafta.
+ *
+ * Toplam 125 kenar / 109 dugum, iki gorsel katman:
+ *   belirgin  contrast + cause + part_of        51 cift  (anlamsal bag)
+ *   soluk     curated co_occurrence + w3        74 cift  (birlikte gecis)
+ *
+ * DIKKAT: ilk plan taslagi curated'i 51 saniyordu — o rakam yalnizca
+ * contrast+cause+part_of toplamiydi, 66 elle yazilmis co_occurrence'i
+ * atliyordu. Gercek 117.
+ */
+const gorulen = new Set<string>();
+const kenarlar: RadyalKenar[] = [];
+for (const c of concepts) {
+  for (const r of c.relations) {
+    const cizilir = r.origin === "curated" || r.weight === 3;
+    if (!cizilir) continue;
+    const anahtar = [c.slug, r.slug].sort().join("|") + "#" + r.type;
+    if (gorulen.has(anahtar)) continue;
+    gorulen.add(anahtar);
+    kenarlar.push({ a: c.slug, b: r.slug, type: r.type, weight: r.weight, origin: r.origin });
+  }
+}
+
+const yerlesim = radyalYerlesim({ boyut: 900, gruplar, kenarlar });
 ---
 
 <Base
@@ -50,6 +113,18 @@ const sorted = [...roots].sort((a, b) => b.verseCount - a.verseCount);
         <li><b>{roots.length}</b><span>üst kavram</span></li>
       </ul>
     </header>
+
+    <RadyalAtlas
+      yerlesim={yerlesim}
+      baslik="Kavram atlası"
+      aciklama={`${String(concepts.length)} kavram, ${String(gruplar.length)} üst başlık altında; çemberin içinden geçen çizgiler kavramlar arası bağlardır. Aynı veri aşağıda liste hâlinde de var.`}
+      hrefOnEk="/kavram/"
+    />
+    <p class="atlas-not">
+      Bu bölümleme platform derlemesidir; kavramların kendisi ve ayet bağları
+      kök verisinden hesaplanır. Grafiği okuyamıyorsanız aynı veri aşağıda
+      liste hâlindedir.
+    </p>
 
     <ol class="concept-grid">
       {

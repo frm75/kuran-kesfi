@@ -1,0 +1,173 @@
+---
+import type { GetStaticPaths } from "astro";
+import Base from "~/layouts/Base.astro";
+import RadyalAtlas from "~/components/RadyalAtlas.astro";
+import { getConcept, getConceptsIndex } from "~/lib/data";
+import { radyalYerlesim } from "~/lib/graf";
+import type { RadyalGrup, RadyalKenar } from "~/lib/graf";
+
+/**
+ * Kavram grubu — plan Task 5 adım 4.
+ *
+ * Sekiz üst kavramın her biri kendi sayfasını alır: tanım, yalnızca bu
+ * grubun kendi kavramları arasındaki bağları gösteren küçük bir alt grafik,
+ * ve tam liste.
+ *
+ * Alt grafik `kavramlar.astro`'daki ana atlasın FİLTRESİNİ kullanmaz — orada
+ * 109 düğüm arasında hesaplanan ağırlık 1-2 bağları "saç yumağı" olurdu, bu
+ * yüzden yalnızca ağırlık 3 + tüm elle yazılmış bağlar çizilir. Burada grup
+ * en fazla 15 üye taşıyor (`members`), o risk yok: iki üye ARASINDAKİ HER
+ * bağ çizilir, ağırlık/kaynak farkı gözetilmez.
+ *
+ * Kaynak da farklı: `concepts_index.json` kavram başına ilişkiyi kırpıyor
+ * (Task 3 — curated hiç kırpılmaz ama computed ağırlık 1 çoğunlukla dizin
+ * dosyasına girmiyor). Grup grafiği eksiksiz olmalı, o yüzden her üye için
+ * `concept_<slug>.json` (kırpılmamış tam liste) okunuyor.
+ */
+
+export const getStaticPaths = (() =>
+  getConceptsIndex()
+    .filter((c) => c.parentSlug === null)
+    .map((c) => ({ params: { slug: c.slug } }))) satisfies GetStaticPaths;
+
+const { slug } = Astro.params;
+if (slug === undefined) throw new Error("grup slug yok");
+
+const concepts = getConceptsIndex();
+const grup = concepts.find((c) => c.slug === slug);
+if (grup === undefined) throw new Error(`grup bulunamadi: ${slug}`);
+
+const children = concepts.filter((c) => c.parentSlug === slug);
+const grandchildrenOf = new Map<string, typeof concepts>();
+for (const child of children) {
+  grandchildrenOf.set(
+    child.slug,
+    concepts.filter((c) => c.parentSlug === child.slug),
+  );
+}
+const members = new Set<string>([
+  ...children.map((c) => c.slug),
+  ...children.flatMap((c) => (grandchildrenOf.get(c.slug) ?? []).map((a) => a.slug)),
+]);
+
+/*
+ * Tum ic baglar — agirlik/kaynak filtresi yok, gerekce dosya basindaki
+ * yorumda. Cift yonlu depolamadan (A'nin iliskisinde B, B'ninkinde A da
+ * var) dogan tekrar `gorulen` ile eleniyor.
+ */
+const gorulen = new Set<string>();
+const kenarlar: RadyalKenar[] = [];
+for (const memberSlug of members) {
+  const full = getConcept(memberSlug);
+  for (const r of full.relations) {
+    if (!members.has(r.slug)) continue;
+    const anahtar = [memberSlug, r.slug].sort().join("|") + "#" + r.type;
+    if (gorulen.has(anahtar)) continue;
+    gorulen.add(anahtar);
+    kenarlar.push({ a: memberSlug, b: r.slug, type: r.type, weight: r.weight, origin: r.origin });
+  }
+}
+
+const gruplar: RadyalGrup[] = [
+  {
+    slug: grup.slug,
+    label: grup.nameTr,
+    cocuklar: children.map((c) => ({
+      slug: c.slug,
+      label: c.nameTr,
+      agirlik: c.verseCount,
+      altlar: (grandchildrenOf.get(c.slug) ?? []).map((a) => ({
+        slug: a.slug,
+        label: a.nameTr,
+        agirlik: a.verseCount,
+      })),
+    })),
+  },
+];
+
+const yerlesim = radyalYerlesim({ boyut: 700, gruplar, kenarlar });
+
+const totalVerses = children.reduce(
+  (a, c) => a + c.verseCount + (grandchildrenOf.get(c.slug) ?? []).reduce((x, y) => x + y.verseCount, 0),
+  0,
+);
+---
+
+<Base
+  title={`${grup.nameTr} — Kavram grubu — Kur'an-ı Kerim Keşfi`}
+  description={grup.definition.slice(0, 160)}
+  arabic
+>
+  <main id="icerik" class="pg pg-wide">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <a href="/anla">Anla</a> <span aria-hidden="true">›</span>
+      <a href="/kavramlar">Kavramlar</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">{grup.nameTr}</span>
+    </nav>
+
+    <header class="pg-head">
+      <p class="pg-kicker">Kavram grubu</p>
+      <h1 class="pg-title">
+        {grup.nameTr}
+        {grup.nameAr !== null && (
+          <span lang="ar" dir="rtl" class="pg-title-ar">{grup.nameAr}</span>
+        )}
+      </h1>
+      <p class="pg-lede">{grup.definition}</p>
+      <ul class="fact-row">
+        <li><b>{children.length}</b><span>alt kavram</span></li>
+        <li><b>{totalVerses}</b><span>ayet bağı</span></li>
+        <li><b>{kenarlar.length}</b><span>iç bağ</span></li>
+      </ul>
+    </header>
+
+    <RadyalAtlas
+      yerlesim={yerlesim}
+      baslik={`${grup.nameTr} grubunun kavram grafiği`}
+      aciklama={`${String(children.length)} kavram ve aralarındaki ${String(kenarlar.length)} bağ; ana atlasın aksine burada ağırlık farkı gözetmeksizin bu grubun kendi içindeki TÜM bağlar çizilir. Aynı veri aşağıda liste hâlinde de var.`}
+      hrefOnEk="/kavram/"
+    />
+    <p class="atlas-not">
+      Bu küçük grafik yalnızca <strong>{grup.nameTr}</strong> grubunun kendi kavramlarını
+      ve aralarındaki bağları gösterir; ana kavram atlasının aksine ağırlık/kaynak
+      filtresi uygulanmaz. Grafiği okuyamıyorsanız aynı veri aşağıda liste hâlindedir.
+    </p>
+
+    <ol class="concept-grid">
+      {
+        children.map((concept) => {
+          const kids = grandchildrenOf.get(concept.slug) ?? [];
+          return (
+            <li>
+              <a class="cn-main" href={`/kavram/${concept.slug}`}>
+                <span class="cn-head">
+                  <span class="cn-name">{concept.nameTr}</span>
+                  {concept.nameAr !== null && (
+                    <span class="cn-ar" lang="ar" dir="rtl">
+                      {concept.nameAr}
+                    </span>
+                  )}
+                </span>
+                <span class="cn-def">{concept.definition}</span>
+                <span class="cn-meta">{concept.verseCount} ayet</span>
+              </a>
+              {kids.length > 0 && (
+                <ul class="cn-kids">
+                  {kids.map((kid) => (
+                    <li>
+                      <a href={`/kavram/${kid.slug}`}>
+                        {kid.nameTr}
+                        <span class="cn-kid-count">{kid.verseCount}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          );
+        })
+      }
+    </ol>
+  </main>
+</Base>

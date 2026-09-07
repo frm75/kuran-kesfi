@@ -1,0 +1,66 @@
+---
+import { kirisYolu } from "~/lib/graf";
+import type { GrafYerlesim } from "~/lib/graf";
+
+interface Props {
+  yerlesim: GrafYerlesim;
+  /** SVG <title> — ekran okuyucu bunu okur */
+  baslik: string;
+  /** SVG <desc> — grafiğin ne gösterdiği */
+  aciklama: string;
+  /** Düğüm bağlantısının önü, örn "/kavram/" */
+  hrefOnEk: string;
+}
+
+const { yerlesim, baslik, aciklama, hrefOnEk } = Astro.props;
+const { dugumler, kenarlar, boyut } = yerlesim;
+const merkez = boyut / 2;
+const dugumBySlug = new Map(dugumler.map((d) => [d.slug, d]));
+
+/*
+ * Grup rengi SVG'de sinif adiyla veriliyor, gomulu stille degil: CSP
+ * style-src 'unsafe-inline' aciyor ama nitelik icinde renk yazmak temayla
+ * degismeyen sabit renk demek olurdu. Sinif -> CSS degiskeni -> iki tema.
+ */
+const gruplar = [...new Set(dugumler.map((d) => d.grup))];
+const grupSinifi = new Map(gruplar.map((g, i) => [g, `gr-${String((i % 8) + 1)}`]));
+---
+
+<figure class="atlas">
+  <svg viewBox={`0 0 ${String(boyut)} ${String(boyut)}`} role="img" aria-labelledby="atlas-baslik atlas-desc">
+    <title id="atlas-baslik">{baslik}</title>
+    <desc id="atlas-desc">{aciklama}</desc>
+
+    <g class="atlas-kenarlar">
+      {
+        kenarlar.map((k) => {
+          const a = dugumBySlug.get(k.a);
+          const b = dugumBySlug.get(k.b);
+          if (a === undefined || b === undefined) return null;
+          return (
+            <path
+              d={kirisYolu(a, b, merkez)}
+              class={`kn kn-${k.type} ${k.origin === "computed" ? "kn-hesap" : "kn-elle"}`}
+              fill="none"
+            />
+          );
+        })
+      }
+    </g>
+
+    <g class="atlas-dugumler">
+      {
+        dugumler.map((d) => (
+          <a href={`${hrefOnEk}${d.slug}`}>
+            <circle cx={d.x} cy={d.y} r={d.r} class={`dg dg-${String(d.derinlik)} ${grupSinifi.get(d.grup) ?? ""}`} />
+            {d.derinlik === 0 && (
+              <text x={d.x} y={d.y - d.r - 6} class="dg-etiket" text-anchor="middle">
+                {d.label}
+              </text>
+            )}
+          </a>
+        ))
+      }
+    </g>
+  </svg>
+</figure>

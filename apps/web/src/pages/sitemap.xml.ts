@@ -64,6 +64,9 @@ export const GET: APIRoute = () => {
   }
   for (const concept of getConceptsIndex()) {
     urls.push({ loc: `/kavram/${concept.slug}`, priority: "0.6" });
+    if (concept.parentSlug === null) {
+      urls.push({ loc: `/kavram/grup/${concept.slug}`, priority: "0.7" });
+    }
   }
 
   // Kok adresleri Arapca harf tasiyor; sitemap'te yuzde kodlu olmalari gerekir.

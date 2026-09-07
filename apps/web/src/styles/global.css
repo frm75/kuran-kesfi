@@ -4083,3 +4083,171 @@ a.ctx-num:hover {
   color: var(--text-secondary);
   font-size: var(--text-xs);
 }
+
+/* =============================================================================
+   Kavram atlası — radyal graf (Task 5, kavram haritası planı)
+
+   `RadyalAtlas.astro` üreten SVG'yi biçimlendirir; `kavramlar.astro` (ana
+   atlas, 900×900) ve `kavram/grup/[slug].astro` (grup alt grafiği, 700×700)
+   ortak kullanır. Betik yok: koordinatlar `lib/graf.ts`'te build zamanında
+   hesaplanmış geliyor, burada yalnızca renk/biçim var.
+
+   Aynı verinin metin karşılığı her iki sayfada da grafiğin ALTINDA duran
+   gerçek bir `<ol>` — grafik onun yerine geçmiyor, görsel özeti. 48rem
+   altında (`@media` en altta) atlas gizlenir, liste tek başına kalır.
+   ========================================================================== */
+
+.atlas {
+  margin: 0 0 var(--space-2);
+}
+.atlas svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-elevated);
+}
+.atlas-not {
+  margin: 0 0 var(--space-6);
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  line-height: var(--lh-normal);
+}
+
+/*
+ * Kenarlar (bağlar) — iki görsel katman, DESIGN.md "renk tek başına anlam
+ * taşımaz" ilkesi:
+ *   belirgin   contrast / cause / part_of   — anlamsal bağ, insan kararı
+ *   soluk      co_occurrence                — birlikte geçiş, çoğu hesap
+ *
+ * Hesaplanan bağ KESİKLİ (`.kn-hesap`), elle yazılan DÜZ (`.kn-elle`): bu
+ * ayrım renkten bağımsız çalışsın diye çizgi biçiminde de tekrarlanıyor.
+ */
+.atlas .kn {
+  stroke: var(--text-muted);
+  stroke-width: 1;
+  opacity: 0.35;
+}
+.atlas .kn-contrast,
+.atlas .kn-cause,
+.atlas .kn-part_of {
+  stroke: var(--accent-text);
+  stroke-width: 1.4;
+  opacity: 0.8;
+}
+.atlas .kn-co_occurrence {
+  stroke: var(--text-muted);
+  stroke-width: 1;
+  opacity: 0.35;
+}
+.atlas .kn-hesap {
+  stroke-dasharray: 3 3;
+}
+.atlas .kn-elle {
+  stroke-dasharray: none;
+}
+
+/* Düğümler ------------------------------------------------------------- */
+.atlas .atlas-dugumler a {
+  cursor: pointer;
+}
+.atlas .dg {
+  stroke: var(--bg-primary);
+  stroke-width: 1;
+  transition: opacity var(--duration-fast);
+}
+.atlas .atlas-dugumler a:hover .dg,
+.atlas .atlas-dugumler a:focus-visible .dg {
+  opacity: 0.7;
+}
+/* derinlik 0: grup çekirdeği — daha kalın çerçeve, kendi etiketi var. */
+.atlas .dg-0 {
+  stroke: var(--text-primary);
+  stroke-width: 1.5;
+}
+.atlas .dg-1 {
+  opacity: 0.92;
+}
+.atlas .dg-2 {
+  opacity: 0.78;
+}
+.atlas .dg-etiket {
+  fill: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+/*
+ * Sekiz grup rengi — gruplar renk VE konumla (kendi açı dilimi) ayrışır,
+ * tek başına renge dayanmaz. `docs/DESIGN.md`'de tanımlı değildi, Task 5
+ * ile eklendi; her hex WCAG 1.4.11 (grafik nesne, metin değil) eşiği olan
+ * 3:1'i kendi temasının --bg-primary'sine karşı en az sağlıyor.
+ */
+:root {
+  --gr-1: #cb4d4d; /* 4,26:1 */
+  --gr-2: #cbac4d; /* 8,62:1 */
+  --gr-3: #8ccb4d; /* 9,76:1 */
+  --gr-4: #4dcb6d; /* 9,13:1 */
+  --gr-5: #4dcbcb; /* 9,72:1 */
+  --gr-6: #4d6dcb; /* 3,93:1 */
+  --gr-7: #8c4dcb; /* 3,66:1 */
+  --gr-8: #cb4dac; /* 4,70:1 */
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --gr-1: #b82e2e; /* 4,90:1 */
+    --gr-2: #8f7424; /* 3,61:1 */
+    --gr-3: #598f24; /* 3,15:1 */
+    --gr-4: #248f3e; /* 3,34:1 */
+    --gr-5: #248f8f; /* 3,14:1 */
+    --gr-6: #2e50b8; /* 5,72:1 */
+    --gr-7: #732eb8; /* 6,04:1 */
+    --gr-8: #b82e95; /* 4,39:1 */
+  }
+}
+:root[data-theme="light"] {
+  --gr-1: #b82e2e;
+  --gr-2: #8f7424;
+  --gr-3: #598f24;
+  --gr-4: #248f3e;
+  --gr-5: #248f8f;
+  --gr-6: #2e50b8;
+  --gr-7: #732eb8;
+  --gr-8: #b82e95;
+}
+.atlas .gr-1 {
+  fill: var(--gr-1);
+}
+.atlas .gr-2 {
+  fill: var(--gr-2);
+}
+.atlas .gr-3 {
+  fill: var(--gr-3);
+}
+.atlas .gr-4 {
+  fill: var(--gr-4);
+}
+.atlas .gr-5 {
+  fill: var(--gr-5);
+}
+.atlas .gr-6 {
+  fill: var(--gr-6);
+}
+.atlas .gr-7 {
+  fill: var(--gr-7);
+}
+.atlas .gr-8 {
+  fill: var(--gr-8);
+}
+
+/* Küçük ekranda atlas gizlenir, liste birincil içerik olarak kalır (plan
+   §12 "grafik listenin yerine geçmez" — dekoratife düşmesin diye gizleme
+   noktası listeyi TEK içerik yapan bir genişlikte, yarım okunur bir grafik
+   değil). */
+@media (max-width: 48rem) {
+  .atlas {
+    display: none;
+  }
+}
