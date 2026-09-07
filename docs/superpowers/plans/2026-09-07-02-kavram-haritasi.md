@@ -231,19 +231,39 @@ CREATE TYPE relation_origin AS ENUM ('curated', 'computed');
   origin            relation_origin NOT NULL,
 ```
 
-- [ ] **Step 2: Veritabanını yeni şemayla kur**
+- [ ] **Step 2: Şema deltasını CANLI veritabanına uygula — `down -v` YAPMA**
 
-`content:import` tabloları `TRUNCATE` ediyor ama sütun eklemiyor. Şema değiştiği için veritabanı yeniden kurulur:
+**Bu adım 2026-09-07'de değişti.** Önceki hâli `docker compose down -v` ile veritabanını
+sıfırdan kurduruyordu. Ölçüldü: veritabanı **279 MB, 56 tablo** ve içinde
+**336 537 meal satırı, 6236 ayet, 1641 kök** var. Bunlar `data:import`'tan gelir ve
+`content:import` onlara **dokunmaz** (`CONTENT_TABLES` yalnızca içerik katmanını sayar).
+`down -v` bu katmanı yok eder ve saatler süren bir yeniden import gerektirirdi — hiçbir
+karşılığı olmadan.
+
+Doğru yol: DDL'i çalışan veritabanına uygula. `concept_relation` zaten her import'ta
+`TRUNCATE` ediliyor, bu yüzden boş tabloya `NOT NULL` sütun eklemek sorunsuz:
 
 ```bash
-cd /opt/kuran && docker compose -f infra/db/docker-compose.yml down -v && docker compose -f infra/db/docker-compose.yml up -d
+docker exec kuran-pg psql -U kuran -d kuran -v ON_ERROR_STOP=1 <<'SQL'
+BEGIN;
+CREATE TYPE relation_origin AS ENUM ('curated', 'computed');
+TRUNCATE concept_relation;
+ALTER TABLE concept_relation ADD COLUMN origin relation_origin NOT NULL;
+COMMIT;
+SQL
 ```
 
-`docker-compose.yml` içindeki başlatma yolunun `infra/db/schema.sql`'i uyguladığını doğrula; uygulamıyorsa şemayı elle yükle:
+Doğrula:
 
 ```bash
-cd /opt/kuran && grep -n "schema.sql\|initdb" infra/db/docker-compose.yml
+docker exec kuran-pg psql -U kuran -d kuran -c "\d concept_relation"
 ```
+
+`origin | relation_origin | not null` satırını görmelisin.
+
+**`infra/db/schema.sql` yine de güncellenir** (Step 1) — o dosya sıfırdan kurulan bir
+veritabanının kaynağıdır. İki yer birlikte değişir: canlı DB delta ile, `schema.sql`
+gelecекteki temiz kurulum için.
 
 - [ ] **Step 3: Import'ta `origin` yaz**
 

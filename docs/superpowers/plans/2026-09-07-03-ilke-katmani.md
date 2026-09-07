@@ -216,14 +216,48 @@ console.log("yazildi:", yazildi);
 
 Beklenen: `yazildi: 60`, "ESLEME YOK" satırı yok. Çıkarsa **dur**.
 
-- [ ] **Step 6: Veritabanını yeniden kur ve içe aktar**
+- [ ] **Step 6: Şema deltasını CANLI veritabanına uygula — `down -v` YAPMA**
 
-Şema değişti; `content:import` sütun eklemez.
+**Bu adım 2026-09-07'de değişti.** Gerekçe plan 2 Task 2 Step 2 ile aynı: veritabanı
+279 MB ve içindeki 336 537 meal satırı `data:import`'tan geliyor; `content:import` onlara
+dokunmuyor. `down -v` o katmanı karşılıksız yok ederdi.
+
+`principle` tablosu her import'ta `TRUNCATE` ediliyor, bu yüzden boş tabloya `NOT NULL`
+sütun eklemek sorunsuz:
 
 ```bash
-cd /opt/kuran && docker compose -f infra/db/docker-compose.yml down -v && docker compose -f infra/db/docker-compose.yml up -d
-sleep 5 && pnpm content:import
+docker exec kuran-pg psql -U kuran -d kuran -v ON_ERROR_STOP=1 <<'SQL'
+BEGIN;
+CREATE TABLE principle_area (
+  id          integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  slug        text NOT NULL UNIQUE CHECK (slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$'),
+  name_tr     text NOT NULL,
+  name_ar     text,
+  definition  text NOT NULL,
+  "order"     smallint NOT NULL UNIQUE CHECK ("order" > 0)
+);
+CREATE TABLE principle_area_source (
+  principle_area_id integer NOT NULL REFERENCES principle_area (id) ON DELETE CASCADE,
+  source_id         integer NOT NULL REFERENCES source (id),
+  PRIMARY KEY (principle_area_id, source_id)
+);
+TRUNCATE principle CASCADE;
+ALTER TABLE principle ADD COLUMN area_id integer NOT NULL REFERENCES principle_area (id);
+COMMIT;
+SQL
 ```
+
+`TRUNCATE principle CASCADE` gereklidir: `principle_source`, `principle_verse`,
+`principle_story`, `principle_concept` ona bağlıdır ve hepsi zaten her import'ta
+yeniden yazılır.
+
+Sonra içe aktar:
+
+```bash
+pnpm content:import
+```
+
+**`infra/db/schema.sql` yine de güncellenir** (Step 3) — sıfırdan kurulum için.
 
 - [ ] **Step 7: Commit**
 
