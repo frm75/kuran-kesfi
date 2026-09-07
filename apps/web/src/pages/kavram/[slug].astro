@@ -1,7 +1,10 @@
 ---
 import type { GetStaticPaths } from "astro";
 import Base from "~/layouts/Base.astro";
+import RadyalAtlas from "~/components/RadyalAtlas.astro";
 import { getConcept, getConceptsIndex, getDefaultAuthor, getVerseText } from "~/lib/data";
+import { radyalYerlesim } from "~/lib/graf";
+import type { RadyalGrup, RadyalKenar } from "~/lib/graf";
 
 /**
  * Tek kavram — plan §2.4, §12.3 "kavramın Kur'an içindeki dağılımı".
@@ -40,6 +43,53 @@ const mekkiPercent = total === 0 ? 0 : Math.round((concept.stats.mekki / total) 
 /** En çok geçtiği 12 sure — dağılım çubuğu için. */
 const topSurahs = [...concept.stats.bySurah].sort((a, b) => b.count - a.count).slice(0, 12);
 const maxCount = topSurahs[0]?.count ?? 1;
+
+/*
+ * Ego-graf — plan Task 6. Kavram merkezde, en güçlü 6 komşusu tek halkada.
+ * `radyalYerlesim` yeniden kullanılıyor: merkezdeki kavram tek elemanlı bir
+ * "grup", komşular onun çocukları.
+ *
+ * `concept.relations` KIRPILMAMIŞ tam listeyi taşır (dizin dosyası —
+ * `concepts_index.json` — kırpar, kavram dosyası kırpmaz; bkz.
+ * `scripts/build/lib/content.ts`). Dizi tipe göre gruplu, tip içinde
+ * ağırlığa göre azalan sırada (`.sort((a,b) => tip esitse agirlik, degilse
+ * tip)`) — yani düz `.slice(0, 6)` "en güçlü 6" DEĞİL, "alfabetik ilk tipin
+ * en güçlüleri" demek. Ölçüldü: `adalet`'te bu, en güçlü bağlardan biri olan
+ * `zulum` (contrast, ağırlık 3 — adalet/zulüm zıt çifti) tamamen dışarıda
+ * kalıyor çünkü "contrast" tipi alfabetik olarak "co_occurrence"tan sonra
+ * geliyor. `iman`'da da aynı sorun: `takva`/`emanet`/`tevekkul` (part_of)
+ * tamamen kayboluyor.
+ *
+ * Bu yüzden burada AYRI bir sıralama yapılıyor: önce kaynak (curated her
+ * zaman computed'tan önce — insan kararı istatistiğe feda edilmez, dizin
+ * dosyasındaki kuralla aynı ilke), sonra ağırlığa göre azalan, sonra slug
+ * (belirlilik için). İlk 6 bu sıradan alınır. `adalet` için sonuç artık
+ * `zulum`'u içeriyor; `iman` için `sirk`/`takva`/`emanet` de giriyor.
+ */
+const komsular = [...concept.relations]
+  .sort((a, b) => {
+    if (a.origin !== b.origin) return a.origin === "curated" ? -1 : 1;
+    return b.weight - a.weight || a.slug.localeCompare(b.slug);
+  })
+  .slice(0, 6);
+
+const egoGruplar: RadyalGrup[] = [
+  {
+    slug: concept.slug,
+    label: concept.nameTr,
+    cocuklar: komsular.map((r) => ({ slug: r.slug, label: r.nameTr, agirlik: r.weight })),
+  },
+];
+const egoKenarlar: RadyalKenar[] = komsular.map((r) => ({
+  a: concept.slug,
+  b: r.slug,
+  type: r.type,
+  weight: r.weight,
+  origin: r.origin,
+}));
+// boyut=420 ölçüldü: 109 kavramın tümünde (1..~12 komşu, ilk 6'ya kırpılmış)
+// tek bir düğüm çifti bile çakışmıyor — bkz. görev raporu.
+const egoYerlesim = radyalYerlesim({ boyut: 420, gruplar: egoGruplar, kenarlar: egoKenarlar });
 ---
 
 <Base
@@ -123,6 +173,12 @@ const maxCount = topSurahs[0]?.count ?? 1;
               işaretlidir; etiketsiz olanlar kaynağa dayanır.
             </span>
           </div>
+          <RadyalAtlas
+            yerlesim={egoYerlesim}
+            baslik={`${concept.nameTr} ve en güçlü ${String(komsular.length)} komşusu`}
+            aciklama={`Merkezde ${concept.nameTr}, çevresinde en güçlü ${String(komsular.length)} bağlı kavram; elle yazılmış bağlar ağırlığından bağımsız önce gelir, kalan yer en ağırlıklı hesaplananlarla doldurulur. Aynı veri altta liste hâlinde de var.`}
+            hrefOnEk="/kavram/"
+          />
           <ul class="rel-list">
             {concept.relations.map((rel) => (
               <li>
