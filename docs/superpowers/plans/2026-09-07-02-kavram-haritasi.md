@@ -18,7 +18,7 @@
 - **Kaynaksız bağ kaynaklı gibi gösterilmez** (`CLAUDE.md` kural 4): hesaplanan bağ arayüzde ayrı etiketlenir.
 - **Her grafiğin altında gerçek liste bulunur** (plan §12) — liste birincil içerik, grafik onun görsel özeti.
 - **Renk tek başına anlam taşımaz**; gruplar renk **ve** konumla ayrılır.
-- Ölçülen graf gerçekleri (değişirse plan gözden geçirilir): 543 tekil yönsüz çift; contrast 25, part_of 14, cause 12; co_occurrence ağırlık 3/2/1 = 27/172/293; derece min 3, medyan 9, maks 90 (`ilah`); ilişkisiz kavram 0.
+- Ölçülen graf gerçekleri (Task 2 sonrası, `origin` ile): 543 tekil yönsüz çift = **117 curated** (contrast 25, cause 12, part_of 14, co_occurrence 66) + **426 computed** (ağırlık 3/2/1 = 8/125/293); derece min 3, medyan 9, maks 90 (`ilah`); ilişkisiz kavram 0. Atlas bütçesi **125 kenar / 109 düğüm**.
 
 ---
 
@@ -954,11 +954,20 @@ const gruplar: RadyalGrup[] = sorted.map((ust) => ({
 }));
 
 /*
- * Atlas cizim butcesi — spec B.2'de olculdu.
- * Elle yazilmis bag (contrast 25, part_of 14, cause 12) HEP cizilir: insan
- * karari grafige girer. Hesaplanan bagdan yalnizca agirlik 3 (27 cift)
- * girer; agirlik 1 ve 2 toplam 465 cift ve atlasi sac yumagina cevirirdi.
- * Toplam ~78 kenar / 109 dugum.
+ * Atlas cizim butcesi — spec B.2, `origin` sutunu eklendikten SONRA olculdu.
+ *
+ * curated 117 cift (contrast 25, cause 12, part_of 14, co_occurrence 66) HEP
+ * cizilir: insan karari istatistige feda edilmez. Hesaplanandan yalnizca
+ * agirlik 3 (8 cift) girer; agirlik 2 (125) ve 1 (293) atlasi sac yumagina
+ * cevirirdi, onlar grup sayfasinda ve ego-grafta.
+ *
+ * Toplam 125 kenar / 109 dugum, iki gorsel katman:
+ *   belirgin  contrast + cause + part_of        51 cift  (anlamsal bag)
+ *   soluk     curated co_occurrence + w3        74 cift  (birlikte gecis)
+ *
+ * DIKKAT: ilk plan taslagi curated'i 51 saniyordu — o rakam yalnizca
+ * contrast+cause+part_of toplamiydi, 66 elle yazilmis co_occurrence'i
+ * atliyordu. Gercek 117.
  */
 const gorulen = new Set<string>();
 const kenarlar: RadyalKenar[] = [];

@@ -214,10 +214,16 @@ içinde zaten çalışıyor ve önerilen tasarımın neredeyse tamamını yapıy
 | Ölçüm | Değer |
 |---|---|
 | Tekil yönsüz çift | **543** |
-| contrast / cause / part_of | 25 / 12 / 14 |
-| co_occurrence (ağırlık 3 / 2 / 1) | 27 / 172 / 293 |
+| **curated** (elle yazılmış) | **117** — contrast 25, cause 12, part_of 14, co_occurrence **66** |
+| **computed** (kosinüsten) | **426** — ağırlık 3 / 2 / 1 = **8 / 125 / 293** |
 | Düğüm derecesi (min / medyan / maks) | 3 / 9 / **90** (`ilah`) |
 | İlişkisiz kavram | **0** |
+
+**Düzeltme (2026-09-07, `origin` sütunu eklendikten sonra ölçüldü):** ilk tasarım turunda
+elle yazılmış bağ sayısı **51** sanılmıştı. Yanlış: o rakam yalnızca `contrast`, `cause` ve
+`part_of` toplamıydı; `data/concepts/*.json` içinde ayrıca **66 elle yazılmış
+`co_occurrence`** bağı var. Gerçek curated sayısı 117'dir. `origin` sütunu tam olarak bunu
+görünür kıldı.
 
 **Geriye kalan gerçek iş yalnızca ikisi:**
 
@@ -246,14 +252,17 @@ Atlasta çizilecek kenarlar ölçülen sayılarla sabitlenir:
 
 | Kenar | Adet | Atlasta |
 |---|---|---|
-| contrast | 25 | **çizilir** — kiriş, en belirgin |
-| part_of | 14 | **çizilir** — kiriş |
-| cause | 12 | **çizilir** — kiriş |
-| co_occurrence ağırlık 3 | 27 | **çizilir** — soluk yay |
-| co_occurrence ağırlık 2 | 172 | yalnızca grup sayfasında |
-| co_occurrence ağırlık 1 | 293 | yalnızca ego-grafta |
+| curated contrast | 25 | **belirgin kiriş** — çemberin içinden |
+| curated part_of | 14 | **belirgin kiriş** |
+| curated cause | 12 | **belirgin kiriş** |
+| curated co_occurrence | 66 | **soluk kiriş** — insan kararı, ama anlamsal değil |
+| computed ağırlık 3 | 8 | **soluk yay** |
+| computed ağırlık 2 | 125 | yalnızca grup sayfasında |
+| computed ağırlık 1 | 293 | yalnızca ego-grafta |
 
-Atlas toplam **78 kenar / 101 düğüm** — okunur yoğunluk.
+Atlas toplam **125 kenar / 109 düğüm**. İki görsel katman: 51 anlamsal bağ
+(contrast/cause/part_of) belirgin, 74 birlikte-geçiş bağı (66 curated + 8 computed) soluk.
+Elle yazılan bağ her zaman çizilir — insan kararı istatistiğe feda edilmez.
 
 ### B.3 `concepts_index.json` genişlemesi
 
@@ -282,10 +291,11 @@ Yerleşim:
 - Üçüncü seviye (`sirk`, `fisk`) ebeveyninin hemen dışında, kısa bir çıkıntıda.
 - Düğüm yarıçapı `sqrt(verseCount)` ile ölçeklenir — alan orantılı olsun, büyük kavram
   ekranı yutmasın.
-- Kenarlar §B.2'deki çizim bütçesine göre: 51 elle yazılmış bağ (contrast 25,
-  part_of 14, cause 12) çemberin **içinden** kiriş olarak geçer — kontrol noktası
-  merkez olan quadratic Bézier. Ağırlık 3 birlikte geçiş (27 çift) soluk yay olarak
-  eklenir. Ağırlık 1 ve 2 atlasa **girmez**; toplam 78 kenar.
+- Kenarlar §B.2'deki çizim bütçesine göre, iki görsel katman: **51 anlamsal bağ**
+  (contrast 25, cause 12, part_of 14) çemberin **içinden** belirgin kiriş olarak geçer —
+  kontrol noktası merkez olan quadratic Bézier. **74 birlikte-geçiş bağı** (66 curated
+  co_occurrence + 8 computed ağırlık 3) soluk kiriş/yay olarak eklenir. Computed ağırlık
+  1 ve 2 (418 çift) atlasa **girmez**; toplam **125 kenar**.
 - Her düğüm `<a href="/kavram/<slug>">`.
 
 Determinizm: yalnızca `Math.sin`/`Math.cos` ve veri sırası. Rastgelelik, zaman damgası
