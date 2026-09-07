@@ -1,0 +1,25 @@
+---
+import Base from "~/layouts/Base.astro";
+import HubKartlari from "~/components/HubKartlari.astro";
+import { NAV } from "~/lib/nav";
+
+const hub = NAV.find((h) => h.href === "/oku");
+if (hub === undefined) throw new Error("nav.ts icinde /oku hub'i yok.");
+---
+
+<Base title={`${hub.label} — Kur'an-ı Kerim Keşfi`} description={hub.blurb}>
+  <main id="icerik" class="pg pg-normal">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">{hub.label}</span>
+    </nav>
+
+    <header class="pg-head">
+      <p class="pg-kicker">Metnin kendisi</p>
+      <h1 class="pg-title">{hub.label}</h1>
+      <p class="pg-lede">{hub.blurb}</p>
+    </header>
+
+    <HubKartlari hub={hub} />
+  </main>
+</Base>

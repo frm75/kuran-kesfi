@@ -1,0 +1,47 @@
+---
+import type { NavHub } from "~/lib/nav";
+import {
+  getConceptsIndex,
+  getPrinciplesIndex,
+  getRootsIndex,
+  getStoriesIndex,
+  getSurahsIndex,
+} from "~/lib/data";
+import { getManuscripts } from "~/lib/manuscripts";
+
+interface Props {
+  hub: NavHub;
+}
+
+const { hub } = Astro.props;
+
+/*
+ * Kart üzerindeki sayılar CANLI okunur, elle yazılmaz. Elle yazılan sayı
+ * veri büyüdüğü gün sessizce yalan söylerdi ve kimse fark etmezdi.
+ *
+ * Sayısı olmayan sayfa (harita, günlük, iletişim, telegram) listede yok —
+ * `undefined` dönerse kartta rozet basılmaz. Uydurma rozet konmaz.
+ */
+const counts: Record<string, string | undefined> = {
+  "/sureler": `${String(getSurahsIndex().surahs.length)} sure`,
+  "/kavramlar": `${String(getConceptsIndex().length)} kavram`,
+  "/ilkeler": `${String(getPrinciplesIndex().length)} ilke`,
+  "/kok": `${String(getRootsIndex().roots.length)} kök`,
+  "/kissalar": `${String(getStoriesIndex().length)} kıssa`,
+  "/yazmalar": `${String(getManuscripts().length)} yazma`,
+};
+---
+
+<ul class="hub-grid">
+  {
+    hub.children.map((child) => (
+      <li>
+        <a href={child.href}>
+          <span class="hb-name">{child.label}</span>
+          <span class="hb-blurb">{child.blurb}</span>
+          {counts[child.href] !== undefined && <span class="hb-meta">{counts[child.href]}</span>}
+        </a>
+      </li>
+    ))
+  }
+</ul>

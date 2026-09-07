@@ -1,6 +1,8 @@
 ---
 import Base from "~/layouts/Base.astro";
+import HubKartlari from "~/components/HubKartlari.astro";
 import { getAuthorsIndex, getScripture, getSources, getSurahsIndex } from "~/lib/data";
+import { NAV } from "~/lib/nav";
 
 /**
  * Kaynak Şeffaflığı sayfası — plan §9 ve §12.10.
@@ -31,6 +33,9 @@ const sourceBySlug = new Map(sources.map((s) => [s.slug, s]));
 if (sources.length === 0) {
   throw new Error("sources.json bos: Kaynak Seffafligi sayfasi uretilmez.");
 }
+
+const hub = NAV.find((h) => h.href === "/kaynaklar");
+if (hub === undefined) throw new Error("nav.ts icinde /kaynaklar hub'i yok.");
 ---
 
 <Base
@@ -56,6 +61,8 @@ if (sources.length === 0) {
         <li><b>{english.length}</b><span>İngilizce çeviri</span></li>
       </ul>
     </header>
+
+    <HubKartlari hub={hub} />
 
     <section class="mt-10">
       <h2 class="text-xl">Kaynaklar</h2>
