@@ -1,0 +1,123 @@
+---
+import Base from "~/layouts/Base.astro";
+import { TELEGRAM } from "~/lib/site";
+
+/**
+ * Telegram botu tanıtım sayfası — plan §19.4 ("Site → Günlük ayet al").
+ *
+ * Sayfa tamamen statik; bot ayrı bir servistir (`apps/bot`) ve siteyle
+ * yalnızca içerik üzerinden bağlıdır: bota giden ayet ve ilke, buradaki
+ * sayfalarda duranın aynısıdır (plan §19.6).
+ *
+ * KVKK aydınlatması hem burada hem botun `/start` çıktısında yazılı
+ * (plan §19.2: "aydınlatma metni abonelik akışında gösterilir").
+ */
+
+const KOMUTLAR = [
+  { komut: "/gunluk", ne: "Her gün bir ayet ve bir ilke" },
+  { komut: "/haftalik", ne: "Haftada bir, Cuma günleri" },
+  { komut: "/bugun", ne: "Bugünün mesajını hemen gönderir" },
+  { komut: "/meal", ne: "Hangi mealin gönderileceğini seçersiniz" },
+  { komut: "/saat", ne: "Gönderim saatini seçersiniz (0–23)" },
+  { komut: "/durum", ne: "Aboneliğinizin ayarlarını gösterir" },
+  { komut: "/dur", ne: "Abonelikten çıkarsınız, kaydınız silinir" },
+] as const;
+---
+
+<Base
+  title="Günlük ayet — Telegram botu — Kur'an-ı Kerim Keşfi"
+  description="Her gün bir ayet ve bir ilke. İçerik siteyle aynıdır ve kaynaklıdır; reklam, bağış çağrısı ve takip yoktur."
+>
+  <main id="icerik" class="pg pg-normal">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">Telegram</span>
+    </nav>
+
+    <header class="pg-head">
+      <p class="pg-kicker">Günlük ayet</p>
+      <h1 class="pg-title">Telegram botu</h1>
+      <p class="pg-lede">
+        Her gün bir ayet ve o ayetin bağlandığı bir ilke. Gönderilen metin
+        <strong>bu sitede duranın aynısıdır</strong>: aynı meal, aynı ilke, aynı
+        kaynak. Bot kendi yorumunu üretmez, yapay zekâ metni göndermez; reklam,
+        bağış çağrısı ve üçüncü taraf içerik yoktur.
+      </p>
+      <p>
+        <a class="tg-button" href={TELEGRAM.url} rel="noopener noreferrer" target="_blank">
+          Telegram'da aç — @{TELEGRAM.username}
+          <span class="sr-only"> (yeni sekmede açılır)</span>
+        </a>
+      </p>
+    </header>
+
+    <section>
+      <div class="sec-head">
+        <h2>Nasıl başlanır</h2>
+      </div>
+      <ol class="tg-steps">
+        <li>Yukarıdaki bağlantıyla botu açın ve <b>Başlat</b>'a basın.</li>
+        <li><b>/gunluk</b> ya da <b>/haftalik</b> yazın.</li>
+        <li>İsterseniz <b>/meal</b> ile meali, <b>/saat</b> ile saati değiştirin.</li>
+      </ol>
+      <p class="sec-note">
+        Varsayılan: her gün 08:00 (Europe/Istanbul), Diyanet İşleri meali.
+        Haftalık seçerseniz Cuma günleri gelir.
+      </p>
+    </section>
+
+    <section>
+      <div class="sec-head">
+        <h2>Komutlar</h2>
+      </div>
+      <dl class="tg-komutlar">
+        {
+          KOMUTLAR.map((k) => (
+            <>
+              <dt><code>{k.komut}</code></dt>
+              <dd>{k.ne}</dd>
+            </>
+          ))
+        }
+      </dl>
+    </section>
+
+    <section>
+      <div class="sec-head">
+        <h2>Ne saklanıyor, ne saklanmıyor</h2>
+        <span class="sec-note">
+          Abonelik tamamen isteğe bağlıdır; siteyi kullanmak için gerekmez.
+        </span>
+      </div>
+      <div class="tg-kvkk">
+        <div>
+          <h3>Saklananlar</h3>
+          <ul>
+            <li>Sohbetin kimliği (Telegram'ın verdiği numara)</li>
+            <li>Sıklık: günlük ya da haftalık</li>
+            <li>Seçtiğiniz meal</li>
+            <li>Saat dilimi ve gönderim saati</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Saklanmayanlar</h3>
+          <ul>
+            <li>Adınız, kullanıcı adınız, telefon numaranız</li>
+            <li>E-posta adresiniz</li>
+            <li>Mesaj geçmişiniz</li>
+            <li><strong>Hangi ayetin gönderildiği</strong></li>
+          </ul>
+        </div>
+      </div>
+      <p class="sec-note">
+        Son madde bir tasarım kararının sonucu: gönderim takvimi yılın başından
+        sonuna kadar önceden belirlidir, bu yüzden kime ne gönderildiğini
+        kaydetmeye gerek kalmaz — yalnızca kaçıncı günde olduğunuz tutulur.
+      </p>
+      <p class="sec-note">
+        <strong>/dur</strong> yazdığınızda kaydınız <strong>silinir</strong>:
+        arşivlenmez, "pasif" diye işaretlenmez, veritabanından kaldırılır.
+      </p>
+    </section>
+  </main>
+</Base>

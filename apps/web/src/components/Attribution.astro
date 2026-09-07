@@ -1,6 +1,6 @@
 ---
 import { getAuthorsIndex } from "~/lib/data";
-import { CONTACT } from "~/lib/site";
+import { CONTACT, TELEGRAM } from "~/lib/site";
 
 /**
  * Zorunlu atıf alanı — DESIGN.md §5, plan §12.10, data/LICENSE.
@@ -57,5 +57,9 @@ if (requiredAttributionLinks.length === 0) {
     <a href="/iletisim">Bize yazın</a> — {CONTACT.org},
     <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>,
     <a href={`tel:${CONTACT.phoneHref}`}>{CONTACT.phone}</a>.
+  </p>
+  <p class="mt-3">
+    Her gün bir ayet ve bir ilke isterseniz:
+    <a href="/telegram">Telegram botu</a> (@{TELEGRAM.username}).
   </p>
 </footer>

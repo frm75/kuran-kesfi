@@ -59,3 +59,15 @@ export const CONTACT = {
   /** tel: bağlantısı için — boşluksuz */
   phoneHref: "+905526833580",
 } as const;
+
+/**
+ * Telegram botu — plan §19.
+ *
+ * `CONTACT` ile aynı gerekçeyle burada duruyor: gizli değil, sitede görünen
+ * bir değer ve tekrarlanabilir build için ortam değişkeninden okunmamalı.
+ * Bot token'ı `.env` içinde kalır ve yalnızca `apps/bot` okur.
+ */
+export const TELEGRAM = {
+  username: "kurankesfi_bot",
+  url: "https://t.me/kurankesfi_bot",
+} as const;

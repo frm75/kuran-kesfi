@@ -107,6 +107,8 @@ smoke_test() {
   check "/iletisim"                200
   check "/iletisim-tesekkur"       200
   check "/iletisim-hata"           200
+  # Telegram tanitim sayfasi (2026-09-07).
+  check "/telegram"                200
   # Kok adresleri Arap harfi tasiyor; nginx'in yuzde kodlu istegi cozdugu
   # her yayinda dogrulanir (bir kez elle test edildi, sonra buraya alindi).
   check "/kok/%D9%82%D9%88%D9%84"  200
