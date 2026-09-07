@@ -63,14 +63,21 @@ export interface GrafYerlesim {
 }
 
 /**
- * En büyük düğüm yarıçapı; görüş alanının kenarına göre ölçeklenir.
+ * En büyük/en küçük düğüm yarıçapı; görüş alanının kenarına göre ölçeklenir.
  *
- * 0.018 (brief'teki ilk değer) gerçek veride (99 kavram, en kalabalık grup
- * 15 çocuklu) komşu iki ağır kavram yan yana geldiğinde çakışıyordu: çocuk
- * halkasında (0.40) düğüm başına düşen yay uzunluğu, toplam çocuk sayısına
- * bölündüğü için grup büyüklüğünden bağımsız olarak sabit (~22.8px, boyut
- * 900 iken) — bu da azami çapı yaklaşık 11px'in altında tutmayı gerektiriyor.
- * 0.010 seçildi: iki azami yarıçaplı düğüm yan yana olsa bile aralarında
+ * Brief'teki ilk değerler 0.018 / 0.006'ydı. Gerçek veride (109 kavram,
+ * `concepts_index.json`) iki kavram çifti çakışıyordu: `fazl-ilah` ve
+ * `ilah-izzet`, ikisi de aynı çocuk halkasında (0.40) komşu. Sebep: o
+ * halkada düğüm başına düşen yay uzunluğu, toplam çocuk sayısına bölündüğü
+ * için grup büyüklüğünden bağımsız olarak sabit (~22.8px, boyut 900 iken).
+ *
+ * Test edilerek doğrulandı ki (`graf.smoke.ts`, bölüm 6) MAKS_YARICAP ve
+ * MIN_YARICAP'ın HER BİRİ TEK BAŞINA bu iki çifti çakışmadan kurtarmaya
+ * yetiyor — ikisi birden orijinal değerinde kalırsa çakışma geri geliyor.
+ * Yani MIN_YARICAP'ın küçültülmesi salt kozmetik değil, kendi başına da
+ * çakışmayı önlüyor; iki sabit birlikte orantılı küçültüldü (oran ~1/3
+ * korunarak) ki en küçük/en büyük görsel farkı orijinaline yakın kalsın.
+ * 0.010 / 0.0035 ile iki azami yarıçaplı düğüm yan yana olsa bile aralarında
  * ~%21 pay kalıyor.
  */
 const MAKS_YARICAP = 0.01;
