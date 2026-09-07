@@ -415,10 +415,11 @@ Atlas sayfası 109 ayrı dosya yerine tek dosya okusun.
 
 ```ts
         /*
-         * Atlas sayfasi icin. Kavram basina EN FAZLA 6: tam liste
-         * concept_<slug>.json icinde duruyor, dizin dosyasi grafigi
-         * cizebilecek kadarini tasiyor. Olculen derece medyani 9, maksimum
-         * 90 (ilah) — sinirsiz tasisak dizin dosyasi uc katina cikardi.
+         * Atlas sayfasi icin. Kavram basina EN AZ 6, ama elle yazilan bag
+         * hepsi: tam liste concept_<slug>.json icinde duruyor, dizin dosyasi
+         * grafigi cizebilecek kadarini tasiyor. Olculen derece medyani 9,
+         * maksimum 90 (ilah) — sinirsiz tasisak dizin dosyasi uc katina
+         * cikardi. Curated hicbir zaman kesilmez (bkz. build/lib/content.ts).
          */
         relations: z.array(
           z.object({
@@ -439,16 +440,27 @@ Atlas sayfası 109 ayrı dosya yerine tek dosya okusun.
       slug: c.slug, nameTr: c.name_tr, nameAr: c.name_ar, definition: c.definition,
       parentSlug: parent?.slug ?? null, verseCount: vs.length, rootCount: (conceptRoots.get(c.id) ?? []).length,
       /*
-       * Atlas icin en guclu 6 bag. `rel` zaten tipe ve agirliga gore sirali;
-       * once ELLE yazilanlar (contrast/cause/part_of) alinir, kalan yer
-       * hesaplananlarla doldurulur. Insan karari her zaman grafige girsin.
+       * Atlas icin bag listesi. Kural: ELLE YAZILAN HICBIR BAG KESILMEZ,
+       * kalan yer en guclu hesaplananlarla 6'ya tamamlanir.
+       *
+       * Neden duz `.slice(0, 6)` DEGIL: olculdu, `iman` 10 ve `adalet` 7
+       * curated bag tasiyor. Duz kesme bunlari kendi taraflarindan dusurur.
+       * Bugun sansliyiz — her curated cift kars_i uctan hayatta kaliyor, yani
+       * atlas (cifti tekillestirdigi icin) 117'sini de cizebiliyor. Ama bu
+       * VERIYE BAGLI bir tesaduf: iki ucu da 6'yi asan bir cift eklenirse
+       * kenar SESSIZCE kaybolur ve kimse fark etmez. Insan karari istatistige
+       * feda edilmez; kural veriden bagimsiz olsun.
        */
-      relations: [
-        ...rel.filter((r) => r.origin === "curated"),
-        ...rel.filter((r) => r.origin === "computed"),
-      ]
-        .slice(0, 6)
-        .map((r) => ({ slug: r.slug, type: r.type, weight: r.weight, origin: r.origin })),
+      relations: (() => {
+        const curated = rel.filter((r) => r.origin === "curated");
+        const computed = rel.filter((r) => r.origin === "computed");
+        return [...curated, ...computed.slice(0, Math.max(0, 6 - curated.length))].map((r) => ({
+          slug: r.slug,
+          type: r.type,
+          weight: r.weight,
+          origin: r.origin,
+        }));
+      })(),
     });
 ```
 
@@ -465,7 +477,29 @@ console.log("6dan fazla tasiyan:",j.concepts.filter(c=>c.relations.length>6).len
 console.log("ust baslik iliskisi:",j.concepts.filter(c=>c.parentSlug===null).reduce((a,c)=>a+c.relations.length,0));'
 ```
 
-Beklenen: 109 kavram, ilişki başına ≤6, hiçbiri 6'yı aşmıyor. Dosya ~23 KB'tan ~45 KB'a çıkar; yalnızca build anında okunur, tarayıcıya gitmez.
+Beklenen: 109 kavram. **Çoğu kavram ≤6 bağ taşır, ama `iman` (10 curated) ve `adalet`
+(7 curated) daha fazlasını taşır** — kural "elle yazılan kesilmez". Doğrulama scripti bunu
+hata saymamalı; kesilmiş curated bağ olup olmadığını denetlemeli:
+
+```bash
+node -e '
+const idx=require("./apps/web/public/data/concepts_index.json").concepts;
+const fs=require("fs");const d="apps/web/public/data/concept";
+let eksik=0;
+for(const c of idx){
+  const tam=JSON.parse(fs.readFileSync(d+"/concept_"+c.slug+".json","utf8"));
+  const tamCur=tam.relations.filter(r=>r.origin==="curated").map(r=>r.slug).sort().join(",");
+  const idxCur=c.relations.filter(r=>r.origin==="curated").map(r=>r.slug).sort().join(",");
+  if(tamCur!==idxCur){eksik++;console.log("KESILMIS curated:",c.slug);}
+}
+const n=idx.reduce((a,c)=>a+c.relations.length,0);
+console.log("kavram:",idx.length,"| iliski ucu:",n,"| ortalama:",(n/idx.length).toFixed(1));
+console.log("6dan fazla tasiyan:",idx.filter(c=>c.relations.length>6).map(c=>c.slug+":"+c.relations.length).join(" "));
+console.log("KESILMIS curated tasiyan kavram:",eksik,"(0 olmali)");'
+```
+
+Beklenen: `KESILMIS curated tasiyan kavram: 0`, `6dan fazla tasiyan: adalet:7 iman:10`.
+Dosya ~23 KB'tan ~45 KB'a çıkar; yalnızca build anında okunur, tarayıcıya gitmez.
 
 - [ ] **Step 4: Commit**
 
