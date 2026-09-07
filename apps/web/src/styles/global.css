@@ -1156,6 +1156,14 @@
   background-color: var(--bg-primary);
   box-shadow: 0 10px 30px rgb(0 0 0 / 0.18);
 }
+/* Son ögenin paneli sağa çapalanır: sola çapalı kalsaydı 1400px altındaki
+   her genişlikte viewport'u taşardı (1246px altında etiket kesiliyordu) ve
+   belge yatay kaydırma kazanırdı — kaydırmaya çalışınca :hover düşüp menü
+   kapanır, kullanıcı kesilen metni hiç okuyamazdı. */
+.site-header .nav-item:last-child > .nav-sub {
+  inset-inline-start: auto;
+  inset-inline-end: calc(var(--space-4) * -1);
+}
 .site-header .nav-item:hover > .nav-sub,
 .site-header .nav-item:focus-within > .nav-sub {
   display: block;

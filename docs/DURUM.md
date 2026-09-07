@@ -1276,7 +1276,7 @@ açılmadı").
 ## Ana menü — 11 düz linkten dört başlığa (2026-09-07)
 
 Şerit artık `/sureler`, `/kissalar`, `/zaman`, `/kavramlar`, `/kok`, `/ilkeler`,
-`/yazmalar`, `/harita`, `/gunluk`, `/kaynaklar`, `/iletişim` gibi 11 düz linki tek
+`/yazmalar`, `/harita`, `/gunluk`, `/kaynaklar`, `/iletisim` gibi 11 düz linki tek
 sırada basmıyor. Bunun yerine dört üst başlık var — **Oku · Anla · Keşfet ·
 Kaynaklar** — her biri altında 2-4 çocuk linkle. Karar kullanıcıya ait
 (2026-09-07): 11 link genişledikçe (kıssalar, harita, zaman eklendiğinde) şerit
@@ -1296,7 +1296,8 @@ kendi işi, hiç JS yok (`global.css` "Ana gezinme" bloğu, `.nav-item:hover >
 .nav-sub` / `.nav-item:focus-within > .nav-sub`). Fare üst başlığın üzerine
 gelince açılıyor, klavyeyle Tab'lanınca da (`:focus-within` sekmeyle içindeki
 bir linke odaklanmayı da açık tutuyor) — CSP'de `script-src` hâlâ yalnızca
-`/harita` ve `/kissa/*`'e özel, şerit hiçbir sayfada bunu bozmuyor.
+`/harita`, `/kissa/*` ve `/gunluk`'e özel (okuma günlüğü IndexedDB + FSRS
+zamanlayıcı kullanıyor), şerit hiçbir sayfada bunu bozmuyor.
 
 ### 48rem altında alt liste hiç basılmıyor
 

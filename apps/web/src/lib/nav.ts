@@ -39,7 +39,7 @@ export const NAV: readonly NavHub[] = [
       {
         href: "/sureler",
         label: "Sureler",
-        blurb: "114 sure; Arapça metin, çeviriyazı ve yan yana mealler.",
+        blurb: "Arapça metin, çeviriyazı ve yan yana mealler.",
       },
       {
         href: "/gunluk",
@@ -109,7 +109,7 @@ export const NAV: readonly NavHub[] = [
     children: [
       {
         href: "/kaynaklar",
-        label: "Kaynak şeffaflığı",
+        label: "Kaynak Şeffaflığı",
         blurb: "Kaynak listesi, meal lisansları ve kaynak taraflı eksikler.",
       },
       {

@@ -151,8 +151,9 @@ ve tanıtım sayfasında birlikte güncellenir.
 
 ### A.7 Maliyet ve denetim
 
-Her sayfada nav 11 link yerine 17 link taşır (~+300 bayt ham HTML). 13516 sayfada gzip
-sonrası ihmal edilebilir; uygulamada ölçülüp rapora yazılır. Ölçüm eşiği: `/bakara-suresi/255`
+Her sayfada nav 11 link yerine 16 link taşır (15 tekil adres; ham fark +551 bayt,
+bkz. DURUM.md). 13516 sayfada gzip sonrası ihmal edilebilir; uygulamada ölçülüp
+rapora yazılır. Ölçüm eşiği: `/bakara-suresi/255`
 sayfasının gzip'li boyutu %2'den fazla artarsa durup nedeni yazılır.
 
 ---

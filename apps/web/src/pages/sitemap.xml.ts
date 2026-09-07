@@ -20,7 +20,7 @@ import { SITE } from "~/lib/site";
  * değişince sitemap de değişir. Astro entegrasyonu kullanılmadı; tek dosya
  * için bir bağımlılık eklemenin anlamı yok.
  *
- * ~9350 adres tek dosyada (2849'u meal sayfası). Sitemap sınırı 50.000 adres /
+ * 13510 adres tek dosyada (2963'ü meal sayfası). Sitemap sınırı 50.000 adres /
  * 50 MB, rahat sığıyor.
  *
  * `lastmod` YAZILMIYOR: doğru değeri metnin gerçekten değiştiği tarihtir,

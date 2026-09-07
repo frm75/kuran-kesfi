@@ -30,11 +30,16 @@ const counts: Record<string, string | undefined> = {
   "/kissalar": `${String(getStoriesIndex().length)} kıssa`,
   "/yazmalar": `${String(getManuscripts().length)} yazma`,
 };
+
+// Hub kendi cocuklarindan biriyle ayni adresi tasiyabilir (/kaynaklar).
+// Serit'te bu tekrar normal; kart izgarasi ICERIKTIR ve sayfanin kendisine
+// goturen bir kart basmak okuyucuya bos bir tiklama vaat eder.
+const kartlar = hub.children.filter((c) => c.href !== hub.href);
 ---
 
 <ul class="hub-grid">
   {
-    hub.children.map((child) => (
+    kartlar.map((child) => (
       <li>
         <a href={child.href}>
           <span class="hb-name">{child.label}</span>
