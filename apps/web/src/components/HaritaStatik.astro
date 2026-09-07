@@ -1,0 +1,106 @@
+---
+import { getMapGeometry } from "~/lib/harita/statik";
+
+/**
+ * Statik kissa haritasi — sifir bayt JavaScript.
+ *
+ * ============================================================================
+ * IKI VARYANT, TEK GEOMETRI
+ * ============================================================================
+ *
+ * `tam`       /harita sayfasi. Etiketli pinler + kaynak alt yazisi.
+ * `onizleme`  Ana sayfa. Etiket YOK, alt yazi YOK; kart tamami /harita'ya
+ *             baglanti. Etiketler onizlemede 26 yer adini ust uste bindirir
+ *             ve kucuk olcekte okunmaz — bilgi tasimayan gorsel gurultu
+ *             olurdu. Sayilar kartin metninde yazili.
+ *
+ * Kadraj, pin yerleri ve kara cizgileri IKISINDE DE AYNI (lib/harita/statik).
+ * Onizleme kucuk hali, farkli harita degil.
+ *
+ * ============================================================================
+ * NEDEN MAPLIBRE DEGIL
+ * ============================================================================
+ *
+ * /harita sayfasinda MapLibre bu SVG'nin USTUNE biner (HaritaCanli) ve betik
+ * gercekten yuklenirse SVG'yi gizler. Ana sayfada BINMEZ: ana sayfanin CSP'si
+ * `script-src` tanimlamiyor ve sayfa 0 bayt JS ile cikiyor. Etkilesimli
+ * harita icin bir tik otede /harita var.
+ */
+
+interface Props {
+  variant?: "tam" | "onizleme";
+}
+
+const { variant = "tam" } = Astro.props;
+const { width, height, landPaths, pins } = getMapGeometry();
+const onizleme = variant === "onizleme";
+---
+
+{
+  onizleme ? (
+    /*
+     * `aria-hidden`: bu SVG ana sayfada bir baglantinin ICINDE duruyor ve
+     * baglantinin kendi metni konum sayilarini zaten okutuyor. Haritayi ayrica
+     * seslendirmek ayni bilgiyi iki kez vermek olurdu. Bilginin metin karsiligi
+     * /harita sayfasindaki konum listesidir (plan 12).
+     */
+    <svg
+      class="map-svg is-onizleme"
+      viewBox={`0 0 ${String(width)} ${String(height)}`}
+      aria-hidden="true"
+      focusable="false"
+    >
+      <g class="map-land">
+        {landPaths.map((d) => (
+          <path d={d} />
+        ))}
+      </g>
+      <g class="map-pins">
+        {pins.map((pin) => (
+          <g class:list={["pin", `is-${pin.confidence}`]}>
+            <circle cx={pin.x} cy={pin.y} r="7" />
+            {pin.confidence === "gelenek" && <circle class="pin-dot" cx={pin.x} cy={pin.y} r="2.8" />}
+            {pin.confidence === "tartismali" && <circle cx={pin.x} cy={pin.y} r="3.2" />}
+          </g>
+        ))}
+      </g>
+    </svg>
+  ) : (
+    <figure class="map-figure" data-map-static>
+      <svg
+        class="map-svg"
+        viewBox={`0 0 ${String(width)} ${String(height)}`}
+        role="img"
+        aria-labelledby="harita-basligi"
+      >
+        <title id="harita-basligi">
+          Kur'an kıssalarının geçtiği {pins.length} yerin haritası. Aynı bilgi aşağıdaki listede
+          metin olarak da var.
+        </title>
+        <g class="map-land">
+          {landPaths.map((d) => (
+            <path d={d} />
+          ))}
+        </g>
+        <g class="map-pins">
+          {pins.map((pin) => (
+            <g class:list={["pin", `is-${pin.confidence}`]}>
+              <circle cx={pin.x} cy={pin.y} r="6" />
+              {/* gelenek: halka + merkez nokta. tartışmalı: iç içe iki halka.
+                  Biçim MapLibre pinleriyle birebir aynı (DESIGN.md §1). */}
+              {pin.confidence === "gelenek" && <circle class="pin-dot" cx={pin.x} cy={pin.y} r="2.4" />}
+              {pin.confidence === "tartismali" && <circle cx={pin.x} cy={pin.y} r="2.8" />}
+              <text x={pin.x + 10} y={pin.y + 4}>
+                {pin.name}
+              </text>
+            </g>
+          ))}
+        </g>
+      </svg>
+      <figcaption>
+        Kara parçaları: Natural Earth 1:110m (kamu malı). Yakınlaştırma yok — harita betik
+        gerektirmeden çiziliyor; tam bilgi aşağıdaki listede.
+      </figcaption>
+    </figure>
+  )
+}

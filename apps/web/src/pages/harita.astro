@@ -1,10 +1,9 @@
 ---
-import { readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 import Base from "~/layouts/Base.astro";
 import HaritaCanli from "~/components/HaritaCanli.astro";
+import HaritaStatik from "~/components/HaritaStatik.astro";
 import { getLocations } from "~/lib/data";
+import { getMapGeometry } from "~/lib/harita/statik";
 
 /**
  * Kıssa haritası — plan §2.1.
@@ -21,6 +20,11 @@ import { getLocations } from "~/lib/data";
  * 1:110m verisinden (kamu malı, data/geo/) Mercator ile çiziliyor; konumlar
  * pin olarak üstüne biniyor. Sıfır bayt JavaScript, sıfır dış istek.
  *
+ * Projeksiyon ve pin hesabı 2026-09-07'de `lib/harita/statik.ts` içine,
+ * çizim ise `components/HaritaStatik.astro` içine alındı: ana sayfa aynı
+ * haritanın etiketsiz küçük hâlini gösteriyor ve iki kadrajın ayrışması
+ * kabul edilemezdi.
+ *
  * Kaybedilen: yakınlaştırma ve kaydırma. Karşılığında sayfa altındaki
  * KONUM LİSTESİ tam veriyi taşıyor — plan §12 haritalar için liste
  * alternatifini zaten zorunlu kılıyor, burada liste asıl arayüz.
@@ -32,83 +36,7 @@ import { getLocations } from "~/lib/data";
  */
 
 const locations = getLocations();
-const withCoords = locations.filter(
-  (l): l is typeof l & { lat: number; lng: number } => l.lat !== null && l.lng !== null,
-);
-
-// --- projeksiyon -------------------------------------------------------------
-// Kıssaların tamamı Akdeniz–Arabistan–Mezopotamya üçgeninde; dünya haritası
-// çizmek boş alan olurdu. Kadraj konumlardan hesaplanıyor, sabit yazılmıyor.
-const PAD = 6;
-const bounds = withCoords.reduce(
-  (acc, l) => ({
-    minLng: Math.min(acc.minLng, l.lng),
-    maxLng: Math.max(acc.maxLng, l.lng),
-    minLat: Math.min(acc.minLat, l.lat),
-    maxLat: Math.max(acc.maxLat, l.lat),
-  }),
-  { minLng: 180, maxLng: -180, minLat: 90, maxLat: -90 },
-);
-const box = {
-  minLng: bounds.minLng - PAD,
-  maxLng: bounds.maxLng + PAD,
-  minLat: bounds.minLat - PAD,
-  maxLat: bounds.maxLat + PAD,
-};
-
-const W = 1000;
-/** Mercator y — enlem arttıkça gerilir; kara şekilleri bozulmasın. */
-const merc = (lat: number): number => Math.log(Math.tan(Math.PI / 4 + (lat * Math.PI) / 360));
-const yTop = merc(box.maxLat);
-const yBottom = merc(box.minLat);
-const H = Math.round((W * (yTop - yBottom)) / ((box.maxLng - box.minLng) * (Math.PI / 180)));
-
-const px = (lng: number): number => ((lng - box.minLng) / (box.maxLng - box.minLng)) * W;
-const py = (lat: number): number => ((yTop - merc(lat)) / (yTop - yBottom)) * H;
-
-// --- kara parçaları ----------------------------------------------------------
-const geoPath = resolve(
-  dirname(fileURLToPath(import.meta.url)),
-  "../../../../data/geo/ne_110m_land.geojson",
-);
-interface Geo {
-  features: { geometry: { type: string; coordinates: number[][][] | number[][][][] } }[];
-}
-const geo = JSON.parse(readFileSync(geoPath, "utf8")) as Geo;
-
-/** Kadraj dışındaki halkalar atılır; 5091 noktanın çoğu boşa çizilmesin. */
-function ringPath(ring: number[][]): string | null {
-  let inBox = false;
-  const points: string[] = [];
-  for (const [lng, lat] of ring) {
-    if (lng === undefined || lat === undefined) continue;
-    if (lng >= box.minLng && lng <= box.maxLng && lat >= box.minLat && lat <= box.maxLat) {
-      inBox = true;
-    }
-    points.push(`${px(lng).toFixed(1)},${py(lat).toFixed(1)}`);
-  }
-  if (!inBox || points.length < 3) return null;
-  return `M${points.join("L")}Z`;
-}
-
-const landPaths: string[] = [];
-for (const feature of geo.features) {
-  const polys =
-    feature.geometry.type === "Polygon"
-      ? [feature.geometry.coordinates as number[][][]]
-      : (feature.geometry.coordinates as number[][][][]);
-  for (const poly of polys) {
-    const outer = poly[0];
-    if (outer === undefined) continue;
-    const path = ringPath(outer);
-    if (path !== null) landPaths.push(path);
-  }
-}
-
-// --- konumlar ----------------------------------------------------------------
-const pins = withCoords
-  .map((l) => ({ ...l, x: px(l.lng), y: py(l.lat) }))
-  .sort((a, b) => a.y - b.y);
+const { pins } = getMapGeometry();
 
 /**
  * Enum degeri ASCII (`tartismali`), kullaniciya gosterilen metin Turkce
@@ -180,46 +108,7 @@ const withAlternatives = locations.filter((l) => l.alternatives.length > 0);
         locations={locations}
         label={`Kur'an kissalarinin gectigi ${String(pins.length)} yerin etkilesimli haritasi`}
       />
-      <figure class="map-figure" data-map-static>
-        <svg
-          class="map-svg"
-          viewBox={`0 0 ${String(W)} ${String(H)}`}
-          role="img"
-          aria-labelledby="harita-basligi"
-        >
-          <title id="harita-basligi">
-            Kur'an kıssalarının geçtiği {pins.length} yerin haritası. Aynı bilgi aşağıdaki
-            listede metin olarak da var.
-          </title>
-          <g class="map-land">
-            {landPaths.map((d) => <path d={d} />)}
-          </g>
-          <g class="map-pins">
-            {
-              pins.map((pin) => (
-                <g class:list={["pin", `is-${pin.confidence}`]}>
-                  <circle cx={pin.x} cy={pin.y} r="6" />
-                  {/* gelenek: halka + merkez nokta. tartışmalı: iç içe iki halka.
-                      Biçim MapLibre pinleriyle birebir aynı (DESIGN.md §1). */}
-                  {pin.confidence === "gelenek" && (
-                    <circle class="pin-dot" cx={pin.x} cy={pin.y} r="2.4" />
-                  )}
-                  {pin.confidence === "tartismali" && (
-                    <circle cx={pin.x} cy={pin.y} r="2.8" />
-                  )}
-                  <text x={pin.x + 10} y={pin.y + 4}>
-                    {pin.name}
-                  </text>
-                </g>
-              ))
-            }
-          </g>
-        </svg>
-        <figcaption>
-          Kara parçaları: Natural Earth 1:110m (kamu malı). Yakınlaştırma yok — harita
-          betik gerektirmeden çiziliyor; tam bilgi aşağıdaki listede.
-        </figcaption>
-      </figure>
+      <HaritaStatik />
 
       <ul class="map-legend">
         <li class="pin is-kesin"><span class="lg-mark" aria-hidden="true"></span> kesin — tartışmasız yer</li>
