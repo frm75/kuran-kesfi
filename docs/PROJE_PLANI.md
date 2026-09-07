@@ -380,7 +380,7 @@ Tüm import scriptleri tekrar çalıştırılabilir (upsert), kaynak bazlı ayr�
 - Açık kaynak yayın, katkı rehberi, veri giriş rehberi
 - CONTRIBUTING.md'de açık kural: "Meal ekleme PR'ı kabul edilmez; yalnızca konum/kıssa/ilke/kavram verisi ve kod katkısı kabul edilir"
 - "Kaynak Şeffaflığı" sayfası: her veri seti için nereden geldi, lisansı ne, ne zaman güncellendi
-- Geri bildirim kanalı (e-posta / GitHub issues; takip kodu yok)
+- ~~Geri bildirim kanalı~~ → **BİTTİ 2026-09-07.** `/iletisim` — öneri, düzeltme ve iletişim formu; mesaj SQLite'a yazılır ve mail olarak gelir. Künye (Esfasoft, admin@esfasoft.com.tr, +90 552 683 35 80) **her sayfanın altında** duruyor. Takip kodu yok, IP saklanmıyor, captcha yok. Ayrıntı `docs/DURUM.md`
 
 ---
 

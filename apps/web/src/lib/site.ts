@@ -40,3 +40,22 @@ export const routePath = (pathname: string): string => {
   if (withoutExtension === "" || withoutExtension === "/") return "/";
   return withoutExtension.replace(/\/+$/, "");
 };
+
+/**
+ * İletişim bilgileri — sitede görünen, gizli olmayan veriler.
+ *
+ * `.env` yerine burada durmalarının sebebi tekrarlanabilir build (plan §20.1):
+ * aynı depo aynı baytları üretmeli. Ortam değişkeninden okunsaydı build,
+ * çalıştığı makinenin yapılandırmasına bağlı olurdu.
+ *
+ * Sırlar burada DEĞİLDİR: SMTP kullanıcı adı ve şifresi `.env` içinde kalır ve
+ * yalnızca form servisi (`apps/iletisim`) okur — tarayıcıya hiçbir zaman inmez.
+ */
+export const CONTACT = {
+  org: "Esfasoft",
+  email: "admin@esfasoft.com.tr",
+  /** Görünen biçim */
+  phone: "+90 552 683 35 80",
+  /** tel: bağlantısı için — boşluksuz */
+  phoneHref: "+905526833580",
+} as const;

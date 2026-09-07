@@ -1,0 +1,35 @@
+---
+import Base from "~/layouts/Base.astro";
+import { CONTACT } from "~/lib/site";
+
+/**
+ * Form gönderildikten sonra gelinen sayfa (POST-Redirect-GET'in "GET"i).
+ *
+ * Statik: sunucu servisi kendi HTML'ini üretmez, yalnızca 303 ile buraya
+ * yönlendirir. Böylece geri tuşu formu yeniden göndermez.
+ */
+---
+
+<Base
+  title="Mesajınız alındı — Kur'an-ı Kerim Keşfi"
+  description="İletişim formu gönderildi."
+>
+  <main id="icerik" class="pg pg-narrow">
+    <header class="pg-head">
+      <p class="pg-kicker">Teşekkürler</p>
+      <h1 class="pg-title">Mesajınız alındı</h1>
+      <p class="pg-lede">
+        Mesaj kaydedildi ve bize iletildi. E-posta adresinizi yazdıysanız yanıt
+        oraya gelir. Düzeltme bildirdiyseniz kaynağına bakılarak denetlenir;
+        haklı çıkan her düzeltme uygulanır ve gerekçesi kayda geçer.
+      </p>
+    </header>
+    <p>
+      <a href="/">Ana sayfaya dön</a> · <a href="/iletisim">Yeni mesaj gönder</a>
+    </p>
+    <p class="sec-note">
+      Acil bir durum varsa doğrudan <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+      adresine de yazabilirsiniz.
+    </p>
+  </main>
+</Base>

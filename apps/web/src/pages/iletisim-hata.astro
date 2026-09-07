@@ -1,0 +1,42 @@
+---
+import Base from "~/layouts/Base.astro";
+import { CONTACT } from "~/lib/site";
+
+/**
+ * Form gönderilemediğinde gelinen sayfa.
+ *
+ * Tek bir sayfa üç durumu birden karşılar (eksik/hatalı alan, çok sık gönderim,
+ * geçici sunucu hatası) çünkü sebebi adres satırında taşımak ziyaretçiye bir şey
+ * kazandırmaz, taşımadığı sürece de sayfa statik kalabiliyor. Üç durumun ortak
+ * çıkışı aynı: metni kaybetmeden tekrar denemek ya da doğrudan yazmak.
+ */
+---
+
+<Base
+  title="Mesaj gönderilemedi — Kur'an-ı Kerim Keşfi"
+  description="İletişim formu gönderilemedi."
+>
+  <main id="icerik" class="pg pg-narrow">
+    <header class="pg-head">
+      <p class="pg-kicker">Gönderilemedi</p>
+      <h1 class="pg-title">Mesaj gönderilemedi</h1>
+      <p class="pg-lede">Üç sebepten biri olabilir:</p>
+    </header>
+
+    <ul>
+      <li><strong>Mesaj çok kısa ya da bir alan hatalı.</strong> Mesaj en az 10 karakter olmalı; ayet yazdıysanız <code>2:255</code> biçiminde olmalı.</li>
+      <li><strong>Kısa süre içinde çok fazla gönderim yapıldı.</strong> Birkaç dakika bekleyip tekrar deneyin.</li>
+      <li><strong>Geçici bir sunucu sorunu.</strong> Bu durumda mesajınız kaydedilmemiştir.</li>
+    </ul>
+
+    <p>
+      <a href="/iletisim">Forma dön</a> — tarayıcının geri tuşu yazdığınız metni
+      çoğu zaman korur.
+    </p>
+
+    <p class="sec-note">
+      Sorun sürerse doğrudan <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> adresine
+      yazabilir ya da {CONTACT.phone} numarasından ulaşabilirsiniz.
+    </p>
+  </main>
+</Base>

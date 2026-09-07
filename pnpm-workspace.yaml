@@ -2,3 +2,10 @@ packages:
   - "apps/*"
   - "packages/*"
   - "scripts/*"
+
+# pnpm 10 kurulum betiklerini varsayilan olarak CALISTIRMAZ (tedarik zinciri
+# onlemi). better-sqlite3 yerel bir eklenti derliyor; izin verilmezse modul
+# "better_sqlite3.node bulunamadi" ile duser. Listeye yalnizca gercekten
+# derleme gereken paket girer.
+onlyBuiltDependencies:
+  - better-sqlite3

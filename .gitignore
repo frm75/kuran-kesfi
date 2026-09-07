@@ -71,3 +71,7 @@ apps/web/public/_maplibre/
 # Kure projeksiyonu icin dunya kara silueti — build oncesi data/geo'dan
 # kopyalanir (apps/web/scripts/prepare-harita.mjs). Kaynak repoda zaten var.
 apps/web/public/geo/
+
+# calisma zamani verisi — iletisim formu mesajlari (SQLite).
+# Ziyaretci mesajlari surum gecmisine girmez.
+var/

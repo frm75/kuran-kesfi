@@ -102,6 +102,11 @@ smoke_test() {
   # dondugu halde CSP'de script-src yoksa gunluk SESSIZCE bos kalir — asagida
   # CSP'si de ayrica denetleniyor.
   check "/gunluk"                  200
+  # Iletisim formu (2026-09-07): sayfa + iki sonuc sayfasi. Sonuc sayfalari
+  # eksikse form calisir ama gonderen kisi 404 gorur.
+  check "/iletisim"                200
+  check "/iletisim-tesekkur"       200
+  check "/iletisim-hata"           200
   # Kok adresleri Arap harfi tasiyor; nginx'in yuzde kodlu istegi cozdugu
   # her yayinda dogrulanir (bir kez elle test edildi, sonra buraya alindi).
   check "/kok/%D9%82%D9%88%D9%84"  200
@@ -212,6 +217,17 @@ smoke_test() {
   # olmadan not satirinin yanindaki ayet metni sessizce gelmez.
   csp_must_have "/gunluk"          "script-src 'self'"
   csp_must_have "/gunluk"          "connect-src 'self'"
+  # Iletisim: form-action olmadan tarayici POST'u ENGELLER ve hicbir hata
+  # gostermez — sayfa acilir, "Gonder" hicbir sey yapmaz.
+  csp_must_have "/iletisim"        "form-action 'self'"
+  # Arka uc ayakta mi: servis dusmusse POST 502 doner ve mesaj kaybolur.
+  # Yalnizca yerelden okunur; ucu disariya acilmadi.
+  if curl -sf --max-time 10 http://127.0.0.1:4380/api/iletisim/durum >/dev/null 2>&1; then
+    printf '    %-34s %s\n' "/api/iletisim" "arka uc ayakta"
+  else
+    printf '    %-34s %s\n' "/api/iletisim" "ARKA UC CEVAP VERMIYOR (pm2: kuran-iletisim)"
+    fail=1
+  fi
   # Geri kalan her sey: 0 bayt JS garantisini sunucu tarafinda zorlayan sey bu.
   csp_must_not_have "/"                  "script-src"
   csp_must_not_have "/bakara-suresi/153" "script-src"
@@ -220,6 +236,9 @@ smoke_test() {
   header_contains "/bakara-suresi/153" "medya.kurankesfi.tr" "CSP kiraat media-src"
   csp_must_not_have "/kissalar"          "script-src"
   csp_must_not_have "/sureler"           "script-src"
+  # Form yalnizca /iletisim'de acik; baska bir sayfada acilirsa CSP genislemis
+  # demektir ve bu sessizce olur.
+  csp_must_not_have "/bakara-suresi/153" "form-action 'self'"
 
   [ "$fail" -eq 0 ] || die "duman testi basarisiz"
   log "duman testi temiz"

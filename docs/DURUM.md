@@ -552,6 +552,62 @@ dili ayırarak `turkishAuthors.length` / `englishAuthors.length` basıyor.
 `mehmet-alagas` 168 ayet, `suleymaniye-vakfi` 34 ayet (66. sure tamamen),
 3 İngilizce yazarda 1-2 ayet.
 
+## AI medyası yayına girdi (2026-09-07) — 10 kayıt
+
+İlk AI çıktıları `media/ai/cikti/` altına bırakıldı: **6 görsel (1536×864) + 4 video
+(960×544, 9,96 sn)**. `pnpm media:ai:collect` onları `ai_generated.json`'a yazdı.
+
+| kayıt | kıssa | konum | tür |
+|---|---|---|---|
+| `nuh-gemi-hazirlik` (+video) | hz-nuh | cudi | IMAGE + VIDEO |
+| `musa-tuva-vadisi` (+video) | hz-musa | sina-tur | IMAGE + VIDEO |
+| `semud-kaya-yerlesimi` (+video) | hz-salih | hicr | IMAGE + VIDEO |
+| `sebe-marib-kenti` (+video) | sebe | sebe-marib | IMAGE + VIDEO |
+| `yusuf-kuyudan-cikarilmasi` | hz-yusuf | kenan | IMAGE |
+| `firavun-sarayi` | firavun | misir | IMAGE |
+
+### Yüz taraması
+
+Altı görsele tam çözünürlükte, figür bölgeleri 2× büyütülerek bakıldı. Dört video
+5 karede bir örneklenip (video başına 50 kare) kontak sayfalarında incelendi.
+Sonuç `faceScanNote` alanlarında kayıt kayıt yazılı.
+
+Sekizi tanınabilir yüz içermiyor. İkisi **karar gerektirdi** ve kullanıcı onayladı:
+`yusuf-kuyudan-cikarilmasi` (net yüzler var ama hepsi kervancılara ait, Yûsuf kuyuda
+ve kadrajda değil) ve `firavun-sarayi` (saray erkânı görünüyor, Mûsâ sahnede değil).
+
+### İki hata yakalandı, ikisi de yayına çıkmadan
+
+**1. AI kayıtları hiçbir sayfaya bağlanmıyordu.** `scripts/import/content.ts`
+`media_story`, `media_verse`, `media_timeline_event` ve `location_id` alanlarını
+yalnızca `data.media`'dan (gerçek medya) dolduruyordu. AI kaydı `media_item`'a
+giriyor, taramadan geçiyor, `media.json`'a çıkıyor ve **hiçbir sayfada
+görünmüyordu** — kıssa sayfası `storySlugs` ile süzüyor, dizi hep boş. Hata yoktu,
+uyarı yoktu; kayıt ortada yoktu.
+
+Bağlar prompt'ta zaten duruyor (`storySlug`, `locationSlug`, `timelineOrder`) ve
+`crossCheck` bunları **doğruluyordu ama kimse kullanmıyordu**. Düzeltildi: AI
+medyası bağını prompt'undan alıyor.
+
+Ayet bağı hâlâ yok — `aiPromptInput` şemasında `verseRefs` alanı yok. AI medyası
+kıssa ve konum sayfalarında çıkar, **ayet sayfalarında çıkmaz**.
+
+**2. R2 kapısı yoktu.** `media:r2:push` `media/` altındaki her şeyi yürüyor,
+`faceScanned`'e bakmıyordu. Dosya sayfada görünmese de
+`medya.kurankesfi.tr/ai/cikti/<id>.png` adresinden **erişilebiliyordu**. Kapı
+üç yerde birden dursun diye `r2_sync.ts` içine eklendi: kayıt `faceScanned` değilse
+ya da diskteki sha256 kayıttakiyle tutmuyorsa dosya yüklenmez.
+
+Kaldırılan figür kapısından farkı: o, görselin İÇERİĞİNİ hash ile denetlemeye
+çalışıyordu ve bu imkânsız olduğu için kaldırıldı. Bu kapı içeriğe bakmıyor,
+**insanın verdiği kararı** okuyor; sha256 yalnızca kararın hangi dosyaya
+verildiğini bağlıyor.
+
+**Kapı geç kaldı:** bu 10 dosya kapı yazılmadan önce R2'ye çıkmıştı ve tarama
+yapılmadan önce halka açıktı. Onaylandıkları için zarar kalmadı, ama sıradaki
+partide kapı önce gelmeli. `r2_sync.ts` uzaktaki onaysız nesneyi **silmiyor**,
+yalnızca yenisini yüklemiyor.
+
 ## Tuzaklar (hepsi bir kez yaşandı)
 
 1. `pnpm deploy` pnpm'in yerleşiği — sessizce hiçbir şey yapmaz. **`pnpm run deploy`** kullan.
@@ -579,6 +635,14 @@ dili ayırarak `turkishAuthors.length` / `englishAuthors.length` basıyor.
 11. **Ana sayfada elle yazılmış sayı bırakma.** 2026-09-07'de aynı sayfa hem `54` hem `26`
    meal yazıyordu; biri veriden geliyordu, öteki koda gömülüydü ve yazar eklenince bayatladı.
    Sayı daima `authors_index.json`'dan hesaplanır.
+13. **`pgrep -f "<desen>"` kendi bash sarmalayıcısını yakalar.** `pgrep -af "node.*astro.js build"`
+   çalışan build olmadığı hâlde 2 döndürdü: desen, komutu çalıştıran `bash -c`'nin kendi
+   komut satırında geçiyor. Köşeli parantez de yetmiyor. Doğrusu süreç adına bakmak:
+   `ps -eo comm,args --no-headers | awk '$1=="node" && /astro\.js build/'`.
+14. **Duman testi yayından hemen sonra yanlış alarm veriyor.** `contains()` gövdeyi
+   `|| body=""` ile yutuyor; 13509 dosya kopyalandıktan sonra disk doluyken 20 sn zaman
+   aşımı yetmiyor ve `og:image BULUNAMADI` diyor. Sembolik bağlantı çevrilmiş, sayfa 200,
+   içerik doğru. 2026-09-07'de iki kez oldu. `contains()` boş gövdede yeniden denemeli.
 12. **Sayfa dosyasındaki `import.meta.url` taşınırken kırılır.** `harita.astro` içindeki
    `dirname(fileURLToPath(import.meta.url)) + "../../../../"` şans eseri doğruydu; kütüphaneye
    taşınınca paket `dist/chunks/` altına düşer ve derinlik değişir. Yeni kod `DATA_DIR`
@@ -947,3 +1011,72 @@ açmak, migration yazmak ve import adımı eklemek hiçbir şey kazandırmazdı.
 ayetlerde oynatıcı hiç basılmaz — çalmayan bir oynatıcı göstermek sessiz kırılmadır.
 Linter kapsamı denetliyor: `verseCount + missingVerses.length = 6236` tutmuyorsa
 build durur (manifest indirmeden sonra yeniden yazılmamış demektir).
+
+## İletişim / öneri / düzeltme formu (2026-09-07)
+
+`/iletisim` yayında. Plan Faz 5'in "geri bildirim kanalı" maddesi ve §23.4 / K2'nin
+"iletişim yolu sayfada yazılıdır" koşulu karşılandı — künye **her sayfanın altında**
+duruyor (`Attribution.astro`), tek bir sayfaya gömülü değil.
+
+| Katman | Dosya |
+|---|---|
+| Arka uç | `apps/iletisim/` (pm2: `kuran-iletisim`, 127.0.0.1:4380) |
+| Sayfalar | `iletisim.astro` · `iletisim-tesekkur.astro` · `iletisim-hata.astro` |
+| Künye | `apps/web/src/lib/site.ts` → `CONTACT` |
+| Stil | `global.css` "İletişim formu (/iletisim)" |
+| Nginx | `location = /api/iletisim` + CSP `~^/iletisim(\.html)?$` |
+| Ayar | `.env` → `FORM_PORT`, `FORM_DB_PATH`, `SMTP_*`, `CONTACT_*` |
+
+**Sitenin ilk ve tek sunucu taraflı parçası.** Bugüne kadar her şey statik dosyaydı.
+Form düz `<form method="post">`; JavaScript yok, CSP'de açılan tek şey
+`form-action 'self'`. Servis HTML üretmez, 303 ile statik sonuç sayfasına yollar
+(POST-Redirect-GET) — geri tuşu formu yeniden göndermez.
+
+### Önce veritabanı, sonra mail
+
+Mesaj **önce** SQLite'a yazılır, **sonra** mail gönderilir ve gönderim sonucu aynı
+satıra düşer. Gerekçe: posta bir gün sessizce bozulur (şifre değişir, kota dolar,
+alıcı reddeder) ve o gün form "gönderildi" deyip mesajı hiçbir yere yazmamış olurdu.
+Gönderilemeyen satır sayısı `/api/iletisim/durum` ucunda görünür; deploy duman testi
+arka ucun ayakta olduğunu da denetliyor.
+
+### Mail neden esfasoft SMTP'sinden
+
+`kurankesfi.tr`'nin **SPF kaydı ve MX'i yok** (ölçüldü 2026-09-07). Sunucudaki
+sendmail ile o alan adından gönderilen mail alıcı tarafında büyük olasılıkla spam'e
+düşerdi. `mail.esfasoft.com.tr` kendi sunucumuz; SPF/DKIM zaten orada.
+
+Ziyaretçinin yazdığı adres **gönderen yapılmaz** — doğrulanmamıştır ve başkası adına
+mail göndermek olurdu. Yalnızca `Reply-To` olur.
+
+### Ne saklanmıyor
+
+IP adresi, tarayıcı bilgisi, referans adresi saklanmaz (plan §1.2, §1.3). Hız sınırı
+için IP yalnızca **bellekte, karması alınarak** tutulur; diske yazılmaz, süreç
+yeniden başlayınca sıfırlanır. Captcha yok: üçüncü taraf bağımlılığı olurdu
+(CLAUDE.md kural 5). Yerine bal küpü alanı + hız sınırı + uzunluk sınırları.
+
+Bal küpü dolu gelen isteğe **başarı gösterilir**, hata değil: bota hangi alanda
+yakalandığını öğretmenin anlamı yok. Mesaj hiçbir yere yazılmaz.
+
+### Ölçülen davranış (2026-09-07)
+
+| Durum | Sonuç |
+|---|---|
+| Geçerli mesaj | 303 → `/iletisim-tesekkur`, satır yazıldı |
+| Bal küpü dolu | 303 → `/iletisim-tesekkur`, satır **yazılmadı** |
+| Mesaj < 10 karakter | 303 → `/iletisim-hata` |
+| Ayet biçimi bozuk (`abc`) | 303 → `/iletisim-hata` |
+| E-posta biçimi bozuk | 303 → `/iletisim-hata` |
+| Aynı IP, 20 sn içinde ikinci gönderim | 303 → `/iletisim-hata` |
+| `GET /api/iletisim` | 404 (nginx'te de `limit_except POST`) |
+
+### Açık kalan
+
+**SMTP kullanıcı adı ve şifresi `.env` içinde boş.** Servis çalışıyor ve mesajları
+kaydediyor, ama mail gönderemiyor; satırlara "SMTP yapılandırılmamış" düşüyor.
+`SMTP_USER` / `SMTP_PASS` dolduğunda `pm2 restart kuran-iletisim` yeter — kod
+değişmez. `pnpm approve-builds` gereği `better-sqlite3` `pnpm-workspace.yaml`
+içindeki `onlyBuiltDependencies` listesine alındı (pnpm 10 kurulum betiklerini
+varsayılan olarak çalıştırmıyor; izin verilmezse modül "better_sqlite3.node
+bulunamadı" ile düşüyor).

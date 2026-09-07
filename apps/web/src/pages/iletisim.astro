@@ -1,0 +1,157 @@
+---
+import Base from "~/layouts/Base.astro";
+import { CONTACT } from "~/lib/site";
+
+/**
+ * İletişim / öneri / düzeltme — plan §12.10, Faz 5 "geri bildirim kanalı".
+ *
+ * ## Sitenin tek sunucu taraflı akışı
+ *
+ * Form düz bir `<form method="post">`; JavaScript YOK. Tarayıcı
+ * `/api/iletisim`'e POST eder, nginx onu `apps/iletisim` servisine geçirir,
+ * servis 303 ile statik bir sonuç sayfasına gönderir (POST-Redirect-GET).
+ * Geri tuşu formu yeniden göndermez, sonuç sayfaları da statik kalır.
+ *
+ * CSP'de bu sayfa için açılan TEK şey `form-action 'self'`. `script-src` hâlâ
+ * kapalı — betik gerektiren bir doğrulama yok, tarayıcının kendi `required` /
+ * `maxlength` / `type="email"` denetimleri yetiyor.
+ *
+ * ## Captcha yok
+ *
+ * Üçüncü taraf bağımlılığı olurdu (CLAUDE.md kural 5) ve ziyaretçiyi izleyen
+ * bir hizmete sokardı. Yerine bal küpü alanı + sunucuda hız sınırı.
+ */
+
+const TURLER = [
+  {
+    value: "duzeltme",
+    label: "Düzeltme",
+    hint: "Bir metinde, mealde, tarihte ya da bağlantıda hata gördünüz",
+  },
+  {
+    value: "oneri",
+    label: "Öneri",
+    hint: "Eklenmesini ya da değişmesini istediğiniz bir şey var",
+  },
+  { value: "iletisim", label: "İletişim", hint: "Diğer her konu" },
+] as const;
+---
+
+<Base
+  title="İletişim, öneri ve düzeltme — Kur'an-ı Kerim Keşfi"
+  description="Hata bildirimi, öneri ve iletişim. Form doğrudan bize ulaşır; takip kodu ve hesap yok."
+>
+  <main id="icerik" class="pg pg-normal">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">İletişim</span>
+    </nav>
+
+    <header class="pg-head">
+      <p class="pg-kicker">Geri bildirim</p>
+      <h1 class="pg-title">İletişim, öneri ve düzeltme</h1>
+      <p class="pg-lede">
+        Bu site kaynaklı içerik yayımlar ve <strong>kendi yorumunu üretmez</strong>;
+        bu yüzden bir hata gördüğünüzde bildirmeniz doğrudan işe yarar. Yanlış bir
+        meal atfı, kayan bir ayet numarası, kırık bir bağlantı, tarihi tartışmalı
+        bir kayıt — hepsi buradan gelir ve kaynağına bakılarak düzeltilir.
+      </p>
+    </header>
+
+    <form class="ilt-form" method="post" action="/api/iletisim">
+      <fieldset class="ilt-fieldset">
+        <legend>Konu</legend>
+        <div class="ilt-turler">
+          {
+            TURLER.map((tur, index) => (
+              <label class="ilt-tur">
+                <input type="radio" name="tur" value={tur.value} checked={index === 0} />
+                <span class="ilt-tur-ad">{tur.label}</span>
+                <span class="ilt-tur-ipucu">{tur.hint}</span>
+              </label>
+            ))
+          }
+        </div>
+      </fieldset>
+
+      <label class="ilt-field">
+        <span class="ilt-label">Ayet <span class="ilt-opt">(isteğe bağlı)</span></span>
+        <input
+          type="text"
+          name="ayet"
+          inputmode="numeric"
+          placeholder="2:255"
+          pattern="[0-9]{1,3}:[0-9]{1,3}"
+          maxlength="16"
+        />
+        <span class="ilt-hint">
+          Düzeltme bir ayetle ilgiliyse numarasını yazın — sure:ayet biçiminde.
+        </span>
+      </label>
+
+      <label class="ilt-field">
+        <span class="ilt-label">Mesaj</span>
+        <textarea name="mesaj" rows="8" required minlength="10" maxlength="5000"></textarea>
+        <span class="ilt-hint">
+          Düzeltme bildiriyorsanız <strong>neyin yanlış olduğunu ve doğrusunun ne
+          olduğunu</strong> yazın; kaynağını da eklerseniz doğrudan denetlenebilir.
+        </span>
+      </label>
+
+      <div class="ilt-grid">
+        <label class="ilt-field">
+          <span class="ilt-label">Adınız <span class="ilt-opt">(isteğe bağlı)</span></span>
+          <input type="text" name="ad" maxlength="100" autocomplete="name" />
+        </label>
+        <label class="ilt-field">
+          <span class="ilt-label">E-posta <span class="ilt-opt">(isteğe bağlı)</span></span>
+          <input type="email" name="eposta" maxlength="200" autocomplete="email" />
+          <span class="ilt-hint">Yalnızca size yanıt verebilmek için. Listeye eklenmez.</span>
+        </label>
+      </div>
+
+      {/*
+        Bal küpü. Ekranda görünmez ve ekran okuyucudan da gizlidir; yalnızca
+        formu kör dolduran botlar bunu doldurur. Sunucu dolu gelen isteği
+        sessizce atar — botun hangi alanda yakalandığını öğrenmesi istenmez.
+      */}
+      <div class="ilt-hp" aria-hidden="true">
+        <label>
+          Bu alanı boş bırakın
+          <input type="text" name="website" tabindex="-1" autocomplete="off" />
+        </label>
+      </div>
+
+      <button type="submit" class="ilt-submit">Gönder</button>
+
+      <p class="ilt-privacy">
+        Mesajınız ve — yazdıysanız — adınız ile e-posta adresiniz bize ulaşır ve
+        sunucuda saklanır. <strong>IP adresiniz, tarayıcınız ve gezinme geçmişiniz
+        kaydedilmez</strong>; site takip kodu içermez, hesap açtırmaz. Kısa süre
+        içinde çok sayıda gönderim yapılmasını engellemek için IP adresi yalnızca
+        geçici olarak bellekte tutulur, diske yazılmaz.
+      </p>
+    </form>
+
+    <section class="ilt-direct">
+      <h2>Doğrudan iletişim</h2>
+      <p class="sec-note">
+        Form çalışmazsa ya da ek dosya göndermeniz gerekiyorsa doğrudan
+        yazabilirsiniz.
+      </p>
+      <dl class="ilt-kunye">
+        <dt>Yürüten</dt>
+        <dd>{CONTACT.org}</dd>
+        <dt>E-posta</dt>
+        <dd><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></dd>
+        <dt>Telefon</dt>
+        <dd><a href={`tel:${CONTACT.phoneHref}`}>{CONTACT.phone}</a></dd>
+      </dl>
+      <p class="sec-note">
+        Bir metnin kaldırılmasını talep ediyorsanız aynı adres geçerlidir; talep
+        alındıktan sonra ilgili kayıt yayından kaldırılır ve gerekçesi kaynak
+        listesine yazılır.
+      </p>
+    </section>
+  </main>
+</Base>
