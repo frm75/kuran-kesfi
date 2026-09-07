@@ -196,35 +196,63 @@ kavrama bağlı olması, hiçbirinin bağsız kalmaması.
 
 Slug çakışması yok: `tevhid` (kavram) ile `tevhid-ve-allah` (üst kavram) ayrı.
 
-### B.2 Hesaplanan ilişkiler
+### B.2 Hesaplanan ilişkiler — BÜYÜK ÖLÇÜDE ZATEN VAR
 
-139 elle ilişki graf için yetersiz. `concept_verse` tablosu zaten kökten hesaplanmış
-durumda (`content.ts` içindeki `conceptVerses`). İki kavramın ayet kümesi kesişimi =
-birlikte geçiş.
+Tasarım turunda "139 ilişki var, hesaplama eklenmeli" denmişti. Doğrulandı: **139 sayısı
+elle yazılan kaynak dosyalarındı.** Hesaplama hattı `scripts/import/content.ts:622-659`
+içinde zaten çalışıyor ve önerilen tasarımın neredeyse tamamını yapıyor:
 
-- 101 kavram → 5050 çift, küme kesişimi. Ucuz.
-- Ağırlık PMI ile normalize edilir, 1–3 aralığına ölçeklenir.
-- Kavram başına **en güçlü 6** bağ tutulur (saç yumağı olmasın).
-- Üst kavramlar bu hesaba **girmez** (kendi ayetleri yok).
+- `concept_verse` üzerinde SQL self-join ile ortak ayet sayımı, `HAVING count(*) >= 3`
+- **Kosinüs benzerliği** ile normalize (PMI değil — mevcut seçim korunur)
+- **Kavram başına en yakın 6 komşu**
+- **Elle yazılan çift kazanır**, hesaplanan onun üstüne yazılmaz
+- Ağırlık eşiği: kosinüs ≥0.25 → 3, ≥0.12 → 2, altı → 1
 
-Hesaplama yeri: `scripts/import/content.ts`. Gerekçe: `verse_relation` ve `concept_verse`
-zaten orada türetiliyor; aynı yerde durması hattı tek yönlü tutar ve `build.ts` saf
-dışa aktarıcı kalır.
+Üretilen veride ölçülen gerçek graf (`public/data/concept/*.json`):
 
-**Şema eklemeleri:**
+| Ölçüm | Değer |
+|---|---|
+| Tekil yönsüz çift | **543** |
+| contrast / cause / part_of | 25 / 12 / 14 |
+| co_occurrence (ağırlık 3 / 2 / 1) | 27 / 172 / 293 |
+| Düğüm derecesi (min / medyan / maks) | 3 / 9 / **90** (`ilah`) |
+| İlişkisiz kavram | **0** |
 
-```sql
-CREATE TYPE relation_origin AS ENUM ('curated', 'computed');
-ALTER TABLE concept_relation ADD COLUMN origin relation_origin NOT NULL DEFAULT 'curated';
-```
+**Geriye kalan gerçek iş yalnızca ikisi:**
 
-`concept_relation` birincil anahtarı `(source, target, type)`. Aynı çift için hem elle
-hem hesaplanmış `co_occurrence` çıkabilir. **Kural: elle girilen kazanır**, hesaplanan
-o çift için atlanır. Elle girilmiş `contrast` / `cause` / `part_of` hiç dokunulmadan kalır.
+1. **`origin` ayrımı yok.** `staticConcept.relations[]` şu an `{slug, nameTr, type, weight}`
+   taşıyor; bir bağın elle mi yazıldığı yoksa istatistikten mi geldiği **görünmüyor**.
+   Arayüz hesaplanan bağı kaynaklı bağ gibi gösteriyor — `CLAUDE.md` kural 4'e aykırı.
+   Şema eklemesi gerekiyor:
 
-`staticConcept.relations[]` ve `concepts_index.json` içindeki ilişkiler `origin` alanını
-taşır. Arayüz hesaplanan bağı **"birlikte geçiş (hesaplanmış)"** diye ayrı etiketler —
-kaynaksız bağ kaynaklıymış gibi gösterilmez (`CLAUDE.md` kural 4).
+   ```sql
+   CREATE TYPE relation_origin AS ENUM ('curated', 'computed');
+   ALTER TABLE concept_relation ADD COLUMN origin relation_origin NOT NULL DEFAULT 'curated';
+   ```
+
+   `content.ts:622` elle yazılanlara `'curated'`, `:658` hesaplananlara `'computed'` yazar.
+   Arayüz hesaplanan bağı **"birlikte geçiş (hesaplanmış)"** diye ayrı etiketler.
+
+2. **`concepts_index.json` ilişki taşımıyor.** Atlas sayfası tek dosyadan okuyabilsin diye
+   eklenir (§B.3).
+
+**Bu bölümde yeni bir hesaplama yazılmayacak.** Mevcut kosinüs hattına dokunulmaz.
+
+#### Atlas için çizim bütçesi
+
+Düğüm derecesi maksimumu 90 (`ilah`). 543 çiftin hepsini çizmek saç yumağı üretir.
+Atlasta çizilecek kenarlar ölçülen sayılarla sabitlenir:
+
+| Kenar | Adet | Atlasta |
+|---|---|---|
+| contrast | 25 | **çizilir** — kiriş, en belirgin |
+| part_of | 14 | **çizilir** — kiriş |
+| cause | 12 | **çizilir** — kiriş |
+| co_occurrence ağırlık 3 | 27 | **çizilir** — soluk yay |
+| co_occurrence ağırlık 2 | 172 | yalnızca grup sayfasında |
+| co_occurrence ağırlık 1 | 293 | yalnızca ego-grafta |
+
+Atlas toplam **78 kenar / 101 düğüm** — okunur yoğunluk.
 
 ### B.3 `concepts_index.json` genişlemesi
 
@@ -253,10 +281,10 @@ Yerleşim:
 - Üçüncü seviye (`sirk`, `fisk`) ebeveyninin hemen dışında, kısa bir çıkıntıda.
 - Düğüm yarıçapı `sqrt(verseCount)` ile ölçeklenir — alan orantılı olsun, büyük kavram
   ekranı yutmasın.
-- **Zıtlık** (`contrast`) bağları çemberin **içinden** kiriş olarak geçer: kontrol
-  noktası merkez olan quadratic Bézier.
-- **Birlikte geçiş** (`co_occurrence`) bağları dilim içinde soluk yay; grup dışına
-  taşanlar yalnızca ağırlık 3 ise çizilir.
+- Kenarlar §B.2'deki çizim bütçesine göre: 51 elle yazılmış bağ (contrast 25,
+  part_of 14, cause 12) çemberin **içinden** kiriş olarak geçer — kontrol noktası
+  merkez olan quadratic Bézier. Ağırlık 3 birlikte geçiş (27 çift) soluk yay olarak
+  eklenir. Ağırlık 1 ve 2 atlasa **girmez**; toplam 78 kenar.
 - Her düğüm `<a href="/kavram/<slug>">`.
 
 Determinizm: yalnızca `Math.sin`/`Math.cos` ve veri sırası. Rastgelelik, zaman damgası
@@ -458,7 +486,7 @@ Kavramla aynı `graf.ts` yardımcısı: 7 alan halkada, ilkeler dışta, emir/ne
 |---|---|---|
 | 1 | Menü: `nav.ts`, `SiteNav.astro`, CSS, 3 hub sayfası, kicker/breadcrumb, tagline, sitemap | — |
 | 2 | Kavram taksonomisi: 8 üst kavram dosyası, 101 `parentSlug`, `conceptInput` refine gevşetme, linter denetimi | — |
-| 3 | Hesaplanan ilişkiler: `relation_origin` enum, `origin` sütunu, import hesabı, index genişlemesi | 2 |
+| 3 | `relation_origin` enum + `origin` sütunu + index genişlemesi (hesaplama ZATEN var, dokunulmuyor) | 2 |
 | 4 | `graf.ts` + radyal atlas + grup sayfaları + ego-graf | 3 |
 | 5 | İlke alan katmanı: şema zinciri, 7 alan dosyası, 60 eşleme, `ilkeler.astro` gruplama | — |
 | 6 | İbadet ilkeleri (4 yeni) + `oppositeSlug` çiftleri + DURUM.md takvim güncellemesi | 5 |
