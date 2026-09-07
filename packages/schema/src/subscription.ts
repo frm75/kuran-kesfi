@@ -45,8 +45,24 @@ export type Subscription = z.infer<typeof subscription>;
 export const scheduleEntry = z.object({
   /** Yilin gunu: 0-365 */
   dayIndex: z.number().int().min(0).max(365),
+  /**
+   * verse.id = sure * 1000 + ayet. Bu deger SERI DEGIL, ayet numarasindan
+   * hesaplanir; yeniden import edildiginde kaymaz.
+   */
   verseId: dbId,
-  principleId: dbId,
+  /** Kolaylik: verseId'den turetilir, bot ikinci bir hesap yapmasin. */
+  surahId: z.number().int().min(1).max(114),
+  verseNumber: z.number().int().positive(),
+  /**
+   * principle.slug — SAYISAL ID DEGIL.
+   *
+   * `principle.id` bir seridir ve `pnpm content:import` her calistiginda
+   * tablo bosaltilip yeniden dolduruldugu icin degisebilir. Takvim bot
+   * veritabaninda imlecle takip ediliyor; id kaysaydi abonelere sessizce
+   * BASKA ilke gitmeye baslardi. `subscription.authorSlug` ayni gerekceyle
+   * slug tutuyor.
+   */
+  principleSlug: slug,
   /** Ramazan, kandil, kurban gibi tematik secimler icin etiket */
   occasion: z.string().nullable(),
 });

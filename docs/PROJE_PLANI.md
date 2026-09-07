@@ -795,6 +795,12 @@ gönderildiği kalıcı olarak kaydedilmez.
 ## 19.7 Öncelik
 Telegram botu Faz 3; WhatsApp Faz 5 (yayın sonrası). İlkeler modülü (Bölüm 18) botun ön koşuludur.
 
+**Durum 2026-09-07:** Telegram botunun **kodu bitti** (`apps/bot`, pm2 `kuran-bot`),
+gönderim takvimi build'de üretiliyor (`schedule.json`, 366 gün / 60 ilke / 239 ayet),
+29 duman testi geçiyor. Yalnızca `BOT_TOKEN` ve `BOT_USERNAME` bekliyor. grammY
+alınmadı, webhook yerine uzun yoklama seçildi; gerekçeler `docs/DURUM.md` ve
+`apps/bot/README.md`. WhatsApp'a dokunulmadı.
+
 
 ---
 

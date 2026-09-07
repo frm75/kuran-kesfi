@@ -1123,3 +1123,76 @@ sayısını ve hata metnini yazar. Dört ardışık çalıştırma temiz geçti,
 (100/100, 60/60, 50/50 temiz), yalnızca duman testinin ~50 isteklik yığını içinde
 çıkıyor. Ziyaretçiye yansıdığına dair bir belirti yok; yansırsa artık çıkış kodu
 kayda geçecek.
+
+## Telegram botu (2026-09-07) — KOD HAZIR, TOKEN BEKLİYOR
+
+Plan §19'un tamamı yazıldı; `pm2: kuran-bot` ayakta ve `BOT_TOKEN` bekliyor.
+İlkeler modülü ön koşuldu, o zaten bitmişti.
+
+| Katman | Dosya |
+|---|---|
+| Takvim üretimi | `scripts/build/lib/content.ts` → `schedule.json` (366 gün) |
+| Şema | `packages/schema/src/subscription.ts` |
+| Servis | `apps/bot/` (pm2 `kuran-bot`, 127.0.0.1:4330) |
+| Abonelik deposu | SQLite — `/opt/kuran/var/bot.sqlite` |
+| Test | `apps/bot/src/__tests__/bot.smoke.ts` (29 test) · `pnpm test` |
+| Ayar | `.env` → `BOT_TOKEN`, `BOT_USERNAME`, `BOT_*` |
+
+### Gönderim takvimi
+
+**366 gün, 60 ilke dönüşümlü, 239 farklı ayet.** Rotasyon: gün *i* → ilke
+`i % 60`, o ilkenin ayetlerinden `floor(i / 60)` sırasındaki. Bir ilke yılda ~6
+kez geliyor ve **her seferinde başka ayetiyle**; 60 gün içinde hiçbir ilke
+tekrar etmiyor. Birincil dayanaklar önce, ikinciller sonra.
+
+Takvim **deterministik** — `generatedAt` bilerek sabit (`1970-01-01`), yoksa her
+build parmak izini değiştirirdi (plan §20.1). Determinizmin asıl karşılığı veri
+minimizasyonu: kullanıcıya hangi ayetin gönderildiği **kaydedilmiyor**, yalnızca
+imleç ilerliyor (plan §19.2). Rastgele seçim yapsaydık gönderim geçmişi tutmak
+zorunda kalırdık.
+
+`occasion` (Ramazan, kandil, kurban) hep `null`: bu günler hicrî takvime bağlı ve
+her yıl kayıyor, takvimin üretildiği yıl bilinmeden hesaplanamaz. Uydurulmadı.
+
+### Şema düzeltmesi: `principleId` → `principleSlug`
+
+`scheduleEntry` ilkeyi sayısal id ile tutuyordu. `principle.id` bir **seri** ve
+`pnpm content:import` her çalıştığında tablo boşaltılıp yeniden dolduruluyor —
+id kaysaydı abonelere sessizce **başka ilke** gitmeye başlardı. `verseId` kaldı
+çünkü o seri değil, `sure * 1000 + ayet` olarak hesaplanıyor.
+
+### Kararlar
+
+- **grammY alınmadı.** Kullanılan yüzey üç uç: `getMe`, `getUpdates`,
+  `sendMessage`. Dexie ve D3 ile aynı gerekçe.
+- **Webhook değil uzun yoklama.** Webhook nginx'te yeni bir genel uç ve gizli
+  yol yönetimi isterdi; yoklama dışarıya hiçbir şey açmıyor.
+- **İçerik yayındaki sürümden okunuyor** (`current/data`), repodan değil. Bota
+  giden ayet ve ilke sitede duranın aynısı (plan §19.6). Takvim önbelleğe
+  alınmıyor — alınsaydı yeni yayından sonra bot yeniden başlatılana kadar eski
+  takvimi gönderirdi ve kimse fark etmezdi.
+- **Cron yok**, süreç içi saatlik zamanlayıcı var; servis zaten sürekli açık.
+- **İmleç yalnızca gönderim başarılı olunca ilerler** — hata durumunda aynı gün
+  yeniden denenir (plan §19.6), abone bir günü kaçırmaz.
+- Bot **yalnızca birebir sohbette** çalışır; gruplarda yok sayar.
+
+### Bir kez yaşanmış tuzak — sessizce yanlış görünen mesaj
+
+`BOT_DEFAULT_AUTHOR` yanlış yazılmıştı (`diyanet-isleri-baskanligi`, doğrusu
+`diyanet-isleri`). Sonuç: mesaj **gidiyor**, doğru meal gösteriliyor, ama altına
+her seferinde "*Seçtiğiniz meal bu ayette yok; Diyanet İşleri meali gösterildi*"
+notu düşüyordu. Gönderim çalıştığı için hata sayılmazdı.
+
+Servis artık açılışta slug'ı `authors_index.json` ile doğruluyor ve uyarıyor;
+duman testi de hem doğru mealde notun **çıkmadığını** hem yanlış mealde
+**çıktığını** ayrı ayrı denetliyor.
+
+### Açık kalan
+
+- **`BOT_TOKEN` ve `BOT_USERNAME` boş.** BotFather'dan alınacak. Token gelince
+  `pm2 restart kuran-bot` yeter, kod değişmez.
+- **Sitedeki "Günlük ayet al" sayfası yapılmadı** — bot kullanıcı adı olmadan
+  `t.me/<ad>` bağlantısı kurulamıyor ve olmayan bir adrese bağlantı vermek
+  menüdeki "dürüstlük kuralı"na aykırı olurdu.
+- **WhatsApp** plan §19.3'e göre Faz 5; Meta doğrulaması, şablon onayı ve
+  telefon numarası saklama yükü ayrıca değerlendirilecek.

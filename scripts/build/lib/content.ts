@@ -15,6 +15,7 @@ import type {
   StaticVerseManuscripts,
   StaticVerseRelations,
   StaticSurahSections,
+  Schedule,
   StaticTafsirBlock,
   StaticTafsirIndex,
   StaticTafsirSurah,
@@ -35,6 +36,7 @@ import {
   staticVerseManuscripts,
   staticVerseRelations,
   staticSurahSections,
+  schedule,
   staticTafsirIndex,
   staticTafsirSurah,
 } from "@kuran/schema";
@@ -553,6 +555,94 @@ export async function emitContent(
     const linked = Object.keys(relPayload.verses).length;
     info(`ayet iliskisi: ${relationRows.length.toLocaleString("tr-TR")} bag · ${linked} ayet`);
     report.note(`Ayet iliskisi: ${relationRows.length.toLocaleString("tr-TR")} bag · ${linked} / 6236 ayet`);
+  }
+
+  /*
+   * --- gonderim takvimi (plan 19.5) ----------------------------------------
+   *
+   * Telegram botunun her gun ne gonderecegi BUILD ZAMANINDA belirlenir; bot
+   * kendi basina icerik secmez. Iki sebep:
+   *
+   *   1. Icerik tek kaynaktan yonetilir — bota giden ayet ve ilke, sitede
+   *      duran ayet ve ilkenin AYNISIDIR (plan 19.6).
+   *   2. Takvim deterministik oldugu icin kullaniciya hangi ayetin
+   *      gonderildigi KAYDEDILMEZ; abonelik kaydinda yalnizca imlec ilerler
+   *      (plan 19.2 veri minimizasyonu). Rastgele secim yapsaydik gonderim
+   *      gecmisi tutmak zorunda kalirdik.
+   *
+   * Rotasyon: gun i -> ilke[i % ilkeSayisi], o ilkenin ayetlerinden
+   * floor(i / ilkeSayisi) sirasindaki. Boylece bir ilke 366 gunde ~6 kez
+   * geliyor ve HER SEFERINDE BASKA ayetiyle geliyor; 60 gun icinde hicbir
+   * ilke tekrar etmiyor. Birincil dayanaklar once, ikinciller sonra.
+   *
+   * `occasion` (Ramazan, kandil, kurban) su an hep null: bu gunler hicri
+   * takvime bagli ve her yil kayiyor, yani takvimin uretildigi yil bilinmeden
+   * hesaplanamaz. Uydurmak yerine bos birakildi (docs/BACKLOG.md).
+   */
+  const principleRows = await q<{ id: number; slug: string }>(
+    `SELECT id, slug FROM principle ORDER BY "order", id`,
+  );
+
+  if (principleRows.length > 0) {
+    const principleVerseRows = await q<{ principle_id: number; verse_id: number; role: string }>(
+      `SELECT principle_id, verse_id, role
+         FROM principle_verse
+        ORDER BY principle_id, (role <> 'primary'), verse_id`,
+    );
+
+    const versesByPrinciple = new Map<number, number[]>();
+    for (const row of principleVerseRows) {
+      const list = versesByPrinciple.get(row.principle_id) ?? [];
+      if (list.length === 0) versesByPrinciple.set(row.principle_id, list);
+      list.push(row.verse_id);
+    }
+
+    // Ayeti olmayan ilke takvime GIRMEZ: gonderilecek ayeti olmayan bir gun
+    // bota bos mesaj yazdirirdi.
+    const usable = principleRows.filter((p) => (versesByPrinciple.get(p.id)?.length ?? 0) > 0);
+
+    if (usable.length > 0) {
+      const DAYS = 366;
+      const entries = [];
+      for (let day = 0; day < DAYS; day += 1) {
+        const principle = usable[day % usable.length];
+        if (principle === undefined) continue;
+        const verses = versesByPrinciple.get(principle.id) ?? [];
+        const verseId = verses[Math.floor(day / usable.length) % verses.length];
+        if (verseId === undefined) continue;
+        entries.push({
+          dayIndex: day,
+          verseId,
+          surahId: Math.floor(verseId / 1000),
+          verseNumber: verseId % 1000,
+          principleSlug: principle.slug,
+          occasion: null,
+        });
+      }
+
+      /*
+       * `generatedAt` BUILD ZAMANI DEGIL, sabittir. Tekrarlanabilir build
+       * (plan 20.1) ayni girdinin ayni baytlari uretmesini istiyor; zaman
+       * damgasi konsaydi her build parmak izini degistirirdi.
+       */
+      const payload: Schedule = {
+        version: 1,
+        generatedAt: "1970-01-01T00:00:00.000Z",
+        entries,
+      };
+      verifyOrFail(schedule, payload, "schedule.json");
+      emitter.write("schedule.json", payload);
+
+      const distinctVerses = new Set(entries.map((e) => e.verseId)).size;
+      info(
+        `gonderim takvimi: ${String(entries.length)} gun · ${String(usable.length)} ilke · ` +
+          `${String(distinctVerses)} farkli ayet`,
+      );
+      report.note(
+        `Gonderim takvimi (bot): ${String(entries.length)} gun · ${String(usable.length)} ilke ` +
+          `donusumlu · ${String(distinctVerses)} farkli ayet · occasion bos (hicri takvim yok)`,
+      );
+    }
   }
 
   /*

@@ -41,6 +41,7 @@ import {
   staticVerseMedia,
   staticVerseManuscripts,
   recitationFile,
+  schedule,
   staticRecitation,
   staticTafsirIndex,
   staticTafsirSurah,
@@ -788,6 +789,45 @@ function checkStaticOutput(): void {
               `${relativePath}: ${key} icin gosterilen yazma sayisi toplamdan buyuk`,
             );
             break;
+          }
+        }
+      }
+    } else if (relativePath === "schedule.json") {
+      const result = schedule.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) errors.push(`${relativePath}: ${result.error.message}`);
+      else {
+        /*
+         * Takvim botun TEK icerik kaynagi (plan 19.6). Buradaki bir bosluk
+         * abonelere sessizce bos ya da tekrarli mesaj gonderilmesi demek.
+         */
+        const entries = result.data.entries;
+        if (entries.length !== 366) {
+          errors.push(`${relativePath}: ${String(entries.length)} gun var, 366 olmali`);
+        } else {
+          for (const [index, entry] of entries.entries()) {
+            if (entry.dayIndex !== index) {
+              errors.push(`${relativePath}: gun indeksi atlamis (${String(index)})`);
+              break;
+            }
+            if (entry.verseId !== entry.surahId * 1000 + entry.verseNumber) {
+              errors.push(
+                `${relativePath}: gun ${String(index)} verseId sure/ayet ile tutmuyor`,
+              );
+              break;
+            }
+          }
+          /*
+           * Ilkeler DONUSUMLU olmali: bir tur icinde ayni ilke iki kez
+           * gelirse baska bir ilke o yil hic gelmiyor demektir.
+           */
+          const principles = new Set(entries.map((e) => e.principleSlug));
+          const cycle = entries.slice(0, principles.size).map((e) => e.principleSlug);
+          if (new Set(cycle).size !== principles.size) {
+            errors.push(
+              `${relativePath}: ilk ${String(principles.size)} gunde ilke tekrari var — ` +
+                "rotasyon bozuk",
+            );
           }
         }
       }
