@@ -871,5 +871,42 @@ ve sağlayıcı değişimi tek DNS kaydına iner.
 
 **Cache-Control:** `.pmtiles` → 7 gün (adı değişmeden yeniden üretilir); diğerleri 1 yıl `immutable`.
 
-**Doğrulandı 2026-09-05:** bağlantı TAMAM · yükleme + genel okuma 200 · değişmeyen dosya atlanıyor ·
-figür kapısı taranmamış `.png`'yi durdurdu ve **hiçbir dosyayı yüklemedi** (kapı tüm gruba uygulanır).
+**Doğrulandı 2026-09-05:** bağlantı TAMAM · yükleme + genel okuma 200 · değişmeyen dosya atlanıyor.
+
+**Kapı değişti (2026-09-07).** 2026-09-05'te doğrulanan *figür kapısı* 2026-09-06'da kaldırıldı:
+görselin içeriğini sha256 ile denetlemeye çalışıyordu ve bir yüz hash'lenemez. Yerine **AI yüz
+taraması kapısı** kondu (`scripts/media/r2_sync.ts`): `media/ai/` altındaki bir dosya
+`data/media/ai_generated.json` içinde `faceScanned: true` DEĞİLSE ya da diskteki sha256 kayıttakiyle
+tutmuyorsa **yüklenmez**. İçeriğe bakmaz; insanın verdiği kararı okur, sha256 yalnızca kararın hangi
+dosyaya verildiğini bağlar. Doğrulandı 2026-09-07: onay öncesi 10 AI çıktısının 10'u durduruldu,
+**0 dosya yüklendi**; onay sonrası hepsi geçti.
+
+Kapı uzaktaki nesneyi **silmez**. Yanlışlıkla çıkmış dosya `pnpm media:r2:list ai/cikti` ile görülür,
+kaldırmak elle yapılır.
+
+---
+
+# İletişim servisi — `kuran-iletisim` (2026-09-07)
+
+| Ne | Değer |
+|---|---|
+| Servis | `kuran-iletisim` (pm2, fork) |
+| Port | `127.0.0.1:4380` — yalnızca yerel, dışarı açık değil |
+| Kaynak | `apps/iletisim/` |
+| Uç nokta | `POST /api/iletisim` → nginx ters vekil |
+| Mail | Brevo SMTP (commit `b8f2796`) |
+
+**nginx kuralı** (`location = /api/iletisim`): yalnız POST (`limit_except POST { deny all; }`,
+GET **403** döner), gövde en fazla 64 KB, `proxy_connect_timeout 5s` / `proxy_read_timeout 20s`,
+`proxy_redirect off` (303 tarayıcıya gider). `X-Real-IP` hız sınırı için geçer; servis adresi
+saklamaz, karmasını bellekte geçici tutar.
+
+**CSP** `~^/iletisim(\.html)?$`: `form-action 'self'` açıldı, **`script-src` AÇILMADI** — sayfa
+0 bayt JS ile çalışır.
+
+**Doğrulandı 2026-09-07 yayın sonrası:** `/iletisim` 200 · CSP `form-action 'self'` var,
+`script-src` yok · `GET /api/iletisim` → 403 · boş `POST` → 303 `/iletisim-hata` ·
+`/`, `/harita`, `/gunluk`, `/kissa/*`, ayet sayfaları 200.
+
+**Yedekler:** `/www/server/panel/vhost/nginx/kurankesfi.tr.conf.bak.20260907`
+(gunluk CSP uygulanmadan önce) ve `.bak.20260907-2` (iletisim kuralı uygulanmadan önce).

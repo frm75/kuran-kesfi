@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { createReadStream, existsSync, statSync } from "node:fs";
+import { createReadStream, existsSync, readFileSync, statSync } from "node:fs";
 import { readdir } from "node:fs/promises";
 import { extname, join, relative, resolve, sep } from "node:path";
 import {
@@ -67,6 +67,53 @@ import { env, fail, info, repoRoot, warn } from "@kuran/pipeline";
 // --- sabitler ----------------------------------------------------------------
 
 const stagingDir = resolve(repoRoot, "media");
+
+/**
+ * AI CIKTI KAPISI — taranmamis dosya R2'ye CIKMAZ (2026-09-07).
+ *
+ * ============================================================================
+ * NEDEN GEREKLI
+ * ============================================================================
+ *
+ * Yuz taramasi kapisi `scripts/build/lib/content.ts` icinde duruyordu ve
+ * yalnizca STATIK CIKTIYI suzuyordu: taranmamis kayit hicbir sayfada
+ * gorunmuyordu. Ama bu script `media/` altindaki HER SEYI yuruyor — dosya
+ * sayfada gorunmese de `medya.kurankesfi.tr/ai/cikti/<id>.png` adresinden
+ * erisilebilir hale geliyordu. Kapi bir yerde acik kaldiginda kapi degildir.
+ *
+ * ============================================================================
+ * NEDEN BU HASH'LI KAPI, KALDIRILAN FIGUR KAPISINDAN FARKLI
+ * ============================================================================
+ *
+ * Yukarida anlatilan figur kapisi bir GORSELIN ICERIGINI hash ile denetlemeye
+ * calisiyordu; bir yuz hash'lenemez, o yuzden kaldirildi. Bu kapi icerige
+ * bakmiyor: INSANIN VERDIGI KARARI okuyor. `faceScanned` bir kisi tarafindan
+ * elle true yapilir; sha256 yalnizca o kararin HANGI DOSYAYA verildigini
+ * baglar. Dosya degisirse karar dusrer (bkz. ai_queue.ts collect).
+ *
+ * Kapsam yalnizca `media/ai/` altidir. Gercek belgeler ve harita altligi
+ * bu kapiya girmez; onlarin kapisi lisanstir (fetch_images.ts).
+ */
+const AI_PREFIX = `ai${sep}`;
+
+interface AiRecord {
+  id: string;
+  localPath: string;
+  sha256: string;
+  faceScanned: boolean;
+}
+
+function taranmisAiDosyalari(): Map<string, string> {
+  const path = resolve(repoRoot, "data/media/ai_generated.json");
+  if (!existsSync(path)) return new Map();
+  const doc = JSON.parse(readFileSync(path, "utf8")) as { items?: AiRecord[] };
+  const onayli = new Map<string, string>();
+  for (const item of doc.items ?? []) {
+    if (item.faceScanned) onayli.set(item.localPath, item.sha256);
+  }
+  return onayli;
+}
+
 
 const CONTENT_TYPE: Record<string, string> = {
   ".mp4": "video/mp4",
@@ -277,6 +324,31 @@ async function push(dryRun: boolean): Promise<void> {
     hashes.set(file, await sha256File(file));
   });
 
+  /*
+   * AI kapisi. Hash'ler hesaplandiktan SONRA suzuluyor cunku onay dosyaya
+   * baglidir: kayitta yazan sha256 ile diskteki dosya tutmuyorsa onay o
+   * dosyaya verilmemistir ve gecersizdir.
+   */
+  const onayliAi = taranmisAiDosyalari();
+  const engellenen: string[] = [];
+  const yuklenecek = files.filter((file) => {
+    const key = relative(stagingDir, file);
+    if (!key.startsWith(AI_PREFIX)) return true;
+    const beklenen = onayliAi.get(key.split(sep).join("/"));
+    if (beklenen !== undefined && beklenen === hashes.get(file)) return true;
+    engellenen.push(key.split(sep).join("/"));
+    return false;
+  });
+  if (engellenen.length > 0) {
+    warn(
+      `${engellenen.length} AI dosyasi YUKLENMEDI — yuz taramasi onayi yok ya da ` +
+        "dosya onaydan sonra degismis:\n  " +
+        engellenen.join("\n  ") +
+        "\n  Onay: kare kare bak, data/media/ai_generated.json icinde faceScanned true yap.",
+    );
+  }
+  if (yuklenecek.length === 0) fail("Yuklenecek dosya kalmadi (hepsi AI kapisinda durduruldu).");
+
   // --- degismeyenleri atla, kalanlari PARALEL yukle -------------------------
   //
   // Sirali surum 513 glyph dosyasini 213 saniyede yukluyordu — dosya basina
@@ -288,7 +360,7 @@ async function push(dryRun: boolean): Promise<void> {
   let bytes = 0;
   let hata = 0;
 
-  await havuz(files, PARALEL, async (file) => {
+  await havuz(yuklenecek, PARALEL, async (file) => {
     const key = relative(stagingDir, file).split(sep).join("/");
     const hash = hashes.get(file) as string;
     const size = statSync(file).size;

@@ -74,6 +74,12 @@ pnpm media:ai:collect
 Her dosya için: sha256 alınır, görsel ölçüsü okunur, prompt'la eşleştirilir ve
 `data/media/ai_generated.json` yazılır. **`faceScanned` false yazılır.**
 
+Kaydın **kıssa, konum ve olay bağı prompt'undan gelir** — `ai_generated.json`'da bağ
+alanı yoktur ve olmamalıdır: o dosya `collect` tarafından üretilir ve yalnızca
+dosyanın ölçülebilir özelliklerini taşır. Nereye ait olduğu editoryal bir karardır ve
+`data/media/prompts/` içinde durur (`storySlug`, `locationSlug`, `timelineOrder`).
+`storySlug` boş bırakılan bir prompt'un çıktısı **hiçbir sayfada görünmez.**
+
 ## 5. Yüz taraması — otomatik DEĞİL
 
 Bir yüz karma ile denetlenemez; bakmak insanın işi (CLAUDE.md "Görsel ve VİDEO
@@ -103,6 +109,14 @@ pnpm media:r2:push       # media/ai/cikti → R2
 pnpm build               # build:data → lint:refs → build:web  (~4 dk)
 pnpm run deploy          # atomik yayın + duman testi
 ```
+
+**`media:r2:push` taranmamış dosyayı yüklemez** (2026-09-07). Kapı `faceScanned`'e
+VE dosyanın sha256'sına bakar: onaydan sonra dosya değiştiyse yükleme durur. Önceden
+kapı yalnızca statik çıktıdaydı; dosya sayfada görünmese de R2 adresinden
+erişilebiliyordu.
+
+Uzaktaki eski nesneyi **silmez** — bir dosya yanlışlıkla çıkmışsa
+`pnpm media:r2:list ai/cikti` ile görülür, kaldırmak elle yapılır.
 
 `pnpm deploy` **değil** — pnpm'in yerleşik komutuyla çakışır.
 

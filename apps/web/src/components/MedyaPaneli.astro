@@ -24,7 +24,11 @@ import { MEDIA_KIND_LABEL, groupByKind, isAiMedia } from "~/lib/media";
  * gelir; `:target` tabanlı sahte filtreye göre de daha dürüst — açık olan
  * grup adres çubuğunda değil ekranda görünür.
  *
- * İlk grup açık gelir ki panel boş bir başlık yığını gibi görünmesin.
+ * HER BÖLÜMÜN ilk grubu açık gelir ki panel boş bir başlık yığını gibi
+ * görünmesin. Önceden yalnızca SAYFADAKİ ilk grup açılıyordu; pratikte bu hep
+ * "Gerçek fotoğraf" oluyordu ve AI bölümünün tamamı kapalı kalıyordu — ilk AI
+ * çıktıları yayına girdiğinde (2026-09-07) yeni medya bir tık arkasında
+ * gizlenmiş oldu. Görünürlük bölüm başına verilir.
  */
 
 interface Props {
@@ -45,13 +49,6 @@ const sections = [
   { key: "ai", label: "AI canlandırmalar", groups: groupByKind(ai) },
 ].filter((s) => s.groups.length > 0);
 
-/** Yalnızca ilk grup açık — hangisi olduğu bölümler arasında değil, toplamda. */
-let opened = false;
-const isOpen = (): boolean => {
-  if (opened) return false;
-  opened = true;
-  return true;
-};
 ---
 
 {
@@ -77,8 +74,8 @@ const isOpen = (): boolean => {
             </p>
           )}
 
-          {section.groups.map((group) => (
-            <details class="medya-grup" open={isOpen()}>
+          {section.groups.map((group, index) => (
+            <details class="medya-grup" open={index === 0}>
               <summary class="medya-grup-ozet">
                 <span>{MEDIA_KIND_LABEL[group.kind]}</span>
                 <b>{group.items.length}</b>

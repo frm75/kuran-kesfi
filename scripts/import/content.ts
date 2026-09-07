@@ -849,6 +849,17 @@ async function main(): Promise<void> {
       ]),
       "prompt_key",
     );
+    /*
+     * Prompt kimligi -> prompt kaydi. AI medyasinin kissa/konum/olay baglari
+     * BURADAN gelir; ai_generated.json'da bag alani YOKTUR ve olmamalidir.
+     */
+    const promptByKey = new Map(data.prompts.map((p) => [p.id, p]));
+    const promptOf = (key: string): AiPromptInput | undefined => promptByKey.get(key);
+    const aiLocationId = (key: string): number | null => {
+      const slug = promptOf(key)?.locationSlug;
+      return slug == null ? null : (locationId.get(slug) ?? null);
+    };
+
     for (const p of data.prompts) {
       if (p.baseImagePromptId === null) continue;
       await client.query("UPDATE ai_prompt SET base_image_prompt_id = $2 WHERE id = $1", [
@@ -894,7 +905,13 @@ async function main(): Promise<void> {
         a.id, a.kind, a.title, null, null,
         null, null, null, null, null, null,
         null, null, null, null,
-        null, null, null, null, null,
+        /*
+         * Konum AI kaydinin KENDISINDE yok, prompt'unda var. ai_generated.json
+         * `collect` tarafindan uretilir ve yalnizca dosyanin olculebilir
+         * ozelliklerini tasir (karma, en/boy, sure); nereye ait oldugu
+         * editoryal bir karardir ve prompt'ta durur.
+         */
+        null, null, null, aiLocationId(a.promptId), null,
         a.localPath, a.width, a.height,
         promptId.get(a.promptId), a.generator, a.model, a.sha256, a.durationSec, a.createdAt,
         a.faceScanned, a.faceScanNote,
@@ -902,11 +919,29 @@ async function main(): Promise<void> {
     ];
     const mediaId = await insertReturning(client, "media_item", MEDIA_COLUMNS, mediaRows, "media_key");
 
+    /*
+     * KISSA BAGI — gercek medya kendi `storySlugs` alanindan, AI medyasi
+     * PROMPT'undan gelir.
+     *
+     * 2026-09-07'ye kadar yalnizca `data.media` yaziliyordu. Sonuc: AI kaydi
+     * media_item'a giriyor, yuz taramasi onaylaniyor, media.json'a cikiyor ve
+     * HICBIR SAYFADA gorunmuyordu — kissa sayfasi `storySlugs` ile suzuyor,
+     * dizi bos oldugu icin hep eleniyordu. Hata vermiyordu; yalnizca ortada
+     * yoktu. Ilk 10 AI ciktisi yayina alinirken yakalandi.
+     */
     await insertPlain(
       client,
       "media_story",
       ["media_item_id", "story_id"],
-      data.media.flatMap((m) => [...new Set(m.storySlugs)].map((s) => [mediaId.get(m.id), storyId.get(s)])),
+      [
+        ...data.media.flatMap((m) =>
+          [...new Set(m.storySlugs)].map((s) => [mediaId.get(m.id), storyId.get(s)]),
+        ),
+        ...data.aiMedia.flatMap((a) => {
+          const slug = promptOf(a.promptId)?.storySlug;
+          return slug == null ? [] : [[mediaId.get(a.id), storyId.get(slug)]];
+        }),
+      ],
     );
     const mediaVerseRows: unknown[][] = [];
     for (const m of data.media) {
@@ -922,7 +957,15 @@ async function main(): Promise<void> {
       client,
       "media_timeline_event",
       ["media_item_id", "timeline_event_id"],
-      data.media.flatMap((m) => [...new Set(m.timelineOrders)].map((o) => [mediaId.get(m.id), eid(o)])),
+      [
+        ...data.media.flatMap((m) =>
+          [...new Set(m.timelineOrders)].map((o) => [mediaId.get(m.id), eid(o)]),
+        ),
+        ...data.aiMedia.flatMap((a) => {
+          const order = promptOf(a.promptId)?.timelineOrder;
+          return order == null ? [] : [[mediaId.get(a.id), eid(order)]];
+        }),
+      ],
     );
     await insertPlain(
       client,
