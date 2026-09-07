@@ -85,6 +85,11 @@ CREATE TYPE story_type AS ENUM ('prophet', 'people', 'person', 'event');
 
 CREATE TYPE concept_relation_type AS ENUM ('co_occurrence', 'cause', 'contrast', 'part_of');
 
+-- Bir baglantinin ELLE mi yazildigi yoksa istatistikten mi geldigi.
+-- Arayuz ikisini ayri etiketler: kaynaksiz bag kaynakli gibi gosterilmez
+-- (CLAUDE.md kural 4). 2026-09-07.
+CREATE TYPE relation_origin AS ENUM ('curated', 'computed');
+
 CREATE TYPE timeline_period AS ENUM ('mekke_1', 'mekke_2', 'mekke_3', 'medine');
 
 CREATE TYPE principle_verse_role AS ENUM ('primary', 'secondary');
@@ -558,6 +563,7 @@ CREATE TABLE concept_relation (
   target_concept_id integer NOT NULL REFERENCES concept (id) ON DELETE CASCADE,
   relation_type     concept_relation_type NOT NULL,
   weight            smallint NOT NULL CHECK (weight BETWEEN 1 AND 3),
+  origin            relation_origin NOT NULL,
   PRIMARY KEY (source_concept_id, target_concept_id, relation_type),
   CONSTRAINT concept_relation_not_self CHECK (source_concept_id <> target_concept_id)
 );

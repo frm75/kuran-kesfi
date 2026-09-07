@@ -628,7 +628,12 @@ async function main(): Promise<void> {
         manualKeys.add(`${String(lo)}:${String(hi)}`);
       }
     }
-    await insertPlain(client, "concept_relation", ["source_concept_id", "target_concept_id", "relation_type", "weight"], [...manualMap.values()]);
+    await insertPlain(
+      client,
+      "concept_relation",
+      ["source_concept_id", "target_concept_id", "relation_type", "weight", "origin"],
+      [...manualMap.values()].map((row) => [...row, "curated"]),
+    );
 
     // Hesaplanan birlikte gecme (co_occurrence)
     const sizes = new Map<number, number>();
@@ -668,9 +673,14 @@ async function main(): Promise<void> {
       const p = pairs.find((x) => x.a === a && x.b === b);
       if (p === undefined) continue;
       const weight = p.cosine >= 0.25 ? 3 : p.cosine >= 0.12 ? 2 : 1;
-      coRows.push([a, b, "co_occurrence", weight]);
+      coRows.push([a, b, "co_occurrence", weight, "computed"]);
     }
-    await insertPlain(client, "concept_relation", ["source_concept_id", "target_concept_id", "relation_type", "weight"], coRows);
+    await insertPlain(
+      client,
+      "concept_relation",
+      ["source_concept_id", "target_concept_id", "relation_type", "weight", "origin"],
+      coRows,
+    );
     report.note(`Kavram birlikte gecme iliskisi: ${coRows.length} cift (kosinus benzerligi, kavram basina en fazla 6)`);
 
     // --- kissalar ----------------------------------------------------------

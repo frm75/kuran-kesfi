@@ -124,6 +124,11 @@ const maxCount = topSurahs[0]?.count ?? 1;
               <li>
                 <a href={`/kavram/${rel.slug}`}>{rel.nameTr}</a>
                 <span class:list={["rel-type", `is-${rel.type}`]}>{relationLabel[rel.type]}</span>
+                {rel.origin === "computed" && (
+                  <span class="rel-origin" title="Bu bağ iki kavramın ortak ayetlerinden hesaplandı; bir kaynağın kurduğu bağ değildir.">
+                    hesaplanmış
+                  </span>
+                )}
               </li>
             ))}
           </ul>

@@ -209,7 +209,7 @@ export async function emitContent(
     ),
     (r) => r.concept_id,
   );
-  const conceptRelations = await q<{ source_concept_id: number; target_concept_id: number; relation_type: "co_occurrence" | "cause" | "contrast" | "part_of"; weight: number }>(
+  const conceptRelations = await q<{ source_concept_id: number; target_concept_id: number; relation_type: "co_occurrence" | "cause" | "contrast" | "part_of"; weight: number; origin: "curated" | "computed" }>(
     "SELECT * FROM concept_relation ORDER BY 1, 2, 3",
   );
   const conceptSources = group(
@@ -420,7 +420,7 @@ export async function emitContent(
         const otherId = r.source_concept_id === c.id ? r.target_concept_id : r.source_concept_id;
         const o = conceptById.get(otherId);
         if (o === undefined) fail(`kavram ${c.slug}: iliski hedefi ${otherId} yok`);
-        return { slug: o.slug, nameTr: o.name_tr, type: r.relation_type, weight: r.weight };
+        return { slug: o.slug, nameTr: o.name_tr, type: r.relation_type, weight: r.weight, origin: r.origin };
       })
       .sort((a, b) => (a.type === b.type ? b.weight - a.weight || a.slug.localeCompare(b.slug) : a.type.localeCompare(b.type)));
     const payload: StaticConcept = {

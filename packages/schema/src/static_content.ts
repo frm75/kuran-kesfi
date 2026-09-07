@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { confidence, locationConfidence, nonEmptyText, slug } from "./common.js";
-import { conceptRelationType } from "./concept.js";
+import { conceptRelationType, relationOrigin } from "./concept.js";
 import { mediaKind, mediaLicense } from "./media.js";
 import { verseRelationType } from "./discovery.js";
 import { origin as contentOrigin } from "./source.js";
@@ -254,7 +254,11 @@ export const staticConcept = z.object({
   }),
   verses: z.array(staticVersePointer.extend({ weight: z.number().int().min(1).max(3) })),
   relations: z.array(
-    namedSlug.extend({ type: conceptRelationType, weight: z.number().int().min(1).max(3) }),
+    namedSlug.extend({
+      type: conceptRelationType,
+      weight: z.number().int().min(1).max(3),
+      origin: relationOrigin,
+    }),
   ),
   stories: z.array(titledSlug),
   principles: z.array(namedSlug),

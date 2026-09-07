@@ -30,6 +30,10 @@ export type ConceptVerse = z.infer<typeof conceptVerse>;
 export const conceptRelationType = z.enum(["co_occurrence", "cause", "contrast", "part_of"]);
 export type ConceptRelationType = z.infer<typeof conceptRelationType>;
 
+/** Baglantinin kaynagi: insan karari mi, istatistik mi. */
+export const relationOrigin = z.enum(["curated", "computed"]);
+export type RelationOrigin = z.infer<typeof relationOrigin>;
+
 export const conceptRelation = z.object({
   sourceConceptId: dbId,
   targetConceptId: dbId,

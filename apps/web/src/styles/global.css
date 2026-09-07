@@ -4073,3 +4073,13 @@ a.ctx-num:hover {
   color: var(--accent-text);
   font-size: var(--text-sm);
 }
+
+/* Kavram bagi kaynagi — hesaplanan bag kaynakli gibi gorunmesin (kural 4). */
+.rel-origin {
+  margin-inline-start: var(--space-2);
+  padding: 0 var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+}
