@@ -301,6 +301,42 @@ sure sure katlamak. Acil değil — gzip'li ağırlık 26 KB.
 - **Meal sesi (Türkçe) yok.** Plan §2.4 "Türkçe meal sesi"ni de sayıyor; açık
   lisanslı bir Türkçe meal kaydı araştırılmadı.
 
+## WhatsApp — incelendi, ERTELENDİ (2026-09-07)
+
+Plan §19.3 WhatsApp'ı Faz 5'e koymuştu. Bugün maliyeti ve seçenekleri çıkarıldı,
+karar **şimdilik yapılmıyor** (kullanıcı kararı). Tekrar araştırılmasın diye
+bulgular:
+
+**Günlük gönderim Marketing kategorisidir, Utility değil.** Meta'nın kendi
+kılavuzu bülten ve düzenli içerik aboneliğini açıkça Marketing sayıyor:
+*"kullanıcı istese bile bunlar marketing'dir"*. Nisan 2025'ten beri Utility
+onaylanmış şablonlar sonradan Marketing'e yeniden sınıflandırılıyor — "Utility
+diye geçiririz" yolu kapalı.
+
+| Yol | Maliyet |
+|---|---|
+| Günlük push (marketing), 1.000 abone | **$331/ay** ($0,0109 × 30 × 1000) |
+| İstek üzerine cevap (servis mesajı), <1.000/ay | **$0** |
+| İstek üzerine, 10.000/ay | ~$2 (1.000 bedava + ~$0,0002/mesaj) |
+
+**1 Ekim 2026'da servis mesajları ücretli oldu**, ama numara başına ayda
+**1.000 bedava** kotası var; üstü ülkenin utility oranından. Türkiye utility
+oranı 1 Temmuz 2026'da %84 düştü (~$0,0002); kesin rakam Meta'nın oran
+kartından doğrulanmalı.
+
+**Ücretsiz ve resmi seçenekler:**
+- **Kanal** — takipçi sınırı yok, takipçiler birbirine ve yöneticiye anonim,
+  webden bağlantıyla katılım. Resmi API'si YOK, elle paylaşılır.
+- **Grup** — 1.024 üye sınırı ve **her üye herkesin telefon numarasını görür**.
+  Bu projede kullanılamaz: sitenin kendi gizlilik sözüyle çelişir ve KVKK
+  yükünü grup yöneticisine yıkar.
+- **Resmi olmayan kütüphaneler** (Baileys, whatsapp-web.js) — çalışıyor ama
+  numara kalıcı kapanma riski taşıyor. Plan §19.3 yasağı duruyor.
+
+Yeniden gündeme gelirse: `apps/bot` şeması `whatsapp` kanalını zaten tanıyor
+(`subscription_channel`), içerik motoru ortak; yazılacak olan webhook ucu,
+`X-Hub-Signature-256` imza doğrulaması ve kanal farkındalıklı gönderim.
+
 ## Özellik önerileri
 
 > Hepsi **ilk yayın sonrası**. Kaynağı: kullanıcının 2026-09-06 tarihli
