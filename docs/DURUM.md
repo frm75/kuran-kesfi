@@ -1196,3 +1196,29 @@ duman testi de hem doğru mealde notun **çıkmadığını** hem yanlış mealde
   menüdeki "dürüstlük kuralı"na aykırı olurdu.
 - **WhatsApp** plan §19.3'e göre Faz 5; Meta doğrulaması, şablon onayı ve
   telefon numarası saklama yükü ayrıca değerlendirilecek.
+
+### Ana sayfada eskimiş bir yalan — düzeltildi (2026-09-07)
+
+Tanıtım sayfasının "Bülten" bölümü şunu diyordu:
+
+> Henüz açılmadı. Kayıt formu koymuyoruz çünkü **arkasında çalışan bir sunucu yok**;
+> çalışmayan bir kutu göstermek sizi yanıltmak olurdu. Bülten Faz 3'te…
+
+Telegram botu aynı gün yayına girmişti. Metin, sitenin **kendi dürüstlük kuralını**
+çiğneyen bir yalana dönüşmüştü. **Kullanıcı fark etti, ben değil.**
+
+Kuralın iki yönü var ve ikincisi kaçırıldı: hazır olmayanı hazır göstermek kadar
+**hazır olanı yok göstermek de yalandır**. `index.astro` başındaki not bu yüzden
+güncellendi — bir modül yayına girdiğinde tanıtım sayfası da güncellenir.
+
+Bölüm artık Telegram'a bağlanıyor, "hazır" etiketi taşıyor ve kayıt formu yine
+konulmadı — ama artık sebebi "sunucu yok" değil: kayıt botun içinde yapılıyor,
+sitenin e-posta toplamasına gerek yok. E-posta bülteni hâlâ yok ve söz de
+verilmiyor.
+
+Aynı türden başka iddia var mı diye tanıtım sayfası tarandı: "0 bayt JS" ifadeleri
+tanıtım sayfası ve 6236 ayet sayfası için hâlâ doğru (JS yalnızca `/harita`,
+`/kissa/*` ve `/gunluk`'te), "yakında" kalan iki kart (hoca notları, çevrimdışı
+okuma) gerçekten hazır değil.
+
+Yayın: `20260907T090647Z`.

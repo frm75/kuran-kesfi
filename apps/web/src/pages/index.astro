@@ -10,6 +10,7 @@ import {
   getVerseDetail,
   verseLabel,
 } from "~/lib/data";
+import { TELEGRAM } from "~/lib/site";
 
 /**
  * Tanıtım sayfası — plan §14.1, DESIGN.md §7.
@@ -28,10 +29,14 @@ import {
  * <details>. Betik yok.
  *
  * DÜRÜSTLÜK KURALI: hazır olmayan bölüm "yakında" diye işaretlenir, çalışıyor
- * gibi gösterilmez. Bülten için form KONULMADI — arkasında sunucu yok ve CSP
- * `form-action 'none'` diyor; çalışmayan bir kutu koymak kullanıcıyı kandırmak
- * olurdu (plan §1.5, CLAUDE.md kural 5). Menüde de yalnızca var olan sayfalar
- * bağlantıdır; gerisi "yakında" etiketiyle, tıklanamaz durur.
+ * gibi gösterilmez. Menüde de yalnızca var olan sayfalar bağlantıdır; gerisi
+ * "yakında" etiketiyle, tıklanamaz durur (plan §1.5, CLAUDE.md kural 5).
+ *
+ * Kural İKİ YÖNLÜ çalışır ve ikinci yönü 2026-09-07'de kaçırıldı: bülten
+ * bölümü "henüz açılmadı, arkasında çalışan bir sunucu yok" diyordu, oysa
+ * Telegram botu o gün yayına girmişti. Hazır olmayanı hazır göstermek kadar
+ * HAZIR OLANI YOK GÖSTERMEK de yalandır — bu sayfa bir modül yayına girdiğinde
+ * de güncellenir.
  *
  * KAYNAK BÖLÜMLERİ KALDIRILDI (kullanıcı kararı 2026-09-04): "Kaynaklar" ve
  * "Kaynak Şeffaflığı" bölümleri aynı şeyi sayfanın dört yerinde tekrar
@@ -768,17 +773,35 @@ const menu = [
     </section>
 
     {/* --- 9. Bülten ------------------------------------------------------ */}
+    {/*
+      2026-09-07: bu bölüm "henüz açılmadı, arkasında çalışan bir sunucu yok"
+      diyordu. Artık VAR — Telegram botu yayında (`apps/bot`, @kurankesfi_bot).
+      Metin olduğu gibi bırakılsaydı sitenin KENDİ dürüstlük kuralını çiğneyen
+      bir yalan olurdu; kullanıcı fark etti.
+
+      E-posta bülteni hâlâ yok ve burada söz de verilmiyor. Form yine
+      KONULMADI ama artık sebebi "sunucu yok" değil: kayıt botun içinde
+      yapılıyor, sitenin e-posta toplamasına gerek yok.
+    */}
     <section class="lp-bulten" aria-labelledby="bulten-baslik">
       <div class="lp-wrap lp-bulten-in">
         <div>
           <h2 id="bulten-baslik" class="lp-h2">Her sabah bir ayet, bir ilke</h2>
           <p class="lp-lead">
-            Henüz açılmadı. Kayıt formu koymuyoruz çünkü arkasında çalışan bir sunucu yok;
-            çalışmayan bir kutu göstermek sizi yanıltmak olurdu. Bülten Faz 3'te, e-posta
-            adresi dışında hiçbir veri toplamadan gelecek.
+            Telegram'dan geliyor: her gün bir ayet ve o ayetin bağlandığı bir ilke.
+            Gönderilen metin bu sitede duranın aynısıdır — aynı meal, aynı kaynak.
+            Kayıt için e-posta adresi istemiyoruz, sohbeti başlatmanız yetiyor;
+            çıkmak da tek komut: <b>/dur</b> yazınca kaydınız silinir.
+          </p>
+          <p class="lp-bulten-baglantilar">
+            <a class="lp-bulten-cta" href={TELEGRAM.url} rel="noopener noreferrer" target="_blank">
+              Telegram'da aç — @{TELEGRAM.username}
+              <span class="sr-only"> (yeni sekmede açılır)</span>
+            </a>
+            <a href="/telegram">Ne saklanıyor, ne saklanmıyor</a>
           </p>
         </div>
-        <p class="state state-yakinda">yakında</p>
+        <p class="state state-hazir">hazır</p>
       </div>
     </section>
 
@@ -1964,6 +1987,27 @@ const menu = [
   }
   .lp-bulten .state {
     margin: 0;
+  }
+  .lp-bulten-baglantilar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+    margin: var(--space-6) 0 0;
+    font-size: var(--text-sm);
+  }
+  /* Tek eylem düğmesi: dolgulu. Yanındaki bağlantı düz metin kalır ki
+     hangisinin asıl eylem olduğu belli olsun. */
+  .lp-bulten-cta {
+    padding: var(--space-3) var(--space-6);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+    background-color: var(--accent);
+    color: var(--bg-primary);
+    text-decoration: none;
+  }
+  .lp-bulten-cta:hover {
+    background-color: var(--accent-hover);
   }
 
   /* --- Kapanış ----------------------------------------------------------- */
