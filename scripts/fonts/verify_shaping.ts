@@ -166,7 +166,7 @@ function loadCorpus(): Corpus {
   // yeni bir baslik eklenirse buraya da eklenmelidir.
   const UI_HEADINGS = [
     "Kur'an-ı Kerim Keşfi",
-    "Keşfet • Oku • Anla",
+    "Oku • Anla • Keşfet",
     "Sureler",
     "Türkçe mealler",
     "İngilizce çeviriler",

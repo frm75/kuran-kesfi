@@ -1,6 +1,6 @@
 # Kur'an-ı Kerim Keşfi
 
-**Keşfet • Oku • Anla** — <https://kurankesfi.tr>
+**Oku • Anla • Keşfet** — <https://kurankesfi.tr>
 
 Ücretsiz, reklamsız, üyeliksiz ve takipsiz bir Kur'an keşif sitesi. Kur'an'ı sure/ayet listesi
 olarak sunmak yerine **harita, zaman, kavram, kelime ve ilkeler** eksenlerinde gezilebilir kılar;

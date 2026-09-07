@@ -13,7 +13,7 @@ bilgisayarda çalışır (`kuran-extract`) ve buraya JSON dosyalarıyla veri akt
 ## Domain ve Marka
 - **Alan adı:** `kurankesfi.tr` (alındı) — plan §11 açık sorusu kapandı, §6 barındırma satırı güncellendi
 - **Proje adı:** Kur'an-ı Kerim Keşfi
-- **Tagline:** Keşfet • Oku • Anla
+- **Tagline:** Oku • Anla • Keşfet
 - Marka renkleri ve tipografi `docs/DESIGN.md`'de; kod içinde marka rengi sabitlenmez, token üzerinden gelir
 
 ## Çalışma Kuralları (kesin)

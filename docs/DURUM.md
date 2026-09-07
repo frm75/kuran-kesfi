@@ -1272,3 +1272,120 @@ metni güncellemeyi zorunlu kılar**.
 ve build'i durdurdu. Dosya geri alındı, denetim temiz — geriye yalnızca gerçek ve
 hâlâ doğru olan bir uyarı kalıyor (`/kaynaklar`: "İngilizce dil seçeneği henüz
 açılmadı").
+
+## Ana menü — 11 düz linkten dört başlığa (2026-09-07)
+
+Şerit artık `/sureler`, `/kissalar`, `/zaman`, `/kavramlar`, `/kok`, `/ilkeler`,
+`/yazmalar`, `/harita`, `/gunluk`, `/kaynaklar`, `/iletişim` gibi 11 düz linki tek
+sırada basmıyor. Bunun yerine dört üst başlık var — **Oku · Anla · Keşfet ·
+Kaynaklar** — her biri altında 2-4 çocuk linkle. Karar kullanıcıya ait
+(2026-09-07): 11 link genişledikçe (kıssalar, harita, zaman eklendiğinde) şerit
+tek satırda taşacaktı; dört başlık büyümeye dayanıklı bir çatı.
+
+Ayrım eksene göre: **Oku** (metnin kendisi — sureler, günlük, günlük ayet
+botu), **Anla** (metni açan katmanlar — kavramlar, kökler, ilkeler),
+**Keşfet** (bağlam eksenleri — kıssalar, harita, zaman, yazmalar),
+**Kaynaklar** (nereden geldiği — kaynak şeffaflığı, iletişim). Tek kaynak
+`apps/web/src/lib/nav.ts` → `NAV`; şerit (`SiteNav.astro`), hub sayfaları
+(`HubKartlari.astro`), breadcrumb'lar ve sitemap hepsi bu diziden okuyor.
+
+### Betiksiz açılır menü
+
+Alt liste `:hover` ve `:focus-within` ile açılıyor — ikisi de tarayıcının
+kendi işi, hiç JS yok (`global.css` "Ana gezinme" bloğu, `.nav-item:hover >
+.nav-sub` / `.nav-item:focus-within > .nav-sub`). Fare üst başlığın üzerine
+gelince açılıyor, klavyeyle Tab'lanınca da (`:focus-within` sekmeyle içindeki
+bir linke odaklanmayı da açık tutuyor) — CSP'de `script-src` hâlâ yalnızca
+`/harita` ve `/kissa/*`'e özel, şerit hiçbir sayfada bunu bozmuyor.
+
+### 48rem altında alt liste hiç basılmıyor
+
+`@media (max-width: 48rem) { .site-header .nav-sub { display: none !important; } }`.
+Nedeni CSS özelliği değil, dokunmatik gerçeği: `:hover` dokunmatik ekranda
+"kilitlenir" — bir kez dokunduğunda menü açılır ama kapanmaz, çünkü hover
+durumundan çıkacak bir fare imleci yok. Alt liste responsive biçimde küçülüp
+dokunmatikte de görünür kalsaydı, üst başlığa ilk dokunuş açılır menüyü açar,
+arkasındaki gerçek bağlantıya (ör. hub sayfasının kendisi) ulaşmak için ikinci
+bir dokunuş gerekirdi ve bazı tarayıcılarda o ikinci dokunuş hiç gelmezdi. Bu
+yüzden dar ekranda alt liste derleme zamanında hiç basılmıyor; dokunma üst
+başlığa gider, o da zaten hub sayfası — çocuklarına oradan devam edilir.
+Gezinme kopmuyor, sadece bir basamak ekleniyor.
+
+### `nav.ts` neden hiçbir şey import etmiyor
+
+`Base.astro` bu dosyayı **her sayfada** çekiyor — 13516 sayfanın hepsinde.
+`~/lib/data`'yı (veya `~/lib/manuscripts`'i) içeri alsaydı, yalnızca menü
+metnini basmak için her sayfa `surahs_index.json`, `concepts_index.json` ve
+benzerlerini okurdu; bu sayılar zaten ilgili hub sayfasında ayrıca çözülüyor,
+tekrar okumanın anlamı yok. `nav.ts` bu yüzden sabit, elle yazılmış bir
+diziden ibaret — sıfır bağımlılık, sıfır dosya okuma.
+
+### Task 3'ten kalan iz: `--space-5` yok
+
+Boşluk ölçeği (`global.css:257-265`) `1, 2, 3, 4, 6, 8, 12, 16, 24` basamaklarını
+içeriyor — `5` tanımlı değil. `HubKartlari.astro`'daki `.hub-grid a` başta
+`padding: var(--space-5)` (1,25rem) hedefliyordu; token yokluğu fark edilince
+en yakın emsale (`.principle-grid a`, `--space-4`) uyuldu, `--space-6`'ya
+çıkılmadı. Görsel etki küçük (1,25rem yerine 1rem dolgu) ama ölçek yeni bir ara
+basamak (`--space-5: 1.25rem`) isteyen bir sonraki bileşende tekrar çıkacaktır.
+
+### Sitemap ve tagline hizalandı
+
+`sitemap.xml.ts` artık hub adreslerini elle değil `NAV`'dan okuyor — menü
+değişince sitemap kendiliğinden değişir. `/kaynaklar` hem hub hem çocuk
+olduğundan `Set` ile tekilleştirildi; aşağıdaki elle yazılmış ikinci
+`{ loc: "/kaynaklar" }` satırı silindi, yoksa yinelenen `<loc>` sitemap hatası
+doğardı (`grep ... | sort | uniq -d` boş döndü, doğrulandı).
+
+Tagline `Keşfet • Oku • Anla` iken menü sırası `Oku · Anla · Keşfet`'e
+döndüğünde ikisi ayrışmıştı. Canlı/güncel metin geçen dört yer hizalandı:
+`CLAUDE.md` ("Tagline:" satırı), `apps/web/src/pages/index.astro` (`<title>`
+ve `og:title`), `scripts/fonts/verify_shaping.ts` (arayüzde geçen sabit
+başlıklar listesi — arayüz metniyle aynı kalmalı ki font şekillendirme
+denetimi gerçek metni test etsin) ve `README.md` (üstteki marka satırı).
+
+Bilerek **dokunulmayan** yerler: `docs/PROJE_PLANI.md` §11 ve `docs/BACKLOG.md`
+"Alan adı ve proje adı" maddeleri 2026-09-04 tarihli kapanmış birer "KARAR"
+kaydı — o günkü kararı geriye dönük değiştirmek tarihi yanlış yazardı.
+`docs/superpowers/specs/…` ve `docs/superpowers/plans/…` de aynı sebeple
+dokunulmadı: ikisi de "tagline X idi, Y'ye çekildi" geçişinin kendisini
+anlatıyor, X'i Y yaparsan cümle kendi kendini çürütür. `docs/DESIGN.md` §9
+Marka'daki `"KEŞFET • OKU • ANLA"` de dokunulmadı — bu, `docs/DESIGN.md`'nin
+düzyazısı değil, **gerçek bir görselin** (logo, `og-image.png`,
+`scripts/brand/logo-source.png`'den üretilen tüm favicon/logo dosyaları)
+içine gömülü metnin açıklaması; metni değiştirmek görseli değiştirmez, sadece
+belgeyi görselle uyuşmaz hâle getirirdi. **Açık kalan:** marka görselleri hâlâ
+eski sırayı taşıyor; yeniden üretim (`pnpm brand`, yeni kaynak sanat) ayrı bir
+görev.
+
+### Ölçülen boyut artışı
+
+Eşik (Spec §A.7): `/bakara-suresi/255`'in gzip'li boyutu **%2'den fazla**
+artmamalı. Karşılaştırma tabanı için eski dalı ayrıca derlemeye gerek
+duyulmadı (brief bunu istemiyordu); onun yerine eski 11-linkli şerit
+`fa55ab4` (menü değişiminden hemen önceki commit) `Base.astro`'sundan aynen
+alınıp, gerçek `bakara-suresi/255.html` çıktısındaki yeni şerit bloğunun
+yerine — Astro'nun kendi minify kuralıyla (etiketler arası tek boşluk) —
+yeniden kuruldu ve iki sürüm de `gzip -9` ile karşılaştırıldı:
+
+| | Şerit (ham) | Sayfa (gzip) |
+|---|---|---|
+| Eski (11 link, yeniden kurulan) | 425 bayt | 26 919 bayt |
+| Yeni (4 başlık + alt liste) | 976 bayt | 27 016 bayt |
+| **Fark** | **+551 bayt** | **+97 bayt / %0,36** |
+
+`%0,36`, eşiğin (`%2`) çok altında. Aynı yöntem en küçük sayfalarda da
+denendi — nav'ın toplam sayfa içindeki payı en yüksek olduğu, dolayısıyla en
+kötü durumu temsil eden yerler:
+
+| Sayfa | Eski (gzip) | Yeni (gzip) | Fark |
+|---|---|---|---|
+| `/kavramlar` | 9 311 bayt | 9 413 bayt | +102 bayt / %1,10 |
+| `/kissalar` | 8 926 bayt | 9 020 bayt | +94 bayt / %1,05 |
+
+En kötü durumda bile (`%1,10`) eşiğin yarısı kadar. Alt liste her sayfada
+basılıyor olsa da (`nav-sub` yalnızca hub sayfalarına özel değil, 4 başlığın
+hepsinde her yerde basılıyor — CSS `:hover` seçicisi çalışabilsin diye DOM'da
+bulunması gerekiyor) gzip tekrar eden `<a href=…>` kalıplarını iyi sıkıştırdığı
+için ham fark (+551 bayt) gzip'li farka (+97..102 bayt) küçülüyor. `nav-sub`'ı
+yalnızca hub sayfalarında basma fikri (brief'in bahsettiği tedbir) gerekmedi.

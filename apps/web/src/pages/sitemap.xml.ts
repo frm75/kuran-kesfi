@@ -10,6 +10,7 @@ import {
   getTurkishAuthors,
 } from "~/lib/data";
 import { getCenturyBuckets, getManuscripts } from "~/lib/manuscripts";
+import { NAV } from "~/lib/nav";
 import { SITE } from "~/lib/site";
 
 /**
@@ -34,6 +35,9 @@ export const GET: APIRoute = () => {
 
   const urls: { loc: string; priority: string }[] = [
     { loc: "/", priority: "1.0" },
+    // Hub sayfalari nav.ts'ten geliyor: menu degisince sitemap de degisir.
+    // /kaynaklar hem hub hem cocuk oldugu icin bir kez girsin diye Set.
+    ...[...new Set(NAV.map((hub) => hub.href))].map((loc) => ({ loc, priority: "0.9" })),
     { loc: "/sureler", priority: "0.9" },
     { loc: "/kissalar", priority: "0.9" },
     { loc: "/zaman", priority: "0.8" },
@@ -42,7 +46,6 @@ export const GET: APIRoute = () => {
     { loc: "/harita", priority: "0.8" },
     { loc: "/kok", priority: "0.8" },
     { loc: "/yazmalar", priority: "0.7" },
-    { loc: "/kaynaklar", priority: "0.7" },
   ];
 
   // Yazma sayfalari — 2322 kayit. Yuzyil sayfalari da listelenir ki katalogun
