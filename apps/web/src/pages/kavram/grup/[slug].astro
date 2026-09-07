@@ -13,11 +13,13 @@ import type { RadyalGrup, RadyalKenar } from "~/lib/graf";
  * grubun kendi kavramları arasındaki bağları gösteren küçük bir alt grafik,
  * ve tam liste.
  *
- * Alt grafik `kavramlar.astro`'daki ana atlasın FİLTRESİNİ kullanmaz — orada
- * 109 düğüm arasında hesaplanan ağırlık 1-2 bağları "saç yumağı" olurdu, bu
- * yüzden yalnızca ağırlık 3 + tüm elle yazılmış bağlar çizilir. Burada grup
- * en fazla 15 üye taşıyor (`members`), o risk yok: iki üye ARASINDAKİ HER
- * bağ çizilir, ağırlık/kaynak farkı gözetilmez.
+ * Alt grafik `kavramlar.astro`'daki ana atlasın filtresinden BİR BASAMAK
+ * gevşektir — üç kademeli bir hikaye var: ana atlas curated + ağırlık 3,
+ * grup sayfası curated + ağırlık ≥2, tek-kavram sayfasındaki ilişki listesi
+ * (gelecekte ego-graf) ağırlık 1 dahil hepsi. Curated bağ HER ZAMAN girer
+ * (ağırlığından bağımsız — insan kararı istatistiğe feda edilmez); yalnızca
+ * computed ağırlık 1 (en zayıf, en gürültülü hesaplanan bağ) burada da
+ * dışarıda kalır.
  *
  * Kaynak da farklı: `concepts_index.json` kavram başına ilişkiyi kırpıyor
  * (Task 3 — curated hiç kırpılmaz ama computed ağırlık 1 çoğunlukla dizin
@@ -51,9 +53,10 @@ const members = new Set<string>([
 ]);
 
 /*
- * Tum ic baglar — agirlik/kaynak filtresi yok, gerekce dosya basindaki
- * yorumda. Cift yonlu depolamadan (A'nin iliskisinde B, B'ninkinde A da
- * var) dogan tekrar `gorulen` ile eleniyor.
+ * Curated bag agirligindan bagimsiz HER ZAMAN girer; computed'tan yalnizca
+ * agirlik >=2 (yani 2 ve 3) girer, agirlik 1 disarida kalir — gerekce dosya
+ * basindaki yorumda (uc kademeli hikaye). Cift yonlu depolamadan (A'nin
+ * iliskisinde B, B'ninkinde A da var) dogan tekrar `gorulen` ile eleniyor.
  */
 const gorulen = new Set<string>();
 const kenarlar: RadyalKenar[] = [];
@@ -61,6 +64,8 @@ for (const memberSlug of members) {
   const full = getConcept(memberSlug);
   for (const r of full.relations) {
     if (!members.has(r.slug)) continue;
+    const cizilir = r.origin === "curated" || r.weight >= 2;
+    if (!cizilir) continue;
     const anahtar = [memberSlug, r.slug].sort().join("|") + "#" + r.type;
     if (gorulen.has(anahtar)) continue;
     gorulen.add(anahtar);
@@ -125,13 +130,15 @@ const totalVerses = children.reduce(
     <RadyalAtlas
       yerlesim={yerlesim}
       baslik={`${grup.nameTr} grubunun kavram grafiği`}
-      aciklama={`${String(children.length)} kavram ve aralarındaki ${String(kenarlar.length)} bağ; ana atlasın aksine burada ağırlık farkı gözetmeksizin bu grubun kendi içindeki TÜM bağlar çizilir. Aynı veri aşağıda liste hâlinde de var.`}
+      aciklama={`${String(children.length)} kavram ve aralarındaki ${String(kenarlar.length)} bağ; elle yazılmış bağlar ağırlığından bağımsız, hesaplanan bağlardan ağırlığı 2 ve üzeri olanlar çizilir. Aynı veri aşağıda liste hâlinde de var.`}
       hrefOnEk="/kavram/"
     />
     <p class="atlas-not">
       Bu küçük grafik yalnızca <strong>{grup.nameTr}</strong> grubunun kendi kavramlarını
-      ve aralarındaki bağları gösterir; ana kavram atlasının aksine ağırlık/kaynak
-      filtresi uygulanmaz. Grafiği okuyamıyorsanız aynı veri aşağıda liste hâlindedir.
+      ve aralarındaki bağları gösterir; elle yazılmış (kaynağa dayalı) bağlar ağırlığından
+      bağımsız hep çizilir, hesaplanan bağlardan yalnızca ağırlığı 2 ve üzeri olanlar
+      girer — ana atlasta bu eşik 3'tür, grup ölçeği daha küçük olduğu için burada bir
+      basamak gevşetildi. Grafiği okuyamıyorsanız aynı veri aşağıda liste hâlindedir.
     </p>
 
     <ol class="concept-grid">

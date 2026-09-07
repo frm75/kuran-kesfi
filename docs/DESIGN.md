@@ -165,6 +165,41 @@ Rozet bileşeni beş değeri de tanır, konum sayfaları yalnızca dördünü ü
 `--danger` burada hata değil **ihtilaf** demektir: bir yerin tartışmalı olması kusur değil, kaynakların
 durumudur. Kırmızı seçilmesinin sebebi dikkat çekmesi, uyarı olması değil.
 
+### Kavram Atlası Grup Renkleri (2026-09-07, plan §20 kavram haritası)
+
+`RadyalAtlas.astro` bileşeni kavram atlasını (`/kavramlar`) ve sekiz grup sayfasını
+(`/kavram/grup/<slug>`) çizer. Sekiz üst kavram grubu, kendi açı diliminin (radyal
+yerleşim) yanında bir de renkle ayrışır — **ama renk TEK BAŞINA anlam taşımaz**: aynı
+ilke burada da geçerli, grup zaten konumla (kendi dilimi) ve derinlik farkıyla da
+ayırt edilebiliyor, renk yalnızca göz için ek bir ipucu.
+
+```
+        karanlık   açık       kontrast (--bg-primary'ye karşı, WCAG 1.4.11 ≥3:1)
+--gr-1  #CB4D4D    #B82E2E    4,26:1 / 4,90:1
+--gr-2  #CBAC4D    #8F7424    8,62:1 / 3,61:1
+--gr-3  #8CCB4D    #598F24    9,76:1 / 3,15:1
+--gr-4  #4DCB6D    #248F3E    9,13:1 / 3,34:1
+--gr-5  #4DCBCB    #248F8F    9,72:1 / 3,14:1
+--gr-6  #4D6DCB    #2E50B8    3,93:1 / 5,72:1
+--gr-7  #8C4DCB    #732EB8    3,66:1 / 6,04:1
+--gr-8  #CB4DAC    #B82E95    4,70:1 / 4,39:1
+```
+
+Eşik metin değil **grafik nesne** eşiğidir (WCAG 1.4.11, 3:1) — düğümler kart üzerinde
+duran renkli daireler, okunacak metin değil. Her hex, kendi temasının `--bg-elevated`
+zemininde (atlas'ın kendi arka planı) bu eşiği geçiyor; en düşük oran karanlıkta
+`--gr-7` (3,66:1), aydınlıkta `--gr-5` (3,14:1).
+
+Sekiz grup slug'ı sabit bir renge bağlıdır (`RadyalAtlas.astro` içindeki
+`KAVRAM_GRUP_RENGI` eşlemesi), dizideki sıraya değil — aksi hâlde tek grup içeren
+grup sayfasında (dizi tek elemanlı) her sayfa aynı rengi (`--gr-1`) alırdı ve ana
+atlastaki grup kimliği kendi sayfasında kaybolurdu. Eşleme ana atlasın mevcut
+görünümüyle aynı sırayı izler: `tevhid-ve-allah`→1, `vahiy-ve-peygamberlik`→2,
+`iman-ve-kufur`→3, `ahlak-ve-toplum`→4, `amel-ve-ibadet`→5, `ahiret-ve-hesap`→6,
+`insan-ve-nefs`→7, `imtihan-ve-kader`→8. Bilinmeyen bir grup slug'ı gelirse (bileşen
+ileride ilke atlası gibi başka bir taksonomi için de kullanılabilir) dizideki
+index'e düşülür — bileşen tek bir taksonomiye kilitlenmez.
+
 ---
 
 ## 2. Tipografi

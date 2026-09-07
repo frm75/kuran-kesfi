@@ -21,9 +21,33 @@ const dugumBySlug = new Map(dugumler.map((d) => [d.slug, d]));
  * Grup rengi SVG'de sinif adiyla veriliyor, gomulu stille degil: CSP
  * style-src 'unsafe-inline' aciyor ama nitelik icinde renk yazmak temayla
  * degismeyen sabit renk demek olurdu. Sinif -> CSS degiskeni -> iki tema.
+ *
+ * Renk SLUG'a bagli, dizideki SIRAYA degil. Once index tabanliydi
+ * (`gruplar.map((g,i) => ...i%8...)`) ve bu, grup sayfasinda (tek elemanli
+ * `gruplar` dizisi, index hep 0) sekiz sayfanin sekizini de gr-1 yapiyordu
+ * — ana atlastaki grup kimligi kendi sayfasinda kayboluyordu (olculdu:
+ * dist/kavram/grup/*.html hepsi gr-1). Sekiz kavram grubu, ana atlasin
+ * MEVCUT gorunumundeki renk sirasiyla sabitlendi ki ayni grup nerede
+ * cizilirse cizilsin ayni renk cikssin.
+ *
+ * Bilinmeyen bir grup slug'i gelirse (ör. ilerideki ilke atlasi bu
+ * bileseni kullanirsa) sabit listedeki degil kendi index'ine dusuluyor —
+ * bilesen Kur'an kavram taksonomisine kilitlenmesin.
  */
+const KAVRAM_GRUP_RENGI: Record<string, string> = {
+  "tevhid-ve-allah": "gr-1",
+  "vahiy-ve-peygamberlik": "gr-2",
+  "iman-ve-kufur": "gr-3",
+  "ahlak-ve-toplum": "gr-4",
+  "amel-ve-ibadet": "gr-5",
+  "ahiret-ve-hesap": "gr-6",
+  "insan-ve-nefs": "gr-7",
+  "imtihan-ve-kader": "gr-8",
+};
 const gruplar = [...new Set(dugumler.map((d) => d.grup))];
-const grupSinifi = new Map(gruplar.map((g, i) => [g, `gr-${String((i % 8) + 1)}`]));
+const grupSinifi = new Map(
+  gruplar.map((g, i) => [g, KAVRAM_GRUP_RENGI[g] ?? `gr-${String((i % 8) + 1)}`]),
+);
 ---
 
 <figure class="atlas">
@@ -52,6 +76,12 @@ const grupSinifi = new Map(gruplar.map((g, i) => [g, `gr-${String((i % 8) + 1)}`
       {
         dugumler.map((d) => (
           <a href={`${hrefOnEk}${d.slug}`}>
+            {/* SVG'de erisilebilir ad ic <title>'dan gelir; <a>'nin ILK cocugu
+                olmali (ad cozumlemesi boyle calisir). Grup dugumlerinin
+                gorunur <text> etiketi var ama o SESLENDIRILMEZ diye degil,
+                sadece gorsel — 101 yaprak dugumun (derinlik 1-2) ise HICBIR
+                erisilebilir adi yoktu, ekran okuyucu hedefsiz "link" diyordu. */}
+            <title>{d.label}</title>
             <circle cx={d.x} cy={d.y} r={d.r} class={`dg dg-${String(d.derinlik)} ${grupSinifi.get(d.grup) ?? ""}`} />
             {d.derinlik === 0 && (
               <text x={d.x} y={d.y - d.r - 6} class="dg-etiket" text-anchor="middle">
