@@ -117,7 +117,11 @@ const maxCount = topSurahs[0]?.count ?? 1;
         <section>
           <div class="sec-head">
             <h2>Bağlı kavramlar</h2>
-            <span class="sec-note">"birlikte geçer" bağları aynı ayette bulunma sıklığından hesaplandı</span>
+            <span class="sec-note">
+              Bu bağların bir kısmı kaynaklardan derlendi, bir kısmı iki kavramın ortak
+              ayetlerinden hesaplandı. Hesaplananlar <em>hesaplanmış</em> etiketiyle
+              işaretlidir; etiketsiz olanlar kaynağa dayanır.
+            </span>
           </div>
           <ul class="rel-list">
             {concept.relations.map((rel) => (
