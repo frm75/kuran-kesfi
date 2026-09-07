@@ -129,12 +129,26 @@ export function radyalYerlesim(girdi: RadyalGirdi): GrafYerlesim {
     y: merkez + Math.sin(aci) * boyut * oran,
   });
 
+  /*
+   * Tek grup varsa acisal konum ANLAMSIZ: dilim payi tam 2π cikar, bu da
+   * grup merkez acisini hep π/2'de sabitler ve dugum merkeze degil 0.26
+   * yaricapinda HEP GUNEYE duser — kavramdan bagimsiz, sistemik bir kayma
+   * (olculdu: boyut 420'de (210,210) yerine (210,319.2), boyut 700'de
+   * (350,350) yerine (350,532)). Ego-graf (Task 6, kavram sayfasi) ve grup
+   * sayfasi (Task 5) tek grubu bir merkez/hub olarak kullaniyor — cocuklari
+   * gercek merkez etrafinda dogru bir daire cizdigi icin sorun fark
+   * edilmiyordu, ama "halka"nin kendisi (merkez dugum) kaymis oluyordu ve
+   * erisilebilirlik metni ("Merkezde X") yanlis cikiyordu. Cok gruplu (asil
+   * atlas) durumda bu dal calismiyor, davranis DEGISMEDI.
+   */
+  const tekGrup = gruplar.length === 1;
+
   // -PI/2: ilk grup tepede başlasın, saat yönünde ilerlesin.
   let aci = -Math.PI / 2;
   for (const grup of gruplar) {
     const pay = (Math.max(1, grup.cocuklar.length) / toplamCocuk) * Math.PI * 2;
     const grupMerkezAci = aci + pay / 2;
-    const gp = nokta(grupMerkezAci, 0.26);
+    const gp = tekGrup ? { x: merkez, y: merkez } : nokta(grupMerkezAci, 0.26);
     dugumler.push({
       slug: grup.slug,
       label: grup.label,

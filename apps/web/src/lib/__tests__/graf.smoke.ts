@@ -171,6 +171,60 @@ if (!existsSync(idxYolu)) {
 }
 
 console.log("");
+console.log("7. Tek grup (ego-graf / hub sayfasi)");
+/*
+ * Duzeltme turu 1 bulgusu: tek grup varken dilim payi tam 2π cikiyor, bu da
+ * grup merkez acisini hep π/2'de sabitleyip dugumu merkeze degil 0.26
+ * yaricapinda HEP GUNEYE dusuruyordu (kavramdan bagimsiz, sistemik —
+ * olculdu: boyut 420'de (210,319.2), boyut 700'de (350,532)). Ego-graf
+ * (kavram sayfasi) ve grup sayfasi tek grubu merkez/hub olarak kullaniyor;
+ * bu bolum o dali dogrudan sinar.
+ */
+const tekGrupGirdi: RadyalGirdi = {
+  boyut: 420,
+  gruplar: [
+    {
+      slug: "merkez",
+      label: "Merkez",
+      cocuklar: [
+        { slug: "k1", label: "K1", agirlik: 3 },
+        { slug: "k2", label: "K2", agirlik: 2 },
+        { slug: "k3", label: "K3", agirlik: 2 },
+        { slug: "k4", label: "K4", agirlik: 2 },
+        { slug: "k5", label: "K5", agirlik: 1 },
+        { slug: "k6", label: "K6", agirlik: 1 },
+      ],
+    },
+  ],
+  kenarlar: [],
+};
+const tekGrupYerlesim = radyalYerlesim(tekGrupGirdi);
+const tekMerkez = tekGrupGirdi.boyut / 2;
+const tekMerkezDugum = tekGrupYerlesim.dugumler.find((d) => d.derinlik === 0);
+check(
+  "tek grupta grup dugumu tam merkezde",
+  tekMerkezDugum !== undefined && tekMerkezDugum.x === tekMerkez && tekMerkezDugum.y === tekMerkez,
+);
+const tekCocuklar = tekGrupYerlesim.dugumler.filter((d) => d.derinlik === 1);
+const tekUzakliklar = tekCocuklar.map((d) => Math.hypot(d.x - tekMerkez, d.y - tekMerkez));
+check(
+  "tek grupta cocuklarin hepsi merkeze esit uzaklikta (gercek halka)",
+  tekUzakliklar.length === 6 && tekUzakliklar.every((u) => Math.abs(u - (tekUzakliklar[0] ?? 0)) < 0.01),
+);
+check(
+  "tek grupta hicbir dugum cifti cakismiyor",
+  tekGrupYerlesim.dugumler.every((d1, i) =>
+    tekGrupYerlesim.dugumler.slice(i + 1).every((d2) => Math.hypot(d1.x - d2.x, d1.y - d2.y) > d1.r + d2.r - 0.01),
+  ),
+);
+check(
+  "cok gruplu davranis degismedi: 2 gruplu duzende grup dugumleri hala merkezden uzakta",
+  bir.dugumler
+    .filter((d) => d.derinlik === 0)
+    .every((g) => Math.hypot(g.x - girdi.boyut / 2, g.y - girdi.boyut / 2) > 0.01),
+);
+
+console.log("");
 if (failures.length > 0) {
   console.error(`${String(passed)} test gecti, ${String(failures.length)} basarisiz:`);
   for (const f of failures) console.error(`  - ${f}`);
