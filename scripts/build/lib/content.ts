@@ -456,6 +456,28 @@ export async function emitContent(
     conceptsIndex.push({
       slug: c.slug, nameTr: c.name_tr, nameAr: c.name_ar, definition: c.definition,
       parentSlug: parent?.slug ?? null, verseCount: vs.length, rootCount: (conceptRoots.get(c.id) ?? []).length,
+      /*
+       * Atlas icin bag listesi. Kural: ELLE YAZILAN HICBIR BAG KESILMEZ,
+       * kalan yer en guclu hesaplananlarla 6'ya tamamlanir.
+       *
+       * Neden duz `.slice(0, 6)` DEGIL: olculdu, `iman` 10 ve `adalet` 7
+       * curated bag tasiyor. Duz kesme bunlari kendi taraflarindan dusurur.
+       * Bugun sansliyiz — her curated cift kars_i uctan hayatta kaliyor, yani
+       * atlas (cifti tekillestirdigi icin) 117'sini de cizebiliyor. Ama bu
+       * VERIYE BAGLI bir tesaduf: iki ucu da 6'yi asan bir cift eklenirse
+       * kenar SESSIZCE kaybolur ve kimse fark etmez. Insan karari istatistige
+       * feda edilmez; kural veriden bagimsiz olsun.
+       */
+      relations: (() => {
+        const curated = rel.filter((r) => r.origin === "curated");
+        const computed = rel.filter((r) => r.origin === "computed");
+        return [...curated, ...computed.slice(0, Math.max(0, 6 - curated.length))].map((r) => ({
+          slug: r.slug,
+          type: r.type,
+          weight: r.weight,
+          origin: r.origin,
+        }));
+      })(),
     });
   }
   if (conceptsIndex.length > 0) {

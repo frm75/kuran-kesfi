@@ -276,6 +276,21 @@ export const staticConceptsIndex = z.object({
         parentSlug: slug.nullable(),
         verseCount: z.number().int().nonnegative(),
         rootCount: z.number().int().nonnegative(),
+        /*
+         * Atlas sayfasi icin. Kavram basina EN AZ 6, ama elle yazilan bag
+         * hepsi: tam liste concept_<slug>.json icinde duruyor, dizin dosyasi
+         * grafigi cizebilecek kadarini tasiyor. Olculen derece medyani 9,
+         * maksimum 90 (ilah) — sinirsiz tasisak dizin dosyasi uc katina
+         * cikardi. Curated hicbir zaman kesilmez (bkz. build/lib/content.ts).
+         */
+        relations: z.array(
+          z.object({
+            slug,
+            type: conceptRelationType,
+            weight: z.number().int().min(1).max(3),
+            origin: relationOrigin,
+          }),
+        ),
       }),
     )
     .min(1),
