@@ -4304,17 +4304,9 @@ a.ctx-num:hover {
  * altın, ZEMİN rengi" diye tanımlı (bkz. :root); parşömen metin onun üstünde
  * okunur kalıyor.
  */
-.dinle-bas {
-  margin-bottom: 2rem;
-}
-.dinle-kari {
-  color: var(--text-secondary);
-  margin: 0.25rem 0;
-}
-.dinle-not {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  max-width: 46ch;
+.dinle-geri-bag {
+  margin: 0.75rem 0 0;
+  font-size: 0.95rem;
 }
 .dinle-liste {
   display: grid;

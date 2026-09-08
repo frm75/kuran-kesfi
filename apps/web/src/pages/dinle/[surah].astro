@@ -80,20 +80,24 @@ const islandData = {
   reading
 >
   <main class="dinle" id="icerik">
-    <header class="dinle-bas">
-      <h1>{surah.nameTr} suresini dinle</h1>
-      {
-        reciter !== null && (
-          <p class="dinle-kari">
-            {reciter.name} — {STYLE_LABEL[reciter.style]}
-          </p>
-        )
-      }
-      <p class="dinle-not">
-        Okunan kelime metin üstünde işaretlenir. Betik çalışmazsa her ayetin
-        altındaki oynatıcı yine çalışır.
+    <header class="pg-head">
+      <p class="pg-kicker">{surah.id}. sure · dinle</p>
+      <h1 class="pg-title">
+        {surah.nameTr} Suresi
+        <span lang="ar" dir="rtl" class="pg-title-ar">{surah.nameAr}</span>
+      </h1>
+      <p class="pg-lede">
+        Okunan kelime metin üstünde işaretlenir; sure baştan sona kesintisiz
+        çalar. Betik çalışmazsa her ayetin altındaki oynatıcı yine çalışır.
       </p>
-      <p><a href={`/${String(surahId)}`}>{surah.nameTr} suresi sayfasına dön</a></p>
+      <ul class="chip-row">
+        <li class="chip"><b>{surah.verseCount}</b> ayet</li>
+        {reciter !== null && <li class="chip">{reciter.name}</li>}
+        {reciter !== null && <li class="chip">{STYLE_LABEL[reciter.style]}</li>}
+      </ul>
+      <p class="dinle-geri-bag">
+        <a href={`/${String(surahId)}`}>{surah.nameTr} suresi sayfasına dön</a>
+      </p>
     </header>
 
     <div class="dinle-cubuk" hidden id="dinle-cubuk">
