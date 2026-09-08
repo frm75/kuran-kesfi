@@ -26,13 +26,13 @@ function check(label: string, ok: boolean): void {
 
 const tables: ReferenceTables = {
   surahs: [
-    { id: 2, slug: "bakara-suresi", nameTr: "Bakara", nameAr: "البقرة", verseCount: 286 },
-    { id: 5, slug: "maide-suresi", nameTr: "Mâide", nameAr: "المائدة", verseCount: 120 },
-    { id: 9, slug: "tevbe-suresi", nameTr: "Tevbe", nameAr: "التوبة", verseCount: 129 },
-    { id: 10, slug: "yunus-suresi", nameTr: "Yûnus", nameAr: "يونس", verseCount: 109 },
-    { id: 12, slug: "yusuf-suresi", nameTr: "Yûsuf", nameAr: "يوسف", verseCount: 111 },
-    { id: 24, slug: "nur-suresi", nameTr: "Nûr", nameAr: "النور", verseCount: 64 },
-    { id: 71, slug: "nuh-suresi", nameTr: "Nûh", nameAr: "نوح", verseCount: 28 },
+    { id: 2, slug: "bakara-suresi", nameTr: "Bakara", nameAr: "البقرة", verseCount: 286, rev: 1 },
+    { id: 5, slug: "maide-suresi", nameTr: "Mâide", nameAr: "المائدة", verseCount: 120, rev: 1 },
+    { id: 9, slug: "tevbe-suresi", nameTr: "Tevbe", nameAr: "التوبة", verseCount: 129, rev: 1 },
+    { id: 10, slug: "yunus-suresi", nameTr: "Yûnus", nameAr: "يونس", verseCount: 109, rev: 0 },
+    { id: 12, slug: "yusuf-suresi", nameTr: "Yûsuf", nameAr: "يوسف", verseCount: 111, rev: 0 },
+    { id: 24, slug: "nur-suresi", nameTr: "Nûr", nameAr: "النور", verseCount: 64, rev: 1 },
+    { id: 71, slug: "nuh-suresi", nameTr: "Nûh", nameAr: "نوح", verseCount: 28, rev: 0 },
   ],
   aliases: [{ surahId: 9, name: "Berâe", sourceReference: "Tevbe Sûresi" }],
   juzStarts: [

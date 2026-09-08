@@ -67,6 +67,7 @@ import { resolve } from "node:path";
 import { Report, closePool, fail, info, pool, repoRoot, stripSourceHtml } from "@kuran/pipeline";
 import { Emitter, dataRoot } from "./lib/emit.js";
 import { emitContent } from "./lib/content.js";
+import { emitSearch } from "./lib/search.js";
 
 interface SurahRow {
   id: number;
@@ -804,6 +805,12 @@ async function main(): Promise<void> {
 
   // --- icerik katmani: kissa, konum, kavram, ilke, zaman cizelgesi ---
   await emitContent(emitter, metas, report);
+
+  // Arama indeksi (plan §12.2). emitContent'ten SONRA cagriliyor: konu,
+  // kavram, ilke ve kissa tablolari orada dogrulaniyor, burada yeniden
+  // dogrulanmaz. Ayri bir son-gecis script'i OLAMAZDI — Emitter.reset()
+  // public/data'yi her kosuda siliyor (lib/emit.ts).
+  await emitSearch(emitter, metas, report);
 
   const sourcesPayload = {
     sources: sources.map((s) => ({

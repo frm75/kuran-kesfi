@@ -174,3 +174,37 @@ export function softenFinal(token: string): string | null {
   if (soft === undefined) return null;
   return token.slice(0, -1) + soft;
 }
+
+/**
+ * Bir token'ın hangi shard dosyasında durduğunu söyler.
+ *
+ * ## Neden burada
+ *
+ * Build shard'ları bu kurala göre YAZAR, istemci bu kurala göre OKUR. Kural
+ * iki yerde ayrı yazılsaydı biri değişince istemci var olmayan bir dosya
+ * ister, 404 alır ve arama sessizce boş döner. Modülün geri kalanıyla aynı
+ * gerekçe: tek kaynak.
+ *
+ * ## Neden iki harf
+ *
+ * Tek harf denendi ve ölçüldü: Arapça `ا` kovası 53 KB gzip (kelimelerin çoğu
+ * `ال` belirlilik ekiyle başlıyor), Latin `k`, `s`, `a` kovaları 35-41 KB.
+ * İki harfle en büyük kova 38 KB'a, tipik sorgu 40 KB'tan 1-12 KB'a indi.
+ * Toplam indeks %6 büyüdü — kullanıcının indirdiği bayt üçte bire düştüğü
+ * için kabul edildi.
+ *
+ * Token en az iki harf olduğundan (`MIN_TOKEN_LENGTH`) anahtar her zaman
+ * hesaplanabilir; iki harften kısa sorgu zaten aramaya girmez.
+ *
+ * Arapça tarafta kod noktasının onaltılığı kullanılır: dosya adında Arapça
+ * harf `fetch` sırasında yüzde kodlaması gerektirir ve gereksiz bir hata
+ * yüzeyi açardı. Latin tarafta `a-z` dışındaki her karakter `0` kovasına
+ * düşer.
+ */
+export function shardKey(token: string, script: "tr" | "ar"): string {
+  const chars = [...token].slice(0, 2);
+  if (script === "ar") {
+    return chars.map((c) => (c.codePointAt(0) ?? 0).toString(16).padStart(4, "0")).join("");
+  }
+  return chars.map((c) => (/^[a-z]$/.test(c) ? c : "0")).join("");
+}
