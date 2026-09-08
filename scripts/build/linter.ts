@@ -66,6 +66,7 @@ import {
 } from "@kuran/schema";
 import { closePool, info, pool, repoRoot } from "@kuran/pipeline";
 import { dataRoot } from "./lib/emit.js";
+import { checkPrincipleAreaCounts, checkPrincipleOppositeReciprocity } from "./lib/principle_checks.js";
 
 // -----------------------------------------------------------------------------
 // Hata toplama
@@ -1069,70 +1070,16 @@ function checkStaticOutput(): void {
   }
 
   /*
-   * Ilke karsitlik denetimi (gorev 4, 2026-09-07). A'nin karsiti B ise B'nin
-   * karsiti da A olmali — tek yonlu bir cift kurulursa bag ilke sayfasinda
-   * yalnizca BIR yonde gorunur (A -> B), digerinde (B sayfasinda A'ya bag)
-   * gorunmez ve bu sessizce gecer, kimse fark etmez. Ayni dongude, var
-   * olmayan bir ilkeye isaret eden karsit slug da (dangling) burada yakalanir.
+   * Ilke karsitlik + kendine referans + alan sayimi denetimleri (gorev 4,
+   * 2026-09-07). Saf fonksiyonlara tasindi (bkz. lib/principle_checks.ts)
+   * ki dosya sistemi/DB'siz birim testi yazilabilsin — bkz.
+   * lib/__tests__/principle_checks.smoke.ts.
    */
   checksRun += 1;
-  for (const [slug, opposite] of principleOpposite) {
-    if (opposite === null) continue;
-    /*
-     * Kendine referans korumasi (fix round 1, inceleme bulgusu). `opposite
-     * === slug` durumunda asagidaki "back !== slug" karsilastirmasi
-     * TRIVIAL DOGRU cikar (back zaten slug'in kendisi) — denetim sessizce
-     * gecerdi. Bugun `content_input.ts`'teki Zod refine bunu content:import
-     * asamasinda zaten engelliyor (pipeline'dan gecmez), ama linter YAYINLANAN
-     * ciktiyi dogruluyor — dosya elle bozulursa (ya da baska bir uretici
-     * yolundan gecerse) bu koruma olmadan build durmazdi.
-     */
-    if (opposite === slug) {
-      errors.push(`ilke ${slug}: kendi karsiti olamaz (oppositeSlug kendisine isaret ediyor)`);
-      continue;
-    }
-    if (!principleOpposite.has(opposite)) {
-      errors.push(
-        `ilke ${slug}: karsit ilke '${opposite}' yayinlanan ilkeler arasinda yok`,
-      );
-      continue;
-    }
-    const back = principleOpposite.get(opposite) ?? null;
-    if (back !== slug) {
-      errors.push(
-        `ilke ${slug} <-> ${opposite}: karsilikli degil (${slug}.opposite = '${opposite}' ` +
-          `ama ${opposite}.opposite = ${back === null ? "null" : `'${back}'`})`,
-      );
-    }
-  }
+  errors.push(...checkPrincipleOppositeReciprocity(principleOpposite));
 
-  /*
-   * principle_areas.json'daki principleCount, principle/ dosyalarindan
-   * SAYILAN gercek dagilimla tutarli olmali. Kavramdaki "dagilim istatistigi
-   * ayet sayisiyla tutarsiz" denetiminin ilke alani karsiligi: sayim elle
-   * dosyada da bozulabilir, kopmasi sayfada sessizce yanlis bir sayi birakir.
-   */
   checksRun += 1;
-  {
-    const actualCounts = new Map<string, number>();
-    for (const areaSlug of principleAreaOf.values()) {
-      actualCounts.set(areaSlug, (actualCounts.get(areaSlug) ?? 0) + 1);
-    }
-    for (const [areaSlug, declared] of principleAreaDeclaredCounts) {
-      const actual = actualCounts.get(areaSlug) ?? 0;
-      if (actual !== declared) {
-        errors.push(
-          `principle_areas.json: alan '${areaSlug}' principleCount ${String(declared)} bildiriyor ` +
-            `ama gercek ilke sayisi ${String(actual)}`,
-        );
-      }
-    }
-    for (const areaSlug of actualCounts.keys()) {
-      if (!principleAreaDeclaredCounts.has(areaSlug)) {
-        errors.push(`principle_areas.json: ilkelerin kullandigi alan '${areaSlug}' dizinde yok`);
-      }
-    }
-  }
+  errors.push(...checkPrincipleAreaCounts(principleAreaOf, principleAreaDeclaredCounts));
 
   checksRun += 1;
   if (surahFiles !== 114) {
