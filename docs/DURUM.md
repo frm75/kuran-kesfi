@@ -994,6 +994,11 @@ QUL'un kıraat paketi **atlanmıştı**: yalnızca sure düzeyinde MP3 adresi ve
 yapılamaz. everyayah.com ayet başına **ayrı dosya** veriyor; dosya adı ayetin
 kendisi (`002255.mp3`). Damgaya gerek kalmadı.
 
+> **2026-09-07 düzeltmesi:** "damga yok" tespiti yalnız QUL paketi içindi ve
+> artık geçerli değil. Quran.com'un QDC ucu **kelime kelime** damga veriyor;
+> aşağıdaki "Kelime takip ışığı" bölümüne bakın. Ayet başına dosya kararı
+> yerinde duruyor — damga o dosyalara ölçülerek uyduruldu.
+
 İkinci sonucu daha önemli: **oynatma JavaScript istemiyor.** `<audio controls>`
 yetiyor. Ayet sayfalarının `default-src 'none'` CSP'si değişmedi; `media-src`
 zaten medya.kurankesfi.tr'ye açıktı (medya katmanı, 2026-09-06).
@@ -1011,6 +1016,50 @@ açmak, migration yazmak ve import adımı eklemek hiçbir şey kazandırmazdı.
 ayetlerde oynatıcı hiç basılmaz — çalmayan bir oynatıcı göstermek sessiz kırılmadır.
 Linter kapsamı denetliyor: `verseCount + missingVerses.length = 6236` tutmuyorsa
 build durur (manifest indirmeden sonra yeniden yazılmamış demektir).
+
+
+### Kelime takip ışığı (2026-09-07)
+
+| Konu | Yer |
+|---|---|
+| İndirme | `scripts/media/fetch_segments.ts` · `pnpm media:segments` |
+| Kaynak | Quran.com QDC — `api.qurancdn.com/api/qdc/audio/reciters/7/audio_files?segments=true` (User-Agent başlığı ZORUNLU, yoksa 403) |
+| Onarım | `packages/pipeline/src/segments.ts` (saf, 29 duman testi) |
+| Veri | `data/recitation/segments_alafasy.json` (script ÜRETİR — 481 KB) |
+| Çıktı | `apps/web/public/data/ses/segment_<sure>.json` — 114 dosya, 772 KB |
+| Sayfa | `apps/web/src/pages/dinle/[surah].astro` |
+| Ada | `apps/web/src/lib/dinle/app.ts` · saf mantık `lib/dinle/timeline.ts` |
+| CSP | `~^/dinle/` dalı — `script-src 'self'`, `connect-src 'none'` |
+
+**Sure MP3'ü indirilmedi.** QDC damgayı sure dosyasına göre veriyor, bizde ayet
+başına dosya var. İkisinin aynı kayıttan kesildiği ölçüldü: 300 ayetlik rastgele
+örneklemde `ffprobe` süresi ile QDC süresi farkı **medyan 2 ms, p95 6 ms**, 100 ms
+üstü fark yalnız 3 ayette. Damga `timestamp_from` çıkarılarak ayete göreli hale
+getirildi.
+
+**Kelime indisi `verse_part.sort_number` ile birebir.** Duraklama işaretleri
+(ۚ ۖ ۗ) DB'de ayrı satır değil, önceki kelimenin `arabic` alanının içinde. Bu
+yüzden sayılar tutuyor; ek hizalama katmanı gerekmedi. Ölçüldü: Bakara'da 6116
+kelime kutusu = 6116 `verse_part`.
+
+**Onarım ölçülür, tahmin edilmez.** 77.429 kelimenin 545'i (%0,70) aradeğerlendi:
+247'sinin damgası kaynakta hiç yok, 215'i ayet başından 500 ms'den fazla önce
+başlayan bozuk ilk damga, 83'ü aynı bozukluğun ayet ortasındaki hâli. 1 ayette
+(37:130) kaynak kelimeyi ikiye bölmüş, kırpıldı. Sayaçlar `segments_*.json`
+içinde durur; linter her build'de **damga sayısı = kelime sayısı + 1** ve artan
+sıralılık denetler. Damga bir ayette kaysa ışık bütün ayet boyunca yanlış
+kelimede yanardı ve bu sessiz bir kırılmadır.
+
+**Damga sayfaya gömülü.** Sure başına ortalama 4,2 KB (en büyük 36,5 KB, Bakara).
+Ağdan çekilmediği için `/dinle` CSP'sinde `connect-src 'none'` kaldı.
+
+**Astro küçük betikleri HTML'e gömüyordu.** Gömülü betik `script-src 'self'` ile
+engellenirdi; `astro.config.mjs`e `vite.build.assetsInlineLimit: 0` eklendi.
+`/gunluk` ve `/harita` zaten ayrı dosya alıyordu, paketleri eşiğin üstündeydi.
+
+**Sure boyunca sürekli çalma geldi.** Tek `<audio>` etiketi ayetten ayete geçiyor;
+ayet sayfaları betiksiz kalmaya devam ediyor ve oraya düz bir bağ veriyor
+(`/dinle/2#ayet-2-255`).
 
 ## İletişim / öneri / düzeltme formu (2026-09-07)
 

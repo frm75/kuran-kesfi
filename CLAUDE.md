@@ -135,9 +135,12 @@ yapılmayanlar ve NEDENİ, bir kez yaşanmış tuzaklar, sıradaki adımlar. Bü
 - **JavaScript 0 bayt.** Sunucu CSP'si `default-src 'none'`; betik sessizce engellenir. Betik gerektiren
   bir tasarım öğesi JS'siz karşılığıyla kurulur (statik SVG, `<details>`, CSS `:focus-within`).
   Gerçekten gerekiyorsa önce CSP'ye `script-src 'self'` girer ve bu ayrıca onaylanır.
-  Bugüne kadar üç sayfada açıldı: `/harita`, `/kissa/*` ve `/gunluk`. **6236 ayet sayfası dahil
-  kalan her şey 0 bayt JS** — okuma günlüğü tam bu yüzden tek sayfada döner ve ayet sayfası ona
-  yalnızca düz bir bağlantı verir (`/gunluk?ekle=2:255`, kullanıcı kararı 2026-09-07)
+  Bugüne kadar dört yerde açıldı: `/harita`, `/kissa/*`, `/gunluk` ve `/dinle/*`. **6236 ayet
+  sayfası dahil kalan her şey 0 bayt JS** — okuma günlüğü ve dinleme tam bu yüzden kendi
+  sayfalarında döner, ayet sayfası onlara yalnızca düz bir bağlantı verir
+  (`/gunluk?ekle=2:255`, `/dinle/2#ayet-2-255`; kullanıcı kararı 2026-09-07).
+  Astro küçük betikleri HTML'e GÖMÜYOR: `vite.build.assetsInlineLimit: 0` bunu kapatır,
+  yoksa gömülü betik `script-src 'self'` ile engellenirdi ve `'unsafe-inline'` açılmayacak
 - **CSP değişirse canlıya da uygulanır.** `infra/nginx/*.conf` repoda güncellenip
   `/www/server/panel/vhost/nginx/` altına kopyalanmazsa hiçbir şey hata vermez — dosyalar 200 döner,
   yalnızca `<video>` sessizce engellenir. Duman testi artık CSP başlığının kendisini okuyor

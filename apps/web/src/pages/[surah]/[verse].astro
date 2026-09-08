@@ -353,6 +353,18 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
                 />
               </div>
             ))}
+            {/*
+              Kesintisiz dinleme ve kelime takip isigi /dinle sayfasinda:
+              orasi betik calisan tek yer, ayet sayfasi betiksiz kaliyor
+              (plan 04, spec 2).
+            */}
+            <p class="verse-audio-not">
+              <a
+                href={`/dinle/${String(surahId)}#ayet-${String(surahId)}-${String(verseNumber)}`}
+              >
+                Sureyi kesintisiz dinle, okunan kelime işaretlensin
+              </a>
+            </p>
           </div>
         )
       }

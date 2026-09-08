@@ -4414,3 +4414,13 @@ a.ctx-num:hover {
   margin-inline-start: auto;
   font-variant-numeric: tabular-nums;
 }
+
+/* --- /dinle bağlantıları (ayet ve sure sayfalarından) --------------------- */
+.pg-dinle {
+  margin: 0.75rem 0 0;
+  font-size: 0.95rem;
+}
+.verse-audio-not {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+}
