@@ -51,10 +51,12 @@ import {
   staticSources,
   recitationFile,
   scriptureBooksFile,
+  segmentFile,
   scriptureQuotesFile,
   staticRecitation,
   staticScripture,
   staticSurah,
+  staticSurahSegments,
   staticSurahTranslation,
   staticSurahsIndex,
   staticVerseDetail,
@@ -251,6 +253,63 @@ function emitRecitation(emitter: Emitter, report: Report): void {
       `Kiraat: ${r.name} (${r.style}) — ${r.verseCount.toLocaleString("tr-TR")} / 6236 ayet · ` +
         `kaynak ${r.sourceSlug} · medya.kurankesfi.tr/${r.basePath}/`,
     );
+  }
+}
+
+/**
+ * Kelime zaman damgasi — sure basina bolunur.
+ *
+ * Butun Kur'an 481 KB; tek dosya olsaydi /dinle sayfasi kendi suresi icin
+ * hepsini tasirdi. Sure basina ortalama 4,2 KB, en buyugu 36,5 KB (Bakara):
+ * sayfaya GOMULECEK kadar kucuk, boylece `connect-src` kapali kaliyor.
+ */
+function emitRecitationSegments(emitter: Emitter, report: Report): void {
+  const dir = resolve(repoRoot, "data/recitation");
+  if (!existsSync(dir)) return;
+  const files = readdirSync(dir)
+    .filter((name) => /^segments_[a-z0-9-]+\.json$/.test(name))
+    .sort();
+  if (files.length === 0) return;
+
+  /** sureId -> kariSlug -> ayetAnahtari -> baslangiclar */
+  const bySurah = new Map<number, Record<string, Record<string, number[]>>>();
+
+  for (const name of files) {
+    const parsed = segmentFile.safeParse(JSON.parse(readFileSync(resolve(dir, name), "utf8")));
+    if (!parsed.success) {
+      fail(`data/recitation/${name} sema dogrulamasi basarisiz:\n${parsed.error.message}`);
+    }
+    const { reciterSlug, stats, verses } = parsed.data;
+    for (const [key, starts] of Object.entries(verses)) {
+      const surahId = Number(key.split(":")[0]);
+      let entry = bySurah.get(surahId);
+      if (!entry) {
+        entry = {};
+        bySurah.set(surahId, entry);
+      }
+      entry[reciterSlug] ??= {};
+      (entry[reciterSlug] as Record<string, number[]>)[key] = starts;
+    }
+    info(
+      `damga: ${reciterSlug} — ${String(stats.verseCount)} ayet · ` +
+        `${stats.wordCount.toLocaleString("tr-TR")} kelime · ` +
+        `${String(stats.interpolatedWords)} aradegerlenen`,
+    );
+    report.note(
+      `Damga: ${reciterSlug} — ${String(stats.verseCount)} ayet, ` +
+        `${String(stats.interpolatedWords)} kelime aradegerlendi, ` +
+        `${String(stats.repairedLeads)} bozuk on-yukleme atildi, ` +
+        `${String(stats.cappedVerses)} ayet kirpildi`,
+    );
+  }
+
+  for (const [surahId, reciters] of [...bySurah.entries()].sort((a, b) => a[0] - b[0])) {
+    const payload = { surahId, reciters };
+    const checked = staticSurahSegments.safeParse(payload);
+    if (!checked.success) {
+      fail(`ses/segment_${String(surahId)}.json sema dogrulamasi basarisiz:\n${checked.error.message}`);
+    }
+    emitter.write(`ses/segment_${String(surahId)}.json`, payload);
   }
 }
 
@@ -767,6 +826,7 @@ async function main(): Promise<void> {
   emitScripture(emitter, report);
 
   emitRecitation(emitter, report);
+  emitRecitationSegments(emitter, report);
 
   const { files, bytes } = emitter.stats;
   info(

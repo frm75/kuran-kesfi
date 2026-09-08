@@ -43,6 +43,7 @@ import {
   staticVerseManuscripts,
   recitationFile,
   schedule,
+  segmentFile,
   staticRecitation,
   staticTafsirIndex,
   staticTafsirSurah,
@@ -279,6 +280,69 @@ async function checkDatabase(): Promise<void> {
       "kok eslesmesi",
       `${unmatched}/${partsTotal} kelime koke baglanmadi (%${ratio.toFixed(1)})`,
     );
+  }
+
+  await checkSegments();
+}
+
+/**
+ * Kelime zaman damgasi <-> kelime sayisi — plan 04.
+ *
+ * Damga bir ayette kayarsa isik butun ayet boyunca yanlis kelimede yanar ve
+ * bu SESSIZ bir kirilmadir: sayfa acilir, ses calar, yalnizca isik yanlistir.
+ * Bu yuzden her build'de denetleniyor:
+ *   damga sayisi = kelime sayisi + 1   (son eleman son kelimenin bitisi)
+ *   dizi artan sirali
+ */
+async function checkSegments(): Promise<void> {
+  const dir = resolve(repoRoot, "data/recitation");
+  if (!existsSync(dir)) return;
+  const files = readdirSync(dir).filter((n) => /^segments_[a-z0-9-]+\.json$/.test(n));
+  if (files.length === 0) return;
+
+  const counts = (
+    await pool.query<{ key: string; n: string }>(
+      `SELECT v.surah_id || ':' || v.verse_number AS key, count(p.*)::text AS n
+         FROM verse_part p JOIN verse v ON v.id = p.verse_id
+        GROUP BY 1`,
+    )
+  ).rows;
+  if (counts.length === 0) return;
+  const expected = new Map(counts.map((r) => [r.key, Number(r.n)]));
+
+  for (const name of files) {
+    const parsed = segmentFile.safeParse(JSON.parse(readFileSync(resolve(dir, name), "utf8")));
+    if (!parsed.success) {
+      check(`damga ${name}`, false, `sema dogrulamasi basarisiz: ${parsed.error.message}`);
+      continue;
+    }
+    const problems: string[] = [];
+    for (const [key, starts] of Object.entries(parsed.data.verses)) {
+      const want = expected.get(key);
+      if (want === undefined) {
+        problems.push(`${key}: veritabaninda yok`);
+        continue;
+      }
+      if (starts.length !== want + 1) {
+        problems.push(`${key}: ${String(starts.length - 1)} damga, ${String(want)} kelime`);
+      }
+      for (let i = 1; i < starts.length; i += 1) {
+        if ((starts[i] ?? 0) < (starts[i - 1] ?? 0)) {
+          problems.push(`${key}: ${String(i)}. damga geriye gidiyor`);
+          break;
+        }
+      }
+    }
+    check(
+      `damga ${name}`,
+      problems.length === 0,
+      `${String(problems.length)} sorun — ${problems.slice(0, 5).join(" · ")}`,
+    );
+    if (problems.length === 0) {
+      info(
+        `  damga denetimi: ${name} — ${String(Object.keys(parsed.data.verses).length)} ayet temiz`,
+      );
+    }
   }
 }
 
