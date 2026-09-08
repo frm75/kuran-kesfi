@@ -71,7 +71,7 @@ export const NAV: readonly NavHub[] = [
       {
         href: "/ilkeler",
         label: "İlkeler",
-        blurb: "Kur'an'ın doğrudan emrettiği ahlâkî ilkeler ve dayanak ayetleri.",
+        blurb: "Kur'an'ın doğrudan emrettiği ahlâkî ve ibadet ilkeleri, dayanak ayetleriyle.",
       },
     ],
   },

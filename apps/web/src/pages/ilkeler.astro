@@ -91,7 +91,7 @@ const yerlesim = radyalYerlesim({ boyut: 900, gruplar, kenarlar });
       <p class="pg-kicker">Anla</p>
       <h1 class="pg-title">İlkeler</h1>
       <p class="pg-lede">
-        Kur'an'ın doğrudan emrettiği ya da tavsiye ettiği ahlâkî ilkeler. Her ilkenin
+        Kur'an'ın doğrudan emrettiği ya da tavsiye ettiği ahlâkî ve ibadet ilkeleri. Her ilkenin
         <strong>birincil</strong> dayanağı doğrudan emir içeren ayettir; <strong>ikincil</strong>
         dayanaklar ilkeyi örnekleyen ayetlerdir. Platform kendi ilkesini icat etmez.
       </p>
@@ -106,7 +106,7 @@ const yerlesim = radyalYerlesim({ boyut: 900, gruplar, kenarlar });
     <RadyalAtlas
       yerlesim={yerlesim}
       baslik="İlke atlası"
-      aciklama={`${String(principles.length)} ilke, ${String(gruplar.length)} alan altında; çemberin içinden geçen ${String(kenarlar.length)} çizgi, Kur'an'ın aynı bağlamda karşı karşıya koyduğu emir/nehiy çiftlerini gösterir. İlkelerin tamamı aşağıda liste hâlinde var; her çiftin bağı ilgili ilkenin kendi sayfasında "karşıtı" olarak da görünür.`}
+      aciklama={`${String(principles.length)} ilke, ${String(gruplar.length)} alan altında; çemberin içinden geçen ${String(kenarlar.length)} çizgi, birbirine karşıt olarak eşlenmiş emir/nehiy ilke çiftlerini gösterir. İlkelerin tamamı aşağıda liste hâlinde var; her çiftin bağı ilgili ilkenin kendi sayfasında "karşıtı" olarak da görünür.`}
       hrefOnEk="/ilke/"
       grupHrefOnEk="/ilkeler#"
       idOnEk="ilke-atlas"
@@ -114,8 +114,8 @@ const yerlesim = radyalYerlesim({ boyut: 900, gruplar, kenarlar });
     <p class="atlas-not">
       Bu bölümleme platform derlemesidir; ilkelerin kendisi ve dayanak ayetleri
       kaynağa dayalıdır. İlkelerin tamamı aşağıda liste hâlinde var; grafikteki{" "}
-      {kenarlar.length} çift Kur'an'ın açıkça karşı karşıya koyduğu emir/nehiy
-      ilkeleridir — zorlanmış bir eşleştirme değildir, karşıtı olmayan ilkede bu
+      {kenarlar.length} çift, birbirine karşıt ilke olarak eşlenmiş emir/nehiy
+      çiftleridir — zorlanmış bir eşleştirme değildir, karşıtı olmayan ilkede bu
       bağ hiç kurulmaz.
     </p>
 
