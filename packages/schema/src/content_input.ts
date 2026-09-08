@@ -240,6 +240,22 @@ export const principleVerseInput = z.object({
   note: z.string().nullable(),
 });
 
+/**
+ * İlke alanı — plan dışı ek katman (2026-09-07).
+ *
+ * 60 ilke düz listeydi; hangi alana ait olduğu görünmüyordu. Kavramın
+ * aksine ilkede hiyerarşi alanı yoktu, bu yüzden ayrı tablo gerekti.
+ */
+export const principleAreaInput = z.object({
+  slug,
+  nameTr: nonEmptyText,
+  nameAr: z.string().nullable(),
+  definition: nonEmptyText,
+  order: z.number().int().positive(),
+  sourceSlugs: slugList.min(1, "ilke alani kaynaksiz olamaz"),
+});
+export type PrincipleAreaInput = z.infer<typeof principleAreaInput>;
+
 export const principleInput = z
   .object({
     slug,
@@ -252,6 +268,8 @@ export const principleInput = z
     dailyNote: z.string().nullable(),
     oppositeSlug: slug.nullable(),
     order: z.number().int().positive(),
+    /** principle_area.slug — zorunlu: alansız ilke listede kaybolurdu */
+    areaSlug: slug,
     sourceSlugs: slugList.min(1, "ilke en az bir kaynak tasimali (plan 18.3)"),
     verses: z.array(principleVerseInput).min(1),
     stories: z.array(z.object({ slug, note: z.string().nullable() })),

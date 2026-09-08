@@ -10,6 +10,7 @@ import {
   locationsFile,
   noldekeOrderFile,
   parseVerseRef,
+  principleAreaInput,
   principleInput,
   storyInput,
   surahSectionsFile,
@@ -22,6 +23,7 @@ import type {
   LocationInput,
   MediaItemInput,
   NoldekeOrderFile,
+  PrincipleAreaInput,
   PrincipleInput,
   StoryInput,
   SurahSectionsFile,
@@ -126,6 +128,7 @@ interface Loaded {
   locations: LocationInput[];
   stories: StoryInput[];
   concepts: ConceptInput[];
+  principleAreas: PrincipleAreaInput[];
   principles: PrincipleInput[];
   events: TimelineEventInput[];
   sections: SurahSectionsFile[];
@@ -168,6 +171,16 @@ function loadAll(): Loaded {
       parseErrors.push(`${relative(repoRoot, path)}: dosya adi concept_${concept.slug}.json olmali`);
     }
     concepts.push(concept);
+  }
+
+  const principleAreas: PrincipleAreaInput[] = [];
+  for (const path of listPrefixed("principle_areas", "area")) {
+    const area = parseWith(principleAreaInput, readJson(path), path);
+    if (area === undefined) continue;
+    if (!path.endsWith(`area_${area.slug}.json`)) {
+      parseErrors.push(`${relative(repoRoot, path)}: dosya adi area_${area.slug}.json olmali`);
+    }
+    principleAreas.push(area);
   }
 
   const principles: PrincipleInput[] = [];
@@ -236,7 +249,7 @@ function loadAll(): Loaded {
     : [];
 
   return {
-    sources, locations, stories, concepts, principles, events, sections, noldeke,
+    sources, locations, stories, concepts, principleAreas, principles, events, sections, noldeke,
     media, prompts, aiMedia,
   };
 }
@@ -315,6 +328,10 @@ function crossCheck(data: Loaded, dbSourceSlugs: ReadonlySet<string>): string[] 
     need(`ilke ${p.slug}`, storySlugs, "kissa", p.stories.map((s) => s.slug));
     need(`ilke ${p.slug}`, conceptSlugs, "kavram", p.concepts);
     needSource(`ilke ${p.slug}`, p.sourceSlugs);
+  }
+  const areaSlugs = uniq("ilke alani", data.principleAreas.map((a) => a.slug));
+  for (const p of data.principles) {
+    need(`ilke ${p.slug}`, areaSlugs, "alan", [p.areaSlug]);
   }
   const orders = new Set<number>();
   for (const p of data.principles) {
@@ -449,6 +466,7 @@ const CONTENT_TABLES = [
   "location", "location_source", "story_location", "story_location_passage",
   "concept", "concept_verse", "concept_relation", "concept_root", "concept_source", "story_concept",
   "timeline_event", "timeline_event_surah", "timeline_event_verse", "timeline_event_source",
+  "principle_area", "principle_area_source",
   "principle", "principle_source", "principle_verse", "principle_story", "principle_concept",
   "surah_section", "section_verse",
   "ai_prompt", "media_item", "media_story", "media_verse", "media_timeline_event", "media_source",
@@ -763,13 +781,29 @@ async function main(): Promise<void> {
       data.stories.flatMap((s) => [...new Set(s.concepts)].map((c) => [storyId.get(s.slug), conceptId.get(c)])),
     );
 
+    // --- ilke alanlari -------------------------------------------------------
+    const areaId = await insertReturning(
+      client,
+      "principle_area",
+      ["slug", "name_tr", "name_ar", "definition", "order"],
+      data.principleAreas.map((a) => [a.slug, a.nameTr, a.nameAr, a.definition, a.order]),
+      "slug",
+    );
+    await insertPlain(
+      client,
+      "principle_area_source",
+      ["principle_area_id", "source_id"],
+      data.principleAreas.flatMap((a) => [...new Set(a.sourceSlugs)].map((s) => [areaId.get(a.slug), sid(s)])),
+    );
+
     // --- ilkeler -----------------------------------------------------------
     const principleId = await insertReturning(
       client,
       "principle",
-      ["slug", "name_tr", "name_ar", "root_id", "definition", "explanation", "daily_note", "opposite_principle_id", "order"],
+      ["slug", "name_tr", "name_ar", "root_id", "area_id", "definition", "explanation", "daily_note", "opposite_principle_id", "order"],
       data.principles.map((p) => [
         p.slug, p.nameTr, p.nameAr, p.rootLatin === null ? null : rootIdByLatin.get(p.rootLatin),
+        areaId.get(p.areaSlug),
         p.definition, p.explanation, p.dailyNote, null, p.order,
       ]),
       "slug",

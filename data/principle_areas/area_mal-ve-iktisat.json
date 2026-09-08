@@ -1,0 +1,8 @@
+{
+  "slug": "mal-ve-iktisat",
+  "nameTr": "Mal ve iktisat",
+  "nameAr": null,
+  "definition": "Mal edinme, harcama, borç ve alışverişte gözetilecek iktisadi ilkeler.",
+  "order": 6,
+  "sourceSlugs": ["tdv-islam-ansiklopedisi"]
+}

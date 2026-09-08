@@ -627,12 +627,30 @@ CREATE TABLE timeline_event_source (
 -- §18.4 — İlkeler modülü
 -- -----------------------------------------------------------------------------
 
+-- İlke alanı (2026-09-07). 60 ilke düz listeydi; alan katmanı olmadan
+-- "Allah'a karşı" ile "mal ve iktisat" ilkeleri aynı ızgarada karışıyordu.
+CREATE TABLE principle_area (
+  id          integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  slug        text NOT NULL UNIQUE CHECK (slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$'),
+  name_tr     text NOT NULL,
+  name_ar     text,
+  definition  text NOT NULL,
+  "order"     smallint NOT NULL UNIQUE CHECK ("order" > 0)
+);
+
+CREATE TABLE principle_area_source (
+  principle_area_id integer NOT NULL REFERENCES principle_area (id) ON DELETE CASCADE,
+  source_id         integer NOT NULL REFERENCES source (id),
+  PRIMARY KEY (principle_area_id, source_id)
+);
+
 CREATE TABLE principle (
   id                     integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   slug                   text NOT NULL UNIQUE CHECK (slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$'),
   name_tr                text NOT NULL,
   name_ar                text,
   root_id                integer REFERENCES root (id),
+  area_id                integer NOT NULL REFERENCES principle_area (id),
   -- Kısa, kaynaklı tanım (plan §18.2)
   definition             text NOT NULL,
   -- Tefsirlerin ilkeyi nasıl ele aldığı — özet ve kaynaklı

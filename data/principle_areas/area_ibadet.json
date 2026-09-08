@@ -1,0 +1,8 @@
+{
+  "slug": "ibadet",
+  "nameTr": "İbadet",
+  "nameAr": null,
+  "definition": "Kulluğun somut ibadet biçimlerini kapsayan ilkeler.",
+  "order": 2,
+  "sourceSlugs": ["tdv-islam-ansiklopedisi"]
+}
