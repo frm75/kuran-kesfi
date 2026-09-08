@@ -14,7 +14,8 @@
     "ai:queue": "tsx ai_queue.ts queue",
     "ai:collect": "tsx ai_queue.ts collect",
     "fetch": "tsx fetch_images.ts",
-    "recitation": "tsx fetch_recitation.ts"
+    "recitation": "tsx fetch_recitation.ts",
+    "segments": "tsx fetch_segments.ts"
   },
   "dependencies": {
     "@kuran/pipeline": "workspace:*",
