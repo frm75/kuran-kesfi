@@ -103,44 +103,79 @@ yapılır; indekse ek kayıt yazılmaz.
 
 ## 6. İndeks biçimi
 
+> **2026-09-08'de uygulama sırasında değişti.** İlk tasarım `meta.json` +
+> `quick.json` + başlık/adres taşıyan `docs/` blokları öngörüyordu. Ölçüm
+> üç yerde yanılmış olduğumuzu gösterdi; aşağıdaki hâl uygulanan hâldir.
+> Değişikliğin gerekçeleri her bölümde yazılı.
+
 `apps/web/public/data/search/` altında:
 
 ```
-meta.json              sürüm, blok haritası, shard listesi, durak kelimeler, tür sayıları
-quick.json             hızlı katman (§8)
-meal/<harf>.json       Diyanet meali + kavram/ilke/kıssa/konu/sure/konum metinleri
-cev/<harf>.json        transkripsiyon (çeviriyazı) + kök latin
-ar/<harf>.json         Arapça ayet metni + kök arapça + kavram/ilke Arapça adları
-docs/<n>.json          doküman kayıtları, 500'erlik bloklar (19 blok)
+index.json             tanım + tablolar + ayet DIŞI bütün kayıtlar   (42 KB gzip)
+docs/<n>.json          kısa parçalar, 100'erlik bloklar, docId sırası (91 blok)
+meal/<iki harf>.json   Diyanet meali + kavram/ilke/kıssa/konu/sure/konum metinleri
+cev/<iki harf>.json    çeviriyazı + kök latin karşılığı
+ar/<iki kod>.json      Arapça ayet metni + kök arapçası + Arapça adlar
 ```
 
-**Üç ayrı ad alanı, tek gerekçe:** "eşleşme yeri" süzgeci (Meal / Arapça /
-Transkripsiyon) böylece **indirilen dosya seviyesinde** çalışır. Süzgeç daraltılınca
-gereksiz shard hiç inmez. Yan faydası: shard'lar küçülür.
+### Ayet kayıtları indekste DURMAZ
 
-Shard anahtarı = normalize edilmiş token'ın ilk karakteri.
-`meal/` ve `cev/` → 26 harf + `0` (rakam/diğer) = 27 dosya. `ar/` → 28 harf + `0` = 29 dosya.
+6236 ayetin başlığı (`Bakara 153`), adresi (`/bakara-suresi/153`), cüzü,
+sayfası ve nüzul yeri tamamen **türetilebilir**: sure tablosu ayet sayılarını,
+`juzStarts`/`pageStarts` sınırları taşıyor. Ölçüldü — türetme **6236/6236
+sapmasız**, açılış dosyası 48 KB'tan 42 KB'a indi.
 
-**Postings dosyası** — token → doküman id listesi, artan sırada:
-```json
-{ "sabir": [12, 340, 1877], "sabreden": [341, 1878] }
-```
+Türetme bir gün sapsa arama **sessizce yanlış ayete** bağlardı: üretilen adres
+geçerli bir sayfa olacağı için 404 bile vermezdi. Bu yüzden
+`scripts/build/lib/search.ts` her build'de 6236 ayetin hepsini veritabanından
+gelen gerçek değerle karşılaştırır ve sapma varsa **build durur**.
 
-**Doküman kaydı** — dizi, alan adı yok (bayt tasarrufu):
-```
-[tür, başlık, url, kısa_parça, ek]
-```
-`ek` türe göre: ayet için `[surahId, verseNumber, juz, page, "mekki"|"medeni"]`,
-diğer türlerde `null`. `kısa_parça` ≤ 160 karakter.
+`index.json` bu yüzden yalnız **2768** ayet dışı kaydı taşır:
+`[tür kodu, başlık, url]`.
 
-Doküman id'si **global** (0 … 9 003) ve tür sırasına göre bloklanır, böylece tek türe
-süzülmüş bir sorgu az sayıda `docs/` bloğu indirir.
+### Shard anahtarı iki harf
 
-**Betik hangi dosyayı indirir:** sorgu Arapça harf içeriyorsa yalnız `ar/`, içermiyorsa
-`meal/` + `cev/`. İnen her shard `sessionStorage`'da tutulur; aynı harf ikinci kez inmez.
+Tek harf denendi ve ölçümde düştü: Arapça `ا` kovası **53 KB** gzip
+(kelimelerin çoğu `ال` belirlilik ekiyle başlıyor), Latin `k`, `s`, `a`
+kovaları 35-41 KB. İki harfle en büyük kova 38 KB'a, tipik sorgu 40 KB'tan
+**1-12 KB'a** indi. Toplam indeks %6 büyüdü; kullanıcının indirdiği bayt üçte
+bire düştüğü için kabul edildi.
 
-**Boyut hedefi (kabul kriteri):** ilk arama < **60 KB** gzip transfer;
-`public/data/search/` toplamı < **1 MB** gzip.
+Arapça tarafta ad, kod noktalarının onaltılığıdır (`ar/06350628.json`): dosya
+adında Arapça harf `fetch` sırasında yüzde kodlaması gerektirir ve gereksiz bir
+hata yüzeyi açar. Kural `apps/web/src/lib/search/normalize.ts` içindeki
+`shardKey` fonksiyonundadır — build **yazarken**, istemci **okurken** aynı
+fonksiyonu çağırır.
+
+### Üç ad alanı
+
+`meal` / `cev` / `ar` ayrımı "eşleşme yeri" süzgecini **indirilen dosya
+seviyesinde** çalıştırır: yalnız mealde arayan `ar/` shard'ını hiç indirmez.
+Sorgu Arapça harf içeriyorsa yalnız `ar/` okunur.
+
+### Kısa parçalar tembel iner
+
+`docs/` blokları sonuç listesi için **gerekli değildir**: başlık ve adres zaten
+`index.json`'da (ya da türetiliyor). Liste anında basılır, kısa parçalar sonra
+doldurulur. Blok boyutu ölçümle 100 seçildi — 500'de ilk 20 sonuç 25-99 KB,
+100'de 24-65 KB, 25'te 14-32 KB ama 18 istek ve %19 daha büyük indeks.
+
+### Ölçülen maliyetler
+
+| | gzip |
+|---|---|
+| `index.json` (oturumda bir kez) | 42 KB |
+| Tipik shard (`sabr` → `meal/sa`) | 1-12 KB |
+| En büyük shard (`cev/ve`) | 38 KB |
+| **Sonuç listesi görünene kadar** | **43-54 KB** |
+| Kısa parçalar (tembel, ilk 20 satır) | 0-65 KB |
+| Sonraki aramalar | 1-12 KB |
+| Toplam indeks (yalnız yayın boyutu) | 1408 KB |
+
+**Linter sınırları kullanıcının hissettiği sayıya kondu:** `index.json` ≤ 50 KB
+gzip ve tek shard ≤ 50 KB gzip — ikisi de aşılırsa **build durur**. Toplam
+boyut yalnız uyarır (1,5 MB) ve 2,5 MB'da durur; 625 MB'lık `dist` içinde
+ölçülemeyecek kadar küçük olduğu için sert sınır değil.
 
 ## 7. Referans ayrıştırıcı
 
