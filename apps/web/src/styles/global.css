@@ -4374,3 +4374,43 @@ a.ctx-num:hover {
     transition: none;
   }
 }
+
+/* --- /dinle oynatıcı çubuğu (yalnız betik açıkken görünür) ---------------- */
+.dinle-cubuk {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 0.4rem;
+}
+.dinle-dugme {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 0.3rem;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+.dinle-dugme:hover {
+  border-color: var(--accent-text);
+}
+.dinle-secim {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+.dinle-durum {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-inline-start: auto;
+  font-variant-numeric: tabular-nums;
+}

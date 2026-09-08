@@ -96,6 +96,27 @@ const islandData = {
       <p><a href={`/${String(surahId)}`}>{surah.nameTr} suresi sayfasına dön</a></p>
     </header>
 
+    <div class="dinle-cubuk" hidden id="dinle-cubuk">
+      <button type="button" id="dinle-oynat" class="dinle-dugme">Oynat</button>
+      <button type="button" id="dinle-geri" class="dinle-dugme">Önceki ayet</button>
+      <button type="button" id="dinle-ileri" class="dinle-dugme">Sonraki ayet</button>
+      <label class="dinle-secim">
+        Hız
+        <select id="dinle-hiz">
+          <option value="0.75">0,75×</option>
+          <option value="1" selected>1×</option>
+          <option value="1.25">1,25×</option>
+        </select>
+      </label>
+      <label class="dinle-secim">
+        <input type="checkbox" id="dinle-tekrar" /> Bu ayeti tekrarla
+      </label>
+      <label class="dinle-secim">
+        <input type="checkbox" id="dinle-kaydir" checked /> Otomatik kaydır
+      </label>
+      <output id="dinle-durum" class="dinle-durum" aria-live="polite"></output>
+    </div>
+
     <div class="dinle-liste">
       {verses.map((verse) => <DinleAyet {...verse} />)}
     </div>
@@ -108,3 +129,7 @@ const islandData = {
     />
   </main>
 </Base>
+
+<script>
+  import "~/lib/dinle/app";
+</script>
