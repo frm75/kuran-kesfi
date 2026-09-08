@@ -11,7 +11,7 @@
 
 import { expandPrefixes, scoreHits, applyFilters, countByType } from "../query.js";
 import { RecordResolver } from "../records.js";
-import type { SearchIndex, TypeKey } from "../types.js";
+import type { SearchIndex } from "../types.js";
 
 let passed = 0;
 const failures: string[] = [];

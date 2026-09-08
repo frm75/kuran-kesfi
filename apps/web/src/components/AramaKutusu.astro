@@ -1,0 +1,136 @@
+---
+import { TYPE_KEYS, TYPE_LABELS, NAMESPACE_LABELS, NAMESPACES } from "~/lib/search/types";
+
+interface Props {
+  /** Sure süzgeci için — `[id, ad]` çiftleri, mushaf sırasında. */
+  surahs: readonly { id: number; nameTr: string }[];
+}
+
+const { surahs } = Astro.props;
+
+/**
+ * Arama kutusu, sekme şeridi ve süzgeç paneli.
+ *
+ * ## Bu bileşen JS YAZMAZ
+ *
+ * Yalnız iskeleti basar; davranış `~/lib/search/app.ts` içinde. Betik
+ * çalışmazsa kutu görünür ama hiçbir şey yapmaz — bu yüzden `<noscript>`
+ * bloğu kutunun YERİNE değil, kutunun ÜSTÜNE açıklama koyuyor ve sayfanın
+ * alt tarafındaki gezinilebilir dizine yönlendiriyor.
+ *
+ * ## Neden <form> yok
+ *
+ * `/ara` CSP'sinde `form-action 'none'` duruyor (yalnız /iletisim'de açık).
+ * Gerçek bir form gönderimi tarayıcı tarafından ENGELLENİRDİ ve hiçbir hata
+ * göstermezdi. Enter tuşu betikte yakalanıyor.
+ */
+---
+
+<section class="ara-kutu" aria-labelledby="ara-baslik">
+  <h2 id="ara-baslik" class="vh">Arama</h2>
+
+  <noscript>
+    <p class="ara-uyari">
+      Serbest kelime araması tarayıcıda çalışır ve JavaScript gerektirir. Aşağıdaki
+      <a href="#ara-dizin">gezinilebilir dizinden</a> sure, kavram, ilke, kıssa, kök ve
+      konumlara ulaşabilirsiniz.
+    </p>
+  </noscript>
+
+  <div class="ara-satir">
+    <label class="vh" for="ara-q">Aranacak kelime, ayet numarası veya sure adı</label>
+    <input
+      type="search"
+      id="ara-q"
+      name="q"
+      class="ara-input"
+      placeholder="sabır · 5/58 · bakara 153 · cüz 2 · صبر"
+      autocomplete="off"
+      spellcheck="false"
+      enterkeyhint="search"
+    />
+  </div>
+
+  <p id="ara-durum" class="ara-durum" role="status" aria-live="polite"></p>
+
+  <!-- Referans kartı: "5/58" gibi sorgularda doldurulur, boşken gizli. -->
+  <div id="ara-kart" class="ara-kart" hidden></div>
+
+  <div id="ara-panel" hidden>
+    <nav id="ara-sekmeler" class="ara-sekmeler" aria-label="Sonuç türü">
+      <button type="button" class="ara-sekme" data-tur="" aria-pressed="true">
+        Tümü <span class="ara-sayi" data-sayi=""></span>
+      </button>
+      {
+        TYPE_KEYS.map((key) => (
+          <button type="button" class="ara-sekme" data-tur={key} aria-pressed="false" hidden>
+            {TYPE_LABELS[key]} <span class="ara-sayi" data-sayi={key} />
+          </button>
+        ))
+      }
+    </nav>
+
+    <details class="ara-suzgec">
+      <summary>Süzgeçler</summary>
+      <div class="ara-suzgec-govde">
+        <p class="ara-suzgec-grup">
+          <label for="ara-sure">Sure</label>
+          <select id="ara-sure">
+            <option value="">Hepsi</option>
+            {surahs.map((s) => <option value={String(s.id)}>{`${String(s.id)}. ${s.nameTr}`}</option>)}
+          </select>
+        </p>
+
+        <p class="ara-suzgec-grup">
+          <label for="ara-nuzul">Nüzul</label>
+          <select id="ara-nuzul">
+            <option value="">Hepsi</option>
+            <option value="mekki">Mekkî</option>
+            <option value="medeni">Medenî</option>
+          </select>
+        </p>
+
+        <p class="ara-suzgec-grup">
+          <label for="ara-cuz-bas">Cüz</label>
+          <input type="number" id="ara-cuz-bas" min="1" max="30" placeholder="1" />
+          <span aria-hidden="true">–</span>
+          <label class="vh" for="ara-cuz-son">Cüz bitiş</label>
+          <input type="number" id="ara-cuz-son" min="1" max="30" placeholder="30" />
+        </p>
+
+        <p class="ara-suzgec-grup">
+          <label for="ara-sayfa-bas">Sayfa</label>
+          <input type="number" id="ara-sayfa-bas" min="1" max="604" placeholder="1" />
+          <span aria-hidden="true">–</span>
+          <label class="vh" for="ara-sayfa-son">Sayfa bitiş</label>
+          <input type="number" id="ara-sayfa-son" min="1" max="604" placeholder="604" />
+        </p>
+
+        <fieldset class="ara-suzgec-grup ara-yer">
+          <legend>Eşleşme yeri</legend>
+          {
+            NAMESPACES.map((ns) => (
+              <label>
+                <input type="checkbox" class="ara-yer-kutu" value={ns} checked />
+                {NAMESPACE_LABELS[ns]}
+              </label>
+            ))
+          }
+        </fieldset>
+
+        <p class="ara-suzgec-grup">
+          <label for="ara-sira">Sıralama</label>
+          <select id="ara-sira">
+            <option value="alaka">Alaka</option>
+            <option value="mushaf">Mushaf sırası</option>
+          </select>
+        </p>
+      </div>
+    </details>
+
+    <ol id="ara-sonuc" class="ara-sonuc"></ol>
+    <p id="ara-daha" hidden>
+      <button type="button" class="ara-daha-btn">Daha fazla sonuç</button>
+    </p>
+  </div>
+</section>

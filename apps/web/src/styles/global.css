@@ -1655,6 +1655,33 @@
   display: none;
 }
 
+/*
+ * Ayet sayfasına giden görünür kapı (2026-09-08).
+ *
+ * Kenardaki numara da bağlantı ama kullanıcı testinde kimse onu bağlantı
+ * gibi görmedi. Düğme metnin akışını bozmasın diye sağa yaslı ve küçük;
+ * Bakara'da 286 kere tekrarlandığı için kendi satırında yer kaplamıyor
+ * (üst boşluğu ayet gövdesinin kendi ritminden geliyor).
+ */
+.verse-list .v-more {
+  margin: var(--space-2) 0 0;
+  text-align: end;
+}
+.verse-list .v-detail {
+  display: inline-block;
+  padding: 0.15rem var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  text-decoration: none;
+}
+.verse-list .v-detail:hover,
+.verse-list .v-detail:focus-visible {
+  border-color: var(--accent-text);
+  color: var(--accent-text);
+}
+
 /* --- Meal ızgarası (ayet sayfası) ---------------------------------------- */
 
 /*
@@ -1715,6 +1742,35 @@
 .pg-nav a:hover {
   color: var(--accent-text);
   text-decoration: underline;
+}
+
+/*
+ * Aynı gezinme sayfanın başında (2026-09-08).
+ *
+ * Ayet sayfası 20+ meal, kelime kelime döküm, tefsir ve medya ile uzun;
+ * alttaki önceki/sonraki bağlantısına inen olmuyordu. Üsttekinin çizgisi
+ * altta değil üstte olmalı ki başlıktan ayrılsın.
+ */
+.pg-nav.is-top {
+  margin-top: 0;
+  margin-bottom: var(--space-6);
+  padding-top: 0;
+  padding-bottom: var(--space-3);
+  border-top: 0;
+  border-bottom: 1px solid var(--border);
+}
+/* Yan bağlantılar dokunulabilir düğme; ortadaki künye düz metin kalıyor. */
+.pg-nav .pg-nav-btn {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--accent-text);
+}
+.pg-nav .pg-nav-btn:hover,
+.pg-nav .pg-nav-btn:focus-visible {
+  border-color: var(--accent-text);
+  background-color: var(--accent-muted);
+  text-decoration: none;
 }
 
 /* =============================================================================
@@ -4415,4 +4471,250 @@ a.ctx-num:hover {
 .verse-audio-not {
   margin: 0.5rem 0 0;
   font-size: 0.9rem;
+}
+
+/* --- Arama (/ara) --------------------------------------------------------- */
+
+/*
+ * Ekran okuyucuya görünür, gözle görünmez.
+ *
+ * Sitede daha önce yoktu; `.map-live-layers legend` aynı kalıbı satır içi
+ * tekrarlıyordu. Arama kutusunda dört etiket bunu istediği için ortak sınıfa
+ * çıkarıldı. `display: none` OLMAZ — ekran okuyucu da görmez.
+ */
+.vh {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.ara-kutu {
+  margin: 1.5rem 0 2rem;
+}
+.ara-uyari {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+}
+.ara-satir {
+  display: flex;
+}
+.ara-input {
+  flex: 1;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+}
+.ara-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.ara-durum {
+  margin: 0.5rem 0 0;
+  min-height: 1.2em;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+/* Referans kartı — "5/58", "cüz 2" gibi sorgularda sonuçların üstünde. */
+.ara-kart-govde {
+  margin: 0.75rem 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--accent-muted);
+  border-inline-start: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+}
+.ara-kart-govde.is-uyari {
+  border-color: var(--border-strong);
+  border-inline-start-color: var(--warning);
+}
+.ara-kart-etiket {
+  margin: 0 0 0.25rem;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.ara-kart-bag {
+  font-size: var(--text-lg);
+  font-weight: var(--fw-semi);
+}
+.ara-kart-not {
+  margin: 0.3rem 0 0;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+}
+
+.ara-sekmeler {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 1rem 0 0.75rem;
+}
+.ara-sekme {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+.ara-sekme[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent-muted);
+  color: var(--accent-text);
+}
+.ara-sayi {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.ara-suzgec {
+  margin: 0 0 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.ara-suzgec > summary {
+  padding: 0.5rem 0.85rem;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+.ara-suzgec-govde {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  padding: 0.25rem 0.85rem 0.85rem;
+}
+.ara-suzgec-grup {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  font-size: var(--text-sm);
+}
+.ara-suzgec-grup input[type="number"] {
+  width: 4.5rem;
+}
+.ara-yer {
+  border: 0;
+  padding: 0;
+}
+.ara-yer legend {
+  padding: 0;
+  color: var(--text-muted);
+}
+
+.ara-sonuc {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ara-r {
+  padding: 0.7rem 0;
+  border-block-end: 1px solid var(--border);
+}
+.ara-r-tur {
+  display: inline-block;
+  margin-inline-end: 0.5rem;
+  padding: 0.1rem 0.45rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+.ara-r-baslik {
+  font-weight: var(--fw-semi);
+}
+.ara-r-snip {
+  margin: 0.3rem 0 0;
+  color: var(--text-secondary);
+  font-family: var(--font-reading);
+  line-height: var(--lh-relaxed);
+}
+.ara-r-snip:empty {
+  display: none;
+}
+.ara-r-meta {
+  margin: 0.25rem 0 0;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+.ara-daha-btn {
+  margin: 1rem 0;
+  padding: 0.45rem 1rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Gezinilebilir dizin — betiksiz de dolu gelir. */
+.ara-dizin {
+  margin: 2.5rem 0;
+}
+.ara-dz {
+  border-block-end: 1px solid var(--border);
+}
+.ara-dz > summary,
+.ara-dz-alt > summary {
+  padding: 0.6rem 0;
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+}
+.ara-dz-alt > summary {
+  padding-inline-start: 1rem;
+  font-weight: var(--fw-normal);
+}
+.ara-dz-sayi {
+  margin-inline-start: 0.4rem;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+.ara-dz-not {
+  margin: 0 0 0.5rem;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+.ara-dz-liste {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 0.2rem 1rem;
+  margin: 0 0 0.9rem;
+  padding: 0 0 0 1rem;
+  list-style: none;
+  font-size: var(--text-sm);
+}
+.ara-dz-liste.is-ar [lang="ar"] {
+  font-family: var(--font-arabic);
+  font-size: var(--text-ar-md);
+}
+.ara-dz-lat {
+  margin-inline-start: 0.4rem;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+.ara-kunye {
+  margin: 2.5rem 0 0;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
 }

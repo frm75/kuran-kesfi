@@ -1,0 +1,178 @@
+---
+import Base from "~/layouts/Base.astro";
+import AramaKutusu from "~/components/AramaKutusu.astro";
+import SourceBadge from "~/components/SourceBadge.astro";
+import {
+  getConceptsIndex,
+  getLocations,
+  getPrinciplesIndex,
+  getRootsIndex,
+  getSourceBySlug,
+  getStoriesIndex,
+  getSurahsIndex,
+  getTimeline,
+} from "~/lib/data";
+
+/**
+ * Arama — plan §12.2.
+ *
+ * ## Sitenin JavaScript çalışan BEŞİNCİ adresi
+ *
+ * Diğerleri `/harita`, `/kissa/*`, `/dinle/*`, `/gunluk`. 6236 ayet sayfasında
+ * CSP hâlâ `default-src 'none'`; buraya yalnız `script-src 'self'` (arama
+ * betiği) ve `connect-src 'self'` (indeks parçaları) açıldı. `unsafe-inline`,
+ * `unsafe-eval` ve `wasm-unsafe-eval` açılmadı — motor bağımlılıksız ve WASM
+ * kullanmıyor. Pagefind tam bu yüzden seçilmedi.
+ *
+ * ## Betik çalışmazsa sayfa BOŞ KALMAZ
+ *
+ * Aşağıdaki dizin build'de basılıyor: 114 sure, 109 kavram, 64 ilke, 50 kıssa,
+ * 26 konum, 22 olay ve 1641 kök. Serbest kelime araması JavaScript ister ve
+ * bunu `<noscript>` açıkça söyler; gezinme yine de tam çalışır.
+ *
+ * Kökler `<details>` içinde katlı: 1641 satır açık dursa sayfa şişerdi.
+ * `<details>` betiksiz çalışır.
+ */
+
+const { surahs } = getSurahsIndex();
+const concepts = getConceptsIndex();
+const principles = getPrinciplesIndex();
+const stories = getStoriesIndex();
+const locations = getLocations();
+const events = getTimeline();
+const { roots } = getRootsIndex();
+
+/** Kökleri ilk Arapça harfine göre gruplar — 1641 satır tek yığın olmasın. */
+const rootGroups = new Map<string, typeof roots>();
+for (const root of roots) {
+  const letter = [...root.arabic][0] ?? "?";
+  rootGroups.set(letter, [...(rootGroups.get(letter) ?? []), root]);
+}
+const rootLetters = [...rootGroups.keys()].sort();
+
+const aliasSource = getSourceBySlug("tdv-islam-ansiklopedisi");
+
+const dizinler = [
+  { id: "dz-sure", baslik: "Sureler", sayi: surahs.length,
+    ogeler: surahs.map((s) => ({ href: `/${s.slug}`, ad: `${String(s.id)}. ${s.nameTr}` })) },
+  { id: "dz-kavram", baslik: "Kavramlar", sayi: concepts.length,
+    ogeler: concepts.map((c) => ({ href: `/kavram/${c.slug}`, ad: c.nameTr })) },
+  { id: "dz-ilke", baslik: "İlkeler", sayi: principles.length,
+    ogeler: principles.map((p) => ({ href: `/ilke/${p.slug}`, ad: p.nameTr })) },
+  { id: "dz-kissa", baslik: "Kıssalar", sayi: stories.length,
+    ogeler: stories.map((s) => ({ href: `/kissa/${s.slug}`, ad: s.title })) },
+  { id: "dz-konum", baslik: "Konumlar", sayi: locations.length,
+    ogeler: locations.map((l) => ({ href: `/harita#konum-${l.slug}`, ad: l.name })) },
+  { id: "dz-zaman", baslik: "Siyer olayları", sayi: events.length,
+    ogeler: events.map((e) => ({ href: `/zaman#olay-${String(e.order)}`, ad: e.title })) },
+];
+---
+
+<Base
+  title="Ara — Kur'an-ı Kerim Keşfi"
+  description="Kur'an'da kelime, ayet numarası veya sure adıyla arayın. Sonuçlar ayet, kavram, kök, kıssa, ilke, sure, konu, konum ve zaman başlıklarına ayrılır."
+  arabic
+>
+  <main id="icerik" class="pg pg-wide">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <a href="/kesfet">Keşfet</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">Ara</span>
+    </nav>
+
+    <header class="pg-head">
+      <p class="pg-kicker">Keşfet</p>
+      <h1 class="pg-title">Ara</h1>
+      <p class="pg-lede">
+        Kelimeyi Türkçe meal, çeviriyazı ya da Arapça metin içinde arayın. Ayet numarası
+        da yazabilirsiniz: <b>5/58</b>, <b>5. sure 58. ayet</b>, <b>bakara 153</b>,
+        <b>cüz 2</b>, <b>sayfa 23</b>. Sonuçlar türlerine göre ayrılır.
+      </p>
+      <ul class="fact-row">
+        <li><b>{surahs.length}</b><span>sure</span></li>
+        <li><b>6236</b><span>ayet</span></li>
+        <li><b>{roots.length}</b><span>kök</span></li>
+        <li><b>{concepts.length}</b><span>kavram</span></li>
+        <li><b>{principles.length}</b><span>ilke</span></li>
+      </ul>
+    </header>
+
+    <AramaKutusu surahs={surahs.map((s) => ({ id: s.id, nameTr: s.nameTr }))} />
+
+    <section id="ara-dizin" class="ara-dizin">
+      <div class="sec-head">
+        <h2>Gezinilebilir dizin</h2>
+        <span class="sec-note">Aramadan bağımsız; JavaScript gerektirmez</span>
+      </div>
+
+      {
+        dizinler.map((dizin) => (
+          <details class="ara-dz" id={dizin.id}>
+            <summary>
+              {dizin.baslik} <span class="ara-dz-sayi">{dizin.sayi}</span>
+            </summary>
+            <ul class="ara-dz-liste">
+              {dizin.ogeler.map((oge) => (
+                <li>
+                  <a href={oge.href}>{oge.ad}</a>
+                </li>
+              ))}
+            </ul>
+          </details>
+        ))
+      }
+
+      <details class="ara-dz" id="dz-kok">
+        <summary>
+          Kökler <span class="ara-dz-sayi">{roots.length}</span>
+        </summary>
+        <p class="ara-dz-not">Arapça ilk harfine göre gruplandı.</p>
+        {
+          rootLetters.map((letter) => (
+            <details class="ara-dz-alt">
+              <summary>
+                <span lang="ar" dir="rtl">{letter}</span>
+                <span class="ara-dz-sayi">{(rootGroups.get(letter) ?? []).length}</span>
+              </summary>
+              <ul class="ara-dz-liste is-ar">
+                {(rootGroups.get(letter) ?? []).map((root) => (
+                  <li>
+                    <a href={`/kok/${root.arabic}`}>
+                      <span lang="ar" dir="rtl">{root.arabic}</span>
+                      <span class="ara-dz-lat">{root.latin}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          ))
+        }
+      </details>
+    </section>
+
+    <section class="ara-kunye">
+      <div class="sec-head">
+        <h2>Aramanın kapsamı</h2>
+      </div>
+      <p>
+        Metin araması <b>Diyanet İşleri</b> mealinde, Tanzil çeviriyazısında ve harekesiz
+        Arapça metinde çalışır. Diğer 26 Türkçe mealin kendine özgü kelimeleri indekste
+        yoktur; kavram ve kök katmanı bu boşluğu kısmen kapatır. Arama tarayıcınızda
+        çalışır — sunucuya hiçbir sorgu gönderilmez, kaydedilmez.
+      </p>
+      <p>
+        Sure eş adları (Tevbe/Berâe, Nebe/Amme gibi) aramada eşleşir ve sonuç kartında
+        gösterilir.
+      </p>
+      <SourceBadge
+        contentClass="kaynakli"
+        label="Sure eş adları"
+        sources={[{ ...aliasSource, reference: "Sûre maddeleri" }]}
+      />
+    </section>
+  </main>
+</Base>
+
+<script>
+  import "~/lib/search/app";
+</script>

@@ -78,8 +78,13 @@ export const NAV: readonly NavHub[] = [
   {
     href: "/kesfet",
     label: "Keşfet",
-    blurb: "Bağlam eksenleri: kıssalar, coğrafya, nüzul sırası ve mushaf tarihi.",
+    blurb: "Bağlam eksenleri: arama, kıssalar, coğrafya, nüzul sırası ve mushaf tarihi.",
     children: [
+      {
+        href: "/ara",
+        label: "Ara",
+        blurb: "Kelime, ayet numarası veya sure adıyla ara; sonuçlar türe göre ayrılır.",
+      },
       {
         href: "/kissalar",
         label: "Kıssalar",

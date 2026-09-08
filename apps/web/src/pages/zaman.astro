@@ -107,7 +107,9 @@ const periods = ["mekke_1", "mekke_2", "mekke_3", "medine"] as const;
 
               <ol class="event-list">
                 {periodEvents.map((event) => (
-                  <li>
+                  /* Cipa arama sonuclarindan gelen /zaman#olay-<order> icin;
+                     cipasiz baglanti sayfanin basina duserdi. */
+                  <li id={`olay-${String(event.order)}`}>
                     <div class="ev-head">
                       <span class="ev-year">
                         {event.approxYear === null ? "—" : `${String(event.approxYear)}`}
