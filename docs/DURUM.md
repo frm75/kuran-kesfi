@@ -41,7 +41,7 @@ pnpm run deploy:rollback      # geri dön
 | Harita | `/harita` | 26 konum (13 kesin / 8 muhtemel / 5 rivayet) |
 | Zaman | `/zaman` | 22 siyer olayı, Nöldeke 114/114 (109'u Mısır'dan farklı) |
 | Kavramlar | `/kavramlar`, `/kavram/<slug>` | 71 kavram, 12 857 ayet bağı |
-| İlkeler | `/ilkeler`, `/ilke/<slug>` | 32 ilke, 116 birincil + 113 ikincil dayanak |
+| İlkeler | `/ilkeler`, `/ilke/<slug>` | 64 ilke, 7 alanda; 196 birincil + 209 ikincil dayanak (405 ayet bağı) |
 | İlgili ayetler | her ayet sayfasında | 40 886 bağ, 5994 / 6236 ayet (%96) |
 | Bağlam | her ayet sayfasında | önceki 3 + sonraki 3 ayet, öntanımlı meal |
 | Konu başlığı | **114 / 114 sure** | 742 başlık, `origin=platform` |
@@ -1401,3 +1401,42 @@ hepsinde her yerde basılıyor — CSS `:hover` seçicisi çalışabilsin diye D
 bulunması gerekiyor) gzip tekrar eden `<a href=…>` kalıplarını iyi sıkıştırdığı
 için ham fark (+551 bayt) gzip'li farka (+97..102 bayt) küçülüyor. `nav-sub`'ı
 yalnızca hub sayfalarında basma fikri (brief'in bahsettiği tedbir) gerekmedi.
+
+## İlke katmanı — alanlar ve karşıtlık (2026-09-07/08, plan-3-ilke)
+
+İlke sayısı 60 → 64 çıktı (namaz, oruç, zekât, hac — `ibadet` alanı) ve düz
+liste yedi **alana** (`principle_area`) gruplandı: `allaha-karsi` (7),
+`ibadet` (4), `nefis-terbiyesi` (7), `soz-ve-dogruluk` (14),
+`aile-ve-yakinlar` (8), `mal-ve-iktisat` (11), `toplum-ve-yonetim` (13).
+Toplam **64 ilke, 196 birincil + 209 ikincil dayanak (405 ayet bağı)**.
+`/ilkeler` bu yedi alanı `order`'a göre bölüm bölüm basıyor, her alan kendi
+`#<alanSlug>` çapasıyla; ayrıca ilke atlasını (`RadyalAtlas`, aynı bileşen
+`/kavramlar`'da da kullanılıyor) yedi alan halkasıyla dış çemberdeki 64
+ilkeye çiziyor.
+
+**Yeni bir ilke eklerken bilinmesi gerekenler:**
+
+- `data/principles/principle_<slug>.json`'da **`areaSlug` zorunludur** —
+  şemada (`principleInput`) opsiyonel değil, DB'de `principle.area_id`
+  **`NOT NULL`**. Var olmayan/boş bir `areaSlug` `pnpm content:import`'u
+  patlatır (`crossCheck` → "ilke X: alan Y yok").
+- `oppositeSlug` yazarsan **karşılıklı olmak zorunda**: A'nın karşıtı B ise
+  B'nin karşıtı da A olmalı. `pnpm content:import` yalnızca var-olma ve
+  kendine-referans olmama durumunu denetler; **karşılıklılığı**
+  `scripts/build/linter.ts` (`lint:refs` adımı, kök `pnpm build`'in bir
+  parçası) denetler — tek yönlü bir çift **`process.exit(1)` ile build'i
+  düşürür**. İki denetim de saf fonksiyon olarak
+  `scripts/build/lib/principle_checks.ts`'te yaşıyor ve
+  `lib/__tests__/principle_checks.smoke.ts` ile testli (`pnpm --filter
+  @kuran/build test:smoke`).
+- Yeni bir alan eklersen `data/principle_areas/area_<slug>.json`'daki
+  `principleCount` gerçek sayımla tutarlı olmalı — linter bunu da denetler.
+
+**Aday tarama scripti:** `scripts/build/principle_candidates.ts` (çalıştırma:
+`pnpm --filter @kuran/build candidates`) Kur'an metnini tarayıp
+`reports/principle_candidates.md`'ye (gitignore'da, yeniden üretilebilir) bir
+ADAY kök listesi yazar — **`data/`'ya hiçbir şey yazmaz**, hangi adayın ilke
+olacağına insan karar verir (CLAUDE.md kural 4). Girdisi
+`apps/web/public/data/*` (sure, yazar, kök, kelime JSON'ları), yani
+**`pnpm build:data` ön koşuldur** — o çalışmadan `candidates` boş/eski
+klasörle patlar ya da eski veriyle rapor üretir.

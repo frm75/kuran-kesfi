@@ -173,6 +173,14 @@ yerleşim) yanında bir de renkle ayrışır — **ama renk TEK BAŞINA anlam ta
 ilke burada da geçerli, grup zaten konumla (kendi dilimi) ve derinlik farkıyla da
 ayırt edilebiliyor, renk yalnızca göz için ek bir ipucu.
 
+**Üçüncü çağıran (2026-09-07, plan-3-ilke):** aynı bileşen `/ilkeler`'de ilke atlasını
+da çiziyor — yedi ilke alanı halkada, 64 ilke dışta. Kavram atlasından iki fark: ilke
+alanlarının kendi sayfası yok, bu yüzden grup düğümleri `grupHrefOnEk="/ilkeler#"`
+ile listenin kendi `#<alanSlug>` bölümüne yönlenir (`hrefOnEk` gibi ilke sayfasına
+değil); ve SVG öğe id'leri iki atlas aynı sayfada asla buluşmasa da çakışmasın diye
+`idOnEk="ilke-atlas"` ile öneklenir. İkisi de varsayılanlı, kavram atlasının kendisi
+hiçbirini geçmez ve davranışı değişmedi.
+
 ```
         karanlık   açık       kontrast (--bg-elevated'e karşı, WCAG 1.4.11 ≥3:1)
 --gr-1  #CB4D4D    #B82E2E    3,86:1 / 5,65:1
@@ -203,9 +211,14 @@ grup sayfasında (dizi tek elemanlı) her sayfa aynı rengi (`--gr-1`) alırdı 
 atlastaki grup kimliği kendi sayfasında kaybolurdu. Eşleme ana atlasın mevcut
 görünümüyle aynı sırayı izler: `tevhid-ve-allah`→1, `vahiy-ve-peygamberlik`→2,
 `iman-ve-kufur`→3, `ahlak-ve-toplum`→4, `amel-ve-ibadet`→5, `ahiret-ve-hesap`→6,
-`insan-ve-nefs`→7, `imtihan-ve-kader`→8. Bilinmeyen bir grup slug'ı gelirse (bileşen
-ileride ilke atlası gibi başka bir taksonomi için de kullanılabilir) dizideki
-index'e düşülür — bileşen tek bir taksonomiye kilitlenmez.
+`insan-ve-nefs`→7, `imtihan-ve-kader`→8. Bilinmeyen bir grup slug'ı gelirse (ör.
+yukarıdaki ilke atlasının yedi alanı, `KAVRAM_GRUP_RENGI` sözlüğünde hiç yok) dizideki
+index'e düşülür (`gr-${(i % 8) + 1}`) — bileşen tek bir taksonomiye kilitlenmez. Pratik
+sonuç: `gr-1` `/kavramlar`'da `tevhid-ve-allah`, `/ilkeler`'de `allaha-karsi` demek;
+renk grup kimliğini konumla ve etiketle birlikte taşıdığı için (yukarıdaki kural) bu
+başlı başına bir erişilebilirlik açığı değil, ama iki sayfa aynı rengi farklı anlamda
+kullanıyor — 8. bir ilke alanı eklenirse ya da alan sırası değişirse ilke atlasının
+renkleri de kayar.
 
 ---
 
@@ -648,6 +661,7 @@ içindeki `:root` ve `@theme inline` bloklarında yaşar (Tailwind v4; ayrı `ta
 | 2026-09-05 | İçerik katmanı yayında: kıssa, konum, kavram, ilke, zaman — 8138 sayfa, hâlâ 0 bayt JS |
 | 2026-09-05 | Harita MapLibre yerine **statik SVG** (Natural Earth, build zamanı); kavram grafı liste |
 | 2026-09-05 | Güven derecesi rozeti `.conf` — renk + kenarlık biçimi (düz/kesikli/noktalı), §1 kuralı |
+| 2026-09-07 | `RadyalAtlas` üçüncü çağıranı: `/ilkeler` ilke atlasını çiziyor (`idOnEk`, `grupHrefOnEk`); `graf.ts` yerleşim sabitleri değişmedi |
 
 ### Karara açık nokta
 
