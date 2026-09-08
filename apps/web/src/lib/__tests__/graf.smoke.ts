@@ -316,7 +316,17 @@ if (!existsSync(ilkeIdxYolu) || !existsSync(alanYolu)) {
     ),
   );
   check("ilke atlasinda ayni girdi ayni ciktiyi verir", JSON.stringify(ilkeBir) === JSON.stringify(ilkeIki));
-  check("ilke atlasinda kenar sayisi 5 (emir/nehiy cifti, dedup edilmis)", ilkeKenarlari.length === 5);
+  /*
+   * Kenar sayisi VERIDEN turetilir, sabit bir sayiya (5, 4, ...) KILITLENMEZ
+   * — cift sayisi degistikce (bkz. Fix round 1: guzel-soz/alay-etmeme cikti,
+   * 5 -> 4) sabit bir beklenti her seferinde elle guncellenmesi gereken,
+   * sessizce eskiyen bir sayi olurdu (takvim testindeki ayni ders).
+   */
+  const ilkeOppositeliSayisi = ilkeler.filter((p) => p.oppositeSlug !== null).length;
+  check(
+    "ilke atlasinda kenar sayisi oppositeSlug'lu ilke sayisinin yarisi (karsilikli cift dedup edilmis)",
+    ilkeKenarlari.length === ilkeOppositeliSayisi / 2,
+  );
   check(
     "ilke atlasinda her kenarin iki ucu da dugumler arasinda var (yuzen dugum yok)",
     ilkeKenarlari.every(

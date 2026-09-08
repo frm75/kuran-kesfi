@@ -1078,6 +1078,19 @@ function checkStaticOutput(): void {
   checksRun += 1;
   for (const [slug, opposite] of principleOpposite) {
     if (opposite === null) continue;
+    /*
+     * Kendine referans korumasi (fix round 1, inceleme bulgusu). `opposite
+     * === slug` durumunda asagidaki "back !== slug" karsilastirmasi
+     * TRIVIAL DOGRU cikar (back zaten slug'in kendisi) — denetim sessizce
+     * gecerdi. Bugun `content_input.ts`'teki Zod refine bunu content:import
+     * asamasinda zaten engelliyor (pipeline'dan gecmez), ama linter YAYINLANAN
+     * ciktiyi dogruluyor — dosya elle bozulursa (ya da baska bir uretici
+     * yolundan gecerse) bu koruma olmadan build durmazdi.
+     */
+    if (opposite === slug) {
+      errors.push(`ilke ${slug}: kendi karsiti olamaz (oppositeSlug kendisine isaret ediyor)`);
+      continue;
+    }
     if (!principleOpposite.has(opposite)) {
       errors.push(
         `ilke ${slug}: karsit ilke '${opposite}' yayinlanan ilkeler arasinda yok`,
