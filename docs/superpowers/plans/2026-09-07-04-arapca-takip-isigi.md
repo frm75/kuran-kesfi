@@ -737,8 +737,13 @@ Beklenen: `1:1 [0, 580, 1409, 2502, 5840]` benzeri, `ok`
 Beklenen (2026-09-07 ölçümüyle aynı mertebede olmalı):
 
 ```
-6236 ayet · 77429 kelime · ~247 aradegerlenen · ~215 bozuk on-yukleme · 1 kirpilan · ~480 KB
+6236 ayet · 77.429 kelime · 545 aradegerlenen · 215 bozuk on-yukleme · 1 kirpilan · 481 KB
 ```
+
+**545 nereden geliyor** (2026-09-07'de ölçüldü): 247 kelimenin damgası hiç yok,
+215 ayette İLK kelimenin damgası ayet başından 500 ms'den fazla önce başlıyor,
+90 kelimede aynı bozukluk ilk kelimede değil ortada. Üçü de atılıp
+aradeğerleniyor: 77.429 kelimenin %0,70'i.
 
 Sayılar bunlardan çok saparsa DURMA, rapora bak: kaynak değişmiş olabilir.
 

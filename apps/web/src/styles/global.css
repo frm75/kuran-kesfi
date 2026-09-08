@@ -4296,3 +4296,131 @@ a.ctx-num:hover {
 .ilke-alan {
   scroll-margin-top: var(--space-4);
 }
+
+/* --- /dinle — kelime takip ışığı (plan 04) -------------------------------- */
+/*
+ * Işık METİN rengini değil ZEMİNİ değiştirir: harekeli Arapça metinde renk
+ * değişimi harekeleri okunmaz hâle getiriyordu. --accent-muted zaten "pasif
+ * altın, ZEMİN rengi" diye tanımlı (bkz. :root); parşömen metin onun üstünde
+ * okunur kalıyor.
+ */
+.dinle-bas {
+  margin-bottom: 2rem;
+}
+.dinle-kari {
+  color: var(--text-secondary);
+  margin: 0.25rem 0;
+}
+.dinle-not {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  max-width: 46ch;
+}
+.dinle-liste {
+  display: grid;
+  gap: 1.5rem;
+}
+.dinle-ayet {
+  border-top: 1px solid var(--border);
+  padding: 1rem 0.75rem 0.75rem;
+  border-radius: 0.4rem;
+  scroll-margin-top: 7rem;
+}
+.dinle-ayet.is-playing {
+  background-color: var(--bg-elevated);
+}
+.dinle-ayet-bas {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.dinle-ayet-no {
+  font-variant-numeric: tabular-nums;
+}
+.dinle-arapca {
+  font-family: var(--font-arabic);
+  font-size: 1.7rem;
+  line-height: 2.1;
+  margin: 0.5rem 0;
+  max-width: 40ch;
+}
+.dinle-kelime {
+  border-radius: 0.2rem;
+  padding: 0 0.1em;
+  transition: background-color 120ms linear;
+}
+.dinle-kelime.is-active {
+  background-color: var(--accent-muted);
+}
+.dinle-meal {
+  color: var(--text-secondary);
+  margin: 0.5rem 0;
+  max-width: 62ch;
+}
+.dinle-yedek-oynatici {
+  width: 100%;
+  max-width: 30rem;
+  margin-top: 0.5rem;
+}
+/* Betik açılınca yedek oynatıcılar gizlenir; app.ts gövdeye bu sınıfı koyar. */
+.dinle-js .dinle-yedek-oynatici {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dinle-kelime {
+    transition: none;
+  }
+}
+
+/* --- /dinle oynatıcı çubuğu (yalnız betik açıkken görünür) ---------------- */
+.dinle-cubuk {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 0.4rem;
+}
+.dinle-dugme {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 0.3rem;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+.dinle-dugme:hover {
+  border-color: var(--accent-text);
+}
+.dinle-secim {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+.dinle-durum {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-inline-start: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- /dinle bağlantıları (ayet ve sure sayfalarından) --------------------- */
+.pg-dinle {
+  margin: 0.75rem 0 0;
+  font-size: 0.95rem;
+}
+.verse-audio-not {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+}

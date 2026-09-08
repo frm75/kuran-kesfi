@@ -63,3 +63,57 @@ export const staticRecitation = z.object({
   reciters: z.array(reciter),
 });
 export type StaticRecitation = z.infer<typeof staticRecitation>;
+
+/**
+ * Kelime zaman damgasi — plan 04.
+ *
+ * ## Neden ayete goreli
+ *
+ * Kaynak (Quran.com QDC) damgayi SURE mp3'une gore veriyor. Bizde ayet basina
+ * ayri dosya var. 300 ayetlik olcumde iki kaydin ayni ustadan kesildigi
+ * dogrulandi (fark medyan 2 ms, p95 6 ms), bu yuzden sure dosyasini indirmek
+ * yerine damga `timestamp_from` cikarilarak ayete goreli hale getirildi.
+ *
+ * ## Neden yalniz baslangiclar
+ *
+ * Bir kelimenin bitisi bir sonrakinin baslangicidir. Dizinin son elemani son
+ * kelimenin bitisidir; uzunluk = kelime sayisi + 1. Boylece dosya yariya iner
+ * (480 KB) ve calan kelime tek bir ikili aramayla bulunur.
+ */
+export const verseSegmentList = z.array(z.number().int().nonnegative()).min(2);
+export type VerseSegmentList = z.infer<typeof verseSegmentList>;
+
+/**
+ * Onarim sayaclari. TAHMIN DEGIL: indirme bittikten sonra gercekten yapilan
+ * onarim sayilir (`missingVerses` ile ayni gerekce).
+ */
+export const segmentStats = z.object({
+  verseCount: z.number().int().nonnegative(),
+  wordCount: z.number().int().nonnegative(),
+  /** Damgasi hic gelmeyip komsulardan aradegerlenen kelime */
+  interpolatedWords: z.number().int().nonnegative(),
+  /** Ilk kelimesi ayet basindan 500 ms'den fazla once baslayan (bozuk) ayet */
+  repairedLeads: z.number().int().nonnegative(),
+  /** Kaynak indisi DB kelime sayisini asan ayet */
+  cappedVerses: z.number().int().nonnegative(),
+});
+export type SegmentStats = z.infer<typeof segmentStats>;
+
+/** data/recitation/segments_<slug>.json */
+export const segmentFile = z.object({
+  reciterSlug: slug,
+  sourceUrl: nonEmptyText,
+  /** YYYY-MM-DD */
+  fetchedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  stats: segmentStats,
+  /** "2:255" -> [0, 410, 980, ..., 51900] */
+  verses: z.record(z.string().regex(/^\d{1,3}:\d{1,3}$/), verseSegmentList),
+});
+export type SegmentFile = z.infer<typeof segmentFile>;
+
+/** public/data/ses/segment_<sure>.json */
+export const staticSurahSegments = z.object({
+  surahId: z.number().int().positive(),
+  reciters: z.record(slug, z.record(z.string(), verseSegmentList)),
+});
+export type StaticSurahSegments = z.infer<typeof staticSurahSegments>;

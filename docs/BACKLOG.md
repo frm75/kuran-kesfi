@@ -296,10 +296,18 @@ sure sure katlamak. Acil değil — gzip'li ağırlık 26 KB.
   yeter, arayüz iki kârîyi de kendiliğinden yan yana gösterir. Depolama +1,6 GB.
 - **Kârî seçimi kalıcı değil.** Birden fazla kârî gelirse ayet sayfasında ikisi de
   basılır; "hep bunu çal" tercihi ayarlar arayüzü olmadığı için tutulamıyor.
-- **Sure boyunca sürekli çalma yok.** Her ayet ayrı `<audio>`; sıradaki ayete
-  kendiliğinden geçmek JavaScript ister, ayet sayfalarında betik kapalı.
-- **Meal sesi (Türkçe) yok.** Plan §2.4 "Türkçe meal sesi"ni de sayıyor; açık
-  lisanslı bir Türkçe meal kaydı araştırılmadı.
+- ~~**Sure boyunca sürekli çalma yok.**~~ **KAPANDI (2026-09-07):** `/dinle/<sure>`
+  sayfası tek `<audio>` ile ayetten ayete geçiyor ve okunan kelimeyi
+  işaretliyor. Ayet sayfaları betiksiz kaldı; oraya düz bir bağ veriyorlar
+  (`/dinle/2#ayet-2-255`). Bkz. `docs/DURUM.md` → "Kelime takip ışığı".
+- **el-Husarî damgası hazır bekliyor.** `pnpm media:segments --reciter husary`
+  yeterli (QDC kimliği 6); arayüz iki kârîyi de gösterir. Önce sesin kendisi
+  inmeli: `pnpm media:recitation --reciter husary`, +1,6 GB.
+- **Kelime takip ışığı yalnız Arapça'da.** Türkçe meal sesi Plan 05'te.
+- **Meal sesi (Türkçe) yok.** 2026-09-07'de araştırıldı: açık lisanslı bir
+  Türkçe meal KAYDI yok, doğrulandı. Tek yol TTS. Plan hazır:
+  `docs/superpowers/plans/2026-09-07-05-turkce-meal-sesi.md` — ücretsiz açık
+  ağırlıklı model, kullanıcının GPU'lu makinesinde, Mehmet Okuyan meali.
 
 ## WhatsApp — incelendi, ERTELENDİ (2026-09-07)
 

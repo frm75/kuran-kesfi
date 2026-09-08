@@ -1,0 +1,67 @@
+---
+import type { StaticWord } from "@kuran/schema";
+import { stripFootnoteMarkers } from "~/lib/data";
+
+/**
+ * Dinleme sayfasindaki tek ayet — plan 04.
+ *
+ * Arapca metin kelime kelime `<span>`lere bolunur cunku isik bir kelimeyi
+ * isaretleyecek. Bolme kaynagi `verse_part`: duraklama isaretleri (ۚ ۖ)
+ * DB'de ayri satir degil, onceki kelimenin icinde — bu yuzden kelime sayisi
+ * QDC damgasiyla birebir tutuyor.
+ *
+ * Betik calismazsa: kelimeler yine basili durur, altta ayetin kendi
+ * `<audio controls>` etiketi vardir. Isik yoktur, dinleme calisir.
+ */
+
+interface Props {
+  verseKey: string;
+  verseNumber: number;
+  words: readonly StaticWord[];
+  translation: string | null;
+  /** Meal metnindeki [n] isaretlerinden hangileri gercek dipnot */
+  footnoteNumbers: readonly number[];
+  audioUrl: string | null;
+  label: string;
+}
+
+const { verseKey, verseNumber, words, translation, footnoteNumbers, audioUrl, label } =
+  Astro.props;
+
+/**
+ * Dipnot isareti dinleme sayfasinda gosterilmiyor. Plan 05 ayni ayiklanmis
+ * metni seslendirecek; iki taraf AYNI islevden gecmezse isik kayar.
+ */
+const mealText =
+  translation === null ? null : stripFootnoteMarkers(translation, footnoteNumbers);
+
+const [surahPart] = verseKey.split(":");
+---
+
+<article class="dinle-ayet" id={`ayet-${verseKey.replace(":", "-")}`} data-verse={verseKey}>
+  <header class="dinle-ayet-bas">
+    <span class="dinle-ayet-no" dir="ltr">{verseNumber}</span>
+    <a href={`/${surahPart}/${String(verseNumber)}`} class="dinle-ayet-bag">ayet sayfası</a>
+  </header>
+
+  <p lang="ar" dir="rtl" class="dinle-arapca">
+    <span class="sr-only" lang="tr">{label}.</span>
+    {
+      words.map((word, index) => (
+        <span class="dinle-kelime" data-i={String(index)}>
+          {word.arabic}
+        </span>
+      ))
+    }
+  </p>
+
+  {mealText !== null && <p lang="tr" class="dinle-meal">{mealText}</p>}
+
+  {
+    audioUrl !== null && (
+      <audio class="dinle-yedek-oynatici" controls preload="none" src={audioUrl}>
+        <a href={audioUrl}>Ses dosyasını indir</a>
+      </audio>
+    )
+  }
+</article>

@@ -15,6 +15,16 @@ export default defineConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+    build: {
+      /*
+       * Astro kucuk betikleri HTML'in ICINE gomuyor. Gomulu betik
+       * `script-src 'self'` ile ENGELLENIR — calismasi icin 'unsafe-inline'
+       * gerekirdi ve o acilmayacak (plan 04, Gorev 7). Sifir esik: her betik
+       * ayri dosya olarak /_astro/ altina cikar. /gunluk ve /harita zaten
+       * boyle davraniyordu, cunku onlarin paketi esigin ustunde.
+       */
+      assetsInlineLimit: 0,
+    },
     /**
      * .env repo kokunde duruyor (tek dosya: DB, R2, ArcGIS hepsi orada).
      * Vite varsayilan olarak Astro projesinin kendi dizinine bakar ve

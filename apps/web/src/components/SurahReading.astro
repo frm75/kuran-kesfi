@@ -123,6 +123,14 @@ const revelation = surah.revelationType === "mekki" ? "Mekkî" : "Medenî";
         <MealSecici surahSlug={surah.slug} surahId={surah.id} currentSlug={author.slug} />
       </li>
     </ul>
+
+    {/* Kesintisiz dinleme ve kelime takip isigi orada: bu sayfa betiksiz
+        kaliyor (plan 04, spec 2). */}
+    <p class="pg-dinle">
+      <a href={`/dinle/${String(surah.id)}`}>
+        Bu sureyi dinle — okunan kelime işaretlenir
+      </a>
+    </p>
   </header>
 
   {

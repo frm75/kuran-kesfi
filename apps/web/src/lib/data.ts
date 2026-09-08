@@ -366,6 +366,27 @@ export function splitFootnoteMarkers(
   return segments;
 }
 
+/**
+ * Dipnot isaretleri ayiklanmis duz metin — plan 04.
+ *
+ * /dinle sayfasi dipnot isareti GOSTERMIYOR: burasi dinleme sayfasi, dipnotlar
+ * ayet ve sure sayfalarinda duruyor. Ayni ayiklama Plan 05'te seslendirilen
+ * metne de uygulanacak; iki taraf AYNI islevden gecmezse sayfadaki kelime
+ * kutulari ile ses kayar ve isik yanlis kelimede yanar.
+ *
+ * Korlemesine `[\d+]` silmiyor: numarasi gercek bir dipnota denk gelmeyen
+ * isaret duz metin kaliyor — `splitFootnoteMarkers` ile ayni kural. Olculdu:
+ * mehmet-okuyan metnindeki 4.432 isaretin 2'si boyle.
+ */
+export function stripFootnoteMarkers(
+  text: string,
+  footnoteNumbers: readonly number[],
+): string {
+  return splitFootnoteMarkers(text, footnoteNumbers)
+    .map((segment) => (segment.kind === "text" ? segment.value : ""))
+    .join("");
+}
+
 /** "Bakara suresi, 153. ayet" — ekran okuyucu ve baslik icin. */
 export function verseLabel(surahNameTr: string, verseNumber: number): string {
   return `${surahNameTr} suresi, ${verseNumber}. ayet`;
