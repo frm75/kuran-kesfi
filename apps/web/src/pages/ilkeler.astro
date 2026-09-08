@@ -1,10 +1,28 @@
 ---
 import Base from "~/layouts/Base.astro";
-import { getPrinciplesIndex } from "~/lib/data";
+import { getPrincipleAreas, getPrinciplesIndex } from "~/lib/data";
 
-/** İlke listesi — plan §18.5. Her ilke en az bir birincil ayet dayanağı taşır. */
+/**
+ * İlke listesi — plan §18.5. Her ilke en az bir birincil ayet dayanağı taşır.
+ *
+ * İlkeler yedi alana gruplanır (2026-09-07, principle_area tablosu). Alanlar
+ * `order`'a göre sıralı gösterilir; henüz hiç ilkesi olmayan bir alan (ör.
+ * "ibadet" — bu görev sırasında 0) BÖLÜM OLARAK BASILMAZ: boş/söz verici bir
+ * bölüm göstermek yerine veri dolunca kendiliğinden görünür. `fact-row`
+ * "alan" sayısı da aynı filtrelenmiş listeden gelir, aksi hâlde sayfa 7 alan
+ * iddia edip 6 tanesini gösterirdi.
+ */
 
 const principles = getPrinciplesIndex();
+const areas = getPrincipleAreas()
+  .filter((a) => a.principleCount > 0)
+  .sort((a, b) => a.order - b.order);
+const principlesByArea = new Map<string, typeof principles>();
+for (const p of principles) {
+  const bucket = principlesByArea.get(p.areaSlug) ?? [];
+  bucket.push(p);
+  principlesByArea.set(p.areaSlug, bucket);
+}
 const totals = {
   primary: principles.reduce((a, p) => a + p.primaryCount, 0),
   verses: principles.reduce((a, p) => a + p.verseCount, 0),
@@ -34,32 +52,43 @@ const totals = {
         <li><b>{principles.length}</b><span>ilke</span></li>
         <li><b>{totals.primary}</b><span>birincil dayanak</span></li>
         <li><b>{totals.verses}</b><span>ayet bağı</span></li>
+        <li><b>{areas.length}</b><span>alan</span></li>
       </ul>
     </header>
 
-    <ol class="principle-grid">
-      {
-        principles.map((principle) => (
-          <li>
-            <a href={`/ilke/${principle.slug}`}>
-              <span class="pn-head">
-                <span class="pn-name">{principle.nameTr}</span>
-                {principle.nameAr !== null && (
-                  <span class="pn-ar" lang="ar" dir="rtl">
-                    {principle.nameAr}
-                  </span>
-                )}
-              </span>
-              <span class="pn-def">{principle.definition}</span>
-              <span class="pn-meta">
-                {principle.primaryCount} birincil
-                <span aria-hidden="true"> · </span>
-                {principle.verseCount} ayet
-              </span>
-            </a>
-          </li>
-        ))
-      }
-    </ol>
+    {
+      areas.map((area) => (
+        <section>
+          <div class="sec-head">
+            <h2>{area.nameTr}</h2>
+            <span class="sec-note">{area.definition}</span>
+          </div>
+          <ol class="principle-grid">
+            {
+              (principlesByArea.get(area.slug) ?? []).map((principle) => (
+                <li>
+                  <a href={`/ilke/${principle.slug}`}>
+                    <span class="pn-head">
+                      <span class="pn-name">{principle.nameTr}</span>
+                      {principle.nameAr !== null && (
+                        <span class="pn-ar" lang="ar" dir="rtl">
+                          {principle.nameAr}
+                        </span>
+                      )}
+                    </span>
+                    <span class="pn-def">{principle.definition}</span>
+                    <span class="pn-meta">
+                      {principle.primaryCount} birincil
+                      <span aria-hidden="true"> · </span>
+                      {principle.verseCount} ayet
+                    </span>
+                  </a>
+                </li>
+              ))
+            }
+          </ol>
+        </section>
+      ))
+    }
   </main>
 </Base>

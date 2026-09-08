@@ -19,6 +19,7 @@ import type {
   StaticLocations,
   StaticPrinciple,
   StaticPrinciplesIndex,
+  StaticPrincipleAreas,
   StaticStoriesIndex,
   StaticStory,
   StaticTimeline,
@@ -400,6 +401,10 @@ export const getPrinciplesIndex = once(
 export function getPrinciple(slug: string): StaticPrinciple {
   return readJson<StaticPrinciple>(`principle/principle_${slug}.json`);
 }
+
+export const getPrincipleAreas = once(() =>
+  readJson<StaticPrincipleAreas>("principle_areas.json").areas,
+);
 
 export const getConceptsIndex = once(
   (): StaticConceptsIndex["concepts"] =>

@@ -190,6 +190,7 @@ export const staticPrinciple = z.object({
   nameTr: nonEmptyText,
   nameAr: z.string().nullable(),
   root: z.object({ arabic: nonEmptyText, latin: nonEmptyText }).nullable(),
+  area: namedSlug,
   definition: nonEmptyText,
   explanation: nonEmptyText,
   dailyNote: z.string().nullable(),
@@ -213,6 +214,7 @@ export const staticPrinciplesIndex = z.object({
         nameAr: z.string().nullable(),
         definition: nonEmptyText,
         order: z.number().int().positive(),
+        areaSlug: slug,
         primaryCount: z.number().int().positive(),
         verseCount: z.number().int().positive(),
         oppositeSlug: slug.nullable(),
@@ -221,6 +223,22 @@ export const staticPrinciplesIndex = z.object({
     .min(1),
 });
 export type StaticPrinciplesIndex = z.infer<typeof staticPrinciplesIndex>;
+
+export const staticPrincipleAreas = z.object({
+  areas: z
+    .array(
+      z.object({
+        slug,
+        nameTr: nonEmptyText,
+        nameAr: z.string().nullable(),
+        definition: nonEmptyText,
+        order: z.number().int().positive(),
+        principleCount: z.number().int().nonnegative(),
+      }),
+    )
+    .min(1),
+});
+export type StaticPrincipleAreas = z.infer<typeof staticPrincipleAreas>;
 
 // --- Kavram ------------------------------------------------------------------
 

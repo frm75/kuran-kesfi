@@ -26,12 +26,13 @@ const secondary = principle.verses.filter((v) => v.role === "secondary");
   <main id="icerik" class="pg pg-normal">
     <nav aria-label="Konum" class="pg-crumb">
       <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <a href="/anla">Anla</a> <span aria-hidden="true">›</span>
       <a href="/ilkeler">İlkeler</a> <span aria-hidden="true">›</span>
       <span aria-current="page">{principle.nameTr}</span>
     </nav>
 
     <header class="pg-head">
-      <p class="pg-kicker">İlke</p>
+      <p class="pg-kicker">{principle.area.nameTr}</p>
       <h1 class="pg-title">
         {principle.nameTr}
         {principle.nameAr !== null && (

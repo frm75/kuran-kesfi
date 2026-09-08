@@ -7,6 +7,7 @@ import type {
   StaticVerseMedia,
   StaticPrinciple,
   StaticPrinciplesIndex,
+  StaticPrincipleAreas,
   StaticStoriesIndex,
   StaticStory,
   StaticSurahMeta,
@@ -29,6 +30,7 @@ import {
   staticVerseMedia,
   staticPrinciple,
   staticPrinciplesIndex,
+  staticPrincipleAreas,
   staticStoriesIndex,
   staticStory,
   staticTimeline,
@@ -99,7 +101,7 @@ export async function emitContent(
 
   const principles = await q<{
     id: number; slug: string; name_tr: string; name_ar: string | null; root_id: number | null;
-    definition: string; explanation: string; daily_note: string | null;
+    area_id: number; definition: string; explanation: string; daily_note: string | null;
     opposite_principle_id: number | null; order: number;
   }>('SELECT * FROM principle ORDER BY "order"');
 
@@ -357,16 +359,23 @@ export async function emitContent(
   const rootById = new Map(
     (await q<{ id: number; arabic: string; latin: string }>("SELECT id, arabic, latin FROM root")).map((r) => [r.id, r]),
   );
+  const areas = await q<{
+    id: number; slug: string; name_tr: string; name_ar: string | null; definition: string; order: number;
+  }>('SELECT * FROM principle_area ORDER BY "order"');
+  const areaById = new Map(areas.map((a) => [a.id, a]));
   const principlesIndex: StaticPrinciplesIndex["principles"] = [];
   for (const p of principles) {
     const vs = principleVerses.get(p.id) ?? [];
     if (vs.length === 0) fail(`ilke ${p.slug}: ayet dayanagi yok`);
     for (const v of vs) linkOf(v.verse_id).principles.push({ slug: p.slug, role: v.role });
     const root = p.root_id === null ? null : rootById.get(p.root_id) ?? null;
+    const area = areaById.get(p.area_id);
+    if (area === undefined) fail(`ilke ${p.slug}: alan ${p.area_id} yok`);
     const opposite = p.opposite_principle_id === null ? null : principleById.get(p.opposite_principle_id) ?? null;
     const payload: StaticPrinciple = {
       slug: p.slug, nameTr: p.name_tr, nameAr: p.name_ar,
       root: root === null ? null : { arabic: root.arabic, latin: root.latin },
+      area: { slug: area.slug, nameTr: area.name_tr },
       definition: p.definition, explanation: p.explanation, dailyNote: p.daily_note,
       opposite: opposite === null ? null : { slug: opposite.slug, nameTr: opposite.name_tr },
       order: p.order,
@@ -387,6 +396,7 @@ export async function emitContent(
     emitter.write(`principle/principle_${p.slug}.json`, payload);
     principlesIndex.push({
       slug: p.slug, nameTr: p.name_tr, nameAr: p.name_ar, definition: p.definition, order: p.order,
+      areaSlug: area.slug,
       primaryCount: vs.filter((v) => v.role === "primary").length, verseCount: vs.length,
       oppositeSlug: opposite?.slug ?? null,
     });
@@ -395,6 +405,16 @@ export async function emitContent(
     const payload: StaticPrinciplesIndex = { principles: principlesIndex };
     verifyOrFail(staticPrinciplesIndex, payload, "principles_index.json");
     emitter.write("principles_index.json", payload);
+  }
+  if (areas.length > 0) {
+    const payload: StaticPrincipleAreas = {
+      areas: areas.map((a) => ({
+        slug: a.slug, nameTr: a.name_tr, nameAr: a.name_ar, definition: a.definition, order: a.order,
+        principleCount: principles.filter((p) => p.area_id === a.id).length,
+      })),
+    };
+    verifyOrFail(staticPrincipleAreas, payload, "principle_areas.json");
+    emitter.write("principle_areas.json", payload);
   }
 
   // --- kavramlar -----------------------------------------------------------
