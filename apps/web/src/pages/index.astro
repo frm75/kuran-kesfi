@@ -442,6 +442,24 @@ const menu = NAV.map((hub) => ({
         }
       </ul>
 
+      {/* Arama kapısı — şeritteki her sayfada olduğu gibi (2026-09-08).
+          Kutuya benzeyen bağlantı; gerçek <input> değil, çünkü CSP'de
+          `form-action 'none'` duruyor. Gerekçe Base.astro'da. */}
+      <a href="/ara" class="site-ara">
+        <svg
+          class="site-ara-ikon"
+          width="15"
+          height="15"
+          viewBox="0 0 16 16"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6" />
+          <line x1="10.4" y1="10.4" x2="14" y2="14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+        </svg>
+        <span class="site-ara-metin">Ara</span>
+      </a>
+
       <a href="/sureler" class="lp-nav-cta">Keşfetmeye başla</a>
 
       {/* Mobil menü: <details> — betik gerektirmez. */}

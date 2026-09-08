@@ -133,6 +133,40 @@ const canonical = absoluteUrl(path);
               Kur'an-ı Kerim Keşfi
             </a>
             <SiteNav path={path} />
+            {
+              /*
+               * Arama kapısı — her sayfada görünür (2026-09-08).
+               *
+               * Kutuya BENZEYEN bir bağlantı, gerçek bir <input> değil.
+               * Gerekçe: 13 651 sayfanın CSP'sinde `form-action 'none'`
+               * duruyor (yalnız /iletisim'de açık). Gerçek bir arama formu
+               * tarayıcı tarafından ENGELLENİR ve hiçbir hata göstermez —
+               * kutu görünür, Enter hiçbir şey yapmaz. Betik eklemek de
+               * 13 651 sayfaya `script-src` açmak demekti.
+               *
+               * Bağlantı `/ara`'ya götürüyor, orada giriş alanı odaklı
+               * açılıyor: tek tık, sonra yaz.
+               *
+               * Doğrudan şeritten yazabilmek için CSP'ye site geneli
+               * `form-action 'self'` girmesi gerekir — kararı verilmedi.
+               */
+              path !== "/ara" && (
+                <a href="/ara" class="site-ara">
+                  <svg
+                    class="site-ara-ikon"
+                    width="15"
+                    height="15"
+                    viewBox="0 0 16 16"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6" />
+                    <line x1="10.4" y1="10.4" x2="14" y2="14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                  </svg>
+                  <span class="site-ara-metin">Ara</span>
+                </a>
+              )
+            }
           </div>
         </div>
       )

@@ -4718,3 +4718,64 @@ a.ctx-num:hover {
   color: var(--text-secondary);
   font-size: var(--text-sm);
 }
+
+/* --- Şerit arama kapısı (her sayfada) ------------------------------------- */
+
+/*
+ * Kutuya benzeyen bağlantı. Gerçek <input> değil: 13 651 sayfanın CSP'sinde
+ * `form-action 'none'` duruyor, gerçek bir arama formu sessizce engellenirdi
+ * (bkz. Base.astro'daki gerekçe).
+ *
+ * Görünüş bilerek arama alanı gibi — kullanıcı ne olduğunu tek bakışta
+ * anlasın. Tıklayınca /ara açılıyor ve giriş alanı odaklı geliyor.
+ */
+.site-ara {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-inline-start: var(--space-6);
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.site-ara:hover,
+.site-ara:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+.site-ara-ikon {
+  flex: none;
+}
+/* Ana sayfa şeridinde kapı, "Keşfetmeye başla" düğmesinden önce duruyor. */
+.lp-nav .site-ara {
+  margin-inline-start: auto;
+  margin-inline-end: var(--space-4);
+}
+
+/*
+ * Dar ekranda yalnız büyüteç kalır.
+ *
+ * Şeritte logo + dört menü başlığı zaten sıkışık; "Ara" kelimesi orada
+ * satırı taşırıyordu. İkon tek başına kaldığında bağlantının erişilebilir
+ * adı kaybolmasın diye metin `.vh` gibi gizleniyor, `display: none` ile
+ * kaldırılmıyor — ekran okuyucu "Ara" demeye devam ediyor.
+ */
+@media (max-width: 60rem) {
+  .site-ara {
+    padding: 0.3rem;
+  }
+  .site-ara-metin {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
