@@ -26,7 +26,7 @@
 
 import { existsSync, readFileSync } from "node:fs";
 import { radyalYerlesim, kirisYolu } from "../graf.js";
-import type { RadyalGirdi, RadyalGrup, RadyalCocuk } from "../graf.js";
+import type { RadyalGirdi, RadyalGrup, RadyalCocuk, RadyalKenar } from "../graf.js";
 
 let passed = 0;
 const failures: string[] = [];
