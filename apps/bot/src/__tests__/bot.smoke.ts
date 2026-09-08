@@ -107,9 +107,13 @@ check(
   schedule.every((e) => e.verseId === e.surahId * 1000 + e.verseNumber),
 );
 {
-  // Ilkeler donusumlu olmali: ilk 60 gunde ayni ilke iki kez gelmemeli.
-  const firstCycle = new Set(schedule.slice(0, 60).map((e) => e.principleSlug));
-  check("ilk 60 gunde ilke tekrari yok", firstCycle.size === 60);
+  // Ilkeler donusumlu olmali: ilk N gunde ayni ilke iki kez gelmemeli.
+  // N sabit 60 degil, takvimdeki farkli ilke sayisindan turetilir (DURUM.md'deki
+  // "N gun icinde tekrar yok" degismezini olcer) - yeni ilke eklendikce test
+  // otomatik dogru pencereyi kullanir.
+  const principleCount = new Set(schedule.map((e) => e.principleSlug)).size;
+  const firstCycle = new Set(schedule.slice(0, principleCount).map((e) => e.principleSlug));
+  check(`ilk ${principleCount} gunde ilke tekrari yok`, firstCycle.size === principleCount);
 }
 
 console.log("4. Mesaj");
