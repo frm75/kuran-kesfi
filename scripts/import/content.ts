@@ -274,6 +274,7 @@ function crossCheck(data: Loaded, dbSourceSlugs: ReadonlySet<string>): string[] 
   const storySlugs = uniq("kissa", data.stories.map((s) => s.slug));
   const conceptSlugs = uniq("kavram", data.concepts.map((c) => c.slug));
   const principleSlugs = uniq("ilke", data.principles.map((p) => p.slug));
+const principleOppositeOf = new Map(data.principles.map((p) => [p.slug, p.oppositeSlug] as const));
 
   const needSource = (where: string, slugs: readonly string[]): void => {
     for (const s of slugs) {
@@ -322,8 +323,22 @@ function crossCheck(data: Loaded, dbSourceSlugs: ReadonlySet<string>): string[] 
     }
   }
   for (const p of data.principles) {
-    if (p.oppositeSlug !== null && !principleSlugs.has(p.oppositeSlug)) {
-      errors.push(`ilke ${p.slug}: karsit ilke '${p.oppositeSlug}' yok`);
+    if (p.oppositeSlug !== null) {
+      if (!principleSlugs.has(p.oppositeSlug)) {
+        errors.push(`ilke ${p.slug}: karsit ilke '${p.oppositeSlug}' yok`);
+      } else {
+        // Karsilikli olmali (A->B ⟹ B->A) — tek yonlu bir cift build asamasinda
+        // lint:refs'e kadar yakalanmaz, DB'ye temiz yazilirdi (bkz. linter.ts
+        // checkPrincipleOppositeReciprocity, ayni degismezi YAYINLANAN ciktida
+        // denetler).
+        const back = principleOppositeOf.get(p.oppositeSlug) ?? null;
+        if (back !== p.slug) {
+          errors.push(
+            `ilke ${p.slug}: karsit ilke '${p.oppositeSlug}' karsilikli degil ` +
+              `(${p.oppositeSlug}.oppositeSlug = ${back === null ? "null" : `'${back}'`})`,
+          );
+        }
+      }
     }
     need(`ilke ${p.slug}`, storySlugs, "kissa", p.stories.map((s) => s.slug));
     need(`ilke ${p.slug}`, conceptSlugs, "kavram", p.concepts);
