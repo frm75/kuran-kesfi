@@ -337,6 +337,27 @@ Yeniden gündeme gelirse: `apps/bot` şeması `whatsapp` kanalını zaten tanıy
 (`subscription_channel`), içerik motoru ortak; yazılacak olan webhook ucu,
 `X-Hub-Signature-256` imza doğrulaması ve kanal farkındalıklı gönderim.
 
+## Kavram slug/içerik uyuşmazlığı — `kadin-erkek-hak` (2026-09-08)
+
+`data/concepts/concept_kadin-erkek-hak.json` dosyasının slug'ı `kadin-erkek-hak`
+("kadın-erkek hak") ama içeriği bambaşka bir kavram: "Sema ve Arz" (gök ve yer,
+kökler `smw`/`ArD`). Sonuç: `/kavram/kadin-erkek-hak` açılınca okur gök-yer
+kavramını görür; 109 kavram arasında gerçek bir kadın-erkek hakları kavramı hiç
+yok. Plan 2'den devralınan sorun (bu dal onu büyütmedi), ama kaydetme rulingi
+plan-3-ilke'ye ait — Task 1 sırasında "(c) uygulanır: ... `docs/BACKLOG.md`'ye
+düşülür" kararı verildi ve o zaman düşürülmedi (yalnızca tarihli bir devir
+notuna yazıldı, oradan da eskiyip gitti). **Dosyanın içeriği değiştirilmedi;**
+karar kullanıcıya ait, üç seçenek:
+
+1. **Slug'ı yeniden adlandır + yönlendir** — `concept_kadin-erkek-hak.json`
+   içeriğine uygun bir slug'a taşınır (ör. `sema-ve-arz`), eski adrese 301/kalıcı
+   yönlendirme eklenir. Gerçek bir "kadın-erkek hak" kavramı hâlâ yok.
+2. **İkiye böl** — mevcut dosya "Sema ve Arz" slug'ına taşınır, ayrıca
+   `kadin-erkek-hak` slug'ıyla yeni, gerçek içerikli bir kavram yazılır (kendi
+   kök/ayet dayanaklarıyla). En doğru ama en pahalı seçenek.
+3. **Olduğu gibi bırak** — slug'ın adı ile içeriği arasındaki tutarsızlık
+   sürer; okuru yanıltma riski devam eder.
+
 ## Özellik önerileri
 
 > Hepsi **ilk yayın sonrası**. Kaynağı: kullanıcının 2026-09-06 tarihli
