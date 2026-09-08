@@ -233,6 +233,99 @@ check(
 );
 
 console.log("");
+console.log("8. Gercek ilke verisi (principles_index.json + principle_areas.json)");
+/*
+ * Ilke atlasi (gorev 4, 2026-09-07) ayni radyalYerlesim'i FARKLI veriyle
+ * cagirir: 7 alan halkada, 64 ilke diginda, agirlik primaryCount. Kenarlar
+ * yalnizca emir/nehiy ciftleri (contrast, curated) — bolum 6'daki kavram
+ * denetiminin ilke karsiligi; MAKS_YARICAP/MIN_YARICAP/ALT_YELPAZE_CARPANI
+ * DEGISTIRILMEDI, bu bolum gercek ilke yogunlugunda (en buyuk alan 14 ilke)
+ * hala cakisma cikmadigini dogruluyor.
+ */
+interface GercekIlke {
+  slug: string;
+  nameTr: string;
+  areaSlug: string;
+  primaryCount: number;
+  oppositeSlug: string | null;
+}
+interface GercekAlan {
+  slug: string;
+  nameTr: string;
+  order: number;
+  principleCount: number;
+}
+const ilkeIdxYolu = "public/data/principles_index.json";
+const alanYolu = "public/data/principle_areas.json";
+if (!existsSync(ilkeIdxYolu) || !existsSync(alanYolu)) {
+  console.log(
+    "  atlandi  gercek ilke verisi denetimi (principles_index.json/principle_areas.json yok — once pnpm build:data)",
+  );
+} else {
+  const ilkeler = (JSON.parse(readFileSync(ilkeIdxYolu, "utf8")) as { principles: GercekIlke[] }).principles;
+  const alanlar = (JSON.parse(readFileSync(alanYolu, "utf8")) as { areas: GercekAlan[] }).areas
+    .filter((a) => a.principleCount > 0)
+    .sort((a, b) => a.order - b.order);
+
+  const ilkelerByAlan = new Map<string, GercekIlke[]>();
+  for (const p of ilkeler) {
+    const bucket = ilkelerByAlan.get(p.areaSlug) ?? [];
+    bucket.push(p);
+    ilkelerByAlan.set(p.areaSlug, bucket);
+  }
+
+  const ilkeGruplari: RadyalGrup[] = alanlar.map((alan) => ({
+    slug: alan.slug,
+    label: alan.nameTr,
+    cocuklar: (ilkelerByAlan.get(alan.slug) ?? []).map((p) => ({
+      slug: p.slug,
+      label: p.nameTr,
+      agirlik: p.primaryCount,
+    })),
+  }));
+
+  // Karsilikli cift TEK kenar — dedup sirali slug anahtariyla (ilkeler.astro ile ayni mantik).
+  const gorulenIlkeCiftleri = new Set<string>();
+  const ilkeKenarlari: RadyalKenar[] = [];
+  for (const p of ilkeler) {
+    if (p.oppositeSlug === null) continue;
+    const anahtar = [p.slug, p.oppositeSlug].sort().join("|");
+    if (gorulenIlkeCiftleri.has(anahtar)) continue;
+    gorulenIlkeCiftleri.add(anahtar);
+    ilkeKenarlari.push({ a: p.slug, b: p.oppositeSlug, type: "contrast", weight: 1, origin: "curated" });
+  }
+
+  const ilkeGirdi: RadyalGirdi = { boyut: 900, gruplar: ilkeGruplari, kenarlar: ilkeKenarlari };
+  const ilkeBir = radyalYerlesim(ilkeGirdi);
+  const ilkeIki = radyalYerlesim(ilkeGirdi);
+
+  check(
+    "ilke atlasi duzgun dugum sayisi uretiyor (7 alan + 64 ilke)",
+    ilkeBir.dugumler.length === alanlar.length + ilkeler.length,
+  );
+  check(
+    "ilke atlasinda hicbir dugum gorus alani disinda degil",
+    ilkeBir.dugumler.every(
+      (d) => d.x - d.r >= 0 && d.x + d.r <= ilkeGirdi.boyut && d.y - d.r >= 0 && d.y + d.r <= ilkeGirdi.boyut,
+    ),
+  );
+  check(
+    "ilke atlasinda hicbir dugum ciftinin arasinda yeterli bosluk var (cakismiyor)",
+    ilkeBir.dugumler.every((d1, i) =>
+      ilkeBir.dugumler.slice(i + 1).every((d2) => Math.hypot(d1.x - d2.x, d1.y - d2.y) > (d1.r + d2.r) * 1.05),
+    ),
+  );
+  check("ilke atlasinda ayni girdi ayni ciktiyi verir", JSON.stringify(ilkeBir) === JSON.stringify(ilkeIki));
+  check("ilke atlasinda kenar sayisi 5 (emir/nehiy cifti, dedup edilmis)", ilkeKenarlari.length === 5);
+  check(
+    "ilke atlasinda her kenarin iki ucu da dugumler arasinda var (yuzen dugum yok)",
+    ilkeKenarlari.every(
+      (k) => ilkeBir.dugumler.some((d) => d.slug === k.a) && ilkeBir.dugumler.some((d) => d.slug === k.b),
+    ),
+  );
+}
+
+console.log("");
 if (failures.length > 0) {
   console.error(`${String(passed)} test gecti, ${String(failures.length)} basarisiz:`);
   for (const f of failures) console.error(`  - ${f}`);

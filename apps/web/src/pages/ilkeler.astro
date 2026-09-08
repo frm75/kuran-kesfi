@@ -1,6 +1,9 @@
 ---
 import Base from "~/layouts/Base.astro";
+import RadyalAtlas from "~/components/RadyalAtlas.astro";
 import { getPrincipleAreas, getPrinciplesIndex } from "~/lib/data";
+import { radyalYerlesim } from "~/lib/graf";
+import type { RadyalGrup, RadyalKenar } from "~/lib/graf";
 
 /**
  * İlke listesi — plan §18.5. Her ilke en az bir birincil ayet dayanağı taşır.
@@ -27,6 +30,50 @@ const totals = {
   primary: principles.reduce((a, p) => a + p.primaryCount, 0),
   verses: principles.reduce((a, p) => a + p.verseCount, 0),
 };
+
+/*
+ * İlke atlası — görev 4 (2026-09-07), Plan 2'nin radyalYerlesim/RadyalAtlas
+ * bileşenini yeniden kullanır. Yedi alan halkada, altmış dört ilke dışta;
+ * ağırlık `primaryCount` (kavram atlasındaki ayet sayısının ilke karşılığı —
+ * bkz. `graf.ts`'teki `agirlik` alan yorumu, aynı görsel kanal çağırana göre
+ * farklı ölçek taşıyabilir).
+ *
+ * Alanların KENDİ sayfası yok (yalnızca ilkenin `/ilke/<slug>` sayfası var),
+ * bu yüzden grup düğümleri `RadyalAtlas`'ın `grupHrefOnEk` ile aşağıdaki
+ * listenin kendi bölümüne (`#<alanSlug>` capası) yönlendirilir — `hrefOnEk`
+ * (ilke düğümleri için `/ilke/`) alanlara da uygulansaydı `/ilke/ibadet` gibi
+ * var olmayan bir adrese, sessiz bir 404'e çıkardı.
+ */
+const gruplar: RadyalGrup[] = areas.map((area) => ({
+  slug: area.slug,
+  label: area.nameTr,
+  cocuklar: (principlesByArea.get(area.slug) ?? []).map((p) => ({
+    slug: p.slug,
+    label: p.nameTr,
+    agirlik: p.primaryCount,
+  })),
+}));
+
+/*
+ * Kenarlar: YALNIZCA emir/nehiy çiftleri (`contrast`, `curated` — platform
+ * kendi ilkesini icat etmez, plan §CLAUDE.md kural 4). Karşılıklı bir çift
+ * TEK kenar sayılır — `oppositeSlug` her iki yönde de yazıldığı için (linter
+ * bunu denetler, bkz. `scripts/build/linter.ts`) sıralanmış slug çiftiyle
+ * anahtarlanıp yinelenmez; aksi hâlde her çift iki kez çizilir, bu da daha
+ * önce (kavram atlasında) komşuların slug'a göre değil dizideki sıraya göre
+ * eşlenmesinden doğan yüzen düğüm hatasının aynısını doğururdu.
+ */
+const gorulenCiftler = new Set<string>();
+const kenarlar: RadyalKenar[] = [];
+for (const p of principles) {
+  if (p.oppositeSlug === null) continue;
+  const anahtar = [p.slug, p.oppositeSlug].sort().join("|");
+  if (gorulenCiftler.has(anahtar)) continue;
+  gorulenCiftler.add(anahtar);
+  kenarlar.push({ a: p.slug, b: p.oppositeSlug, type: "contrast", weight: 1, origin: "curated" });
+}
+
+const yerlesim = radyalYerlesim({ boyut: 900, gruplar, kenarlar });
 ---
 
 <Base
@@ -56,9 +103,25 @@ const totals = {
       </ul>
     </header>
 
+    <RadyalAtlas
+      yerlesim={yerlesim}
+      baslik="İlke atlası"
+      aciklama={`${String(principles.length)} ilke, ${String(gruplar.length)} alan altında; çemberin içinden geçen ${String(kenarlar.length)} çizgi, Kur'an'ın aynı bağlamda karşı karşıya koyduğu emir/nehiy çiftlerini gösterir. İlkelerin tamamı aşağıda liste hâlinde var; her çiftin bağı ilgili ilkenin kendi sayfasında "karşıtı" olarak da görünür.`}
+      hrefOnEk="/ilke/"
+      grupHrefOnEk="/ilkeler#"
+      idOnEk="ilke-atlas"
+    />
+    <p class="atlas-not">
+      Bu bölümleme platform derlemesidir; ilkelerin kendisi ve dayanak ayetleri
+      kaynağa dayalıdır. İlkelerin tamamı aşağıda liste hâlinde var; grafikteki{" "}
+      {kenarlar.length} çift Kur'an'ın açıkça karşı karşıya koyduğu emir/nehiy
+      ilkeleridir — zorlanmış bir eşleştirme değildir, karşıtı olmayan ilkede bu
+      bağ hiç kurulmaz.
+    </p>
+
     {
       areas.map((area) => (
-        <section>
+        <section id={area.slug} class="ilke-alan">
           <div class="sec-head">
             <h2>{area.nameTr}</h2>
             <span class="sec-note">{area.definition}</span>

@@ -4285,3 +4285,14 @@ a.ctx-num:hover {
     display: none;
   }
 }
+
+/*
+ * İlke atlası (Task 4, 2026-09-07) grup düğümlerini alanın kendi sayfası
+ * OLMADIĞI için listedeki bölümüne (`#<alanSlug>`) yönlendiriyor
+ * (`ilkeler.astro`, `RadyalAtlas`'ın `grupHrefOnEk` prop'u). Yapışkan
+ * `.site-header` bölüm başlığını örtmesin diye site genelindeki capa-hedefi
+ * kuralıyla (`.surah-grid > li`, `.verse-list > li`) AYNI değer kullanılıyor.
+ */
+.ilke-alan {
+  scroll-margin-top: var(--space-4);
+}

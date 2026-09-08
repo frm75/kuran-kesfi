@@ -10,12 +10,36 @@ interface Props {
   aciklama: string;
   /** Düğüm bağlantısının önü, örn "/kavram/" */
   hrefOnEk: string;
+  /**
+   * Grup (derinlik 0) düğümleri için AYRI href öneki — verilmezse `hrefOnEk`
+   * kullanılır (kavram atlasının mevcut davranışı budur: üst kavramın kendi
+   * `/kavram/<slug>` sayfası var, grup düğümü oraya gider).
+   *
+   * İlke atlasında alanın (`principle_area`) kendi sayfası YOK — yalnızca
+   * ilkelerin `/ilke/<slug>` sayfası var. `hrefOnEk`'i alanlara da uygulamak
+   * `/ilke/ibadet` gibi var olmayan bir adrese, yani 404'e, çıkardı. Bu prop
+   * o durumda çağırana grup düğümlerini listedeki kendi bölümüne (`#<slug>`
+   * capası) yönlendirme imkanı verir.
+   */
+  grupHrefOnEk?: string;
+  /**
+   * `<title>`/`<desc>` id'lerinin öneki — varsayılan "atlas".
+   *
+   * Sabit id'ler (`atlas-baslik`/`atlas-desc`) Plan 2'de tek atlaslı sayfalarda
+   * sorun çıkarmadı, ama bileşen artık ikinci bir atlasta (ilke atlası) da
+   * kullanılıyor. İki atlas aynı sayfada olsaydı `aria-labelledby` iki id'ye
+   * birden çözülür, ikisi de yanlış adlandırılırdı — henüz olmadı ama id
+   * çakışması sessiz bir erişilebilirlik hatasıdır, önceden kapatılıyor.
+   */
+  idOnEk?: string;
 }
 
-const { yerlesim, baslik, aciklama, hrefOnEk } = Astro.props;
+const { yerlesim, baslik, aciklama, hrefOnEk, grupHrefOnEk, idOnEk = "atlas" } = Astro.props;
 const { dugumler, kenarlar, boyut } = yerlesim;
 const merkez = boyut / 2;
 const dugumBySlug = new Map(dugumler.map((d) => [d.slug, d]));
+const baslikId = `${idOnEk}-baslik`;
+const aciklamaId = `${idOnEk}-desc`;
 
 /*
  * Grup rengi SVG'de sinif adiyla veriliyor, gomulu stille degil: CSP
@@ -51,9 +75,9 @@ const grupSinifi = new Map(
 ---
 
 <figure class="atlas">
-  <svg viewBox={`0 0 ${String(boyut)} ${String(boyut)}`} role="img" aria-labelledby="atlas-baslik atlas-desc">
-    <title id="atlas-baslik">{baslik}</title>
-    <desc id="atlas-desc">{aciklama}</desc>
+  <svg viewBox={`0 0 ${String(boyut)} ${String(boyut)}`} role="img" aria-labelledby={`${baslikId} ${aciklamaId}`}>
+    <title id={baslikId}>{baslik}</title>
+    <desc id={aciklamaId}>{aciklama}</desc>
 
     <g class="atlas-kenarlar">
       {
@@ -75,7 +99,7 @@ const grupSinifi = new Map(
     <g class="atlas-dugumler">
       {
         dugumler.map((d) => (
-          <a href={`${hrefOnEk}${d.slug}`}>
+          <a href={`${d.derinlik === 0 ? (grupHrefOnEk ?? hrefOnEk) : hrefOnEk}${d.slug}`}>
             {/* SVG'de erisilebilir ad ic <title>'dan gelir; <a>'nin ILK cocugu
                 olmali (ad cozumlemesi boyle calisir). Grup dugumlerinin
                 gorunur <text> etiketi var ama o SESLENDIRILMEZ diye degil,

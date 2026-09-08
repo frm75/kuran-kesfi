@@ -31,6 +31,7 @@ import {
   staticConceptsIndex,
   staticLocations,
   staticPrinciple,
+  staticPrincipleAreas,
   staticPrinciplesIndex,
   staticStoriesIndex,
   staticStory,
@@ -335,6 +336,11 @@ function checkStaticOutput(): void {
   const storyFileSlugs = new Set<string>();
   let principlesIndexSlugs = new Set<string>();
   const principleFileSlugs = new Set<string>();
+  /** Ilke karsitlik denetimi: slug -> karsit slug (yok ise null) */
+  const principleOpposite = new Map<string, string | null>();
+  /** Ilke alani denetimi: slug -> areaSlug, principle_areas.json'daki iddia edilen sayimla karsilastirilir */
+  const principleAreaOf = new Map<string, string>();
+  let principleAreaDeclaredCounts = new Map<string, number>();
   let conceptsIndexSlugs = new Set<string>();
   const conceptFileSlugs = new Set<string>();
   /** Medya: media.json'daki kimlikler ve ters dizinin gosterdikleri */
@@ -647,6 +653,13 @@ function checkStaticOutput(): void {
       if (!result.data.verses.some((v) => v.role === "primary")) {
         errors.push(`${relativePath}: birincil ayet dayanagi yok (plan 18.3)`);
       }
+      principleOpposite.set(result.data.slug, result.data.opposite?.slug ?? null);
+      principleAreaOf.set(result.data.slug, result.data.area.slug);
+    } else if (relativePath === "principle_areas.json") {
+      const result = staticPrincipleAreas.safeParse(parsed);
+      checksRun += 1;
+      if (!result.success) errors.push(`${relativePath}: ${result.error.message}`);
+      else principleAreaDeclaredCounts = new Map(result.data.areas.map((a) => [a.slug, a.principleCount]));
     } else if (relativePath === "concepts_index.json") {
       const result = staticConceptsIndex.safeParse(parsed);
       checksRun += 1;
@@ -1053,6 +1066,59 @@ function checkStaticOutput(): void {
     const orphan = [...files].filter((x) => !index.has(x));
     if (missing.length > 0) errors.push(`${label}: dizinde var, dosyasi yok: ${missing.join(", ")}`);
     if (orphan.length > 0) errors.push(`${label}: dosyasi var, dizinde yok: ${orphan.join(", ")}`);
+  }
+
+  /*
+   * Ilke karsitlik denetimi (gorev 4, 2026-09-07). A'nin karsiti B ise B'nin
+   * karsiti da A olmali — tek yonlu bir cift kurulursa bag ilke sayfasinda
+   * yalnizca BIR yonde gorunur (A -> B), digerinde (B sayfasinda A'ya bag)
+   * gorunmez ve bu sessizce gecer, kimse fark etmez. Ayni dongude, var
+   * olmayan bir ilkeye isaret eden karsit slug da (dangling) burada yakalanir.
+   */
+  checksRun += 1;
+  for (const [slug, opposite] of principleOpposite) {
+    if (opposite === null) continue;
+    if (!principleOpposite.has(opposite)) {
+      errors.push(
+        `ilke ${slug}: karsit ilke '${opposite}' yayinlanan ilkeler arasinda yok`,
+      );
+      continue;
+    }
+    const back = principleOpposite.get(opposite) ?? null;
+    if (back !== slug) {
+      errors.push(
+        `ilke ${slug} <-> ${opposite}: karsilikli degil (${slug}.opposite = '${opposite}' ` +
+          `ama ${opposite}.opposite = ${back === null ? "null" : `'${back}'`})`,
+      );
+    }
+  }
+
+  /*
+   * principle_areas.json'daki principleCount, principle/ dosyalarindan
+   * SAYILAN gercek dagilimla tutarli olmali. Kavramdaki "dagilim istatistigi
+   * ayet sayisiyla tutarsiz" denetiminin ilke alani karsiligi: sayim elle
+   * dosyada da bozulabilir, kopmasi sayfada sessizce yanlis bir sayi birakir.
+   */
+  checksRun += 1;
+  {
+    const actualCounts = new Map<string, number>();
+    for (const areaSlug of principleAreaOf.values()) {
+      actualCounts.set(areaSlug, (actualCounts.get(areaSlug) ?? 0) + 1);
+    }
+    for (const [areaSlug, declared] of principleAreaDeclaredCounts) {
+      const actual = actualCounts.get(areaSlug) ?? 0;
+      if (actual !== declared) {
+        errors.push(
+          `principle_areas.json: alan '${areaSlug}' principleCount ${String(declared)} bildiriyor ` +
+            `ama gercek ilke sayisi ${String(actual)}`,
+        );
+      }
+    }
+    for (const areaSlug of actualCounts.keys()) {
+      if (!principleAreaDeclaredCounts.has(areaSlug)) {
+        errors.push(`principle_areas.json: ilkelerin kullandigi alan '${areaSlug}' dizinde yok`);
+      }
+    }
   }
 
   checksRun += 1;
