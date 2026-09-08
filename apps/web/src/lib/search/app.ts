@@ -209,7 +209,12 @@ async function start(
       const rank = s.norm === n ? 3 : s.norm.startsWith(n) ? 2 : s.norm.includes(n) ? 1 : 0;
       if (rank > 0) scored.push({ s, rank });
     }
-    if (scored.length === 0) return;
+    // Eşleşme yoksa eski öneriler EKRANDA KALMASIN; tam arama birazdan
+    // gerçek sonucu basacak, aradaki bayat liste yanıltıcı olur.
+    if (scored.length === 0) {
+      sonuc.replaceChildren();
+      return;
+    }
 
     scored.sort((a, b) => b.rank - a.rank || b.s.weight - a.s.weight);
     panel.hidden = false;
