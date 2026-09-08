@@ -10,7 +10,7 @@ import {
   getVerseDetail,
   verseLabel,
 } from "~/lib/data";
-import { NAV } from "~/lib/nav";
+import { NAV, type NavHub } from "~/lib/nav";
 import { TELEGRAM } from "~/lib/site";
 
 /**
@@ -121,50 +121,98 @@ const featuredDateLabel = buildDate.toLocaleDateString("tr-TR", {
 });
 
 /**
- * Beş keşif kapısı — plan §2. Yalnızca Kelime hazır.
+ * Menüdeki üst başlığı `nav.ts`ten çeker.
+ *
+ * Başlık metni burada İKİNCİ KEZ yazılmaz: taksonomi değişirse (2026-09-07'de
+ * değişti) bu sayfa sessizce eskimek yerine build'de patlar.
+ */
+function navHub(href: string): NavHub {
+  const found = NAV.find((h) => h.href === href);
+  if (found === undefined) {
+    throw new Error(`nav.ts içinde ${href} yok — ana sayfa kapıları buna dayanıyor.`);
+  }
+  return found;
+}
+
+/**
+ * Beş keşif kapısı — plan §2. Beşi de açık.
+ *
+ * KAPILAR ÜST BAŞLIĞA GÖRE GRUPLANIR (2026-09-08). Öncesinde beşi tek yığındı
+ * ve sayfa, sitenin geri kalanıyla çelişiyordu: Kavram, Kelime ve İlkeler
+ * burada "Keşfet"in altındaydı, oysa yeni taksonomide üçü de "Anla"ya ait
+ * (bkz. `src/lib/nav.ts`). Grup başlıkları o dosyadan okunur.
+ *
+ * Grup altındaki tanıtım cümlesi hub'ın kendi `blurb`ü DEĞİL: hub'ın blurb'ü
+ * bütün çocuklarını sayar (Keşfet'inki kıssaları ve yazmaları da anar), bu
+ * bölümse seçilmiş bir alt kümedir. Kıssalar/Yazmalar/Sureler burada kart
+ * olarak yok; kapılar menünün aynası değil, giriş için seçilmiş beş yol.
+ *
+ * Roma rakamları iki grup boyunca kesintisiz akar (I–V), gruba göre yeniden
+ * başlamaz — okuma sırası tek.
  *
  * `href` sayfanın kendisi, `to` KARTIN GİTTİĞİ YER. Hazır olmayan kapılar
  * olmayan bir sayfaya bağlanamaz (dürüstlük kuralı, plan §1.5) ama tık da
  * boşa gitmemeli: onlar "Kullanacağınız araçlar" bölümüne iniyor, çünkü
  * neyin ne zaman geleceği orada yazıyor.
  */
-const gates = [
+const gateGroups = [
   {
-    numeral: "I",
-    name: "Harita",
-    note: "Nuh'un gemisi, Yusuf'un kuyusu, Musa'nın yolculuğu — kıssaların geçtiği yerler, her birinin ne kadar kesin olduğu belirtilerek.",
-    href: "/harita",
-    to: "/harita",
+    id: "kapilar-anla",
+    label: navHub("/anla").label,
+    href: "/anla",
+    tagline: "metnin kendi katmanları",
+    gates: [
+      {
+        numeral: "I",
+        name: "Kavram",
+        note: "Sabır nereye bağlanıyor, şükürle nasıl kesişiyor? Kavramlar arasında gezinin, her düğümde ayetleri görün.",
+        href: "/kavramlar",
+        to: "/kavramlar",
+      },
+      {
+        numeral: "II",
+        name: "Kelime",
+        note: "Arapça bilmeden de kökleri izleyin. Bir kelimenin kökü, türevleri ve Kur'an'ın her yerindeki izi.",
+        href: "/kok",
+        to: "/kok",
+      },
+      {
+        numeral: "III",
+        name: "İlkeler",
+        note: "Adalet, emanet, ölçüde dürüstlük, öfkeyi yutmak — dayandığı ayetler ve tefsir kaynaklarıyla birlikte.",
+        href: "/ilkeler",
+        to: "/ilkeler",
+      },
+    ],
   },
   {
-    numeral: "II",
-    name: "Zaman",
-    note: "Sureleri mushaf sırasıyla değil indikleri sırayla okuyun. O gün Mekke'de ne oluyordu, hemen yanında.",
-    href: "/zaman",
-    to: "/zaman",
-  },
-  {
-    numeral: "III",
-    name: "Kavram",
-    note: "Sabır nereye bağlanıyor, şükürle nasıl kesişiyor? Kavramlar arasında gezinin, her düğümde ayetleri görün.",
-    href: "/kavramlar",
-    to: "/kavramlar",
-  },
-  {
-    numeral: "IV",
-    name: "Kelime",
-    note: "Arapça bilmeden de kökleri izleyin. Bir kelimenin kökü, türevleri ve Kur'an'ın her yerindeki izi.",
-    href: "/kok",
-    to: "/kok",
-  },
-  {
-    numeral: "V",
-    name: "İlkeler",
-    note: "Adalet, emanet, ölçüde dürüstlük, öfkeyi yutmak — dayandığı ayetler ve tefsir kaynaklarıyla birlikte.",
-    href: "/ilkeler",
-    to: "/ilkeler",
+    id: "kapilar-kesfet",
+    label: navHub("/kesfet").label,
+    href: "/kesfet",
+    tagline: "ayetin bağlamı",
+    gates: [
+      {
+        numeral: "IV",
+        name: "Harita",
+        note: "Nuh'un gemisi, Yusuf'un kuyusu, Musa'nın yolculuğu — kıssaların geçtiği yerler, her birinin ne kadar kesin olduğu belirtilerek.",
+        href: "/harita",
+        to: "/harita",
+      },
+      {
+        numeral: "V",
+        name: "Zaman",
+        note: "Sureleri mushaf sırasıyla değil indikleri sırayla okuyun. O gün Mekke'de ne oluyordu, hemen yanında.",
+        href: "/zaman",
+        to: "/zaman",
+      },
+    ],
   },
 ] as const;
+
+/** Metindeki kapı sayıları veriden gelir; "beş" diye yazılmaz. */
+const gateCount = gateGroups.reduce((n, group) => n + group.gates.length, 0);
+/** Giriş paragrafı iki gruba da ADIYLA atıf yapıyor; adlar yine veriden. */
+const [anlaKapilari, kesfetKapilari] = gateGroups;
 
 /**
  * Ayet merkezli ağ — §5'teki şemanın etiketleri (plan §15).
@@ -509,39 +557,66 @@ const menu = NAV.map((hub) => ({
         <p class="rule-ornament" aria-hidden="true"><span></span></p>
         <h2 id="kapilar-baslik" class="lp-h2">Keşfe başlayın</h2>
         {/*
-          2026-09-07: burada "Şu an Kelime kapısı açık; diğer dördünün altyapısı
-          hazırlanıyor" yazıyordu. Beşi de açıldığı hâlde metin öyle kalmıştı —
-          bülten bölümüyle aynı hata (bkz. dosyanın başındaki dürüstlük notu).
-          Kapılardan birinin durumu değişirse bu cümle de değişir.
+          Bu paragraf İKİ KEZ eskidi, ikisini de kullanıcı fark etti.
+          2026-09-07: "Şu an Kelime kapısı açık; diğer dördünün altyapısı
+          hazırlanıyor" yazıyordu, oysa beşi de açılmıştı.
+          2026-09-08: "Beş kapının beşi de açık… bir yer adından, bir tarihten,
+          bir kavramdan, bir kelimenin kökünden ya da bir ilkeden" diyordu —
+          doğruydu ama kapıları tek yığın sayıyordu; bölüm ikiye ayrılınca
+          cümle de ayrıldı.
+          Kapı eklenir, çıkar ya da başlık değiştirirse bu paragraf da değişir.
+          Sayılar veriden okunur, elle yazılmaz.
         */}
         <p class="lp-lead">
-          Beş kapının beşi de açık. Hangisinden girerseniz girin aynı yere —
-          ayete — çıkarsınız; yolu siz seçersiniz: bir yer adından, bir tarihten,
-          bir kavramdan, bir kelimenin kökünden ya da bir ilkeden.
+          {gateCount} kapının hepsi açık ve iki başlık altında toplanıyor.
+          {" "}<b>{anlaKapilari.label}</b> altındaki {anlaKapilari.gates.length} kapı metnin
+          kendi katmanlarını açar: bir kavram, bir kelimenin kökü, bir ilke.
+          {" "}<b>{kesfetKapilari.label}</b> altındaki {kesfetKapilari.gates.length} kapı ayeti
+          çevresine bağlar: bir yer, bir tarih. Hangisinden girerseniz girin aynı yere —
+          ayete — çıkarsınız; yolu siz seçersiniz.
         </p>
 
-        <ul class="lp-gates">
-          {
-            gates.map((gate) => (
-              <li class:list={["lp-gate", gate.href === undefined && "is-soon"]}>
-                <span class="lp-gate-num" aria-hidden="true">
-                  {gate.numeral}
-                </span>
-                {/* Bağlantı başlıkta, tık alanı kartın tamamı (.lp-stretch).
-                    Hazır olmayan kapı "Kullanacağınız araçlar"a iner. */}
-                <h3>
-                  <a href={gate.to} class="lp-stretch">
-                    {gate.name}
-                  </a>
-                </h3>
-                <p>{gate.note}</p>
-                <p class:list={["state", gate.href === undefined ? "state-yakinda" : "state-hazir"]}>
-                  {gate.href === undefined ? "yakında" : "hazır"}
-                </p>
-              </li>
-            ))
-          }
-        </ul>
+        {
+          gateGroups.map((group) => (
+            <div class="lp-gate-grp">
+              {/*
+                Grup başlığı hub sayfasının kendisine gider; kapı kartları o
+                hub'ın altındaki tek tek sayfalara. Başlık metni nav.ts'ten
+                geliyor (yukarıdaki `navHub`), tanıtım cümlesi bu bölüme özel:
+                burada hub'ın bütün çocukları değil, seçilmiş bir alt küme var.
+              */}
+              <h3 id={group.id} class="lp-gate-grp-h">
+                <a href={group.href}>{group.label}</a>
+                <span> — {group.tagline}</span>
+              </h3>
+              <ul class:list={["lp-gates", `is-${String(group.gates.length)}`]} aria-labelledby={group.id}>
+                {group.gates.map((gate) => (
+                  <li class:list={["lp-gate", gate.href === undefined && "is-soon"]}>
+                    <span class="lp-gate-num" aria-hidden="true">
+                      {gate.numeral}
+                    </span>
+                    {/* Bağlantı başlıkta, tık alanı kartın tamamı (.lp-stretch).
+                        Başlık h4: bölümün h2'si → grup h3'ü → kart h4. */}
+                    <h4>
+                      <a href={gate.to} class="lp-stretch">
+                        {gate.name}
+                      </a>
+                    </h4>
+                    <p>{gate.note}</p>
+                    <p
+                      class:list={[
+                        "state",
+                        gate.href === undefined ? "state-yakinda" : "state-hazir",
+                      ]}
+                    >
+                      {gate.href === undefined ? "yakında" : "hazır"}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
       </div>
     </section>
 
@@ -1567,7 +1642,35 @@ const menu = NAV.map((hub) => ({
     line-height: var(--lh-relaxed);
   }
 
-  /* --- Beş kapı ---------------------------------------------------------- */
+  /* --- Beş kapı, iki grup ------------------------------------------------- */
+
+  /* Gruplar üst üste; başlık ızgaranın üstünde durur. Izgara kolon sayısı
+     gruptaki kart sayısı kadar (is-3 / is-2) — 5 kolonluk tek sıra bölündü. */
+  .lp-gate-grp + .lp-gate-grp {
+    margin-top: var(--space-12);
+  }
+  .lp-gate-grp-h {
+    margin: 0 0 var(--space-4);
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    font-weight: var(--fw-normal);
+    line-height: 1.2;
+  }
+  .lp-gate-grp-h a {
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+  .lp-gate-grp-h a:hover,
+  .lp-gate-grp-h a:focus-visible {
+    color: var(--accent-text);
+  }
+  /* Tanıtım cümlesi başlığın parçası ama sesi kısık: küçük, gövde yazısı,
+     soluk. Anlam RENKTE değil metinde — okunmadığında da başlık tamdır. */
+  .lp-gate-grp-h span {
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+  }
 
   .lp-gates {
     display: grid;
@@ -1583,8 +1686,11 @@ const menu = NAV.map((hub) => ({
     }
   }
   @media (min-width: 64rem) {
-    .lp-gates {
-      grid-template-columns: repeat(5, 1fr);
+    .lp-gates.is-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .lp-gates.is-3 {
+      grid-template-columns: repeat(3, 1fr);
     }
   }
   .lp-gate {
@@ -1606,19 +1712,21 @@ const menu = NAV.map((hub) => ({
     font-size: var(--text-sm);
     opacity: 0.45;
   }
-  .lp-gate h3 {
+  /* Kart başlığı h4: bölüm h2 → grup h3 → kart h4 (atlama yok). Boyutu
+     eskisiyle aynı, değişen yalnızca etiket. */
+  .lp-gate h4 {
     margin: 0 0 var(--space-2);
     font-family: var(--font-heading);
     font-size: var(--text-xl);
     font-weight: var(--fw-normal);
     line-height: 1.2;
   }
-  .lp-gate h3,
-  .lp-gate h3 a {
+  .lp-gate h4,
+  .lp-gate h4 a {
     color: var(--text-primary);
   }
-  .lp-gate.is-soon h3,
-  .lp-gate.is-soon h3 a {
+  .lp-gate.is-soon h4,
+  .lp-gate.is-soon h4 a {
     color: var(--text-muted);
   }
   /* Tasarımda açıklama yalnızca üzerine gelince açılıyordu; dokunmatik ve
@@ -1670,7 +1778,7 @@ const menu = NAV.map((hub) => ({
   /* Tıklanabilir kart üzerine gelince başlık pirince döner — tıklanabilir
      olduğu renkle değil imleçle de belli: ::after tüm kartı kapladığı için
      imleç zaten el oluyor. */
-  :is(.lp-gate, .lp-mod, .lp-man-cell):has(.lp-stretch):hover h3,
+  :is(.lp-gate, .lp-mod, .lp-man-cell):has(.lp-stretch):hover :is(h3, h4),
   .lp-net-list li:has(.lp-stretch):hover b {
     color: var(--accent-text);
   }
