@@ -1,0 +1,17 @@
+{
+  "sourceSlug": "tdv-islam-ansiklopedisi",
+  "note": "Surelerin yaygın ikinci adları. Yalnız arama eşleşmesinde ve sonuç kartındaki 'Diğer adı' satırında kullanılır; sure sayfalarının başlığı değişmez. Normalizasyonun zaten çözdüğü varyantlar (Yâsîn->yasin, A'râf->araf, Fîl->fil) buraya girmez.",
+  "aliases": [
+    { "surahId": 9, "name": "Berâe", "sourceReference": "Tevbe Sûresi" },
+    { "surahId": 17, "name": "Benî İsrâîl", "sourceReference": "İsrâ Sûresi" },
+    { "surahId": 35, "name": "Melâike", "sourceReference": "Fâtır Sûresi" },
+    { "surahId": 40, "name": "Gâfir", "sourceReference": "Mü'min Sûresi" },
+    { "surahId": 47, "name": "Kıtâl", "sourceReference": "Muhammed Sûresi" },
+    { "surahId": 76, "name": "Dehr", "sourceReference": "İnsân Sûresi" },
+    { "surahId": 78, "name": "Amme", "sourceReference": "Nebe Sûresi" },
+    { "surahId": 94, "name": "Şerh", "sourceReference": "İnşirâh Sûresi" },
+    { "surahId": 98, "name": "Kayyime", "sourceReference": "Beyyine Sûresi" },
+    { "surahId": 111, "name": "Mesed", "sourceReference": "Tebbet Sûresi" },
+    { "surahId": 111, "name": "Leheb", "sourceReference": "Tebbet Sûresi" }
+  ]
+}
