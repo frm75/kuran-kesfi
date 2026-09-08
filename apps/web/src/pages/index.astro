@@ -10,6 +10,7 @@ import {
   getVerseDetail,
   verseLabel,
 } from "~/lib/data";
+import { NAV } from "~/lib/nav";
 import { TELEGRAM } from "~/lib/site";
 
 /**
@@ -27,6 +28,11 @@ import { TELEGRAM } from "~/lib/site";
  *
  * Menüdeki açılır listeler yalnızca CSS (:focus-within); mobil menü
  * <details>. Betik yok.
+ *
+ * MENÜ VERİSİ `src/lib/nav.ts`ten gelir (bkz. `menu` sabiti). Bu sayfa
+ * `bareHeader` ile açıldığı için SiteNav basılmaz — görünüm buranın kendi
+ * CSS'i, ama üst başlıklar sitenin geri kalanıyla aynı dört başlıktır.
+ * Yalnızca ana sayfaya özel üç madde (`okuEkMaddeler`) elle durur.
  *
  * DÜRÜSTLÜK KURALI: hazır olmayan bölüm "yakında" diye işaretlenir, çalışıyor
  * gibi gösterilmez. Menüde de yalnızca var olan sayfalar bağlantıdır; gerisi
@@ -278,57 +284,69 @@ const stateLabel = {
   yakinda: "yakında",
 } as const;
 
+interface MenuItem {
+  name: string;
+  note: string;
+  /** `undefined` = sayfa yok, "yakında" olarak basılır (dürüstlük kuralı). */
+  href: string | undefined;
+}
+
 /**
- * Menü — yalnızca var olan sayfalar bağlantıdır (dürüstlük kuralı).
+ * Ana sayfaya ÖZEL üç madde — `nav.ts`e girmezler.
  *
- * 2026-09-06: menüde üç boşluk vardı, üçü de düzeltildi.
- *   1. `/kissalar` HİÇBİR yerde yoktu — ne "Keşfet"te ne "Oku"da. 50
- *      kıssalık canlı bir bölüm menüden erişilemiyordu. "Kıssa Haritası"
- *      vardı ama o `/harita`ya gider, kıssa listesine değil.
- *   2. `/kaynaklar` yoktu. Her sayfanın altındaki <Attribution> üzerinden
- *      erişiliyordu ama iç sayfaların menüsünde (Base.astro) yer alıyor.
- *   3. Mobil panel yalnızca ÜST BAŞLIKLARI basıyordu; alt maddeler hiç
- *      yoktu. Yani telefondan ana sayfaya giren biri kök, harita, zaman,
- *      kavram, ilke, kıssa ve kaynak sayfalarının hiçbirine menüden
- *      ulaşamıyordu. En ağır olan buydu.
+ * "Meal Karşılaştırma" bir sayfa değil, ayet sayfasının içindeki bir panele
+ * açılan kestirme; "Mushaf Modu" ve "Sade Okuma" ise henüz yok. Üçü de site
+ * taksonomisinin parçası değil, bu sayfanın okuyucuya uzattığı kolaylıklar —
+ * bu yüzden şeritte (SiteNav) görünmezler, yalnızca burada.
  *
- * İki kapı yapısı korundu: ana sayfada sekiz düz bağlantı yerine "Keşfet"
- * ve "Oku" iki giriş noktası. İç sayfalarda menü zaten düz ve tam
- * (Base.astro). Açılır listeler saf CSS — :hover / :focus-within, JS yok.
+ * Karşılaştırma AYET sayfasında yaşıyor: bütün Türkçe mealler aynı anda,
+ * üstünde hangilerinin görüneceğini seçen JS'siz bir panel. Menü buraya,
+ * Fâtiha'nın ilk ayetine açılıyor — sabit ve tanıdık bir başlangıç. Eskiden
+ * `/sureler`e gidiyordu, yani "Sure Listesi" ile aynı yere; iki madde tek
+ * hedefti (kullanıcı bildirdi 2026-09-06).
  */
-const menu = [
+const okuEkMaddeler: MenuItem[] = [
   {
-    label: "Keşfet",
-    href: "#kapilar",
-    items: [
-      { name: "Kıssalar", note: "Kıssa akışı ve kronoloji, her adım ayete bağlı", href: "/kissalar" },
-      { name: "Kök Kelime Keşfi", note: "Kökten türevlere, türevlerden ayetlere", href: "/kok" },
-      { name: "Kıssa Haritası", note: "Kıssaların geçtiği yerler", href: "/harita" },
-      { name: "Nüzul Zaman Çizelgesi", note: "Sureler iniş sırasıyla", href: "/zaman" },
-      { name: "Kavram Haritası", note: "Kavramlar arası bağlar", href: "/kavramlar" },
-      { name: "İlkeler", note: "Kur'an'ın tavsiye ettiği ilkeler", href: "/ilkeler" },
-    ],
+    name: "Meal Karşılaştırma",
+    note: `${String(turkishAuthors.length)} Türkçe meal yan yana; istediğinizi seçin`,
+    href: "/fatiha-suresi/1#mealler",
   },
-  {
-    label: "Oku",
-    href: "/sureler",
-    items: [
-      { name: "Sure Listesi", note: `${totals.surahs} sure`, href: "/sureler" },
-      // Karşılaştırma AYET sayfasında yaşıyor: bütün Türkçe mealler aynı anda,
-      // üstünde hangilerinin görüneceğini seçen JS'siz bir panel. Menü
-      // buraya, Fâtiha'nın ilk ayetine açılıyor — sabit ve tanıdık bir
-      // başlangıç. Eskiden `/sureler`e gidiyordu, yani "Sure Listesi" ile
-      // aynı yere; iki madde tek hedefti (kullanıcı bildirdi 2026-09-06).
-      {
-        name: "Meal Karşılaştırma",
-        note: `${String(turkishAuthors.length)} Türkçe meal yan yana; istediğinizi seçin`,
-        href: "/fatiha-suresi/1#mealler",
-      },
-      { name: "Mushaf Modu", note: "Sayfa düzeninde Arapça metin", href: undefined },
-      { name: "Sade Okuma", note: "Dikkat dağıtmayan tek sütun", href: undefined },
-    ],
-  },
-] as const;
+  { name: "Mushaf Modu", note: "Sayfa düzeninde Arapça metin", href: undefined },
+  { name: "Sade Okuma", note: "Dikkat dağıtmayan tek sütun", href: undefined },
+];
+
+/**
+ * Menü — `src/lib/nav.ts` TEK KAYNAĞINDAN türetilir.
+ *
+ * 2026-09-08: bu sayfanın menüsü elle yazılıydı ve sitenin geri kalanıyla
+ * çelişiyordu. Şerit dört üst başlığa geçmişti (Oku · Anla · Keşfet ·
+ * Kaynaklar) ama ana sayfa — sitenin en çok açılan sayfası — hâlâ üç madde
+ * gösteriyordu: "Anla" hiç yoktu, Kavram/Kök/İlkeler ise "Keşfet"in altında
+ * duruyordu. Ana sayfa `bareHeader` ile açıldığı için SiteNav basılmıyor;
+ * çözüm şeridi buraya taşımak değil, VERİYİ tek kaynağa bağlamak oldu.
+ * Görünüm (lp-nav / lp-menu / lp-drop) olduğu gibi kaldı.
+ *
+ * Alt madde açıklaması `nav.ts`teki `blurb`tür; burada ikinci kez yazılmaz.
+ *
+ * Hub kendi çocuklarından biriyle aynı adresi taşıyabilir (/kaynaklar →
+ * "Kaynak Şeffaflığı"). Açılır listede o madde elenir; yoksa başlığın altında
+ * yine başlığın kendisine giden bir satır çıkardı. HubKartlari.astro da aynı
+ * süzgeci kullanıyor.
+ *
+ * Yalnızca var olan sayfalar bağlantıdır (dürüstlük kuralı, plan §1.5):
+ * `href === undefined` olan madde tıklanmaz, "yakında" yazar. Açılır listeler
+ * saf CSS — :hover / :focus-within, JS yok.
+ */
+const menu = NAV.map((hub) => ({
+  label: hub.label,
+  href: hub.href,
+  items: [
+    ...hub.children
+      .filter((child) => child.href !== hub.href)
+      .map<MenuItem>((child) => ({ name: child.label, note: child.blurb, href: child.href })),
+    ...(hub.href === "/oku" ? okuEkMaddeler : []),
+  ],
+}));
 ---
 
 <Base
@@ -374,11 +392,6 @@ const menu = [
             </li>
           ))
         }
-        {/* Kaynaklar açılır liste değil, düz bağlantı: tek sayfa. Atıf
-            zorunluluğu gereği menüde görünür olması gerekiyor. */}
-        <li class="lp-mi">
-          <a href="/kaynaklar">Kaynaklar</a>
-        </li>
       </ul>
 
       <a href="/sureler" class="lp-nav-cta">Keşfetmeye başla</a>
@@ -405,7 +418,6 @@ const menu = [
               </div>
             ))
           }
-          <a href="/kaynaklar" class="is-head">Kaynaklar</a>
           <a href="/sureler" class="is-cta">
             Keşfetmeye başla
           </a>
