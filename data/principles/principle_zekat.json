@@ -1,0 +1,53 @@
+{
+  "slug": "zekat",
+  "nameTr": "Zekât",
+  "nameAr": "الزكاة",
+  "rootLatin": "zkw",
+  "definition": "Belirli bir nisaba ulaşan maldan, tespit edilmiş kişilere verilmesi farz olan pay; kökü 'arınma ve artma' anlamı taşır.",
+  "explanation": "'Namazı kılın, zekâtı verin' (2:43) emri sık tekrarlanır. Tevbe 9:60 zekâtın kimlere verileceğini sayar: fakirler, düşkünler, zekâtı toplayan memurlar, kalpleri ısındırılacaklar, köleler, borçlular, Allah yolunda olanlar ve yolda kalmışlar. 9:103 Hz. Peygamber'e hitaben mallarından 'kendilerini temizleyip arındıracak' bir sadaka almasını emreder — kökün 'tezkiye' anlamı burada açıkça görülür. Mü'minûn 23:4 zekâtı mü'min sıfatı sayar; Rûm 30:39 faiz ile zekâtı karşılaştırıp yalnız zekâtın Allah katında arttığını söyler; En'âm 6:141 hasat gününde ürünün hakkının verilmesini ister. DİA 'ZEKÂT' maddesi bu ayetleri farziyet ve nisap bahsiyle birlikte ele alır.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 63,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "2:43",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "9:60",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "9:103",
+      "role": "primary",
+      "note": "Hz. Peygamber'e hitaben"
+    },
+    {
+      "ref": "23:4",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "30:39",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "6:141",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "zekat",
+    "infak"
+  ],
+  "areaSlug": "ibadet"
+}

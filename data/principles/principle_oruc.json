@@ -1,0 +1,48 @@
+{
+  "slug": "oruc",
+  "nameTr": "Oruç",
+  "nameAr": "الصوم",
+  "rootLatin": "Swm",
+  "definition": "Ramazan ayında tan yerinin ağarmasından akşama kadar yeme, içme ve cinsel ilişkiden uzak durarak tutulan; takvâ kazandırması amaçlanan ibadet.",
+  "explanation": "'Ey iman edenler! ... sakınmanız için oruç, sizden öncekilere farz kılındığı gibi size de farz kılındı' (2:183); Ramazan'ın Kur'an'ın indirildiği ay olduğu, hasta ve yolcunun başka günlerde tutabileceği, Allah'ın 'kolaylık dileyip zorluk dilemediği' 2:185'te anlatılır. 2:184 tutamayana fidye, gönüllü fazlasının ise daha hayırlı olduğunu ekler. 2:187 orucun gece sınırını (tan yerinin ağarmasına kadar) ve itikaf sırasındaki yasağı belirler. Ahzâb 33:35 oruç tutan erkek ve kadınları Allah'ın bağışlama ve büyük mükâfat vaad ettiği sıfatlar arasında sayar. DİA 'ORUÇ' maddesi bu hükümleri fıkhî çerçevesiyle ele alır.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 62,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "2:183",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:185",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:187",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:184",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "33:35",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [],
+  "concepts": [
+    "ibadet",
+    "takva"
+  ],
+  "areaSlug": "ibadet"
+}

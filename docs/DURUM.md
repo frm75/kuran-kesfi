@@ -1140,10 +1140,21 @@ Plan §19'un tamamı yazıldı; `pm2: kuran-bot` ayakta ve `BOT_TOKEN` bekliyor.
 
 ### Gönderim takvimi
 
-**366 gün, 60 ilke dönüşümlü, 239 farklı ayet.** Rotasyon: gün *i* → ilke
-`i % 60`, o ilkenin ayetlerinden `floor(i / 60)` sırasındaki. Bir ilke yılda ~6
-kez geliyor ve **her seferinde başka ayetiyle**; 60 gün içinde hiçbir ilke
-tekrar etmiyor. Birincil dayanaklar önce, ikinciller sonra.
+**366 gün, 64 ilke dönüşümlü, 249 farklı ayet.** Rotasyon: gün *i* → ilke
+`i % 64`, o ilkenin ayetlerinden `floor(i / 64)` sırasındaki. Bir ilke yılda
+5-6 kez geliyor (64 ilkeden 46'sı 6 kez, 18'i 5 kez) ve **her seferinde başka
+ayetiyle**; 64 gün içinde hiçbir ilke tekrar etmiyor. Birincil dayanaklar
+önce, ikinciller sonra.
+
+İlke sayısı 60'tan 64'e çıktı: `data/principles/`'a namaz, oruç, zekât ve hac
+eklendi (Task 3, `ibadet` alanı — bkz. `docs/superpowers/plans/2026-09-07-03-ilke-katmani.md`).
+Rotasyon kodu değişmedi, `usable.length` üzerinden kendiliğinden 64'e geçti.
+Bunun doğrudan sonucu: **abonelerin gün→ayet eşlemesi kaydı** — aynı gün
+numarası artık bir önceki takvimden farklı bir ilke/ayet gösterebilir. Bu
+beklenen ve kabul edilen bir davranıştır: takvim `schedule.json` her build'de
+data/principles'tan yeniden üretiliyor, gönderim geçmişi hiç tutulmuyor
+(abonelik kaydında yalnızca `schedule_cursor` ilerler, plan §19.2) — kayacak
+bir "geçmiş" zaten yok, yalnızca ilerideki günlerin içeriği değişiyor.
 
 Takvim **deterministik** — `generatedAt` bilerek sabit (`1970-01-01`), yoksa her
 build parmak izini değiştirirdi (plan §20.1). Determinizmin asıl karşılığı veri

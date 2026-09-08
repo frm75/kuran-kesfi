@@ -1,0 +1,52 @@
+{
+  "slug": "hac",
+  "nameTr": "Hac",
+  "nameAr": "الحج",
+  "rootLatin": "Hjj",
+  "definition": "Gücü yetenlere ömürde bir kez farz olan, belirli aylarda Kâbe ve çevresinde yapılan ibadet yolculuğu.",
+  "explanation": "'Haccı da umreyi de Allah için tamamlayın' (2:196) hac sırasında engellenme, fidye ve kurban hükümlerini birlikte anlatır. Âl-i İmrân 3:97 'yoluna gücü yetenin haccetmesinin Allah'ın insanlar üzerinde bir hakkı olduğunu' söyler. Hac 22:27'de Allah, İbrahim'e haccı insanlara ilan etmesini emreder; bu, Kâbe'yi 'tavaf edenler, namaz kılanlar, rükû ve secde edenler için temizle' emrinin (22:26) devamıdır. 2:197 hac aylarını ve hac sırasındaki yasakları (cinsel ilişki, günah, kavga) belirler; 3:96 Kâbe'yi insanlık için kurulan ilk ibadet evi sayar. DİA 'HAC' maddesi farziyet şartlarını ve menâsiki bu ayetler üzerinden ele alır.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 64,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "2:196",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "3:97",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "22:27",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:197",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "3:96",
+      "role": "secondary",
+      "note": null
+    }
+  ],
+  "stories": [
+    {
+      "slug": "hz-ibrahim",
+      "note": "Kâbe'nin inşası ve hacca çağrı (2:127-129, 22:26-27)"
+    }
+  ],
+  "concepts": [
+    "ibadet"
+  ],
+  "areaSlug": "ibadet"
+}

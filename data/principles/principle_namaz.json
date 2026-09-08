@@ -1,0 +1,68 @@
+{
+  "slug": "namaz",
+  "nameTr": "Namaz",
+  "nameAr": "الصلاة",
+  "rootLatin": "Slw",
+  "definition": "Belirli vakitlerde yerine getirilen, Allah'a yönelişi ve O'nu anmayı ifade eden temel ibadet; Kur'an'da çoğunlukla zekâtla birlikte emredilir.",
+  "explanation": "Kur'an namazı doğrudan emreder: 'Namazı kılın, zekâtı verin' (2:43), 'Namazlara ve orta namaza devam edin' (2:238). Namazın mü'minler üzerine belirli vakitlere bağlı bir farz olduğu 4:103'te; Ankebût 29:45'te ise namazın 'hayasızlıktan ve kötülükten alıkoyduğu', Allah'ı anmanın (zikrin) 'en büyük ibadet' olduğu belirtilir. Tâ-Hâ 20:14'te Mûsâ'ya 'beni anmak için namaz kıl' denir; İbrahim soyu için namaza devam eden bir nesil olmayı diler (14:40). DİA 'NAMAZ' maddesi ibadetin farziyetini ve vakitlerini bu ayetler üzerinden ele alır.",
+  "dailyNote": null,
+  "oppositeSlug": null,
+  "order": 61,
+  "sourceSlugs": [
+    "tdv-islam-ansiklopedisi",
+    "elmalili-hak-dini"
+  ],
+  "verses": [
+    {
+      "ref": "2:43",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "2:238",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "4:103",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "29:45",
+      "role": "primary",
+      "note": null
+    },
+    {
+      "ref": "20:14",
+      "role": "secondary",
+      "note": "Hz. Mûsâ'ya hitap"
+    },
+    {
+      "ref": "11:114",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "2:3",
+      "role": "secondary",
+      "note": null
+    },
+    {
+      "ref": "14:40",
+      "role": "secondary",
+      "note": "İbrahim'in namaz duası"
+    }
+  ],
+  "stories": [
+    {
+      "slug": "hz-ibrahim",
+      "note": "Zürriyeti için namaz duası (14:40)"
+    }
+  ],
+  "concepts": [
+    "namaz",
+    "ibadet"
+  ],
+  "areaSlug": "ibadet"
+}
