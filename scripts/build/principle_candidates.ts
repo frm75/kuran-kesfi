@@ -29,8 +29,15 @@
  * "Ey iman edenler/insanlar" hitabiyla acilan ayetlerde butun icerik kokleri
  * ORTA GUVEN puani alir (bu hitap gercekten genis bir talimat blogu acar);
  * baska hicbir durumda ayetteki bir kok sirf ayni cumlede gectigi icin puan
- * ALMAZ. Asiri sik kokler (esik: 300 gecis — mevcut 20 kok-etiketli ilkenin
- * en sigi 292) puan disi birakilir; bu olcum, tahmin degildir.
+ * ALMAZ. Asiri sik kokler (esik: 300 gecis) ayrica puan disi birakilir.
+ * Bu esigin ilke kapsamasini bozma riski YOK: kapsanan kokler (coveredRoots),
+ * frekans kontrolunden ONCE kosulsuz elenir (bkz. addSupport, ilk satir) —
+ * bir ilkenin koku ne kadar sik geçerse geçsin bu kontrole hic ugramaz
+ * (orn. emanete-sadakat ilkesinin koku Amn, 20 kok-etiketli ilkenin en SIK
+ * geceni, 879 kez gecer ve yine de tamamen kapsanmis sayilir). 300 esigi
+ * yalnizca KAPSANMAYAN, acikca gramer-iskelesi olan asiri sik kokleri
+ * (Allah/demek/olmak/Rab, hepsi 500+ gecis) elemek icindir; olculmus bir
+ * sinir DEGIL, sezgisel/yuvarlak bir kesim noktasidir.
  *
  * Turkce sinyalde kisa ekler (celik "-in/-ın/-un/-ün" veya "-ma/-me") de
  * denendi: Turkce'de bu ekler iyelik/olumsuz mastar ekleriyle ayni gorunur
@@ -326,7 +333,7 @@ function main(): void {
   }
 
   const rootsMeta = loadRootsMeta();
-  /** Asiri sik kokler (esik olcumu dosya basi yorumunda). */
+  /** Asiri sik, gramer-iskelesi kokler icin sezgisel kesim (dosya basi yorumuna bkz — olculmus bir sinir degil). */
   const FREQUENCY_CAP = 300;
 
   // --- Aday ayetler: sinyal1 OR sinyal2 ------------------------------------
@@ -428,6 +435,9 @@ function main(): void {
     readonly directCount: number;
     readonly hitapCount: number;
     readonly verseCount: number;
+    readonly occurrenceCount: number;
+    /** dogrudan capa sayisi / corpus genelinde gecis sayisi (bkz. Fix round 1, F2) */
+    readonly density: number;
     readonly supports: Support[];
   }
   const scored: ScoredRoot[] = [];
@@ -439,19 +449,56 @@ function main(): void {
       else hitapCount += 1;
     }
     const score = directCount * 5 + hitapCount * 2;
+    const occurrenceCount = rootsMeta.get(agg.latin)?.occurrenceCount ?? 0;
+    const density = occurrenceCount > 0 ? directCount / occurrenceCount : 0;
     const supports = [...agg.supports.values()].sort((a, b) => {
       const [as, av] = a.ref.split(":").map(Number);
       const [bs, bv] = b.ref.split(":").map(Number);
       return (as ?? 0) - (bs ?? 0) || (av ?? 0) - (bv ?? 0);
     });
-    scored.push({ latin: agg.latin, arabic: agg.arabic, score, directCount, hitapCount, verseCount: agg.supports.size, supports });
+    scored.push({
+      latin: agg.latin,
+      arabic: agg.arabic,
+      score,
+      directCount,
+      hitapCount,
+      verseCount: agg.supports.size,
+      occurrenceCount,
+      density,
+      supports,
+    });
   }
   scored.sort((a, b) => b.score - a.score || b.verseCount - a.verseCount || a.latin.localeCompare(b.latin));
+
+  /**
+   * Ikinci siralama: CAPA YOGUNLUGU (dogrudan capa / corpus genelinde gecis).
+   *
+   * Puan siralamasi HACIM agirlikli: sik gecen kokler (orn. rjE/donmek, 104
+   * gecis, 30 capa) az gecen ama neredeyse YALNIZCA yasak/emir baglaminda
+   * gecen koklerden (orn. srq/hirsizlik, 9 gecis, 1 capa) daha yuksek
+   * siralanir — puan sirf hacme bakar, secicilige bakmaz. Yogunluk bunun
+   * tersini olcer: bir kok, DOGRUDAN CAPA aldigi ayetlerin corpus genelindeki
+   * gecis sayisina oraninda ne kadar buyukse, o kok o kadar "secici" bicimde
+   * emir/nehiy baglaminda kullaniliyor demektir.
+   *
+   * KUCUK PAYDA TUZAGI: 1 gecis + 1 capa = yogunluk 1.000 — istatistiksel
+   * olarak anlamsiz, tek veri noktasi. Taban (floor) bu yuzden ZORUNLU:
+   * kok en az 5 kez gecmis OLMALI (payda kucuk olmasin) VE en az 1 dogrudan
+   * capasi OLMALI (yogunluk 0 olan kok zaten hicbir sey soylemez). Bu taban
+   * olculmustur: tabani gecemeyen kok sayisi asagida raporlanir, gizlenmez.
+   */
+  const DENSITY_FLOOR_OCCURRENCE = 5;
+  const densityEligible = scored.filter((r) => r.occurrenceCount >= DENSITY_FLOOR_OCCURRENCE && r.directCount >= 1);
+  const densityExcluded = scored.length - densityEligible.length;
+  const byDensity = [...densityEligible].sort(
+    (a, b) => b.density - a.density || b.directCount - a.directCount || b.verseCount - a.verseCount || a.latin.localeCompare(b.latin),
+  );
 
   // --- Rapor uretimi ---------------------------------------------------------
   const DETAIL_CAP = 30;
   const detailed = scored.slice(0, DETAIL_CAP);
   const rest = scored.slice(DETAIL_CAP);
+  const densityDetailed = byDensity.slice(0, DETAIL_CAP);
 
   const lines: string[] = [];
   lines.push("# Aday ilke tarama raporu");
@@ -481,11 +528,14 @@ function main(): void {
   );
   lines.push("");
   lines.push(
-    `Asiri sik kokler (corpus genelinde ${FREQUENCY_CAP} gecisten fazla — ` +
-      "mevcut kok-etiketli ilkelerin en sigi 292'dir, bu esik olculmustur, " +
-      "tahmin degil) aday listesinden cikarilir; aksi halde \"Allah\", " +
-      "\"demek\", \"olmak\" gibi dilbilgisel iskele kokler listenin basini " +
-      "isgal eder.",
+    `Asiri sik kokler (corpus genelinde ${FREQUENCY_CAP} gecisten fazla) aday ` +
+      "listesinden cikarilir. Bu esik ilke kapsamasini BOZMAZ: kapsanan kokler " +
+      "frekans kontrolunden once, kosulsuz olarak elenir — orn. emanete-sadakat " +
+      "ilkesinin koku (Amn) 879 kez gecer (kok-etiketli 20 ilkenin en sik geceni) " +
+      "ve yine de bu kontrole hic ugramadan kapsanmis sayilir. 300 esigi " +
+      "yalnizca KAPSANMAYAN kokler icindir: \"Allah\", \"demek\", \"olmak\" gibi " +
+      "500+ gecen acik gramer-iskelesi kokleri elemek amacli, sezgisel bir " +
+      "kesim noktasidir — olculmus bir sinir DEGILDIR.",
   );
   lines.push("");
   lines.push("## Siralama kurali");
@@ -514,9 +564,9 @@ function main(): void {
   );
   lines.push("");
   lines.push(
-    `Toplam **${scored.length}** aday kok bulundu. Asagida ilk **${detailed.length}** ` +
-      `tanesi ayrintili gosterilir; kalan **${rest.length}** tanesi kisa bir kuyruk ` +
-      "listesinde ozetlenir (hicbiri gizlenmez).",
+    `Toplam **${scored.length}** aday kok bulundu. "Puan sirali" listede ilk ` +
+      `**${detailed.length}** tanesi ayrintili gosterilir; kalan **${rest.length}** ` +
+      "tanesi kisa bir kuyruk listesinde ozetlenir (hicbiri gizlenmez).",
   );
   lines.push("");
   lines.push(
@@ -525,6 +575,50 @@ function main(): void {
   if (missingWordFiles > 0) {
     lines.push(`Kelime dosyasi eksik olan aday ayet sayisi (atlandi): **${missingWordFiles}**.`);
   }
+  lines.push("");
+  lines.push("## Ikinci siralama: capa yogunlugu");
+  lines.push("");
+  lines.push(
+    "Yukaridaki puan HACIM agirliklidir: sik gecen bir kok (orn. rjE/donmek, " +
+      "104 gecis, 30 capa) az gecen ama neredeyse YALNIZCA yasak/emir " +
+      "baglaminda gecen bir kokten (orn. srq/hirsizlik, 9 gecis, 1 capa) daha " +
+      "yuksek siralanir - puan hacme bakar, seciciliğe bakmaz. Bu ikinci liste " +
+      "tam tersini olcer: **yogunluk = dogrudan capa sayisi / kokun corpus " +
+      "genelindeki toplam gecis sayisi**. Bir kok, aldigi capalarin oranina " +
+      "gore ne kadar buyukse, o kok o kadar SECICI bicimde emir/nehiy " +
+      "baglaminda kullaniliyor demektir.",
+  );
+  lines.push("");
+  lines.push(
+    "**Kucuk payda tuzagi:** 1 gecis + 1 capa = yogunluk 1.000 - istatistiksel " +
+      "olarak anlamsiz, tek veri noktasindan gelen bir sayidir. Bu yuzden bir " +
+      `taban (floor) uygulanir: kok en az **${DENSITY_FLOOR_OCCURRENCE}** kez ` +
+      "gecmis olmali (payda kucuk olmasin) VE en az **1** dogrudan capasi " +
+      "olmali (yogunlugu 0 olan kok zaten hicbir sey soylemez). Bu tabani " +
+      `gecemeyen **${densityExcluded}** kok (toplam ${scored.length} adayin ` +
+      `${((densityExcluded / scored.length) * 100).toFixed(0)}%'i) bu ikinci ` +
+      "listede YOK - puan sirali listede ve kuyrukta hala goruluyorlar, yalnizca " +
+      "yogunluk siralamasindan disarida birakildilar.",
+  );
+  lines.push("");
+  lines.push(
+    `Tabani gecen **${densityEligible.length}** kokten ilk **${densityDetailed.length}** ` +
+      "tanesi asagida ayrintili gosterilir.",
+  );
+  lines.push("");
+  lines.push("### Iki liste neyi gosterir, neyi kacirir");
+  lines.push("");
+  lines.push(
+    "**Puan sirali liste** hacimli, tekrarlanan kaniti odule alir: bir kokun " +
+      "Kur'an boyunca defalarca emir/nehiy baglaminda gectigini gosterir, ama " +
+      "nadir-ve-secici konulari (hirsizlik, zina, icki-kumar gibi az sayida " +
+      "ama net biçimde yasaklanan davranislar) hacim dusuklugu yuzunden " +
+      "kuyruga gomer. **Yogunluk sirali liste** nadir-ve-secici konulari one " +
+      "cikarir, ama (a) hic dogrudan capasi olmayan kokleri (yalnizca hitap " +
+      "blogu kaniti tasiyan, orn. icki-kumar ayetindeki bazi kokler) ve (b) " +
+      "cok az gecen kokleri (taban altinda kalanlar) tamamen GORMEZ. Ikisi " +
+      "birlikte okunmali; biri digerinin kor noktasini kapatir.",
+  );
   lines.push("");
   lines.push("## Sinirlar (bilinen kor noktalar)");
   lines.push("");
@@ -565,16 +659,19 @@ function main(): void {
       "olan ilkeleri kok bazinda algilamaz.",
   );
   lines.push("");
-  lines.push("## Ayrintili adaylar");
-  lines.push("");
-
-  for (const [index, root] of detailed.entries()) {
+  /**
+   * Bir aday kokun ayrintili girdisini yazar. Hem "puan sirali" hem
+   * "yogunluk sirali" listede AYNI bicim kullanilir (Fix round 1, F2:
+   * "same evidence format").
+   */
+  function pushDetailedEntry(lines: string[], root: ScoredRoot, rank: number): void {
     const meta = rootsMeta.get(root.latin);
-    lines.push(`### ${index + 1}. ${root.arabic} — ${root.latin}`);
+    lines.push(`### ${rank}. ${root.arabic} — ${root.latin}`);
     lines.push("");
     lines.push(
       `Puan: **${root.score}** (dogrudan capa: ${root.directCount}, hitap blogu: ${root.hitapCount}) · ` +
-        `destekleyen ayet: ${root.verseCount} · corpus genelinde gecis: ${meta?.occurrenceCount ?? "?"}`,
+        `yogunluk: **${root.density.toFixed(3)}** · destekleyen ayet: ${root.verseCount} · ` +
+        `corpus genelinde gecis: ${meta?.occurrenceCount ?? "?"}`,
     );
     lines.push("");
     if (meta?.meaningSummary) {
@@ -613,17 +710,41 @@ function main(): void {
     lines.push("");
   }
 
+  lines.push("## Ayrintili adaylar (puan sirali)");
+  lines.push("");
+  for (const [index, root] of detailed.entries()) {
+    pushDetailedEntry(lines, root, index + 1);
+  }
+
+  lines.push("## Ayrintili adaylar (capa yogunlugu sirali)");
+  lines.push("");
+  lines.push(
+    `Ayni ${densityDetailed.length} girdi bicimi, farkli siralama - yukaridaki ` +
+      "\"Ikinci siralama: capa yogunlugu\" bolumune bakin. Rutbe (#) bu listeye " +
+      "OZGUDUR, puan sirali listedeki rutbeyle KARISTIRILMAMALI.",
+  );
+  lines.push("");
+  for (const [index, root] of densityDetailed.entries()) {
+    pushDetailedEntry(lines, root, index + 1);
+  }
+
   lines.push("## Kuyruk (kisaltilmis)");
   lines.push("");
   lines.push(
-    `Asagidaki ${rest.length} kok de aday olarak bulundu ama puanlari daha ` +
-      "dusuk oldugu icin ayrintili gosterilmedi. Hicbiri gizlenmedi:",
+    `Asagidaki ${rest.length} kok de aday olarak bulundu ama puan sirali listede ` +
+      "ayrintili gosterilmedi (hicbiri gizlenmedi). \"Yogunluk\" sutunu, tabani " +
+      "gecen kokler icin capa/gecis oranidir; tabani gecemeyenlerde \"-\" yazar " +
+      "(bkz. \"Ikinci siralama\" bolumu).",
   );
   lines.push("");
-  lines.push("| # | Kok (Arapca) | rootLatin | Puan | Ayet sayisi |");
-  lines.push("|---|---|---|---|---|");
+  lines.push("| # (puan sirali) | Kok (Arapca) | rootLatin | Puan | Ayet sayisi | Gecis | Yogunluk |");
+  lines.push("|---|---|---|---|---|---|---|");
   for (const [index, root] of rest.entries()) {
-    lines.push(`| ${DETAIL_CAP + index + 1} | ${root.arabic} | ${root.latin} | ${root.score} | ${root.verseCount} |`);
+    const densityEligibleHere = root.occurrenceCount >= DENSITY_FLOOR_OCCURRENCE && root.directCount >= 1;
+    const densityText = densityEligibleHere ? root.density.toFixed(3) : "-";
+    lines.push(
+      `| ${DETAIL_CAP + index + 1} | ${root.arabic} | ${root.latin} | ${root.score} | ${root.verseCount} | ${root.occurrenceCount} | ${densityText} |`,
+    );
   }
   lines.push("");
 
