@@ -1,0 +1,47 @@
+---
+import SourceBadge from "~/components/SourceBadge.astro";
+import type { PageNote } from "~/lib/page-notes";
+
+interface Props {
+  notes: readonly PageNote[];
+}
+
+const { notes } = Astro.props;
+
+/**
+ * Sayfanın altındaki numaralı not listesi.
+ *
+ * Kaynaklı notlar `<SourceBadge>` ile basılır — CLAUDE.md kural 4 kaynaklı
+ * içeriğin rozetsiz render edilmesini yasaklıyor; rozet KALDIRILMADI, yeri
+ * değişti. Kutu kenarlığı burada gereksiz (liste zaten çerçeveli bir bağlam),
+ * `.pn-list` altında sadeleştiriliyor.
+ */
+---
+
+{
+  notes.length > 0 && (
+    <section class="pg-notlar" aria-labelledby="pn-baslik">
+      <h2 id="pn-baslik" class="pn-baslik">
+        Notlar ve kaynaklar
+      </h2>
+      <ol class="pn-list">
+        {notes.map((note) => (
+          <li id={note.id}>
+            {note.text !== undefined && <span class="pn-text">{note.text}</span>}
+            {note.sources !== undefined && (
+              <SourceBadge
+                contentClass="kaynakli"
+                sources={note.sources}
+                label={note.label}
+                compact
+              />
+            )}
+            <a class="pn-back" href={`#${note.id}-ref`} aria-label={`Not ${String(note.n)} — metne dön`}>
+              ↩
+            </a>
+          </li>
+        ))}
+      </ol>
+    </section>
+  )
+}

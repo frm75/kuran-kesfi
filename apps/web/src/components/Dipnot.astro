@@ -1,0 +1,21 @@
+---
+import type { PageNote } from "~/lib/page-notes";
+
+interface Props {
+  note: PageNote;
+}
+
+const { note } = Astro.props;
+
+/**
+ * Sayfa dipnotunun üst rakamı.
+ *
+ * Meal dipnotlarıyla (`footnote-marker`) aynı görsel dil: okuyan kişi ikinci
+ * bir kalıp öğrenmesin. `aria-label` olmadan ekran okuyucu yalnız "3" der.
+ */
+---
+
+<sup class="pn-mark"><a
+  href={`#${note.id}`}
+  id={`${note.id}-ref`}
+  aria-label={`Not ${String(note.n)}`}>{note.n}</a></sup>

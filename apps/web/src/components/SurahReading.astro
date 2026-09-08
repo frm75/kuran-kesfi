@@ -19,7 +19,8 @@ import {
  * Tek sutun, tek meal. Dort meali birden koymak Bakara'yi 300 KB'a cikarirdi
  * (olcum: scripts/build/README.md); meal karsilastirmasi ayet sayfasinin isi.
  *
- * JavaScript yok. Kenardaki ayet numarasi o ayetin kendi sayfasina gider.
+ * JavaScript yok. Kenardaki ayet numarasi o ayetin kendi sayfasina gider;
+ * ayni yere goturen gorunur "Ayet detayi" dugmesi ayetin altinda duruyor.
  *
  * ## Neden bilesen (2026-09-06)
  *
@@ -192,6 +193,20 @@ const revelation = surah.revelationType === "mekki" ? "Mekkî" : "Medenî";
                   hideAuthor
                 />
               )}
+
+              {/*
+                Ayet sayfasina giren tek kapi kenardaki numaraydi; kimse onu
+                baglanti gibi gormedi (kullanici karari, 2026-09-08). Numara
+                yerinde duruyor, yaninda gorunur bir dugme var. Erisilebilir
+                ad ayet etiketini tasiyor: 286 tane "Ayet detayi" baglantisi
+                ekran okuyucuda ayirt edilemezdi.
+              */}
+              <p class="v-more">
+                <a class="v-detail" href={`/${surah.slug}/${String(verse.verseNumber)}`}>
+                  Ayet detayı<span class="sr-only"> — {label}</span>{" "}
+                  <span aria-hidden="true">→</span>
+                </a>
+              </p>
             </div>
           </li>
         );

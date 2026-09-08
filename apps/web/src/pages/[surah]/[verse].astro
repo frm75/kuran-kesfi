@@ -20,7 +20,9 @@ import {
   verseLabel,
 } from "~/lib/data";
 import { dateText, getVerseManuscripts } from "~/lib/manuscripts";
-import SourceBadge from "~/components/SourceBadge.astro";
+import Dipnot from "~/components/Dipnot.astro";
+import SayfaNotlari from "~/components/SayfaNotlari.astro";
+import { NoteList } from "~/lib/page-notes";
 import { blockRangeLabel, getVerseTafsir, paragraphs } from "~/lib/tafsir";
 import { STYLE_LABEL, getVerseAudio } from "~/lib/recitation";
 import MedyaPaneli from "~/components/MedyaPaneli.astro";
@@ -267,6 +269,98 @@ const previous = verse.verseNumber > 1 ? verse.verseNumber - 1 : null;
 const next = verse.verseNumber < surahMeta.verseCount ? verse.verseNumber + 1 : null;
 
 const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} meal`;
+
+/*
+ * Sayfa dipnotları — künye, lisans ve editoryal uyarılar.
+ *
+ * Bunlar bölüm bölüm kutu ve gri satır olarak duruyordu; okuyan kişi ayeti
+ * bulmadan önce üç lisans metninden geçiyordu (kullanıcı kararı 2026-09-08).
+ * Metin KISALTILMADI, kaldırılmadı — yalnız sayfanın altına indi ve yerine
+ * küçük bir üst rakam kondu.
+ *
+ * DİKKAT: `add()` çağrıları BELGE SIRASINDA olmak zorunda; numaralar çağrı
+ * sırasına göre veriliyor. Sıra bozulursa sayfada 1'den önce 2 görünür.
+ */
+const notes = new NoteList();
+
+const kiraatNotes = verseAudio.map(({ reciter }) =>
+  notes.add({
+    sources: [getSourceBySlug(reciter.sourceSlug)],
+    label: `${label} kıraati — ${reciter.name}`,
+  }),
+);
+
+const contextNote =
+  contextVerses.length > 1
+    ? notes.add({
+        text:
+          `Bağlam metinleri ${defaultAuthor.name} mealindendir; bu ayetin bütün ` +
+          `mealleri aşağıdadır. Birleşik numaralar (${defaultAuthor.name} bu ayetleri ` +
+          "tek metin olarak veriyor) aralık olarak yazılır.",
+      })
+    : null;
+
+const topicNote =
+  contextVerses.length > 1 && topic !== null
+    ? notes.add({
+        text:
+          topic.origin === "platform"
+            ? "Konu başlıkları platform derlemesidir; bir tefsirden alınmamıştır."
+            : "Konu başlıkları kaynaktan alınmıştır.",
+      })
+    : null;
+
+const tafsirNote =
+  tafsirs.length > 0
+    ? notes.add({
+        text:
+          "Tefsir ayetin kendisi değil, ona getirilmiş bir YORUMDUR; her eser kendi " +
+          "geleneğinden konuşur ve aralarında fark olabilir. Yukarıdaki " +
+          (tafsirs.length === 1 ? "eser tek görüş" : `${String(tafsirs.length)} eser tek doğru`) +
+          " olarak değil, kaynağıyla birlikte verilir (plan §12.9).",
+      })
+    : null;
+
+/*
+ * Tefsir künyesi ve lisans notu TEK notta birleşti.
+ *
+ * QuranEnc'in yeniden yayın koşulu 3 sürüm numarasının gösterilmesini istiyor;
+ * numara `licenseNote` içinde duruyor ("QuranEnc.com · sürüm 1.0.0 · ...").
+ * Metin olduğu gibi taşınıyor — kısaltılmıyor, gizlenmiyor.
+ */
+const tafsirWorkNotes = new Map(
+  tafsirs.map(({ work }) => [
+    work.sourceSlug,
+    notes.add({
+      text: work.licenseNote ?? undefined,
+      sources: [getSourceBySlug(work.sourceSlug)],
+      label: `${label} tefsiri — ${work.name}`,
+    }),
+  ]),
+);
+
+const relatedNote =
+  relatedRows.length > 0
+    ? notes.add({
+        text:
+          "Her bağın gerekçesi yanında yazar. Bunlar yorum değil, ortak kıssa / olay / " +
+          `kök / kavram sayımıdır. Meal parçaları ${defaultAuthor.name} mealindendir.`,
+      })
+    : null;
+
+const manuscriptNote =
+  manuscripts !== null && manuscripts.oldest.length > 0
+    ? notes.add({
+        text:
+          "Görüntüler kullanım kısıtlı olduğu için burada gösterilmez, kaynağa bağlanır. " +
+          "Kaynak: Corpus Coranicum (BBAW), CC BY-SA 4.0.",
+      })
+    : null;
+
+const mealNote = notes.add({
+  text: "Mealler arasındaki fark yorum farkıdır; hiçbiri tek doğru olarak sunulmaz.",
+});
+
 ---
 
 <Base
@@ -282,6 +376,35 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
       <a href={`/${verse.surahSlug}`}>{verse.surahNameTr}</a>
       <span aria-hidden="true">›</span>
       <span aria-current="page">{verse.verseNumber}. ayet</span>
+    </nav>
+
+    {/*
+      Ayetler arasi gecis yalnizca sayfanin en altindaydi: 20+ meal, kelime
+      kelime dokum, tefsir ve medya bolumlerinin ardinda kimse oraya inmiyordu
+      (kullanici karari, 2026-09-08). Ayni gezinme basligin ustunde de duruyor.
+    */}
+    <nav aria-label="Ayetler arası gezinme" class="pg-nav is-top">
+      {
+        previous === null ? (
+          <span />
+        ) : (
+          <a class="pg-nav-btn" rel="prev" href={`/${verse.surahSlug}/${String(previous)}`}>
+            <span aria-hidden="true">←</span> {previous}. ayet
+          </a>
+        )
+      }
+      <a href={`/${verse.surahSlug}#ayet-${String(verse.verseNumber)}`}>
+        {verse.surahNameTr} <b>{verse.verseNumber}</b> / {surahMeta.verseCount}
+      </a>
+      {
+        next === null ? (
+          <span />
+        ) : (
+          <a class="pg-nav-btn" rel="next" href={`/${verse.surahSlug}/${String(next)}`}>
+            {next}. ayet <span aria-hidden="true">→</span>
+          </a>
+        )
+      }
     </nav>
 
     <header class="pg-head">
@@ -326,11 +449,12 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
       {
         verseAudio.length > 0 && (
           <div class="verse-audio">
-            {verseAudio.map(({ reciter, url }) => (
+            {verseAudio.map(({ reciter, url }, i) => (
               <div class="verse-audio-row">
                 <p class="verse-audio-head">
                   <span class="verse-audio-name">{reciter.name}</span>
                   <span class="verse-audio-style">{STYLE_LABEL[reciter.style]}</span>
+                  {kiraatNotes[i] !== undefined && <Dipnot note={kiraatNotes[i]} />}
                 </p>
                 {/*
                   JavaScript YOK: dosya adı ayetin kendisi olduğu için
@@ -345,12 +469,6 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
                 >
                   <a href={url}>Ses dosyasını indir</a>
                 </audio>
-                <SourceBadge
-                  contentClass="kaynakli"
-                  sources={[getSourceBySlug(reciter.sourceSlug)]}
-                  label={`${label} kıraati — ${reciter.name}`}
-                  compact
-                />
               </div>
             ))}
             {/*
@@ -383,7 +501,7 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
       contextVerses.length > 1 && (
         <section>
           <div class="sec-head">
-            <h2>Bağlam</h2>
+            <h2>Bağlam{contextNote !== null && <Dipnot note={contextNote} />}</h2>
             <span class="sec-note">
               {verse.surahNameTr} {contextStart}–{contextEnd} · surenin{" "}
               {verse.verseNumber}. ayeti / {surahMeta.verseCount}
@@ -397,6 +515,7 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
                 <span class="ctx-topic-range">
                   {verse.surahNameTr} {topic.main.verseStart}–{topic.main.verseEnd}
                 </span>
+                {topicNote !== null && <Dipnot note={topicNote} />}
               </p>
               {topic.main.note !== null && <p class="ctx-topic-note">{topic.main.note}</p>}
               {topic.also.length > 0 && (
@@ -424,12 +543,6 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
                   </a>
                 )}
               </nav>
-              {/* Başlığın nereden geldiği gizlenmez — plan §1.5, §12.15. */}
-              <p class="ctx-origin">
-                {topic.origin === "platform"
-                  ? "Konu başlıkları platform derlemesidir; bir tefsirden alınmamıştır."
-                  : "Konu başlıkları kaynaktan alınmıştır."}
-              </p>
             </div>
           )}
 
@@ -455,11 +568,6 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
               );
             })}
           </ol>
-          <p class="sec-note mt-3">
-            Bağlam metinleri {defaultAuthor.name} mealindendir; bu ayetin bütün
-            mealleri aşağıdadır. Birleşik numaralar ({defaultAuthor.name} bu
-            ayetleri tek metin olarak veriyor) aralık olarak yazılır.
-          </p>
         </section>
       )
     }
@@ -468,27 +576,23 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
       tafsirs.length > 0 && (
         <section id="tefsir">
           <div class="sec-head">
-            <h2>Tefsir</h2>
+            <h2>Tefsir{tafsirNote !== null && <Dipnot note={tafsirNote} />}</h2>
             <span class="sec-note">
-              Tefsir ayetin kendisi değil, ona getirilmiş bir YORUMDUR; her eser
-              kendi geleneğinden konuşur ve aralarında fark olabilir. Aşağıdaki
-              {tafsirs.length === 1 ? " eser tek görüş" : ` ${String(tafsirs.length)} eser tek doğru`}
-              olarak değil, kaynağıyla birlikte verilir (plan §12.9).
+              Ayetin kendisi değil, ona getirilmiş yorum
             </span>
           </div>
           {tafsirs.map(({ work, blocks }) => (
             <article class="tafsir-work">
               <div class="tafsir-head">
-                <h3 class="tafsir-name">{work.name}</h3>
+                <h3 class="tafsir-name">
+                  {work.name}
+                  {tafsirWorkNotes.get(work.sourceSlug) !== undefined && (
+                    <Dipnot note={tafsirWorkNotes.get(work.sourceSlug)!} />
+                  )}
+                </h3>
                 {work.workTitle !== null && <p class="tafsir-worktitle">{work.workTitle}</p>}
                 {work.author !== null && <p class="tafsir-author">{work.author}</p>}
               </div>
-              <SourceBadge
-                contentClass="kaynakli"
-                sources={[getSourceBySlug(work.sourceSlug)]}
-                label={`${label} tefsiri — ${work.name}`}
-                compact
-              />
               {blocks.map((block) => {
                 const range = blockRangeLabel(block);
                 return (
@@ -504,15 +608,6 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
                   </div>
                 );
               })}
-              {/*
-                Sürüm numarası burada görünür. QuranEnc'in yeniden yayın
-                koşullarından 3'ü sürümün belirtilmesini istiyor ve numara bu
-                notun içinde duruyor ("QuranEnc.com · sürüm 1.0.0 · ...").
-                Bu satır kısaltılamaz, gizlenemez.
-              */}
-              {work.licenseNote !== null && (
-                <p class="sec-note tafsir-license">{work.licenseNote}</p>
-              )}
             </article>
           ))}
         </section>
@@ -604,11 +699,8 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
       relatedRows.length > 0 && (
         <section>
           <div class="sec-head">
-            <h2>İlgili ayetler</h2>
-            <span class="sec-note">
-              Her bağın gerekçesi yanında yazar. Bunlar yorum değil, ortak kıssa
-              / olay / kök / kavram sayımıdır.
-            </span>
+            <h2>İlgili ayetler{relatedNote !== null && <Dipnot note={relatedNote} />}</h2>
+            <span class="sec-note">Her bağın gerekçesi yanında yazar</span>
           </div>
           <ul class="rel-verse-list">
             {relatedRows.map((row) => (
@@ -631,9 +723,6 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
               </li>
             ))}
           </ul>
-          <p class="sec-note mt-3">
-            Meal parçaları {defaultAuthor.name} mealindendir.
-          </p>
         </section>
       )
     }
@@ -642,11 +731,12 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
       manuscripts !== null && manuscripts.oldest.length > 0 && (
         <section>
           <div class="sec-head">
-            <h2>Bu ayeti taşıyan yazmalar</h2>
+            <h2>
+              Bu ayeti taşıyan yazmalar
+              {manuscriptNote !== null && <Dipnot note={manuscriptNote} />}
+            </h2>
             <span class="sec-note">
-              Corpus Coranicum kataloğunda bu ayeti içeren {manuscripts.count} yazma
-              kayıtlı. En eski {manuscripts.oldest.length} tanesi aşağıda; görüntüler
-              kullanım kısıtlı olduğu için burada gösterilmez, kaynağa bağlanır.
+              {manuscripts.count} yazma · en eski {manuscripts.oldest.length} tanesi
             </span>
           </div>
           <ul class="ms-verse-list">
@@ -661,8 +751,7 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
             ))}
           </ul>
           <p class="sec-note mt-3">
-            Tamamı: <a href="/yazmalar">yazma kataloğu</a>. Kaynak: Corpus Coranicum
-            (BBAW), CC BY-SA 4.0.
+            Tamamı: <a href="/yazmalar">yazma kataloğu</a>
           </p>
         </section>
       )
@@ -696,11 +785,8 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
     */}
     <section class="mealcmp" id="mealler">
       <div class="sec-head">
-        <h2>Türkçe mealler</h2>
-        <span class="sec-note">
-          {turkish.length} meal. Aralarındaki fark yorum farkıdır; hiçbiri tek
-          doğru olarak sunulmaz.
-        </span>
+        <h2>Türkçe mealler<Dipnot note={mealNote} /></h2>
+        <span class="sec-note">{turkish.length} meal</span>
       </div>
 
       <details class="mf">
@@ -776,12 +862,12 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
       )
     }
 
-    <nav aria-label="Ayetler arası gezinme" class="pg-nav">
+    <nav aria-label="Sayfa sonu — ayetler arası gezinme" class="pg-nav">
       {
         previous === null ? (
           <span />
         ) : (
-          <a href={`/${verse.surahSlug}/${String(previous)}`}>
+          <a class="pg-nav-btn" rel="prev" href={`/${verse.surahSlug}/${String(previous)}`}>
             <span aria-hidden="true">←</span> {previous}. ayet
           </a>
         )
@@ -793,12 +879,20 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
         next === null ? (
           <span />
         ) : (
-          <a href={`/${verse.surahSlug}/${String(next)}`}>
+          <a class="pg-nav-btn" rel="next" href={`/${verse.surahSlug}/${String(next)}`}>
             {next}. ayet <span aria-hidden="true">→</span>
           </a>
         )
       }
     </nav>
+    {/*
+      Künye, lisans ve editoryal uyarılar burada. Yukarıda küçük üst rakam
+      duruyor; metin kısaltılmadı, yalnız yeri değişti (kullanıcı kararı
+      2026-09-08). Sayfa sonu gezinmesinin ALTINDA: okuyan kişi bir sonraki
+      ayete geçerken notların içinden geçmesin.
+    */}
+    <SayfaNotlari notes={notes.all} />
+
   </main>
 
   <style is:inline set:html={mealFilterCss}></style>
