@@ -658,6 +658,31 @@ function main(): void {
       "baska bir ilkede gecip gecmedigi) bunu KISMEN yakalar ama alani bos " +
       "olan ilkeleri kok bazinda algilamaz.",
   );
+  lines.push(
+    "- **Yalnizca olumsuz (لا ت-) capa var; olumlu emir capalanmaz.** " +
+      '"Dogrudan nehiy" capasi yalnizca "ولا ت-" / "فلا ت-" kalibina ' +
+      'baglidir. "Kaçının" (اجتنبوا), "sakının" (اتقوا) gibi OLUMLU ' +
+      "emirlerin nesnesi hicbir dogrudan capa almaz - fiil olumlu oldugu " +
+      "icin bu kalip hic eslesmez.",
+  );
+  lines.push(
+    "- **Icki-kumar bu yuzden HER IKI listede de gorunmuyor - taban disi " +
+      "kaldiklari icin DEGIL.** 5:90 \"فَٱجْتَنِبُوهُ\" (kaçının) OLUMLU emir " +
+      "kullanir. xmr (corpus'ta 7 gecis) ve ysr (44 gecis) ikisi de " +
+      "yogunluk tabanini (en az 5 gecis) rahatca gecer ama dogrudan " +
+      "capalari SIFIRDIR - yalnizca hitap-blogu (orta guven) kaniti " +
+      "tasirlar; yogunluk sirali listede bu yuzden HIC yer almazlar.",
+  );
+  lines.push(
+    "- **Hadd (ceza) ayetleri de ayni sebeple kacar.** 5:38 (hirsizlik) ve " +
+      "24:2 (zina) yasa metinleridir: suc ismi (\"es-sariku\", " +
+      "\"ez-zaniyetu\") cumlenin OZNESI/konusudur, \"لا ت-\" yasaginin " +
+      "nesnesi degildir - 24:2'de \"ولا تأخذكم\" gecer ama bu capa Axp " +
+      "(tutmak) kokune baglanir, zny'ye degil. srq'nin TEK dogrudan capasi " +
+      "bu yuzden 12:70'tir (Yusuf kissasindaki bir SUCLAMA cumlesi, \"siz " +
+      "hirsizsiniz\", yasa ayeti degil) - okuyucu srq'nin siralamasini " +
+      "5:38 hakkinda kanit olarak OKUMAMALI.",
+  );
   lines.push("");
   /**
    * Bir aday kokun ayrintili girdisini yazar. Hem "puan sirali" hem
