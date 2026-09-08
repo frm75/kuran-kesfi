@@ -112,6 +112,11 @@ smoke_test() {
   # Kok adresleri Arap harfi tasiyor; nginx'in yuzde kodlu istegi cozdugu
   # her yayinda dogrulanir (bir kez elle test edildi, sonra buraya alindi).
   check "/kok/%D9%82%D9%88%D9%84"  200
+  # Arama (2026-09-08): sayfa 200 dondugu halde indeks parcalari 404 verirse
+  # kutu gorunur, sonuc gelmez ve hicbir hata cikmaz.
+  check "/ara"                     200
+  check "/data/search/index.json"  200
+  check "/data/search/docs/0.json" 200
   check "/sitemap.xml"             200
   check "/robots.txt"              200
   check "/404.html"                200
@@ -248,6 +253,13 @@ smoke_test() {
   # Iletisim: form-action olmadan tarayici POST'u ENGELLER ve hicbir hata
   # gostermez — sayfa acilir, "Gonder" hicbir sey yapmaz.
   csp_must_have "/iletisim"        "form-action 'self'"
+  # Arama: betik olmadan kutu calismaz; connect-src olmadan indeks parcalari
+  # sessizce engellenir ve arama HEP bos doner.
+  csp_must_have "/ara"             "script-src 'self'"
+  csp_must_have "/ara"             "connect-src 'self'"
+  # WASM acilmadigi dogrulanir: bagimliliksiz motor yerine Pagefind'a
+  # donulurse CSP sessizce genislemesin.
+  csp_must_not_have "/ara"         "wasm-unsafe-eval"
   # Arka uc ayakta mi: servis dusmusse POST 502 doner ve mesaj kaybolur.
   # Yalnizca yerelden okunur; ucu disariya acilmadi.
   if curl -sf --max-time 10 http://127.0.0.1:4380/api/iletisim/durum >/dev/null 2>&1; then

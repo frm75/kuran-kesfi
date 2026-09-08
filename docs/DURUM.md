@@ -11,12 +11,22 @@
 50 kıssa + 101 kavram + 60 ilke + 26 konum + 22 siyer olayı + 742 konu başlığı +
 40 886 ayet-ayet bağı. Plan §12.1 ve §12.5 tamamlandı.
 
-**JavaScript durumu değişti (2026-09-05).** Site artık "0 bayt JS" DEĞİL: `/harita`
-MapLibre GL'e geçti ve tek başına ~970 KB betik yüklüyor. Diğer 8211 sayfa hâlâ betiksiz.
-CSP `infra/nginx/kurankesfi.tr.conf` içindeki `map $uri $kesif_csp` ile sayfaya göre
-seçiliyor; `script-src 'self'` yalnız `/harita` ve `/kissa/*` için açık.
-Etkileşimli harita statik SVG'nin **üstüne** ekleniyor, yerine geçmiyor — betik
-çalışmazsa sayfa eskisi gibi kalır.
+**JavaScript durumu (2026-09-08'de güncellendi).** Site "0 bayt JS" DEĞİL, ama betik
+çalışan adres hâlâ sayılı: **beş** — `/harita` (MapLibre, ~970 KB), `/kissa/*`,
+`/dinle/*`, `/gunluk` ve `/ara`. 13 600'den fazla sayfa, 6236 ayet sayfası dahil, hâlâ
+betiksiz. CSP `infra/nginx/kurankesfi.tr.conf` içindeki `map $uri $kesif_csp` ile
+sayfaya göre seçiliyor ve duman testi **iki yönlü** denetliyor: bu beş adreste
+`script-src` olmalı, `/`, `/sureler`, `/kissalar` ve `/bakara-suresi/153`'te
+OLMAMALI.
+
+Her JS sayfası betiksiz bir karşılığın **üstüne** ekleniyor, yerine geçmiyor: harita
+statik SVG'nin, `/ara` gezinilebilir dizinin üstüne. Betik çalışmazsa sayfa eskisi
+gibi kalır.
+
+`/ara` betiği 14 KB ham / 5,7 KB gzip, **sıfır bağımlılık**. Pagefind WASM istediği
+(`wasm-unsafe-eval` CSP'ye girerdi), FlexSearch indeksin tamamını belleğe yüklediği
+için ikisi de alınmadı; duman testi `/ara`'da `wasm-unsafe-eval` olmadığını ayrıca
+doğruluyor.
 
 ## Komutlar (sırayla)
 
@@ -45,6 +55,7 @@ pnpm run deploy:rollback      # geri dön
 | İlgili ayetler | her ayet sayfasında | 40 886 bağ, 5994 / 6236 ayet (%96) |
 | Bağlam | her ayet sayfasında | önceki 3 + sonraki 3 ayet, öntanımlı meal |
 | Konu başlığı | **114 / 114 sure** | 742 başlık, `origin=platform` |
+| Arama | `/ara` | 9004 kayıt, 9 tür; referans + cüz/sayfa; JS'siz dizin |
 | Kaynak şeffaflığı | `/kaynaklar` | 9 kaynak |
 
 ## Yapılmayanlar ve NEDENİ
@@ -54,7 +65,6 @@ pnpm run deploy:rollback      # geri dön
 | Okuma günlüğü (IndexedDB) | **JS gerekir** — CSP'de `script-src` yok |
 | Çevrimdışı (service worker) | **JS gerekir** |
 | Keşif yolu çubuğu (§12.8a) | **JS gerekir** |
-| İstemci tarafı arama (§12.2) | **JS gerekir** |
 | Kavram grafı (D3), harita (MapLibre) | JS gerekirdi → **liste/SVG karşılığı yapıldı**, iş bitti |
 | Hoca notları (§23.2) | Hoca izni + transkript; şema ve import hattı hazır, veri yok |
 | Ses / kıraat | Kârî lisansı kararı açık (BACKLOG) |
