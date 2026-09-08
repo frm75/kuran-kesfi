@@ -2,7 +2,7 @@
 
 > Bu dosya **oturum devri** içindir: bağlam sıfırlandığında tek okumayla toparlanmak için.
 > Kalıcı kurallar `CLAUDE.md`'de, plan `PROJE_PLANI.md`'de, tasarım `DESIGN.md`'de.
-> Son güncelleme: 2026-09-08 (arama modülü, plan §12.2). Yayın `20260908T201249Z`.
+> Son güncelleme: 2026-09-08 (arama modülü + şerit arama kapısı, plan §12.2). Yayın `20260908T203020Z`.
 
 ## Tek cümle
 
@@ -24,12 +24,24 @@ Plan §12.1, §12.2 ve §12.5 tamamlandı.
 | Ölçülen maliyet | açılış 43 KB gzip · shard 1-12 KB · sonuç listesi 43-54 KB'ta görünüyor · sonraki aramalar 1-12 KB |
 | Betik | 14 KB ham / 5,7 KB gzip, sıfır bağımlılık |
 | JS'siz | sayfa boş kalmaz; sure/kavram/ilke/kıssa/konum/kök dizinleri build'de basılı (27 KB gzip) |
+| Erişim | **13 650 sayfanın hepsinde** şerit kapısı + Keşfet menüsü |
 
 **Ayet kayıtları indekste DURMAZ.** Başlık, adres, cüz, sayfa ve nüzul yeri sure
 tablosundan türetiliyor (`apps/web/src/lib/search/records.ts`). Türetme sapsa arama
 sessizce **yanlış ayete** bağlardı — üretilen adres geçerli bir sayfa olacağı için
 404 bile vermezdi. Bu yüzden her build'de 6236 ayetin hepsi veritabanındaki gerçek
 değerle karşılaştırılıyor; sapma varsa **build durur**.
+
+**Şerit kapısı gerçek `<input>` DEĞİL**, kutuya benzeyen bağlantı. 13 651 sayfanın
+CSP'sinde `form-action 'none'` duruyor (yalnız `/iletisim`'de açık); gerçek bir arama
+formu tarayıcı tarafından **sessizce engellenirdi** — kutu görünür, Enter hiçbir şey
+yapmaz. Betik eklemek de 13 651 sayfaya `script-src` açmak demekti. Kapı `/ara`'ya
+gidiyor, giriş alanı `autofocus` ile odaklı açılıyor. Maliyet sayfa başına
++119…135 bayt gzip.
+
+Doğrudan şeritten yazabilmek site geneli `form-action 'self'` ister — **karar
+verilmedi**. Statik sitede yazan uç yok; açılırsa kaybedilen tek koruma, enjekte
+edilmiş bir formun kendi origin'imizdeki `/api/iletisim`'e POST edebilmesi olurdu.
 
 **Shard anahtarı iki harf.** Tek harf ölçüldü ve düştü: Arapça `ا` kovası 53 KB gzip
 (kelimelerin çoğu `ال` belirlilik ekiyle başlıyor). İki harfle tipik sorgu 40 KB'tan
