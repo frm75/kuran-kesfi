@@ -2,14 +2,45 @@
 
 > Bu dosya **oturum devri** içindir: bağlam sıfırlandığında tek okumayla toparlanmak için.
 > Kalıcı kurallar `CLAUDE.md`'de, plan `PROJE_PLANI.md`'de, tasarım `DESIGN.md`'de.
-> Son güncelleme: 2026-09-06 (meal geçişi + dipnot ayet bağlantısı + Kitab-ı Mukaddes alıntıları). Yayın `20260905T185939Z`
-> (içerik genişletme: 50 kıssa / 101 kavram / 60 ilke).
+> Son güncelleme: 2026-09-08 (arama modülü, plan §12.2). Yayın `20260908T201249Z`.
 
 ## Tek cümle
 
-`kurankesfi.tr` yayında: 11 061 sayfa, 6236 ayet + 53 meal + 1641 kök +
-50 kıssa + 101 kavram + 60 ilke + 26 konum + 22 siyer olayı + 742 konu başlığı +
-40 886 ayet-ayet bağı. Plan §12.1 ve §12.5 tamamlandı.
+`kurankesfi.tr` yayında: 13 651 sayfa, 6236 ayet + 53 meal + 1641 kök +
+50 kıssa + 109 kavram + 64 ilke + 26 konum + 22 siyer olayı + 742 konu başlığı +
+41 556 ayet-ayet bağı + **9004 kayıtlık arama indeksi**.
+Plan §12.1, §12.2 ve §12.5 tamamlandı.
+
+## Arama (2026-09-08'de yayına girdi)
+
+`/ara` — bağımlılıksız ters indeks, build'de üretiliyor
+(`scripts/build/lib/search.ts`), istemci `apps/web/src/lib/search/` altında.
+
+| | |
+|---|---|
+| Kapsam | 6236 ayet (Diyanet meali + çeviriyazı + harekesiz Arapça) · 1641 kök · 742 konu · 114 sure · 109 kavram · 64 ilke · 50 kıssa · 26 konum · 22 olay |
+| Referans | `5/58` · `5.sure 58.ayet` · `bakara 153` · `bakara 153-160` · `cüz 2` · `sayfa 23`; sınır aşımı boş sonuç değil açıklama döndürür |
+| Anlık öneri | `yus.` → Yûsuf; 2768 kayıt `index.json` ile açılışta iniyor, tuş başına ağ isteği yok |
+| Ölçülen maliyet | açılış 43 KB gzip · shard 1-12 KB · sonuç listesi 43-54 KB'ta görünüyor · sonraki aramalar 1-12 KB |
+| Betik | 14 KB ham / 5,7 KB gzip, sıfır bağımlılık |
+| JS'siz | sayfa boş kalmaz; sure/kavram/ilke/kıssa/konum/kök dizinleri build'de basılı (27 KB gzip) |
+
+**Ayet kayıtları indekste DURMAZ.** Başlık, adres, cüz, sayfa ve nüzul yeri sure
+tablosundan türetiliyor (`apps/web/src/lib/search/records.ts`). Türetme sapsa arama
+sessizce **yanlış ayete** bağlardı — üretilen adres geçerli bir sayfa olacağı için
+404 bile vermezdi. Bu yüzden her build'de 6236 ayetin hepsi veritabanındaki gerçek
+değerle karşılaştırılıyor; sapma varsa **build durur**.
+
+**Shard anahtarı iki harf.** Tek harf ölçüldü ve düştü: Arapça `ا` kovası 53 KB gzip
+(kelimelerin çoğu `ال` belirlilik ekiyle başlıyor). İki harfle tipik sorgu 40 KB'tan
+1-12 KB'a indi.
+
+**Bilinen sınır:** metin araması yalnız **Diyanet** mealinde. Okuyan/Esed'de geçip
+Diyanet'te geçmeyen kelime bulunmaz ("namaz" var, "salât" yok); kavram ve kök katmanı
+bunu kısmen kapatıyor. 4 meale çıkmak build parametresi — indeks ~4×, ilk transfer ~2×.
+
+Tasarım `docs/superpowers/specs/2026-09-08-arama-design.md`, plan
+`docs/superpowers/plans/2026-09-08-06-arama.md`.
 
 **JavaScript durumu (2026-09-08'de güncellendi).** Site "0 bayt JS" DEĞİL, ama betik
 çalışan adres hâlâ sayılı: **beş** — `/harita` (MapLibre, ~970 KB), `/kissa/*`,
