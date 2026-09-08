@@ -1,0 +1,110 @@
+---
+import Base from "~/layouts/Base.astro";
+import DinleAyet from "~/components/DinleAyet.astro";
+import { getSurah, getSurahTranslation, getSurahsIndex, getVerseWords, verseLabel } from "~/lib/data";
+import { getSurahSegments } from "~/lib/dinle/data";
+import { STYLE_LABEL, getVerseAudio } from "~/lib/recitation";
+
+/**
+ * Dinleme sayfasi — plan 04, spec §2.
+ *
+ * ## Sitenin JavaScript calisan UCUNCU sayfasi
+ *
+ * Digerleri /harita (MapLibre) ve /gunluk (IndexedDB). Karar spec §2'de:
+ * takip isigi requestAnimationFrame ister, 6236 ayet sayfasinda CSP gevsetmek
+ * bu ozelligin karsiligi degil. Ayet sayfasi buraya duz bir bag verir
+ * (/dinle/2#ayet-2-255) ve kendi <audio controls> etiketini korur.
+ *
+ * ## Damga sayfaya gomulu
+ *
+ * Sure basina ortalama 4,2 KB. Agdan cekilmedigi icin CSP'de `connect-src`
+ * kapali kaldi.
+ */
+
+export function getStaticPaths() {
+  return getSurahsIndex().surahs.map((surah) => ({
+    params: { surah: String(surah.id) },
+    props: { surahId: surah.id },
+  }));
+}
+
+interface Props {
+  surahId: number;
+}
+
+const { surahId } = Astro.props;
+const surah = getSurah(surahId);
+const segments = getSurahSegments(surahId);
+
+/**
+ * Ontanimli meal. Plan 05 bu mealin sesini de uretecek; metni simdiden ayni
+ * kaynaktan okuyoruz ki o zaman degistirmek gerekmesin — dipnot numaralari
+ * yalniz burada var.
+ */
+const MEAL_SLUG = "mehmet-okuyan";
+const mealByVerse = new Map(
+  (getSurahTranslation(MEAL_SLUG, surahId)?.verses ?? []).map((v) => [v.verseNumber, v]),
+);
+
+const verses = surah.verses.map((verse) => {
+  const meal = mealByVerse.get(verse.verseNumber);
+  return {
+    verseKey: `${String(surahId)}:${String(verse.verseNumber)}`,
+    verseNumber: verse.verseNumber,
+    words: getVerseWords(surahId, verse.verseNumber)?.words ?? [],
+    translation: meal?.text ?? null,
+    footnoteNumbers: (meal?.footnotes ?? []).map((f) => f.number),
+    audioUrl: getVerseAudio(surahId, verse.verseNumber)[0]?.url ?? null,
+    label: verseLabel(surah.nameTr, verse.verseNumber),
+  };
+});
+
+const reciter = getVerseAudio(surahId, surah.verses[0]?.verseNumber ?? 1)[0]?.reciter ?? null;
+
+/** Tarayiciya gomulen veri: yalniz bu surenin damgasi ve ses adresleri. */
+const islandData = {
+  surahId,
+  reciterSlug: reciter?.slug ?? null,
+  verses: verses.map((v) => ({
+    key: v.verseKey,
+    url: v.audioUrl,
+    starts: segments?.reciters[reciter?.slug ?? ""]?.[v.verseKey] ?? null,
+  })),
+};
+---
+
+<Base
+  title={`${surah.nameTr} suresini dinle — Kur'an-ı Kerim Keşfi`}
+  description={`${surah.nameTr} suresi ${reciter?.name ?? "kıraat"} okuyuşuyla; okunan kelime metin üstünde işaretlenir.`}
+  arabic
+  reading
+>
+  <main class="dinle" id="icerik">
+    <header class="dinle-bas">
+      <h1>{surah.nameTr} suresini dinle</h1>
+      {
+        reciter !== null && (
+          <p class="dinle-kari">
+            {reciter.name} — {STYLE_LABEL[reciter.style]}
+          </p>
+        )
+      }
+      <p class="dinle-not">
+        Okunan kelime metin üstünde işaretlenir. Betik çalışmazsa her ayetin
+        altındaki oynatıcı yine çalışır.
+      </p>
+      <p><a href={`/${String(surahId)}`}>{surah.nameTr} suresi sayfasına dön</a></p>
+    </header>
+
+    <div class="dinle-liste">
+      {verses.map((verse) => <DinleAyet {...verse} />)}
+    </div>
+
+    <script
+      type="application/json"
+      id="dinle-veri"
+      is:inline
+      set:html={JSON.stringify(islandData)}
+    />
+  </main>
+</Base>
