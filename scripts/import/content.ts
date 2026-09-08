@@ -333,10 +333,16 @@ function crossCheck(data: Loaded, dbSourceSlugs: ReadonlySet<string>): string[] 
   for (const p of data.principles) {
     need(`ilke ${p.slug}`, areaSlugs, "alan", [p.areaSlug]);
   }
+  for (const a of data.principleAreas) needSource(`ilke alani ${a.slug}`, a.sourceSlugs);
   const orders = new Set<number>();
   for (const p of data.principles) {
     if (orders.has(p.order)) errors.push(`ilke ${p.slug}: order ${p.order} baska bir ilkede de var`);
     orders.add(p.order);
+  }
+  const areaOrders = new Set<number>();
+  for (const a of data.principleAreas) {
+    if (areaOrders.has(a.order)) errors.push(`ilke alani ${a.slug}: order ${a.order} baska bir alanda da var`);
+    areaOrders.add(a.order);
   }
   for (const e of data.events) needSource(`olay ${e.order}`, e.sourceSlugs);
   if (data.noldeke !== null) needSource("noldeke", [data.noldeke.sourceSlug]);
