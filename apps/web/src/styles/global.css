@@ -5166,17 +5166,42 @@ a.ctx-num:hover {
 
 /* --- Pasaj karşılaştırma (/<sure>/karsilastir/<konu>) -------------------- */
 
-/* Konu başlığındaki karşılaştırma bağlantısı — akışı bölmesin diye küçük. */
+/*
+ * Konu başlığındaki karşılaştırma düğmesi.
+ *
+ * İlk hâli sönük ve `--text-xs` idi; kullanıcı "çok küçük, anlaşılmıyor"
+ * dedi (2026-09-09). Artık çerçeveli bir düğme: metin bir kademe büyük,
+ * kenarlığı var, ne yaptığını söylüyor ("4 mealde karşılaştır") — "Karşılaştır"
+ * tek başına neyin neyle karşılaştırıldığını söylemiyordu.
+ */
 .rd-topic-cmp {
-  color: var(--text-muted);
-  font-size: var(--text-xs);
+  flex: none;
+  padding: 0.22rem 0.7rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
   text-decoration: none;
   white-space: nowrap;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
 }
 .rd-topic-cmp:hover,
 .rd-topic-cmp:focus-visible {
+  border-color: var(--accent);
+  background-color: var(--accent-muted);
   color: var(--accent-text);
-  text-decoration: underline;
+}
+
+/* Dar ekranda başlık, aralık ve düğme alt alta düşsün. */
+@media (max-width: 40rem) {
+  .rd-topic-head {
+    flex-wrap: wrap;
+  }
+  .rd-topic-title {
+    flex-basis: 100%;
+  }
 }
 
 /*

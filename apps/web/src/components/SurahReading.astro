@@ -141,6 +141,14 @@ if (leftover.length > 0) groups.push({ topic: null, verses: leftover });
 const rangeLabel = (from: number, to: number): string =>
   from === to ? String(from) : `${String(from)}–${String(to)}`;
 
+/*
+ * Karşılaştırma sayfasında kaç meal olduğu — düğme metninde yazıyor.
+ * Sabit "4" yazmak, öncelik listesi değişince sessizce yalan olurdu.
+ */
+const compareAuthorCount = getAuthorsIndex().authors.filter(
+  (item) => item.language === "tr" && item.priority !== null,
+).length;
+
 const juzStarts = new Set<number>();
 let seenJuz: number | null = null;
 for (const verse of surah.verses) {
@@ -270,7 +278,8 @@ for (const verse of surah.verses) {
               class="rd-topic-cmp"
               href={`/${surah.slug}/karsilastir/${String(group.topic.order)}`}
             >
-              Karşılaştır<span class="sr-only"> — {group.topic.title}</span>
+              {compareAuthorCount} mealde karşılaştır
+              <span class="sr-only"> — {group.topic.title}</span>
               <span aria-hidden="true"> →</span>
             </a>
           </h2>
