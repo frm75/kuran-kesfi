@@ -75,7 +75,11 @@ docs/                PROJE_PLANI.md, DESIGN.md, DEPLOY_REPORT.md, BACKLOG.md
 ## Veri Kuralları
 - Tanzil = tek gerçek kaynak; her tablo `verse_id` ile bağlanır, ayet numarası metin olarak saklanmaz
 - `scripts/build` içindeki referans linter geçmeden build tamamlanmaz
-- Kök eşleştirme `scripts/import/lib/arabic_normalize.ts` üzerinden; eşleşmeyenler rapora yazılır
+- Kök eşleştirme `scripts/import/qul_word_root.ts` içinde: QUL'un boşluklu kökü (`ث و ي`) sadeleştirilip
+  `root.arabic` ile birebir eşleşir; eşleşmeyenler rapora yazılır, sessizce atlanmaz.
+  **Planın §20.1 öngördüğü ayrı `arabic_normalize.ts` katmanı kurulmadı** — dosya yok, aramayın.
+  Arapça normalizasyon iki yerde: `apps/web/src/lib/search/normalize.ts` (arama; build ve istemci ORTAK
+  kullanır) ve `scripts/build/principle_candidates.ts` (satır içi, kalıp eşleşmesi için)
 - Import'ta yapay `sleep` yok; `p-limit` ile 5-10 paralel; tek seferlik çekim → `cache/`
 - Öncelikli mealler: Diyanet İşleri, Mehmet Okuyan, Mustafa İslamoğlu, Muhammed Esed (`author.priority` 1-4)
 - Diyanet tefsiri: özet + ≤200 karakter alıntı + link; toplu kopya yok

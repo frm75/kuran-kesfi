@@ -815,6 +815,12 @@ alınmadı, webhook yerine uzun yoklama seçildi; gerekçeler `docs/DURUM.md` ve
 - **Kök normalizasyonu:** Corpus/Açık Kuran kök eşleştirmesinde illetli harfler (ا و ي), hemze dönüşümleri,
   şedde/idğam ve hareke farklılıkları için ayrı normalizasyon katmanı (`scripts/import/lib/arabic_normalize.ts`);
   düz string/regex eşleşmesine güvenilmez. Eşleşmeyen kelimeler rapor dosyasına yazılır, sessizce atlanmaz.
+  **Durum (2026-09-09): bu katman KURULMADI.** `arabic_normalize.ts` diye bir dosya yok. Kök eşleştirme
+  `scripts/import/qul_word_root.ts` içinde birebir string karşılaştırmasıyla yapılıyor (QUL'un boşluklu kökü
+  sadeleştirilip `root.arabic` ile eşleniyor); eşleşmeyenler rapora yazılıyor, yani planın bu yarısı tutuyor.
+  Gerçekten var olan Arapça normalizasyon: `apps/web/src/lib/search/normalize.ts` (arama indeksi ve istemci
+  ortak) ve `scripts/build/principle_candidates.ts` (satır içi). Kök eşleştirmesinde illetli harf / hemze
+  farkı yüzünden kaçan kelime olup olmadığı ÖLÇÜLMEDİ.
 - **Kaynak nezaketi:** Yapay `sleep` kullanılmaz; ancak Açık Kuran gönüllü bir servistir — eşzamanlılık `p-limit`
   ile 5-10 paralel istekle sınırlanır, her kaynak tek seferlik çekilip `cache/` altına alınır, tekrar import cache'ten
   çalışır. Repo'da hazır dump varsa önce o kullanılır.
