@@ -145,6 +145,8 @@ const rangeLabel = (from: number, to: number): string =>
  * Karşılaştırma sayfasında kaç meal olduğu — düğme metninde yazıyor.
  * Sabit "4" yazmak, öncelik listesi değişince sessizce yalan olurdu.
  */
+const firstTopic = sections[0];
+
 const compareAuthorCount = getAuthorsIndex().authors.filter(
   (item) => item.language === "tr" && item.priority !== null,
 ).length;
@@ -201,6 +203,25 @@ for (const verse of surah.verses) {
       <li>
         <MealSecici surahSlug={surah.slug} surahId={surah.id} currentSlug={author.slug} />
       </li>
+      {/*
+        Pasaj karşılaştırma kapısı. Önce her konu başlığında duruyordu; 44
+        tekrar hem gürültüydü hem geç fark ediliyordu (kullanıcı kararı
+        2026-09-09). Artık künye satırında, meal seçicinin sağında — okuyucu
+        hangi mealde olduğunu görürken yanında "başkalarıyla karşılaştır"
+        kapısını da görüyor.
+
+        Hedef ilk konu; oradan önceki/sonraki konuyla ilerleniyor. Belirli bir
+        bölümün karşılaştırmasına konu dizininden de girilebiliyor.
+      */}
+      {firstTopic !== undefined && (
+        <li>
+          <a class="chip-cta" href={`/${surah.slug}/karsilastir/${String(firstTopic.order)}`}>
+            {compareAuthorCount} mealde karşılaştır
+            <span class="sr-only"> — {surah.nameTr} suresi, bölüm bölüm</span>
+            <span aria-hidden="true"> →</span>
+          </a>
+        </li>
+      )}
     </ul>
 
     {/* Kesintisiz dinleme ve kelime takip isigi orada: bu sayfa betiksiz
@@ -224,6 +245,15 @@ for (const verse of surah.verses) {
               <a href={`#konu-${String(topic.order)}`}>
                 <span class="rd-index-title">{topic.title}</span>
                 <span class="rd-index-range">{rangeLabel(topic.verseStart, topic.verseEnd)}</span>
+              </a>
+              {/* Belirli bir bölümü karşılaştırmanın yolu; okuma akışında
+                  düğme yok, erişim burada duruyor. */}
+              <a
+                class="rd-index-cmp"
+                href={`/${surah.slug}/karsilastir/${String(topic.order)}`}
+              >
+                karşılaştır
+                <span class="sr-only"> — {topic.title}</span>
               </a>
             </li>
           ))}
@@ -268,20 +298,6 @@ for (const verse of surah.verses) {
           <h2 class="rd-topic-head">
             <span class="rd-topic-title">{group.topic.title}</span>
             <span class="rd-topic-range">{rangeLabel(group.topic.verseStart, group.topic.verseEnd)}</span>
-            {/*
-              Pasaj karşılaştırma. Sure sayfasında tek meal var; okuyucu
-              karşılaştırmak için ayete tek tek girmek zorundaydı (kullanıcı
-              kararı 2026-09-09). Bu bağlantı o bölümün ayetlerini dört
-              öncelikli mealde yan yana açar.
-            */}
-            <a
-              class="rd-topic-cmp"
-              href={`/${surah.slug}/karsilastir/${String(group.topic.order)}`}
-            >
-              {compareAuthorCount} mealde karşılaştır
-              <span class="sr-only"> — {group.topic.title}</span>
-              <span aria-hidden="true"> →</span>
-            </a>
           </h2>
         )}
 

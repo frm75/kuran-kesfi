@@ -5167,20 +5167,20 @@ a.ctx-num:hover {
 /* --- Pasaj karşılaştırma (/<sure>/karsilastir/<konu>) -------------------- */
 
 /*
- * Konu başlığındaki karşılaştırma düğmesi.
+ * Künye satırındaki karşılaştırma kapısı.
  *
- * İlk hâli sönük ve `--text-xs` idi; kullanıcı "çok küçük, anlaşılmıyor"
- * dedi (2026-09-09). Artık çerçeveli bir düğme: metin bir kademe büyük,
- * kenarlığı var, ne yaptığını söylüyor ("4 mealde karşılaştır") — "Karşılaştır"
- * tek başına neyin neyle karşılaştırıldığını söylemiyordu.
+ * Önce her konu başlığında duruyordu; 44 tekrar hem gürültüydü hem geç fark
+ * ediliyordu (kullanıcı kararı 2026-09-09). Artık başlığın künye çipleriyle
+ * aynı satırda, meal seçicinin sağında.
+ *
+ * Dolgu sitenin kendi CTA kalıbı (`.ilt-submit`): altın zemin + sayfa zemini
+ * rengi metin. Çipler arasında tek dolgulu öğe olduğu için gözü çekiyor.
  */
-.rd-topic-cmp {
-  flex: none;
+.chip-cta {
+  display: inline-block;
   padding: 0.3rem 0.85rem;
   border: 1px solid var(--accent);
   border-radius: 999px;
-  /* Sitenin kendi CTA kalıbı (`.ilt-submit`): altın dolgu + sayfa zemini
-     rengi metin. Kontrastı /iletisim'de zaten denenmiş bir çift. */
   background: var(--accent);
   color: var(--bg-primary);
   font-size: var(--text-sm);
@@ -5189,20 +5189,33 @@ a.ctx-num:hover {
   white-space: nowrap;
   transition: background-color var(--duration-fast) var(--ease-out);
 }
-.rd-topic-cmp:hover,
-.rd-topic-cmp:focus-visible {
+.chip-cta:hover,
+.chip-cta:focus-visible {
   background: var(--accent-hover);
   border-color: var(--accent-hover);
 }
 
-/* Dar ekranda başlık, aralık ve düğme alt alta düşsün. */
-@media (max-width: 40rem) {
-  .rd-topic-head {
-    flex-wrap: wrap;
-  }
-  .rd-topic-title {
-    flex-basis: 100%;
-  }
+/* Konu dizinindeki satır başı karşılaştırma bağlantısı — okuma akışında
+   düğme yok, belirli bir bölüme buradan giriliyor. */
+.rd-index-list > li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+.rd-index-list > li > a:first-child {
+  flex: 1;
+  min-width: 0;
+}
+.rd-index-cmp {
+  flex: none;
+  color: var(--accent-text);
+  font-size: var(--text-xs);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.rd-index-cmp:hover,
+.rd-index-cmp:focus-visible {
+  text-decoration: underline;
 }
 
 /*
