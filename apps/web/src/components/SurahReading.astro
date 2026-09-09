@@ -7,11 +7,13 @@ import {
   getAuthorsIndex,
   getDefaultAuthor,
   getSurah,
+  getSurahSections,
   getSurahTranslation,
   getSurahsIndex,
   surahReadingPath,
   verseLabel,
 } from "~/lib/data";
+import { PERIOD_LABEL, periodOf } from "~/lib/nuzul";
 
 /**
  * Klasik okuma ekraninin govdesi — plan §7, DESIGN.md §9 adim 4.
@@ -85,6 +87,66 @@ const showBasmala = surahId !== 1 && surahId !== 9;
 const basmala = showBasmala ? getSurah(1).verses[0]?.textUthmani : undefined;
 
 const revelation = surah.revelationType === "mekki" ? "Mekkî" : "Medenî";
+const period = periodOf(surah.revelationOrderNoldeke, surah.revelationType);
+
+/**
+ * Konu bölümlemesi — 2026-09-09'da okuma akışına girdi.
+ *
+ * Bakara 286 ayetlik tek düz listeydi: başlık yok, ara yok, dinlenme noktası
+ * yok. Bölümleme 114 surenin hepsinde zaten vardı ve yalnızca ayet
+ * sayfasında görünüyordu; asıl okunan yer burası (kullanıcı kararı
+ * 2026-09-09). Bakara artık 44 bölüm.
+ *
+ * Başlıklar platform derlemesidir (plan §12.15) ve konu dizininin içinde öyle
+ * yazıyor; bir tefsirden alınmış gibi sunulmaz.
+ */
+const sectioning = getSurahSections(surahId);
+const sections = sectioning?.sections ?? [];
+
+interface ReadingGroup {
+  topic: (typeof sections)[number] | null;
+  verses: typeof surah.verses;
+}
+
+/*
+ * Ayetler konulara bölünür. Bölümleme yoksa ya da bir ayet hiçbir aralığa
+ * düşmüyorsa AYET KAYBOLMAZ: kalanlar başlıksız son gruba girer. Linter
+ * aralıkların bitişikliğini zaten denetliyor, bu yalnızca son emniyet.
+ */
+const groups: ReadingGroup[] = [];
+const taken = new Set<number>();
+for (const topic of sections) {
+  const verses = surah.verses.filter(
+    (v) => v.verseNumber >= topic.verseStart && v.verseNumber <= topic.verseEnd,
+  );
+  for (const v of verses) taken.add(v.verseNumber);
+  if (verses.length > 0) groups.push({ topic, verses });
+}
+const leftover = surah.verses.filter((v) => !taken.has(v.verseNumber));
+if (leftover.length > 0) groups.push({ topic: null, verses: leftover });
+
+/**
+ * Cüz sınırı düşen ayetler.
+ *
+ * Bakara cüz 1-3 arasına yayılıyor ve okurken nerede olunduğu belli değildi.
+ * Sayfa işareti KONULMADI: Bakara 48 sayfa sürüyor, 48 işaret akışı bölerdi.
+ * Surenin ilk ayeti işaretlenmez — cüz zaten başlıkta yazıyor.
+ */
+/*
+ * Aralık etiketi TEK İFADE olarak üretilir.
+ *
+ * Şablonda `{start}{end !== start && ...}` yazınca Astro iki ifadenin arasına
+ * boşluk koyuyor ve çıktı "1 –5" oluyor. Fonksiyon tek bir metin döndürür.
+ */
+const rangeLabel = (from: number, to: number): string =>
+  from === to ? String(from) : `${String(from)}–${String(to)}`;
+
+const juzStarts = new Set<number>();
+let seenJuz: number | null = null;
+for (const verse of surah.verses) {
+  if (seenJuz !== null && verse.juz !== seenJuz) juzStarts.add(verse.verseNumber);
+  seenJuz = verse.juz;
+}
 ---
 
 <main id="icerik" class="pg pg-normal">
@@ -113,7 +175,15 @@ const revelation = surah.revelationType === "mekki" ? "Mekkî" : "Medenî";
 
     <ul class="chip-row">
       <li class="chip"><b>{surah.verseCount}</b> ayet</li>
-      <li class="chip">{revelation}</li>
+      <li class="chip">
+        {revelation}
+        {period !== null && (
+          <Fragment>
+            <span aria-hidden="true"> · </span>
+            {PERIOD_LABEL[period]}
+          </Fragment>
+        )}
+      </li>
       <li class="chip">iniş sırası <b>{surah.revelationOrderStandard}</b></li>
       <li class="chip">sayfa <b>{surah.pageStart}</b></li>
       {/* Mealin sahibi metnin yanında yazar — kaynak kutusunun yerine geçen
@@ -135,6 +205,31 @@ const revelation = surah.revelationType === "mekki" ? "Mekkî" : "Medenî";
   </header>
 
   {
+    sections.length > 1 && (
+      <details class="rd-index">
+        <summary>
+          Konu dizini <span class="rd-index-count">{sections.length} konu</span>
+        </summary>
+        <ol class="rd-index-list">
+          {sections.map((topic) => (
+            <li>
+              <a href={`#konu-${String(topic.order)}`}>
+                <span class="rd-index-title">{topic.title}</span>
+                <span class="rd-index-range">{rangeLabel(topic.verseStart, topic.verseEnd)}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+        <p class="rd-index-note">
+          {sectioning?.origin === "platform"
+            ? "Konu başlıkları platform derlemesidir; bir tefsirden alınmamıştır."
+            : "Konu başlıkları kaynaktan alınmıştır."}
+        </p>
+      </details>
+    )
+  }
+
+  {
     basmala !== undefined && (
       <p lang="ar" dir="rtl" class="verse-arabic is-large border-border mb-8 border-b pb-6 text-center">
         {basmala}
@@ -153,66 +248,88 @@ const revelation = surah.revelationType === "mekki" ? "Mekkî" : "Medenî";
     )
   }
 
-  <ol class="verse-list">
-    {
-      surah.verses.map((verse) => {
-        const meal = translationByVerse.get(verse.verseNumber);
-        const label = verseLabel(surah.nameTr, verse.verseNumber);
-        return (
-          <li id={`ayet-${String(verse.verseNumber)}`}>
-            <a class="v-num" href={`/${surah.slug}/${String(verse.verseNumber)}`}>
-              <span class="sr-only">{label} — tek başına aç</span>
-              <span aria-hidden="true">{verse.verseNumber}</span>
-            </a>
-            <div class="v-body">
-              <VerseArabic
-                text={verse.textUthmani}
-                verseNumber={verse.verseNumber}
-                label={label}
-                sajda={verse.sajda}
-              />
+  {
+    groups.map((group) => (
+      <section
+        class="rd-topic"
+        id={group.topic === null ? undefined : `konu-${String(group.topic.order)}`}
+      >
+        {group.topic !== null && (
+          /* Başlık <ol>'un İÇİNE konamaz — <ol> yalnız <li> alır. Her konu
+             kendi <section>'ında: başlık + o konunun ayet listesi. */
+          <h2 class="rd-topic-head">
+            <span class="rd-topic-title">{group.topic.title}</span>
+            <span class="rd-topic-range">{rangeLabel(group.topic.verseStart, group.topic.verseEnd)}</span>
+          </h2>
+        )}
 
-              {verse.transcriptionTr !== null && (
-                <p lang="tr" class="transcription">
-                  {verse.transcriptionTr}
-                </p>
-              )}
-
-              {meal === undefined ? (
-                <p class="text-text-secondary m-0 text-sm">
-                  Bu ayetin {author.name} mealinde karşılığı kaynakta yok.
-                </p>
-              ) : (
-                <Translation
-                  authorName={author.name}
-                  authorSlug={author.slug}
-                  text={meal.text}
-                  footnotes={meal.footnotes}
-                  sourceDeclaredBy="sayfa altındaki kaynak listesi"
-                  anchorPrefix={`${String(surah.id)}-${String(verse.verseNumber)}-${author.slug}`}
-                  hideAuthor
-                />
-              )}
-
-              {/*
-                Ayet sayfasina giren tek kapi kenardaki numaraydi; kimse onu
-                baglanti gibi gormedi (kullanici karari, 2026-09-08). Numara
-                yerinde duruyor, yaninda gorunur bir dugme var. Erisilebilir
-                ad ayet etiketini tasiyor: 286 tane "Ayet detayi" baglantisi
-                ekran okuyucuda ayirt edilemezdi.
-              */}
-              <p class="v-more">
-                <a class="v-detail" href={`/${surah.slug}/${String(verse.verseNumber)}`}>
-                  Ayet detayı<span class="sr-only"> — {label}</span>{" "}
-                  <span aria-hidden="true">→</span>
+        <ol class="verse-list">
+          {group.verses.map((verse) => {
+            const meal = translationByVerse.get(verse.verseNumber);
+            const label = verseLabel(surah.nameTr, verse.verseNumber);
+            return (
+              <li id={`ayet-${String(verse.verseNumber)}`}>
+                {juzStarts.has(verse.verseNumber) && (
+                  <p class="v-juz">
+                    <span class="sr-only">Buradan itibaren </span>
+                    cüz {verse.juz}
+                  </p>
+                )}
+                <a class="v-num" href={`/${surah.slug}/${String(verse.verseNumber)}`}>
+                  <span class="sr-only">{label} — tek başına aç</span>
+                  <span aria-hidden="true">{verse.verseNumber}</span>
                 </a>
-              </p>
-            </div>
-          </li>
-        );
-      })
-    }
-  </ol>
+                <div class="v-body">
+                  <VerseArabic
+                    text={verse.textUthmani}
+                    verseNumber={verse.verseNumber}
+                    label={label}
+                    sajda={verse.sajda}
+                  />
+
+                  {verse.transcriptionTr !== null && (
+                    <p lang="tr" class="transcription">
+                      {verse.transcriptionTr}
+                    </p>
+                  )}
+
+                  {meal === undefined ? (
+                    <p class="text-text-secondary m-0 text-sm">
+                      Bu ayetin {author.name} mealinde karşılığı kaynakta yok.
+                    </p>
+                  ) : (
+                    <Translation
+                      authorName={author.name}
+                      authorSlug={author.slug}
+                      text={meal.text}
+                      footnotes={meal.footnotes}
+                      sourceDeclaredBy="sayfa altındaki kaynak listesi"
+                      anchorPrefix={`${String(surah.id)}-${String(verse.verseNumber)}-${author.slug}`}
+                      hideAuthor
+                    />
+                  )}
+
+                  {/*
+                    Ayet sayfasina giren tek kapi kenardaki numaraydi; kimse onu
+                    baglanti gibi gormedi (kullanici karari, 2026-09-08). Numara
+                    yerinde duruyor, yaninda gorunur bir dugme var. Erisilebilir
+                    ad ayet etiketini tasiyor: 286 tane "Ayet detayi" baglantisi
+                    ekran okuyucuda ayirt edilemezdi.
+                  */}
+                  <p class="v-more">
+                    <a class="v-detail" href={`/${surah.slug}/${String(verse.verseNumber)}`}>
+                      Ayet detayı<span class="sr-only"> — {label}</span>{" "}
+                      <span aria-hidden="true">→</span>
+                    </a>
+                  </p>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      </section>
+    ))
+  }
 
   <nav aria-label="Sureler arası gezinme" class="pg-nav">
     {

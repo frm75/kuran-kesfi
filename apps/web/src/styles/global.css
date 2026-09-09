@@ -5051,3 +5051,115 @@ a.ctx-num:hover {
   font-weight: var(--fw-normal);
   font-size: var(--text-md);
 }
+
+/* --- Sure okuma akışı: konu bölümleri (2026-09-09) ----------------------- */
+
+/*
+ * Bakara 286 ayetlik tek düz listeydi — başlık yok, ara yok, dinlenme noktası
+ * yok. Bölümleme 114 surenin hepsinde zaten vardı ve yalnızca ayet
+ * sayfasında görünüyordu (kullanıcı kararı 2026-09-09).
+ */
+.rd-topic + .rd-topic {
+  margin-block-start: var(--space-8);
+}
+.rd-topic-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-2);
+  padding-block-end: var(--space-2);
+  border-block-end: 1px solid var(--accent-muted);
+  scroll-margin-top: var(--space-4);
+}
+.rd-topic-title {
+  flex: 1;
+  color: var(--text-secondary);
+  font-family: var(--font-heading);
+  font-size: var(--text-md);
+  font-weight: var(--fw-normal);
+}
+.rd-topic-range {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+/* Konu başlığı bölümün İLK ayetiyle bitişik durmalı; listenin kendi üst
+   çizgisi burada ikinci bir çizgi olurdu. */
+.rd-topic .verse-list > li:first-child {
+  border-top: 0;
+}
+
+/* Konu dizini — 44 başlıklı Bakara'da tek gezinme aracı. Betiksiz. */
+.rd-index {
+  margin-block-end: var(--space-6);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.rd-index > summary {
+  padding: var(--space-2) var(--space-3);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: var(--text-sm);
+}
+.rd-index-count {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+.rd-index-list {
+  margin: 0;
+  padding: 0 var(--space-3) var(--space-2);
+  list-style: none;
+  font-size: var(--text-sm);
+}
+.rd-index-list a {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding-block: 0.25rem;
+  text-decoration: none;
+}
+.rd-index-title {
+  flex: 1;
+  color: var(--text-secondary);
+}
+.rd-index-list a:hover .rd-index-title {
+  color: var(--accent-text);
+}
+.rd-index-range {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+.rd-index-note {
+  margin: 0;
+  padding: 0 var(--space-3) var(--space-3);
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+
+/*
+ * Cüz sınırı.
+ *
+ * `.verse-list > li` iki sütunlu ızgara; işaret iki sütunu da kaplasın diye
+ * `grid-column: 1 / -1`. Sayfa işareti konulmadı — Bakara 48 sayfa sürüyor,
+ * 48 işaret akışı bölerdi.
+ */
+.v-juz {
+  grid-column: 1 / -1;
+  margin: 0 0 var(--space-3);
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  text-align: center;
+  text-transform: uppercase;
+}
+.v-juz::before,
+.v-juz::after {
+  content: "";
+  display: inline-block;
+  width: 2.5rem;
+  margin-inline: var(--space-2);
+  border-block-start: 1px solid var(--border-strong);
+  vertical-align: middle;
+}
