@@ -114,6 +114,8 @@ smoke_test() {
   check "/kok/%D9%82%D9%88%D9%84"  200
   # Arama (2026-09-08): sayfa 200 dondugu halde indeks parcalari 404 verirse
   # kutu gorunur, sonuc gelmez ve hicbir hata cikmaz.
+  # Pasaj karsilastirma (2026-09-09): 742 sayfa, konu basina bir adres.
+  check "/bakara-suresi/karsilastir/3"  200
   check "/ara"                     200
   check "/data/search/index.json"  200
   check "/data/search/docs/0.json" 200
