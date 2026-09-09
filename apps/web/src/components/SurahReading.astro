@@ -260,6 +260,19 @@ for (const verse of surah.verses) {
           <h2 class="rd-topic-head">
             <span class="rd-topic-title">{group.topic.title}</span>
             <span class="rd-topic-range">{rangeLabel(group.topic.verseStart, group.topic.verseEnd)}</span>
+            {/*
+              Pasaj karşılaştırma. Sure sayfasında tek meal var; okuyucu
+              karşılaştırmak için ayete tek tek girmek zorundaydı (kullanıcı
+              kararı 2026-09-09). Bu bağlantı o bölümün ayetlerini dört
+              öncelikli mealde yan yana açar.
+            */}
+            <a
+              class="rd-topic-cmp"
+              href={`/${surah.slug}/karsilastir/${String(group.topic.order)}`}
+            >
+              Karşılaştır<span class="sr-only"> — {group.topic.title}</span>
+              <span aria-hidden="true"> →</span>
+            </a>
           </h2>
         )}
 

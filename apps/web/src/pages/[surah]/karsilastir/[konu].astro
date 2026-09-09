@@ -1,0 +1,233 @@
+---
+import type { GetStaticPaths } from "astro";
+import Base from "~/layouts/Base.astro";
+import Translation from "~/components/Translation.astro";
+import VerseArabic from "~/components/VerseArabic.astro";
+import {
+  getAuthorsIndex,
+  getSurah,
+  getSurahMetaById,
+  getSurahSections,
+  getSurahTranslation,
+  getSurahsIndex,
+  verseLabel,
+} from "~/lib/data";
+
+/**
+ * Pasaj karşılaştırma — bir konunun ayetleri, dört mealde yan yana.
+ *
+ * ## Neden ayrı sayfa, sure sayfasında değil
+ *
+ * Ölçüldü: Bakara'nın 286 ayeti tek mealle 97 KB gzip, dört mealle ~160 KB,
+ * 27 mealle ~500 KB. Karşılaştırmayı okuma ekranına gömmek, çoğu okuyucunun
+ * kullanmayacağı bir özellik için ana sayfayı %65 şişirirdi.
+ *
+ * Konu bölümlemesi bu ölçeği çözüyor: 742 konunun ortalaması 8,4 ayet, yani
+ * dört mealle sayfa başına birkaç kilobayt.
+ *
+ * ## Neden dört meal
+ *
+ * `author.priority` 1-4: Diyanet İşleri, Mehmet Okuyan, Mustafa İslamoğlu,
+ * Muhammed Esed (kullanıcı kararı 2026-09-09). Dördü de 114 surenin hepsini
+ * kapsıyor, yani hiçbir konuda boş sütun çıkmıyor. Daha fazlası isteyen ayet
+ * sayfasına gider — orada 27 Türkçe mealin hepsi var.
+ *
+ * ## JavaScript yok
+ *
+ * Meal süzgeci saf CSS: `:has()` ile onay kutusu → meal görünürlüğü. Kalıp
+ * ayet sayfasındaki karşılaştırma panelinin aynısı. `:has()` desteklemeyen
+ * tarayıcıda kutular hiçbir şey yapmaz ve dört meal de görünür kalır —
+ * içerik kaybı olmaz.
+ */
+
+export const getStaticPaths = (() => {
+  const paths: { params: { surah: string; konu: string }; props: { surahId: number; order: number } }[] = [];
+  for (const surah of getSurahsIndex().surahs) {
+    for (const topic of getSurahSections(surah.id)?.sections ?? []) {
+      paths.push({
+        params: { surah: surah.slug, konu: String(topic.order) },
+        props: { surahId: surah.id, order: topic.order },
+      });
+    }
+  }
+  return paths;
+}) satisfies GetStaticPaths;
+
+const { surahId, order } = Astro.props;
+
+const surah = getSurahMetaById().get(surahId);
+if (surah === undefined) throw new Error(`surahs_index.json icinde ${String(surahId)} yok.`);
+
+const sectioning = getSurahSections(surahId);
+const sections = sectioning?.sections ?? [];
+const topic = sections.find((item) => item.order === order);
+if (topic === undefined) {
+  throw new Error(`${surah.slug} icinde ${String(order)} numarali konu yok.`);
+}
+
+const previousTopic = sections.find((item) => item.order === order - 1) ?? null;
+const nextTopic = sections.find((item) => item.order === order + 1) ?? null;
+
+/** Öncelik sırasıyla ilk dört Türkçe meal. */
+const authors = getAuthorsIndex()
+  .authors.filter((author) => author.language === "tr" && author.priority !== null)
+  .sort((a, b) => (a.priority ?? 99) - (b.priority ?? 99))
+  .slice(0, 4);
+
+const verses = getSurah(surahId).verses.filter(
+  (verse) => verse.verseNumber >= topic.verseStart && verse.verseNumber <= topic.verseEnd,
+);
+
+/** yazar slug → (ayet no → meal satırı) */
+const byAuthor = new Map(
+  authors.map((author) => [
+    author.slug,
+    new Map(
+      (getSurahTranslation(author.slug, surahId)?.verses ?? []).map((verse) => [
+        verse.verseNumber,
+        verse,
+      ]),
+    ),
+  ]),
+);
+
+/*
+ * Süzgeç kuralları SATIR İÇİ veriliyor: yazar listesi veriden geliyor, global
+ * stil dosyasına yazılamaz. Kutular öntanımlı olarak İŞARETLİ; işaret
+ * kaldırılınca o meal gizlenir. Tersi (işaretleyince göster) daha kolay
+ * yazılırdı ama sayfa dört meal birden açılmalı — karşılaştırma sayfası bu.
+ */
+const filterCss = authors
+  .map(
+    (author) =>
+      `.kcmp:not(:has(#kf-${author.slug}:checked)) [data-author="${author.slug}"]{display:none}`,
+  )
+  .join("");
+
+const range =
+  topic.verseStart === topic.verseEnd
+    ? String(topic.verseStart)
+    : `${String(topic.verseStart)}–${String(topic.verseEnd)}`;
+const title = `${surah.nameTr} ${range} — ${String(authors.length)} meal karşılaştırma`;
+---
+
+<Base
+  title={title}
+  description={`${surah.nameTr} suresi ${range}. ayetler ${authors.map((a) => a.name).join(", ")} meallerinde yan yana.`}
+  arabic
+  reading
+>
+  <main id="icerik" class="pg pg-wide kcmp">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <a href="/sureler">Sureler</a> <span aria-hidden="true">›</span>
+      <a href={`/${surah.slug}`}>{surah.nameTr}</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">Karşılaştır</span>
+    </nav>
+
+    <header class="pg-head">
+      <p class="pg-kicker">{surah.nameTr} suresi · {range}. ayetler</p>
+      <h1 class="pg-title">{topic.title}</h1>
+      <p class="pg-lede">
+        Bu bölümün ayetleri {authors.length} mealde yan yana. Aralarındaki fark yorum
+        farkıdır; hiçbiri tek doğru olarak sunulmaz. Bütün {" "}
+        <a href={`/${surah.slug}/${String(topic.verseStart)}`}>27 Türkçe meal ayet sayfasında</a>.
+      </p>
+    </header>
+
+    <fieldset class="kf">
+      <legend>Hangi mealler görünsün?</legend>
+      {
+        authors.map((author) => (
+          <label class="kf-item">
+            <input type="checkbox" id={`kf-${author.slug}`} checked />
+            <span>{author.name}</span>
+          </label>
+        ))
+      }
+    </fieldset>
+
+    <ol class="kcmp-list">
+      {
+        verses.map((verse) => {
+          const label = verseLabel(surah.nameTr, verse.verseNumber);
+          return (
+            <li id={`ayet-${String(verse.verseNumber)}`}>
+              <a class="v-num" href={`/${surah.slug}/${String(verse.verseNumber)}`}>
+                <span class="sr-only">{label} — bütün mealleriyle aç</span>
+                <span aria-hidden="true">{verse.verseNumber}</span>
+              </a>
+              <div class="v-body">
+                <VerseArabic
+                  text={verse.textUthmani}
+                  verseNumber={verse.verseNumber}
+                  label={label}
+                  sajda={verse.sajda}
+                />
+                <div class="kcmp-meals">
+                  {authors.map((author) => {
+                    const meal = byAuthor.get(author.slug)?.get(verse.verseNumber);
+                    return meal === undefined ? (
+                      <p class="kcmp-missing" data-author={author.slug}>
+                        <b>{author.name}</b> — bu ayetin karşılığı kaynakta yok.
+                      </p>
+                    ) : (
+                      <Translation
+                        authorName={author.name}
+                        authorSlug={author.slug}
+                        text={meal.text}
+                        footnotes={meal.footnotes}
+                        sourceDeclaredBy="sayfa altındaki kaynak listesi"
+                        anchorPrefix={`k-${String(surahId)}-${String(verse.verseNumber)}-${author.slug}`}
+                        lang="tr"
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            </li>
+          );
+        })
+      }
+    </ol>
+
+    <nav aria-label="Konular arası gezinme" class="pg-nav">
+      {
+        previousTopic === null ? (
+          <span />
+        ) : (
+          <a
+            class="pg-nav-btn"
+            rel="prev"
+            href={`/${surah.slug}/karsilastir/${String(previousTopic.order)}`}
+          >
+            <span aria-hidden="true">←</span> {previousTopic.title}
+          </a>
+        )
+      }
+      <a href={`/${surah.slug}#konu-${String(order)}`}>{surah.nameTr} suresine dön</a>
+      {
+        nextTopic === null ? (
+          <span />
+        ) : (
+          <a
+            class="pg-nav-btn"
+            rel="next"
+            href={`/${surah.slug}/karsilastir/${String(nextTopic.order)}`}
+          >
+            {nextTopic.title} <span aria-hidden="true">→</span>
+          </a>
+        )
+      }
+    </nav>
+
+    <p class="sec-note mt-3">
+      {sectioning?.origin === "platform"
+        ? "Konu başlıkları platform derlemesidir; bir tefsirden alınmamıştır."
+        : "Konu başlıkları kaynaktan alınmıştır."}
+      {" "}Mealler öncelik sırasına göre seçilmiştir; tamamı için ayet sayfasına bakın.
+    </p>
+  </main>
+</Base>
+
+<style is:inline set:html={filterCss}></style>

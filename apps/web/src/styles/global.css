@@ -5163,3 +5163,87 @@ a.ctx-num:hover {
   border-block-start: 1px solid var(--border-strong);
   vertical-align: middle;
 }
+
+/* --- Pasaj karşılaştırma (/<sure>/karsilastir/<konu>) -------------------- */
+
+/* Konu başlığındaki karşılaştırma bağlantısı — akışı bölmesin diye küçük. */
+.rd-topic-cmp {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.rd-topic-cmp:hover,
+.rd-topic-cmp:focus-visible {
+  color: var(--accent-text);
+  text-decoration: underline;
+}
+
+/*
+ * Meal süzgeci.
+ *
+ * Kutular öntanımlı İŞARETLİ; işaret kaldırılınca o meal gizlenir. Görünürlük
+ * kuralları sayfa içinde satır içi veriliyor (yazar listesi veriden geliyor).
+ * `:has()` desteklemeyen tarayıcıda kutular hiçbir şey yapmaz ve dört meal de
+ * görünür kalır — içerik kaybı olmaz.
+ */
+.kf {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin: 0 0 var(--space-6);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-elevated);
+}
+.kf legend {
+  padding-inline: var(--space-2);
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+.kf-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.kcmp-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.kcmp-list > li {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: 0 var(--space-3);
+  padding-block: var(--space-5);
+  border-top: 1px solid var(--border);
+  scroll-margin-top: var(--space-4);
+}
+.kcmp-list > li:first-child {
+  border-top: 0;
+}
+.kcmp-list > li:target {
+  background-color: var(--accent-muted);
+  border-radius: var(--radius-md);
+}
+/*
+ * Mealler yan yana; dar alanda alt alta düşer.
+ *
+ * `auto-fit` boş rayları toplar: üç meal gizlenince kalan tek meal bütün
+ * genişliği alır, iki tanesi kalınca ikisi eşit paylaşır.
+ */
+.kcmp-meals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: var(--space-3) var(--space-5);
+  margin-block-start: var(--space-3);
+}
+.kcmp-missing {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}

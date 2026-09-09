@@ -6,6 +6,7 @@ import {
   getPrinciplesIndex,
   getRootsIndex,
   getStoriesIndex,
+  getSurahSections,
   getSurahsIndex,
   getTurkishAuthors,
 } from "~/lib/data";
@@ -96,6 +97,10 @@ export const GET: APIRoute = () => {
       // Uretilmeyen sayfa sitemap'e girmez, yoksa arama motoruna 404 vaat eder.
       if (!authorHasSurah(author, surah.id)) continue;
       urls.push({ loc: `/${surah.slug}/meal/${author.slug}`, priority: "0.4" });
+    }
+    // Pasaj karsilastirma (2026-09-09): konu basina bir adres, 742 sayfa.
+    for (const topic of getSurahSections(surah.id)?.sections ?? []) {
+      urls.push({ loc: `/${surah.slug}/karsilastir/${String(topic.order)}`, priority: "0.5" });
     }
   }
 
