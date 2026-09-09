@@ -4,6 +4,7 @@ import Base from "~/layouts/Base.astro";
 import Translation from "~/components/Translation.astro";
 import VerseArabic from "~/components/VerseArabic.astro";
 import {
+  authorHasSurah,
   getAuthorsIndex,
   getSurah,
   getSurahMetaById,
@@ -25,12 +26,16 @@ import {
  * Konu bölümlemesi bu ölçeği çözüyor: 742 konunun ortalaması 8,4 ayet, yani
  * dört mealle sayfa başına birkaç kilobayt.
  *
- * ## Neden dört meal
+ * ## Dört meal açık, yirmi yedisi seçilebilir
  *
- * `author.priority` 1-4: Diyanet İşleri, Mehmet Okuyan, Mustafa İslamoğlu,
- * Muhammed Esed (kullanıcı kararı 2026-09-09). Dördü de 114 surenin hepsini
- * kapsıyor, yani hiçbir konuda boş sütun çıkmıyor. Daha fazlası isteyen ayet
- * sayfasına gider — orada 27 Türkçe mealin hepsi var.
+ * Öntanımlı olarak `author.priority` 1-4 görünür: Diyanet İşleri, Mehmet
+ * Okuyan, Mustafa İslamoğlu, Muhammed Esed. Dördü de 114 surenin hepsini
+ * kapsıyor, yani hiçbir konuda boş sütun çıkmıyor.
+ *
+ * Kullanıcı listeden başka mealleri de açabilir (karar 2026-09-09). Bunun
+ * bedeli: 27 mealin metni sayfada DURUR, yalnız görünürlüğü CSS ile
+ * değişir — betik olmadan başka yolu yok. Ölçüm aşağıdaki `filterCss`
+ * yorumunda.
  *
  * ## JavaScript yok
  *
@@ -68,11 +73,27 @@ if (topic === undefined) {
 const previousTopic = sections.find((item) => item.order === order - 1) ?? null;
 const nextTopic = sections.find((item) => item.order === order + 1) ?? null;
 
-/** Öncelik sırasıyla ilk dört Türkçe meal. */
+/*
+ * Bu surede karşılığı olan bütün Türkçe mealler.
+ *
+ * Kaynakta o sureyi taşımayan meal HİÇ basılmaz: kutuyu işaretleyen kişi boş
+ * sütun görmemeli. Sıra öncelikliler önde, sonra ada göre — öntanımlı görünen
+ * dördü listenin başında dursun.
+ */
+const collator = new Intl.Collator("tr");
 const authors = getAuthorsIndex()
-  .authors.filter((author) => author.language === "tr" && author.priority !== null)
-  .sort((a, b) => (a.priority ?? 99) - (b.priority ?? 99))
-  .slice(0, 4);
+  .authors.filter(
+    (author) => author.language === "tr" && authorHasSurah(author, surahId),
+  )
+  .sort(
+    (a, b) =>
+      (a.priority ?? 99) - (b.priority ?? 99) || collator.compare(a.name, b.name),
+  );
+
+/** Öntanımlı açık olanlar — öncelik 1-4. */
+const defaultOpen = new Set(
+  authors.filter((author) => author.priority !== null).map((author) => author.slug),
+);
 
 const verses = getSurah(surahId).verses.filter(
   (verse) => verse.verseNumber >= topic.verseStart && verse.verseNumber <= topic.verseEnd,
@@ -93,9 +114,17 @@ const byAuthor = new Map(
 
 /*
  * Süzgeç kuralları SATIR İÇİ veriliyor: yazar listesi veriden geliyor, global
- * stil dosyasına yazılamaz. Kutular öntanımlı olarak İŞARETLİ; işaret
- * kaldırılınca o meal gizlenir. Tersi (işaretleyince göster) daha kolay
- * yazılırdı ama sayfa dört meal birden açılmalı — karşılaştırma sayfası bu.
+ * stil dosyasına yazılamaz.
+ *
+ * Tek kural her meal için aynı: "kutusu işaretli DEĞİLSE gizle". Öncelikli
+ * dördün kutusu HTML'de `checked` geldiği için onlar açık başlıyor, kalan 23'ü
+ * kapalı. Böylece hem öntanımlı görünüm doğru hem de her meal açılıp
+ * kapanabiliyor — betiksiz.
+ *
+ * BEDELİ: 27 mealin metni sayfada DURUYOR, yalnız görünürlüğü değişiyor.
+ * Ölçüm (2026-09-09): dört mealle ortalama sayfa 6 KB gzip, yirmi yediyle
+ * ~15 KB; en büyük konu (Şuarâ 10-68, 59 ayet) 17 KB'tan ~100 KB'a çıkıyor.
+ * Tek sayfa için kabul edildi; alternatifi betik açmaktı.
  */
 const filterCss = authors
   .map(
@@ -108,12 +137,12 @@ const range =
   topic.verseStart === topic.verseEnd
     ? String(topic.verseStart)
     : `${String(topic.verseStart)}–${String(topic.verseEnd)}`;
-const title = `${surah.nameTr} ${range} — ${String(authors.length)} meal karşılaştırma`;
+const title = `${surah.nameTr} ${range} — meal karşılaştırma`;
 ---
 
 <Base
   title={title}
-  description={`${surah.nameTr} suresi ${range}. ayetler ${authors.map((a) => a.name).join(", ")} meallerinde yan yana.`}
+  description={`${surah.nameTr} suresi ${range}. ayetler ${String(authors.length)} Türkçe mealde yan yana; hangilerinin görüneceğini siz seçersiniz.`}
   arabic
   reading
 >
@@ -129,23 +158,40 @@ const title = `${surah.nameTr} ${range} — ${String(authors.length)} meal karş
       <p class="pg-kicker">{surah.nameTr} suresi · {range}. ayetler</p>
       <h1 class="pg-title">{topic.title}</h1>
       <p class="pg-lede">
-        Bu bölümün ayetleri {authors.length} mealde yan yana. Aralarındaki fark yorum
-        farkıdır; hiçbiri tek doğru olarak sunulmaz. Bütün {" "}
-        <a href={`/${surah.slug}/${String(topic.verseStart)}`}>27 Türkçe meal ayet sayfasında</a>.
+        Bu bölümün ayetleri {defaultOpen.size} mealde yan yana açılıyor; yukarıdaki
+        listeden {authors.length} Türkçe mealin herhangi birini açıp kapatabilirsiniz.
+        Aralarındaki fark yorum farkıdır; hiçbiri tek doğru olarak sunulmaz.
       </p>
     </header>
 
-    <fieldset class="kf">
-      <legend>Hangi mealler görünsün?</legend>
-      {
-        authors.map((author) => (
-          <label class="kf-item">
-            <input type="checkbox" id={`kf-${author.slug}`} checked />
-            <span>{author.name}</span>
-          </label>
-        ))
-      }
-    </fieldset>
+    <details class="kf">
+      <summary class="kf-sum">
+        Hangi mealler görünsün?
+        <span class="kf-count">
+          {defaultOpen.size} / {authors.length} açık
+        </span>
+      </summary>
+      <div class="kf-body">
+        {
+          authors.map((author) => (
+            <label class="kf-item">
+              <input
+                type="checkbox"
+                id={`kf-${author.slug}`}
+                checked={defaultOpen.has(author.slug)}
+              />
+              <span>{author.name}</span>
+              {author.priority !== null && <span class="kf-pri">öntanımlı</span>}
+            </label>
+          ))
+        }
+        <p class="kf-note">
+          Seçim bu sayfada geçerlidir; başka bir bölüme geçince öntanımlıya döner.
+          Saklamak tarayıcıda betik çalıştırmayı gerektirirdi, okuma ekranında
+          betik çalıştırmıyoruz.
+        </p>
+      </div>
+    </details>
 
     <ol class="kcmp-list">
       {
@@ -225,7 +271,7 @@ const title = `${surah.nameTr} ${range} — ${String(authors.length)} meal karş
       {sectioning?.origin === "platform"
         ? "Konu başlıkları platform derlemesidir; bir tefsirden alınmamıştır."
         : "Konu başlıkları kaynaktan alınmıştır."}
-      {" "}Mealler öncelik sırasına göre seçilmiştir; tamamı için ayet sayfasına bakın.
+      {" "}Öntanımlı açık dört meal öncelik sırasına göredir; listeden hepsi açılabilir.
     </p>
   </main>
 </Base>

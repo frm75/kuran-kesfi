@@ -5219,34 +5219,70 @@ a.ctx-num:hover {
 }
 
 /*
- * Meal süzgeci.
+ * Meal süzgeci — 27 Türkçe mealin hepsi listede, dördü öntanımlı açık.
  *
- * Kutular öntanımlı İŞARETLİ; işaret kaldırılınca o meal gizlenir. Görünürlük
+ * Kural her meal için aynı: "kutusu işaretli DEĞİLSE gizle". Öncelikli dördün
+ * kutusu HTML'de `checked` geldiği için onlar açık başlıyor. Görünürlük
  * kuralları sayfa içinde satır içi veriliyor (yazar listesi veriden geliyor).
- * `:has()` desteklemeyen tarayıcıda kutular hiçbir şey yapmaz ve dört meal de
- * görünür kalır — içerik kaybı olmaz.
+ *
+ * `:has()` desteklemeyen tarayıcıda kutular hiçbir şey yapmaz ve BÜTÜN mealler
+ * görünür kalır — içerik kaybı olmaz, yalnız sayfa uzar.
+ *
+ * Panel KAPALI geliyor: okuma ekranında 27 kutu dikkat dağıtır.
  */
 .kf {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-4);
   margin: 0 0 var(--space-6);
-  padding: var(--space-3);
+}
+.kf-sum {
+  display: inline-block;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+.kf-sum:hover {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+.kf-count {
+  margin-inline-start: var(--space-2);
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+.kf-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 0 var(--space-6);
+  margin-top: var(--space-3);
+  padding: var(--space-4);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   background-color: var(--bg-elevated);
-}
-.kf legend {
-  padding-inline: var(--space-2);
-  color: var(--text-muted);
-  font-size: var(--text-xs);
 }
 .kf-item {
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  min-height: 2.4rem;
+  border-bottom: 1px solid var(--border);
   font-size: var(--text-sm);
   cursor: pointer;
+}
+/* Öntanımlı açık olanlar işaretlensin — renk tek başına anlam taşımaz
+   (DESIGN.md §1), bu yüzden metin etiketi kullanılıyor. */
+.kf-pri {
+  margin-inline-start: auto;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+.kf-note {
+  grid-column: 1 / -1;
+  margin: var(--space-3) 0 0;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
 }
 
 .kcmp-list {
