@@ -5064,7 +5064,7 @@ a.ctx-num:hover {
 }
 .rd-topic-head {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: var(--space-3);
   margin: 0 0 var(--space-2);
   padding-block-end: var(--space-2);
@@ -5176,22 +5176,23 @@ a.ctx-num:hover {
  */
 .rd-topic-cmp {
   flex: none;
-  padding: 0.22rem 0.7rem;
-  border: 1px solid var(--border-strong);
+  padding: 0.3rem 0.85rem;
+  border: 1px solid var(--accent);
   border-radius: 999px;
-  color: var(--text-secondary);
+  /* Sitenin kendi CTA kalıbı (`.ilt-submit`): altın dolgu + sayfa zemini
+     rengi metin. Kontrastı /iletisim'de zaten denenmiş bir çift. */
+  background: var(--accent);
+  color: var(--bg-primary);
   font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
   text-decoration: none;
   white-space: nowrap;
-  transition:
-    border-color var(--duration-fast) var(--ease-out),
-    background-color var(--duration-fast) var(--ease-out);
+  transition: background-color var(--duration-fast) var(--ease-out);
 }
 .rd-topic-cmp:hover,
 .rd-topic-cmp:focus-visible {
-  border-color: var(--accent);
-  background-color: var(--accent-muted);
-  color: var(--accent-text);
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
 }
 
 /* Dar ekranda başlık, aralık ve düğme alt alta düşsün. */
