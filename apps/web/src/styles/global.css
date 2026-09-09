@@ -4873,3 +4873,77 @@ a.ctx-num:hover {
   background: var(--accent-muted);
   border-radius: var(--radius-sm);
 }
+
+/* --- Ayet sayfası düzeni (2026-09-08 yeniden sıralandı) ------------------- */
+
+/*
+ * Öne çıkan meal — sayfanın asıl cevabı.
+ *
+ * "Enfâl 25 ne diyor?" sorusunun karşılığı 8. bölümdeydi: okuyan kişi
+ * tefsirden, kelime dökümünden, ilgili ayetlerden ve 76 yazmadan geçip en
+ * alta iniyordu (kullanıcı kararı 2026-09-08). Öntanımlı meal artık Arapça
+ * metnin hemen altında ve gövde yazısı biraz daha büyük.
+ */
+.verse-primary {
+  margin: var(--space-6) 0 var(--space-4);
+  padding-inline-start: var(--space-4);
+  border-inline-start: 2px solid var(--accent-muted);
+}
+.verse-primary .translation-text {
+  font-size: var(--text-lg);
+  line-height: var(--lh-relaxed);
+}
+.verse-primary-alt {
+  margin: var(--space-3) 0 0;
+  font-size: var(--text-sm);
+}
+.verse-journal {
+  margin: var(--space-4) 0 0;
+  font-size: var(--text-sm);
+}
+
+/*
+ * Katlanır bölümler.
+ *
+ * Uzun bölümler (tefsir, kelime dökümü, yazmalar, 26 meal) kapalı açılıyor:
+ * sayfa bir ekranda taranabilsin, isteyen açsın. <details> BETİKSİZ çalışır —
+ * ayet sayfalarında `script-src` kapalı ve öyle kalıyor.
+ *
+ * `summary` öntanımlı olarak `display: list-item`; `.sec-head` onu flex'e
+ * çevirince tarayıcının açılır üçgeni kaybolur. Bu yüzden işaret elle
+ * konuyor ve `::-webkit-details-marker` kapatılıyor (Safari).
+ */
+.sec-fold > summary {
+  cursor: pointer;
+  list-style: none;
+}
+.sec-fold > summary::-webkit-details-marker {
+  display: none;
+}
+.sec-fold > summary::after {
+  content: "▸";
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+.sec-fold[open] > summary::after {
+  content: "▾";
+}
+.sec-fold > summary:hover h2 {
+  color: var(--accent-text);
+}
+
+/* Keşif bölümündeki "İlgili ayetler" alt başlığı. */
+.rel-block {
+  margin-block-start: var(--space-6);
+}
+.rel-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-3);
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-heading);
+  font-weight: var(--fw-normal);
+  font-size: var(--text-md);
+}

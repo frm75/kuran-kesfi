@@ -281,6 +281,20 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
  * DİKKAT: `add()` çağrıları BELGE SIRASINDA olmak zorunda; numaralar çağrı
  * sırasına göre veriliyor. Sıra bozulursa sayfada 1'den önce 2 görünür.
  */
+/*
+ * Öne çıkan meal.
+ *
+ * Ayetin ne dediği sayfanın 8. bölümündeydi: okuyan kişi tefsirden, kelime
+ * dökümünden, ilgili ayetlerden ve 76 yazmadan geçip en alta iniyordu
+ * (kullanıcı kararı 2026-09-08). Öntanımlı meal artık Arapça metnin hemen
+ * altında; kalan 26'sı katlanır bölümde.
+ *
+ * Öntanımlı yazarın meali kaynakta yoksa listenin ilkine düşer — ayet
+ * anlamsız kalmasın.
+ */
+const primaryRow = turkish.find((row) => row.slug === defaultAuthor.slug) ?? turkish[0] ?? null;
+const otherTurkish = turkish.filter((row) => row !== primaryRow);
+
 const notes = new NoteList();
 
 const kiraatNotes = verseAudio.map(({ reciter }) =>
@@ -414,27 +428,10 @@ const mealNote = notes.add({
       <ul class="chip-row">
         <li class="chip">sayfa <b>{verse.page}</b></li>
         <li class="chip">cüz <b>{verse.juz}</b></li>
+        <li class="chip">{surahMeta.revelationType === "mekki" ? "Mekkî" : "Medenî"}</li>
         <li class="chip is-accent"><b>{turkish.length}</b> Türkçe meal</li>
         {other.length > 0 && <li class="chip"><b>{other.length}</b> İngilizce çeviri</li>}
       </ul>
-
-      {/*
-        Günlüğe ekleme DÜZ BİR BAĞLANTIDIR, JavaScript değil.
-
-        Ayet sayfalarında `script-src` kapalı (`default-src 'none'`) ve öyle
-        kalıyor — 6236 sayfanın hepsine betik açmak sitenin en sıkı güvenlik
-        sözünü gevşetirdi (karar 2026-09-07). Not alma, ezber ve yer imi işi
-        /gunluk sayfasında döner; bu bağlantı yalnızca ayet numarasını
-        oraya taşır.
-      */}
-      <p class="verse-journal">
-        <a href={`/gunluk?ekle=${String(surahId)}:${String(verseNumber)}`}>
-          Bu ayeti okuma günlüğüne ekle
-        </a>
-        <span class="verse-journal-note">
-          — not, yer imi ya da ezber; kayıt sunucuya değil cihazınıza yazılır
-        </span>
-      </p>
 
       <div class="mt-6">
         <VerseArabic
@@ -445,6 +442,40 @@ const mealNote = notes.add({
           large
         />
       </div>
+
+      {
+        /* Kaynakta eksikse satır hiç çizilmez — boş başlık gösterilmez. */
+        verse.transcriptionTr !== null && (
+          <p lang="tr" class="transcription">
+            {verse.transcriptionTr}
+          </p>
+        )
+      }
+
+      {/*
+        AYETİN ANLAMI — sayfanın asıl cevabı.
+
+        Öntanımlı meal Arapça metnin hemen altında duruyor. Öncesinde 8.
+        bölümdeydi ve o sıra "Enfâl 25 ne diyor?" sorusuna cevabı bir düzine
+        bölümün arkasına koyuyordu (kullanıcı kararı 2026-09-08). Kalan 26
+        meal aşağıda, katlanır bölümde; karşılaştırmak isteyen açar.
+      */}
+      {primaryRow !== null && (
+        <div class="verse-primary">
+          <Translation
+            authorName={primaryRow.name}
+            authorSlug={primaryRow.slug}
+            text={primaryRow.text}
+            footnotes={primaryRow.footnotes}
+            sourceDeclaredBy="sayfa altındaki kaynak listesi"
+            anchorPrefix={`${String(surahId)}-${String(verseNumber)}-${primaryRow.slug}`}
+            lang="tr"
+          />
+          <p class="verse-primary-alt">
+            <a href="#mealler">{otherTurkish.length} meali daha karşılaştır →</a>
+          </p>
+        </div>
+      )}
 
       {
         verseAudio.length > 0 && (
@@ -487,26 +518,35 @@ const mealNote = notes.add({
         )
       }
 
-      {
-        /* Kaynakta eksikse satır hiç çizilmez — boş başlık gösterilmez. */
-        verse.transcriptionTr !== null && (
-          <p lang="tr" class="transcription">
-            {verse.transcriptionTr}
-          </p>
-        )
-      }
+      {/*
+        Günlüğe ekleme DÜZ BİR BAĞLANTIDIR, JavaScript değil.
+
+        Ayet sayfalarında `script-src` kapalı (`default-src 'none'`) ve öyle
+        kalıyor — 6236 sayfanın hepsine betik açmak sitenin en sıkı güvenlik
+        sözünü gevşetirdi (karar 2026-09-07). Not alma, ezber ve yer imi işi
+        /gunluk sayfasında döner; bu bağlantı yalnızca ayet numarasını taşır.
+
+        Başlıkla Arapça metnin ARASINDAYDI: ikincil bir eylem sayfanın en
+        değerli yerini tutuyordu (kullanıcı kararı 2026-09-08).
+      */}
+      <p class="verse-journal">
+        <a href={`/gunluk?ekle=${String(surahId)}:${String(verseNumber)}`}>
+          Okuma günlüğüne ekle
+        </a>
+      </p>
     </header>
 
     {
       contextVerses.length > 1 && (
         <section>
-          <div class="sec-head">
+          <details class="sec-fold" open>
+          <summary class="sec-head">
             <h2>Bağlam{contextNote !== null && <Dipnot note={contextNote} />}</h2>
             <span class="sec-note">
               {verse.surahNameTr} {contextStart}–{contextEnd} · surenin{" "}
               {verse.verseNumber}. ayeti / {surahMeta.verseCount}
             </span>
-          </div>
+          </summary>
           {topic !== null && (
             <div class="ctx-topic">
               <p class="ctx-topic-name">
@@ -568,6 +608,7 @@ const mealNote = notes.add({
               );
             })}
           </ol>
+          </details>
         </section>
       )
     }
@@ -575,12 +616,13 @@ const mealNote = notes.add({
     {
       tafsirs.length > 0 && (
         <section id="tefsir">
-          <div class="sec-head">
+          <details class="sec-fold">
+          <summary class="sec-head">
             <h2>Tefsir{tafsirNote !== null && <Dipnot note={tafsirNote} />}</h2>
             <span class="sec-note">
-              Ayetin kendisi değil, ona getirilmiş yorum
+              {tafsirs.length} eser · ayetin kendisi değil, ona getirilmiş yorum
             </span>
-          </div>
+          </summary>
           {tafsirs.map(({ work, blocks }) => (
             <article class="tafsir-work">
               <div class="tafsir-head">
@@ -610,6 +652,7 @@ const mealNote = notes.add({
               })}
             </article>
           ))}
+          </details>
         </section>
       )
     }
@@ -617,24 +660,36 @@ const mealNote = notes.add({
     {
       verseWords !== null && (
         <section>
-          <div class="sec-head">
+          <details class="sec-fold">
+          <summary class="sec-head">
             <h2>Kelimeler</h2>
             <span class="sec-note">
-              Kök bağlantısı o kökün Kur'an'daki bütün geçişlerine götürür.
+              {verseWords.words.length} kelime · kök bağlantısı bütün geçişlere götürür
             </span>
-          </div>
+          </summary>
           <WordByWord words={verseWords.words} label={label} />
+          </details>
         </section>
       )
     }
 
+    {/*
+      Keşif bağları TEK bölümde.
+
+      "Bu ayet neye bağlı" ve "İlgili ayetler" ayrı iki üst başlıktı; ikisi de
+      aynı soruyu cevaplıyor — bu ayet neyle ilişkili (kullanıcı kararı
+      2026-09-08). Birincisi içerik katmanına (kıssa, ilke, kavram, nüzul),
+      ikincisi ayetlere bağlanıyor; alt başlık olarak yan yana duruyorlar.
+    */}
     {
-      hasLinks && (
+      (hasLinks || relatedRows.length > 0) && (
         <section>
           <div class="sec-head">
-            <h2>Bu ayet neye bağlı</h2>
-            <span class="sec-note">Kıssa, ilke, kavram ve nüzul dönemi</span>
+            <h2>Keşif{relatedNote !== null && <Dipnot note={relatedNote} />}</h2>
+            <span class="sec-note">Bu ayet neyle ilişkili</span>
           </div>
+
+          {hasLinks && (
           <div class="link-groups">
             {links.stories.length > 0 && (
               <div>
@@ -691,17 +746,14 @@ const mealNote = notes.add({
               </div>
             )}
           </div>
-        </section>
-      )
-    }
+          )}
 
-    {
-      relatedRows.length > 0 && (
-        <section>
-          <div class="sec-head">
-            <h2>İlgili ayetler{relatedNote !== null && <Dipnot note={relatedNote} />}</h2>
-            <span class="sec-note">Her bağın gerekçesi yanında yazar</span>
-          </div>
+          {relatedRows.length > 0 && (
+          <div class="rel-block">
+          <h3 class="rel-head">
+            İlgili ayetler
+            <span class="sec-note">{relatedRows.length} bağ · gerekçesi yanında yazar</span>
+          </h3>
           <ul class="rel-verse-list">
             {relatedRows.map((row) => (
               <li class="rel-verse">
@@ -723,6 +775,8 @@ const mealNote = notes.add({
               </li>
             ))}
           </ul>
+          </div>
+          )}
         </section>
       )
     }
@@ -730,7 +784,8 @@ const mealNote = notes.add({
     {
       manuscripts !== null && manuscripts.oldest.length > 0 && (
         <section>
-          <div class="sec-head">
+          <details class="sec-fold">
+          <summary class="sec-head">
             <h2>
               Bu ayeti taşıyan yazmalar
               {manuscriptNote !== null && <Dipnot note={manuscriptNote} />}
@@ -738,7 +793,7 @@ const mealNote = notes.add({
             <span class="sec-note">
               {manuscripts.count} yazma · en eski {manuscripts.oldest.length} tanesi
             </span>
-          </div>
+          </summary>
           <ul class="ms-verse-list">
             {manuscripts.oldest.map((m) => (
               <li>
@@ -753,6 +808,7 @@ const mealNote = notes.add({
           <p class="sec-note mt-3">
             Tamamı: <a href="/yazmalar">yazma kataloğu</a>
           </p>
+          </details>
         </section>
       )
     }
@@ -784,10 +840,13 @@ const mealNote = notes.add({
       JS demek. Bunu gizlemiyoruz; panelin altında yazıyor.
     */}
     <section class="mealcmp" id="mealler">
-      <div class="sec-head">
-        <h2>Türkçe mealler<Dipnot note={mealNote} /></h2>
-        <span class="sec-note">{turkish.length} meal</span>
-      </div>
+      <details class="sec-fold">
+      <summary class="sec-head">
+        <h2>Diğer mealler<Dipnot note={mealNote} /></h2>
+        <span class="sec-note">
+          {otherTurkish.length} meal daha · {primaryRow?.name ?? "öntanımlı meal"} yukarıda
+        </span>
+      </summary>
 
       <details class="mf">
         <summary class="mf-sum">
@@ -799,7 +858,7 @@ const mealNote = notes.add({
             <span>Yalnızca işaretlediklerimi göster</span>
           </label>
           <div class="mf-list">
-            {turkish.map((row) => (
+            {otherTurkish.map((row) => (
               <label class="mf-item">
                 <input type="checkbox" class="mf-cb" id={`mf-${row.slug}`} />
                 <span>{row.name}</span>
@@ -821,7 +880,7 @@ const mealNote = notes.add({
 
       <div class="meal-grid">
         {
-          turkish.map((row) => (
+          otherTurkish.map((row) => (
             <Translation
               authorName={row.name}
               authorSlug={row.slug}
@@ -834,6 +893,7 @@ const mealNote = notes.add({
           ))
         }
       </div>
+      </details>
     </section>
 
     {
