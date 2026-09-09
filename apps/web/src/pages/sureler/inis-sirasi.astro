@@ -3,6 +3,7 @@ import Base from "~/layouts/Base.astro";
 import SiralamaSecici from "~/components/SiralamaSecici.astro";
 import SureListesi from "~/components/SureListesi.astro";
 import { getSurahsIndex } from "~/lib/data";
+import { PERIOD_LABEL, PERIOD_ORDER, periodOf, periodYears } from "~/lib/nuzul";
 
 /**
  * Sure listesi — iniş (nüzul) sırası.
@@ -33,6 +34,33 @@ const byRevelation = [...surahs].sort(
 const jumps = Array.from({ length: Math.ceil(surahs.length / 10) }, (_unused, i) => i * 10 + 1);
 
 const firstFive = byRevelation.slice(0, 5).map((s) => s.nameTr).join(", ");
+
+/*
+ * Dönem istatistiği.
+ *
+ * Yıllar SİYER OLAYLARINDAN hesaplanıyor (`periodYears`), elle yazılmıyor.
+ * Sure başına iniş tarihi ya da iniş SÜRESİ elimizde yok; bu yüzden yıl
+ * surenin değil dönemin yılıdır ve öyle etiketlenir.
+ */
+const periodStats = PERIOD_ORDER.map((period) => ({
+  period,
+  label: PERIOD_LABEL[period],
+  count: byRevelation.filter(
+    (s) => periodOf(s.revelationOrderNoldeke, s.revelationType) === period,
+  ).length,
+  years: periodYears(period),
+}));
+
+/*
+ * Tanzil'in Mekkî/Medenî kaydı ile Nöldeke dönemi çelişen sureler.
+ *
+ * Hesaplanır, elle sayılmaz: veri değişirse liste kendiliğinden düzelir.
+ * CLAUDE.md veri kuralı — ihtilaf saklanmaz, gösterilir.
+ */
+const conflicting = byRevelation.filter((s) => {
+  const period = periodOf(s.revelationOrderNoldeke, s.revelationType);
+  return period !== null && (period === "medine") !== (s.revelationType === "medeni");
+});
 ---
 
 <Base
@@ -55,6 +83,24 @@ const firstFive = byRevelation.slice(0, 5).map((s) => s.nameTr).join(", ");
         iniş sırası değildir — Kur'an mushafta konu ve uzunluk düzeniyle
         toplanmıştır.
       </p>
+      <ul class="fact-row">
+        {
+          periodStats.map((stat) => (
+            <li>
+              <b>{stat.count}</b>
+              <span>
+                {stat.label}
+                {stat.years !== null && (
+                  <span class="fact-sub">
+                    {" "}
+                    ~{stat.years.from}–{stat.years.to}
+                  </span>
+                )}
+              </span>
+            </li>
+          ))
+        }
+      </ul>
     </header>
 
     <SiralamaSecici active="inis" />
@@ -68,7 +114,23 @@ const firstFive = byRevelation.slice(0, 5).map((s) => s.nameTr).join(", ");
     <p class="sec-note mt-3">
       Sıralama Mısır/Ezher (Tanzil) kabulüne göredir. Nöldeke sıralaması 114
       surenin 109'unda bundan ayrılır; ikisinin karşılaştırması
-      <a href="/zaman">zaman çizelgesinde</a> tablo hâlinde duruyor.
+      <a href="/zaman">zaman çizelgesinde</a> tablo hâlinde duruyor. Satırlardaki
+      dönem etiketi (Mekke I–III, Medine) Nöldeke sırasından türer; yıllar
+      surenin değil dönemin yaklaşık yıllarıdır ve siyer olaylarından
+      hesaplanır. Sure başına iniş tarihi ya da iniş süresi verimizde yoktur,
+      uydurulmaz.
     </p>
+    {
+      conflicting.length > 0 && (
+        <p class="sec-note">
+          {conflicting.length} surede Tanzil'in Mekkî/Medenî kaydı ile Nöldeke
+          dönemi ayrılıyor:{" "}
+          {/* Virgüller ayrı satıra düşerse JSX araya boşluk koyar ("Ra'd , Rahmân"). */}
+          {conflicting.map((s, i) => (
+            <>{i > 0 ? ", " : ""}<a href={`/${s.slug}`}>{s.nameTr}</a></>
+          ))}. İkisi de olduğu gibi gösterilir; biri ötekinin yerine geçirilmez.
+        </p>
+      )
+    }
   </main>
 </Base>
