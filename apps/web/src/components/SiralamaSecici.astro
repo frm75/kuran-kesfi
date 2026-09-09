@@ -1,0 +1,41 @@
+---
+interface Props {
+  /** Hangi sıralama açık. */
+  active: "mushaf" | "inis";
+}
+
+const { active } = Astro.props;
+
+/**
+ * Sure listesi sıralama seçicisi — iki bağlantı, sıfır JavaScript.
+ *
+ * ## Neden iki ayrı sayfa, tek sayfada CSS değil
+ *
+ * `/sureler`'de betik yok ve olmayacak; duman testi bunu
+ * `csp_must_not_have "/sureler" "script-src"` ile zorluyor. Tek sayfada CSS
+ * `order` ile sıralamak mümkündü ama görsel sıra değişirken DOM sırası aynı
+ * kalırdı: ekran okuyucu ve klavye hâlâ mushaf sırasında gezerdi. Görünen
+ * sırayla okunan sıranın ayrışması erişilebilirlik hatasıdır (WCAG 1.3.2).
+ * İki sayfada ikisi de doğru ve iniş sırası paylaşılabilir bir adres oluyor.
+ */
+
+const options = [
+  { key: "mushaf", href: "/sureler", label: "Mushaf sırası" },
+  { key: "inis", href: "/sureler/inis-sirasi", label: "İniş sırası" },
+] as const;
+---
+
+<nav class="sira-secici" aria-label="Sıralama">
+  <span class="sira-etiket">Sıralama</span>
+  {
+    options.map((option) => (
+      <a
+        href={option.href}
+        class:list={["sira-btn", option.key === active && "is-on"]}
+        aria-current={option.key === active ? "page" : undefined}
+      >
+        {option.label}
+      </a>
+    ))
+  }
+</nav>

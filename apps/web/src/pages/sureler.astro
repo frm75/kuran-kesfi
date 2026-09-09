@@ -1,13 +1,19 @@
 ---
 import Base from "~/layouts/Base.astro";
+import SiralamaSecici from "~/components/SiralamaSecici.astro";
+import SureListesi from "~/components/SureListesi.astro";
 import { getSurahsIndex } from "~/lib/data";
 
 /**
- * Sure listesi.
+ * Sure listesi — mushaf sırası.
  *
  * Ana sayfa DEĞİLDİR: plan §14 ana sayfanın beş keşif kapısıyla başlamasını,
  * sure listesiyle başlamamasını istiyor. Klasik okuyucunun ihtiyacı olan liste
  * de bir yerde durmalı; burası orası.
+ *
+ * İkiz sayfa `/sureler/inis-sirasi`; ızgara ve seçici ortak bileşenlerde
+ * (`SureListesi`, `SiralamaSecici`) — kopyalanmış olsalardı biri değişince
+ * öteki sessizce eskide kalırdı.
  *
  * Kaynak rozeti 2026-09-05'te kaldırıldı. Yasal atıf kaybolmadı: her sayfanın
  * altındaki <Attribution> ve /kaynaklar yerinde (data/LICENSE).
@@ -15,11 +21,14 @@ import { getSurahsIndex } from "~/lib/data";
 
 const { surahs, totals } = getSurahsIndex();
 
-/** Onarlı sıçrama: 114 kartlık ızgarada göz kaybolmasın, JavaScript de yok. */
+/** Onarlı sıçrama: 114 satırlık listede göz kaybolmasın, JavaScript de yok. */
 const jumps = Array.from({ length: Math.ceil(surahs.length / 10) }, (_unused, i) => i * 10 + 1);
 ---
 
-<Base title="Sureler — Kur'an-ı Kerim" description="114 surenin listesi.">
+<Base
+  title="Sureler — Kur'an-ı Kerim"
+  description="114 surenin mushaf sırasıyla listesi; iniş sırasına da geçilebilir."
+>
   <main id="icerik" class="pg pg-wide">
     <nav aria-label="Konum" class="pg-crumb">
       <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
@@ -42,31 +51,12 @@ const jumps = Array.from({ length: Math.ceil(surahs.length / 10) }, (_unused, i)
       </ul>
     </header>
 
+    <SiralamaSecici active="mushaf" />
+
     <nav aria-label="Sure numarasına git" class="jump-bar">
       {jumps.map((number) => <a href={`#sure-${String(number)}`}>{number}</a>)}
     </nav>
 
-    <ol class="surah-grid">
-      {
-        surahs.map((surah) => (
-          <li id={`sure-${String(surah.id)}`}>
-            <a href={`/${surah.slug}`}>
-              <span class="sc-num">{surah.id}</span>
-              <span>
-                <span class="sc-name">{surah.nameTr}</span>
-                <span class="sc-meta">
-                  {surah.verseCount} ayet
-                  <span aria-hidden="true"> · </span>
-                  {surah.revelationType === "mekki" ? "Mekkî" : "Medenî"}
-                </span>
-              </span>
-              <span lang="ar" dir="rtl" class="sc-ar">
-                {surah.nameAr}
-              </span>
-            </a>
-          </li>
-        ))
-      }
-    </ol>
+    <SureListesi surahs={surahs} mode="mushaf" />
   </main>
 </Base>

@@ -1,0 +1,74 @@
+---
+import Base from "~/layouts/Base.astro";
+import SiralamaSecici from "~/components/SiralamaSecici.astro";
+import SureListesi from "~/components/SureListesi.astro";
+import { getSurahsIndex } from "~/lib/data";
+
+/**
+ * Sure listesi — iniş (nüzul) sırası.
+ *
+ * ## Hangi sıralama
+ *
+ * İKİ ayrı iniş sıralaması var ve 114 surenin 109'unda farklılar:
+ * Mısır/Ezher (Tanzil'den, ANA REFERANS) ve Nöldeke (alternatif). Bu sayfa
+ * Mısır/Ezher sırasını kullanır; ikisinin karşılaştırması `/zaman`'da tablo
+ * hâlinde duruyor. Birini gizlemek yanıltıcı olurdu — sayfa altındaki not
+ * farkı açıkça söylüyor ve `/zaman`'a bağlanıyor.
+ *
+ * ## Neden ayrı sayfa
+ *
+ * `/sureler`'de betik yok ve olmayacak; duman testi bunu zorluyor. Tek sayfada
+ * CSS `order` ile sıralamak görsel sırayı değiştirir ama DOM sırasını
+ * değiştirmez: ekran okuyucu ve klavye hâlâ mushaf sırasında gezerdi
+ * (WCAG 1.3.2). Ayrı sayfada ikisi de doğru ve adres paylaşılabiliyor.
+ */
+
+const { surahs, totals } = getSurahsIndex();
+
+const byRevelation = [...surahs].sort(
+  (a, b) => a.revelationOrderStandard - b.revelationOrderStandard,
+);
+
+/** Onarlı sıçrama — iniş numarasına göre; çıpalar `inis-<sıra>`. */
+const jumps = Array.from({ length: Math.ceil(surahs.length / 10) }, (_unused, i) => i * 10 + 1);
+
+const firstFive = byRevelation.slice(0, 5).map((s) => s.nameTr).join(", ");
+---
+
+<Base
+  title="Sureler, iniş sırasıyla — Kur'an-ı Kerim"
+  description="114 sure nüzul sırasıyla (Mısır/Ezher sıralaması); mushaf sırasına da geçilebilir."
+>
+  <main id="icerik" class="pg pg-wide">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <a href="/oku">Oku</a> <span aria-hidden="true">›</span>
+      <a href="/sureler">Sureler</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">İniş sırası</span>
+    </nav>
+
+    <header class="pg-head">
+      <p class="pg-kicker">Klasik okuma</p>
+      <h1 class="pg-title">Sureler, iniş sırasıyla</h1>
+      <p class="pg-lede">
+        {totals.surahs} sure indiği sırayla. İlk beşi: {firstFive}. Mushaf sırası
+        iniş sırası değildir — Kur'an mushafta konu ve uzunluk düzeniyle
+        toplanmıştır.
+      </p>
+    </header>
+
+    <SiralamaSecici active="inis" />
+
+    <nav aria-label="İniş numarasına git" class="jump-bar">
+      {jumps.map((number) => <a href={`#inis-${String(number)}`}>{number}</a>)}
+    </nav>
+
+    <SureListesi surahs={byRevelation} mode="inis" />
+
+    <p class="sec-note mt-3">
+      Sıralama Mısır/Ezher (Tanzil) kabulüne göredir. Nöldeke sıralaması 114
+      surenin 109'unda bundan ayrılır; ikisinin karşılaştırması
+      <a href="/zaman">zaman çizelgesinde</a> tablo hâlinde duruyor.
+    </p>
+  </main>
+</Base>

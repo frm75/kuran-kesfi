@@ -40,6 +40,7 @@ export const GET: APIRoute = () => {
     ...[...new Set(NAV.map((hub) => hub.href))].map((loc) => ({ loc, priority: "0.9" })),
     { loc: "/ara", priority: "0.9" },
     { loc: "/sureler", priority: "0.9" },
+    { loc: "/sureler/inis-sirasi", priority: "0.8" },
     { loc: "/kissalar", priority: "0.9" },
     { loc: "/zaman", priority: "0.8" },
     { loc: "/kavramlar", priority: "0.8" },

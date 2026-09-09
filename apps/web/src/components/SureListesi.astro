@@ -1,0 +1,125 @@
+---
+import type { StaticSurahMeta } from "@kuran/schema";
+import { getSurahSections, getSurahsIndex } from "~/lib/data";
+
+interface Props {
+  /** Basılacak sırada gelir; bileşen yeniden sıralamaz. */
+  surahs: readonly StaticSurahMeta[];
+  mode: "mushaf" | "inis";
+}
+
+const { surahs, mode } = Astro.props;
+
+/**
+ * Sure listesi — mushaf ve iniş sıralı sayfaların ORTAK gövdesi.
+ *
+ * İki sayfa aynı satırı basıyor; kopyalanmış olsaydı biri değişince öteki
+ * sessizce eskide kalırdı.
+ *
+ * ## Izgara değil TEK SÜTUN
+ *
+ * Sıralamanın anlamlı olduğu bir sayfada çok sütunlu ızgara yanıltıcı: göz
+ * soldan sağa mı yukarıdan aşağı mı okuyacak belli olmuyor ve "iniş sırası"
+ * takip edilemiyor (kullanıcı kararı 2026-09-09).
+ *
+ * ## Sağdaki alan
+ *
+ * Tek sütuna geçince satırın sağı boş kalıyordu; oraya surenin AÇILIŞ KONUSU
+ * ve ayet/sayfa istatistiği kondu (kullanıcı kararı 2026-09-09).
+ *
+ * Başlık "surenin konusu" DEĞİL, ilk konu başlığıdır ve öyle etiketlenir:
+ * Bakara'nın ilk başlığı "Kitabın niteliği ve sakınanların vasıfları" — surenin
+ * tamamını özetlemez. Ekran okuyucu "ilk konu" diye duyar, gözle okuyan da
+ * yanındaki "+43 konu" sayısından bunun bir başlangıç olduğunu görür.
+ * Başlıklar platform derlemesidir (plan §12.15); sure sayfasında kaynağıyla
+ * birlikte duruyor.
+ */
+
+const { totals } = getSurahsIndex();
+
+/*
+ * Sayfa aralığı `pageStart`lerden hesaplanır: bir surenin son sayfası, bir
+ * sonrakinin başlangıcıdır (aynı sayfada bitip başlayabilirler). Son sure
+ * mushafın son sayfasında biter.
+ */
+const pageStarts = new Map(
+  getSurahsIndex().surahs.map((surah) => [surah.id, surah.pageStart]),
+);
+function pageLabel(surah: StaticSurahMeta): string {
+  const next = pageStarts.get(surah.id + 1) ?? totals.pages + 1;
+  const last = Math.max(surah.pageStart, next - 1);
+  return surah.pageStart === last
+    ? `sayfa ${String(surah.pageStart)}`
+    : `sayfa ${String(surah.pageStart)}–${String(last)}`;
+}
+
+interface Topic {
+  title: string;
+  extra: number;
+}
+function topicOf(surahId: number): Topic | null {
+  const entry = getSurahSections(surahId);
+  const first = entry?.sections[0];
+  if (entry === undefined || entry === null || first === undefined) return null;
+  return { title: first.title, extra: entry.sections.length - 1 };
+}
+
+const anchorOf = (surah: StaticSurahMeta): string =>
+  mode === "inis"
+    ? `inis-${String(surah.revelationOrderStandard)}`
+    : `sure-${String(surah.id)}`;
+---
+
+<ol class:list={["surah-list", mode === "inis" && "is-inis"]}>
+  {
+    surahs.map((surah) => {
+      const topic = topicOf(surah.id);
+      return (
+        <li id={anchorOf(surah)}>
+          <a href={`/${surah.slug}`}>
+            <span class="sc-num">
+              {mode === "inis" ? surah.revelationOrderStandard : surah.id}
+            </span>
+
+            <span class="sc-id">
+              <span class="sc-name">{surah.nameTr}</span>
+              <span class="sc-tag">
+                {surah.revelationType === "mekki" ? "Mekkî" : "Medenî"}
+                <span aria-hidden="true"> · </span>
+                <span class="sc-alt">
+                  {mode === "inis"
+                    ? `mushaf ${String(surah.id)}`
+                    : `iniş ${String(surah.revelationOrderStandard)}`}
+                </span>
+              </span>
+            </span>
+
+            <span class="sc-topic">
+              {topic === null ? (
+                ""
+              ) : (
+                <>
+                  <span class="sr-only">İlk konu: </span>
+                  {topic.title}
+                  {topic.extra > 0 && (
+                    <span class="sc-more"> +{topic.extra} konu</span>
+                  )}
+                </>
+              )}
+            </span>
+
+            <span class="sc-stat">
+              {surah.verseCount} ayet
+              <span aria-hidden="true"> · </span>
+              {pageLabel(surah)}
+            </span>
+
+            <span lang="ar" dir="rtl" class="sc-ar">
+              {surah.nameAr}
+            </span>
+          </a>
+        </li>
+      );
+    })
+  }
+</ol>
