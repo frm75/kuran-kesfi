@@ -10,7 +10,7 @@
     "lint:refs": "tsx linter.ts",
     "candidates": "tsx principle_candidates.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test:smoke": "tsx lib/__tests__/principle_checks.smoke.ts"
+    "test:smoke": "tsx lib/__tests__/principle_checks.smoke.ts && tsx lib/__tests__/schedule.smoke.ts"
   },
   "dependencies": {
     "@kuran/pipeline": "workspace:*",

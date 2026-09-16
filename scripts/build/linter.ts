@@ -68,6 +68,7 @@ import {
 import { closePool, info, pool, repoRoot } from "@kuran/pipeline";
 import { dataRoot } from "./lib/emit.js";
 import { checkPrincipleAreaCounts, checkPrincipleOppositeReciprocity } from "./lib/principle_checks.js";
+import { checkScheduleAdjacentRepeats } from "./lib/schedule.js";
 
 // -----------------------------------------------------------------------------
 // Hata toplama
@@ -907,6 +908,13 @@ function checkStaticOutput(): void {
                 "rotasyon bozuk",
             );
           }
+          /*
+           * Ilke donusumlu olsa bile AYNI AYET iki ilkenin dayanagi olabilir ve
+           * yan yana dusen iki gun ayni ayeti gosterebilir (2026-09-16: gun 7/8
+           * 'ofkeyi-yutma' ve 'affetme', ikisi de 3:134). Ustteki ilke denetimi
+           * bunu gormez; abone ust uste iki gun ayni ayeti alir.
+           */
+          errors.push(...checkScheduleAdjacentRepeats(entries));
         }
       }
     } else if (relativePath === "recitation.json") {

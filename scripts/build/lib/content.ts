@@ -45,6 +45,7 @@ import {
 import { fail, info, pool } from "@kuran/pipeline";
 import type { Report } from "@kuran/pipeline";
 import type { Emitter } from "./emit.js";
+import { buildScheduleDays, VERSE_COOLDOWN_DAYS } from "./schedule.js";
 
 /**
  * Icerik katmani ciktisi — kissa, konum, kavram, ilke, zaman cizelgesi.
@@ -628,6 +629,10 @@ export async function emitContent(
    * geliyor ve HER SEFERINDE BASKA ayetiyle geliyor; 60 gun icinde hicbir
    * ilke tekrar etmiyor. Birincil dayanaklar once, ikinciller sonra.
    *
+   * Secim `lib/schedule.ts` icinde; ilke tekrar etmese bile AYNI AYET iki
+   * ilkenin dayanagi olabildigi icin orada ayrica ayet sogumasi uygulanir
+   * (2026-09-16'da ust uste iki gun 3:134 gitti). Ayrintisi o dosyada.
+   *
    * `occasion` (Ramazan, kandil, kurban) su an hep null: bu gunler hicri
    * takvime bagli ve her yil kayiyor, yani takvimin uretildigi yil bilinmeden
    * hesaplanamaz. Uydurmak yerine bos birakildi (docs/BACKLOG.md).
@@ -656,22 +661,7 @@ export async function emitContent(
 
     if (usable.length > 0) {
       const DAYS = 366;
-      const entries = [];
-      for (let day = 0; day < DAYS; day += 1) {
-        const principle = usable[day % usable.length];
-        if (principle === undefined) continue;
-        const verses = versesByPrinciple.get(principle.id) ?? [];
-        const verseId = verses[Math.floor(day / usable.length) % verses.length];
-        if (verseId === undefined) continue;
-        entries.push({
-          dayIndex: day,
-          verseId,
-          surahId: Math.floor(verseId / 1000),
-          verseNumber: verseId % 1000,
-          principleSlug: principle.slug,
-          occasion: null,
-        });
-      }
+      const entries = buildScheduleDays(usable, versesByPrinciple, DAYS);
 
       /*
        * `generatedAt` BUILD ZAMANI DEGIL, sabittir. Tekrarlanabilir build
@@ -693,7 +683,8 @@ export async function emitContent(
       );
       report.note(
         `Gonderim takvimi (bot): ${String(entries.length)} gun · ${String(usable.length)} ilke ` +
-          `donusumlu · ${String(distinctVerses)} farkli ayet · occasion bos (hicri takvim yok)`,
+          `donusumlu · ${String(distinctVerses)} farkli ayet · ayet sogumasi ` +
+          `${String(VERSE_COOLDOWN_DAYS)} gun · occasion bos (hicri takvim yok)`,
       );
     }
   }

@@ -688,6 +688,44 @@ Kusur sayılmayan iki bulgu — ikisi de bilerek: `/sureler` satırındaki `+N k
 arama düğmesi 27×27 — Apple 44 px, Google 48 px öneriyor. Birkaç yerde 9,6-11,5 px yazı var.
 İkisi de tasarım kararı gerektirdiği için bekliyor (DESIGN.md tip ölçeği).
 
+## Bot aynı ayeti iki gün gönderdi (2026-09-16) — düzeltildi
+
+Abone bildirimi: "dün ve bugün aynı ayet geldi". Doğrulandı — imleçler 9/9/8'di, yani
+gün 7 ve gün 8 gönderilmişti ve takvimde ikisi de **3:134**'tü.
+
+Kök neden üreticide (`lib/content.ts`), botta değil. Rotasyon **ilke** tekrarını
+engelliyor (gün i → ilke[i % 64], bir ilke 64 günden önce dönmez) ama aynı ayet birden
+fazla ilkenin dayanağı olabiliyor ve sıralamada yan yana düşen iki ilke aynı ayeti
+seçebiliyor:
+
+| gün | ilke | eski ayet | yeni ayet |
+|---|---|---|---|
+| 7 | ofkeyi-yutma | 3:134 | 3:134 |
+| 8 | affetme | **3:134** ← tekrar | 7:199 |
+| 9 | istisare | 3:159 | 3:159 |
+| 10 | tevekkul | **3:159** ← tekrar | 11:123 |
+
+İlke tekrar etmediği için ne üretici ne linter bunu gördü. 366 günde iki üst üste
+tekrar, 7 gün içinde dokuz tekrar vardı.
+
+**Düzeltme:** seçim `scripts/build/lib/schedule.ts`'e taşındı (saf fonksiyon, test
+edilebilir). İlke rotasyonu aynen duruyor; yalnızca ayet seçimi, o ilkenin listesinde
+son **45 gündür** kullanılmamış ilk ayete kayıyor. Seçim DETERMİNİSTİK kalıyor — bot
+hangi ayetin gittiğini kaydetmiyor, yalnızca imleci ilerletiyor (plan 19.2 veri
+minimizasyonu), o yüzden rastgelelik seçenek değil. Liste tamamen sıcaksa eski seçime
+geri düşülüyor: takvimde boş gün bırakmak, tekrar eden ayetten kötü olurdu.
+
+45 gün ölçülerek seçildi (7/14/30/45/60/90 denendi): üst üste ve 7 gün içi tekrar
+sıfırlanıyor, çözülemeyen gün 1'de kalıyor. 90 gün pencere geri düşüşü 17'ye çıkarıp
+daha kötü takvim üretiyor. Sonuç: 366 gün, **251 farklı ayet** (249'du), 34 gün değişti,
+en kısa tekrar aralığı 27 gün (49:12 — hem giybet hem tecessüs ilkesinin tek dayanağı,
+kaçınılmaz).
+
+`linter.ts` artık yayınlanan `schedule.json`'ı üst üste tekrara karşı denetliyor: ayet
+listeleri değiştikçe aynı tuzak geri gelebilir ve bot iki gün aynı ayeti sessizce
+gönderir. `lib/__tests__/schedule.smoke.ts` (13 test) girdiyi gerçek hatayla kuruyor;
+`cooldown=0` ile çalıştırıldığında eski davranışı üretip hatayı yakaladığı doğrulandı.
+
 ## Tuzaklar (hepsi bir kez yaşandı)
 
 1. `pnpm deploy` pnpm'in yerleşiği — sessizce hiçbir şey yapmaz. **`pnpm run deploy`** kullan.
