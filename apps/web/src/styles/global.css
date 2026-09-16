@@ -1520,6 +1520,30 @@
   }
 }
 
+/*
+ * Dar ekranda panel kendi çipine değil, künye satırının tamamına yaslanır.
+ *
+ * `.meal-picker` üzerinde `position: relative` dururken panelin sol kenarı
+ * çipin sol kenarıydı. Çip satırın ortasına düştüğünde (360 px'te 85 px
+ * içeride) genişliği `100vw - 2 * space-4` olan panel sağdan taşıyor, sayfa
+ * yatay kayıyordu. Kapsayıcı bloğu `.chip-row` yapınca panel satır boyunca
+ * uzuyor; çipin nerede olduğunun önemi kalmıyor, taşma imkânsız.
+ */
+@media (max-width: 40rem) {
+  .chip-row {
+    position: relative;
+  }
+  .meal-picker {
+    position: static;
+  }
+  .meal-picker-panel {
+    right: 0;
+    left: 0;
+    width: auto;
+    max-width: none;
+  }
+}
+
 /* --- Sıçrama çubuğu ------------------------------------------------------ */
 
 /* 114 kart ya da 1641 kök tek ekranda taranamıyor; çapa bağlantıları
@@ -1795,7 +1819,7 @@
  */
 .meal-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(24rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(24rem, 100%), 1fr));
   gap: var(--space-4);
 }
 .meal-grid .translation {
@@ -1982,7 +2006,7 @@
 
 .story-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(19rem, 100%), 1fr));
   gap: var(--space-3);
   margin: 0;
   padding: 0;
@@ -2304,7 +2328,7 @@
 
 .concept-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(18rem, 100%), 1fr));
   gap: var(--space-3);
   margin: 0;
   padding: 0;
@@ -5313,7 +5337,7 @@ a.ctx-num:hover {
  */
 .kcmp-meals {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
   gap: var(--space-3) var(--space-5);
   margin-block-start: var(--space-3);
 }

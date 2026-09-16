@@ -2237,6 +2237,40 @@ const menu = NAV.map((hub) => ({
   }
 
   /*
+   * 384 px altında şerit tek satıra sığmıyordu: logo (38) + `nowrap` marka
+   * adı + arama kapısı + hamburger, aradaki `--space-8` boşluklarla birlikte
+   * 320 px'lik ekranda 369 px'e çıkıyordu. Taşan uç hamburgerdi: düğme
+   * ekranın dışında kalıyor, okuyucu menüyü yatay kaydırmadan AÇAMIYORDU
+   * (ölçüm 2026-09-09, 320 px'te tıklama hiç ulaşmadı).
+   *
+   * Boşluk daralıyor ve marka adı küçülüp gerekirse "…" ile kısalıyor —
+   * kısalan tek şey yazı, hamburger her genişlikte ekranda kalıyor.
+   */
+  @media (max-width: 24rem) {
+    .lp-nav-in {
+      gap: var(--space-3);
+    }
+    .lp-brand {
+      flex: 0 1 auto;
+      min-width: 0;
+    }
+    .lp-brand img {
+      width: 32px;
+      height: 32px;
+    }
+    /* 0,9rem + 32 px logo, 320 px'te adin TAMAMI sigsin diye olculdu (133 px
+       yer, 120 px yazi). `text-overflow` yine duruyor: web yazi tipi inmeden
+       once yedek yazi tipi daha genis olabilir, o an ad kirpilir ama serit
+       tasmaz. */
+    .lp-brand-txt {
+      min-width: 0;
+      overflow: hidden;
+      font-size: 0.9rem;
+      text-overflow: ellipsis;
+    }
+  }
+
+  /*
    * Hareket azaltma (DESIGN.md §5).
    *
    * Video gizlenir, yerine poster kalır — hareket tamamen durur.

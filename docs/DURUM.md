@@ -2,7 +2,7 @@
 
 > Bu dosya **oturum devri** içindir: bağlam sıfırlandığında tek okumayla toparlanmak için.
 > Kalıcı kurallar `CLAUDE.md`'de, plan `PROJE_PLANI.md`'de, tasarım `DESIGN.md`'de.
-> Son güncelleme: 2026-09-08 (arama modülü + şerit arama kapısı, plan §12.2). Yayın `20260908T203020Z`.
+> Son güncelleme: 2026-09-10 (mobil taşma denetimi + üç düzeltme). Yayın `20260910T032528Z`.
 
 ## Tek cümle
 
@@ -661,6 +661,33 @@ yapılmadan önce halka açıktı. Onaylandıkları için zarar kalmadı, ama s�
 partide kapı önce gelmeli. `r2_sync.ts` uzaktaki onaysız nesneyi **silmiyor**,
 yalnızca yenisini yüklemiyor.
 
+## Mobil taşma denetimi (2026-09-10) — üç düzeltme yayında
+
+Soru "site mobil uyumlu mu" idi. Ölçüm: Playwright, gerçek yayın, 320 / 360 / 390 / 412 px,
+17 adres. Sonuç: **iskelet sağlam** (viewport etiketi var, tüm kırılımlar `min-width`, taban
+stiller telefon), ama üç yerde yatay taşma vardı. Üçü de CSS, üçü de düzeltildi.
+
+| Kusur | Nerede | Etkilenen genişlik | Düzeltme |
+|---|---|---|---|
+| Meal kartları 384 px sabit | `.meal-grid` `minmax(24rem, 1fr)` | **416 px'ten dar her telefon** — 53 kartın hepsi sağdan taşıyor, sayfa yatay kayıyor | `minmax(min(24rem, 100%), 1fr)` |
+| Meal seçici paneli çipin solundan başlıyor | `.meal-picker-panel` (`left: 0`, kapsayıcı blok `.meal-picker`) | ≤ 360 px — panel çipin 85 px'lik offseti kadar taşıyor | 40rem altında kapsayıcı blok `.chip-row`; panel satır boyunca uzuyor |
+| Hamburger ekran dışında | `.lp-nav-in` tek satıra sığmıyor (logo 38 + `nowrap` ad + arama + menü) | 320 px'te düğme 331→369, **menü hiç açılamıyor** | 24rem altında boşluk `--space-3`, logo 32 px, ad 0,9rem + `text-overflow` |
+
+Aynı kalıptaki 18rem ve üstü tüm `auto-fill`/`auto-fit` ızgaralar (`.story-grid` 19rem, iki
+tane 18rem, karşılaştırma modunun 20rem'i) aynı `min(…, 100%)` koruması aldı — hepsi 320 px'te
+taşıyordu ya da sınırdaydı.
+
+**Masaüstü değişmedi**, ölçüldü: 1280 px'te meal ızgarası hâlâ 2 × 566 px, meal paneli hâlâ
+çipe yaslı (700→1206).
+
+Kusur sayılmayan iki bulgu — ikisi de bilerek: `/sureler` satırındaki `+N konu` eki
+`.sc-topic`'in `text-overflow: ellipsis`'iyle kırpılıyor; ana sayfadaki `.map-svg.is-onizleme`
+`overflow: hidden` ile kırpılan bir önizleme (viewBox 1000×1371, kutu 288 px).
+
+**Ölçülmeyen:** dokunma hedefi boyutu düzeltilmedi. Şerit bağlantıları 27-29 px yüksek,
+arama düğmesi 27×27 — Apple 44 px, Google 48 px öneriyor. Birkaç yerde 9,6-11,5 px yazı var.
+İkisi de tasarım kararı gerektirdiği için bekliyor (DESIGN.md tip ölçeği).
+
 ## Tuzaklar (hepsi bir kez yaşandı)
 
 1. `pnpm deploy` pnpm'in yerleşiği — sessizce hiçbir şey yapmaz. **`pnpm run deploy`** kullan.
@@ -674,6 +701,13 @@ yalnızca yenisini yüklemiyor.
    ya da `python3 - <<PY` yamaları o zaman YANLIŞ YERDE çalışır ve sessizce başarısız olur
    (bir kez dist hiç silinmedi, bir kez yama hiç uygulanmadı). Repo dosyalarına dokunan her
    komutta **mutlak yol** kullan ya da `cd /opt/kuran &&` ile başla.
+10. **`minmax(<sabit>rem, 1fr)` mobilde taşırır.** `auto-fill`/`auto-fit` ızgarada taban
+   genişlik esneme DEĞİL alt sınırdır: 24rem'lik ray 328 px'lik alanda 384 px kalır, kart
+   sağdan çıkar ve sayfa yatay kayar. Tabanı her zaman `min(<sabit>rem, 100%)` ile sar.
+11. **Mutlak konumlu panel `100vw` ile sınırlanamaz.** `left: 0` + `max-width: calc(100vw - …)`
+   panelin kapsayıcısının soldan offsetini bilmez; çip satırın ortasındaysa panel o offset
+   kadar taşar. Kapsayıcı bloğu satırın tamamını kaplayan öğe yap.
+
 9. **İki oturum aynı repoda build alamaz.** Astro başlarken `dist`'i temizliyor; ikinci
    build birincinin ara dosyalarını siliyor ("Cannot find module dist/pages/....mjs",
    "renderers.mjs"). Bu oturumda üç build böyle kırıldı. Build almadan önce

@@ -256,7 +256,7 @@ const mealFilterCss = [
    * durur — secilen sayisina gore kendini ayarliyor.
    */
   ".mealcmp:has(.mf-solo:checked) .meal-grid" +
-    "{grid-template-columns:repeat(auto-fit,minmax(20rem,1fr))}",
+    "{grid-template-columns:repeat(auto-fit,minmax(min(20rem,100%),1fr))}",
   ...turkish.map(
     (row) =>
       `.mealcmp:has(.mf-solo:checked):has(#mf-${row.slug}:checked) ` +
