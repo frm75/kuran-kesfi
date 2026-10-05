@@ -2,8 +2,8 @@
 
 > Bu dosya **oturum devri** içindir: bağlam sıfırlandığında tek okumayla toparlanmak için.
 > Kalıcı kurallar `CLAUDE.md`'de, plan `PROJE_PLANI.md`'de, tasarım `DESIGN.md`'de.
-> Son güncelleme: 2026-09-06 (meal geçişi + dipnot ayet bağlantısı + Kitab-ı Mukaddes alıntıları). Yayın `20260905T185939Z`
-> (içerik genişletme: 50 kıssa / 101 kavram / 60 ilke).
+> Son güncelleme: 2026-10-05 (üst bölümler 2026-09-07 yayınlarıyla eşitlendi). Yayın `20260907T090647Z`.
+> Ayrıntılı bölümler aşağıda tarih sırasıyla; üstteki özet ile alttaki bölüm çelişirse **tarihi yeni olan** geçerlidir.
 
 ## Tek cümle
 
@@ -11,10 +11,11 @@
 50 kıssa + 101 kavram + 60 ilke + 26 konum + 22 siyer olayı + 742 konu başlığı +
 40 886 ayet-ayet bağı. Plan §12.1 ve §12.5 tamamlandı.
 
-**JavaScript durumu değişti (2026-09-05).** Site artık "0 bayt JS" DEĞİL: `/harita`
-MapLibre GL'e geçti ve tek başına ~970 KB betik yüklüyor. Diğer 8211 sayfa hâlâ betiksiz.
-CSP `infra/nginx/kurankesfi.tr.conf` içindeki `map $uri $kesif_csp` ile sayfaya göre
-seçiliyor; `script-src 'self'` yalnız `/harita` ve `/kissa/*` için açık.
+**JavaScript durumu (2026-09-07).** Site "0 bayt JS" DEĞİL ama betik üç yolla sınırlı:
+`/harita` (MapLibre GL, ~970 KB), `/kissa/*` (CSP açık, sayfada henüz betik yok — bkz.
+"Açık konu: `/kissa/*` CSP'si") ve `/gunluk` (okuma günlüğü). 6236 ayet sayfası dahil
+kalan her şey betiksiz. CSP `infra/nginx/kurankesfi.tr.conf` içindeki `map $uri $kesif_csp`
+ile sayfaya göre seçiliyor; ayrıca `/iletisim` yalnız `form-action 'self'` alıyor (betik yok).
 Etkileşimli harita statik SVG'nin **üstüne** ekleniyor, yerine geçmiyor — betik
 çalışmazsa sayfa eskisi gibi kalır.
 
@@ -37,32 +38,37 @@ pnpm run deploy:rollback      # geri dön
 | Klasik okuma | `/sureler`, `/<sure>`, `/<sure>/<ayet>` | 114 sure, 6236 ayet, 53 meal |
 | Meal geçişi | `/<sure>/meal/<yazar>` | 26 Türkçe meal × 114 sure = 2849 sayfa |
 | Kök kelime | `/kok`, `/kok/<arapça>` | 1641 kök, 77 429 kelime (**%65** köke bağlı — 2026-09-06'da QUL ile %61'den çıktı) |
-| Kıssalar | `/kissalar`, `/kissa/<slug>` | 34 kıssa, 188 parça, 43 kaynaklı ders |
+| Kıssalar | `/kissalar`, `/kissa/<slug>` | 50 kıssa |
 | Harita | `/harita` | 26 konum (13 kesin / 8 muhtemel / 5 rivayet) |
 | Zaman | `/zaman` | 22 siyer olayı, Nöldeke 114/114 (109'u Mısır'dan farklı) |
-| Kavramlar | `/kavramlar`, `/kavram/<slug>` | 71 kavram, 12 857 ayet bağı |
-| İlkeler | `/ilkeler`, `/ilke/<slug>` | 32 ilke, 116 birincil + 113 ikincil dayanak |
+| Kavramlar | `/kavramlar`, `/kavram/<slug>` | 101 kavram |
+| İlkeler | `/ilkeler`, `/ilke/<slug>` | 60 ilke |
 | İlgili ayetler | her ayet sayfasında | 40 886 bağ, 5994 / 6236 ayet (%96) |
 | Bağlam | her ayet sayfasında | önceki 3 + sonraki 3 ayet, öntanımlı meal |
 | Konu başlığı | **114 / 114 sure** | 742 başlık, `origin=platform` |
 | Kaynak şeffaflığı | `/kaynaklar` | 9 kaynak |
+| Tefsir | her ayet sayfasında | 2 eser (Sa'dî, el-Muhtasar), 13 208 blok |
+| Yazmalar | `/yazmalar`, `/yazma/<id>` | 2322 yazma, görüntü yok |
+| Okuma günlüğü | `/gunluk` | IndexedDB + FSRS, tek JS'li içerik sayfası |
+| Arapça kıraat | her ayet sayfasında | everyayah MP3, R2 üzerinden |
+| İletişim formu | `/iletisim` → `/api/iletisim` | pm2 `kuran-iletisim`, SQLite + Brevo |
+| Telegram botu | `/telegram`, `@kurankesfi_bot` | pm2 `kuran-bot`, 366 günlük takvim |
 
 ## Yapılmayanlar ve NEDENİ
 
 | İş | Engel |
 |---|---|
-| Okuma günlüğü (IndexedDB) | **JS gerekir** — CSP'de `script-src` yok |
 | Çevrimdışı (service worker) | **JS gerekir** |
 | Keşif yolu çubuğu (§12.8a) | **JS gerekir** |
 | İstemci tarafı arama (§12.2) | **JS gerekir** |
 | Kavram grafı (D3), harita (MapLibre) | JS gerekirdi → **liste/SVG karşılığı yapıldı**, iş bitti |
 | Hoca notları (§23.2) | Hoca izni + transkript; şema ve import hattı hazır, veri yok |
-| Ses / kıraat | Kârî lisansı kararı açık (BACKLOG) |
-| Telegram botu (§19) | `infra/db/bot_schema.sql` var; ilkeler modülü ön koşuluydu, artık hazır |
+| WhatsApp (§19.3) | Faz 5; maliyet analizi `BACKLOG.md`'de, ertelendi |
 
-**JS kararı kullanıcıya ait ve henüz alınmadı** (2026-09-05: "şimdi değil"). Alınırsa
-`infra/nginx/kurankesfi.tr.conf` CSP'sine `script-src 'self'` girer **ve canlıya kopyalanır**
-(`/www/server/panel/vhost/nginx/`), duman testindeki "CSP script-src kapali" kontrolü güncellenir.
+**JS kararı sayfa sayfa alınıyor** (2026-09-07: `/gunluk` açıldı). Yeni bir sayfa
+açılacaksa `infra/nginx/kurankesfi.tr.conf` içindeki `$kesif_csp` bloğuna kayıt girer
+**ve canlıya kopyalanır** (`/www/server/panel/vhost/nginx/`); duman testindeki
+`csp_must_have` / `csp_must_not_have` satırları da güncellenir.
 
 ## Yazma modülü (2026-09-06'da yayına hazır)
 
@@ -772,18 +778,24 @@ kıssa katmanına doğrudan denk), `quran_concordance` (tam gramer çözümü), 
 
 Ayrıntı: `docs/KAYNAK_ENVANTERI.md` §7.
 
-**Yayınlanmadı.** Build alındı, `pnpm run deploy` çalıştırılmadı — canlıda hâlâ
-`20260905T185939Z` var. Üç yeni meal siteye ancak deploy'dan sonra çıkar.
+**Yayınlandı** (2026-09-07, `20260907T063508Z` ve sonrası).
 
 ### 1. İçerik genişletme
 
 Kıssa 34 → 50 (Ashâb-ı Sebt, Ashâb-ı Karye, Talût, Belkıs ayrı, İrem…), kavram 71 → 100,
 ilke 32 → 60. Kalıp yerleşti: `data/**` dosyası yaz → `pnpm content:import` → `pnpm build`.
 
+**BİTTİ** — 50 kıssa / 101 kavram / 60 ilke yayında.
+
 ### 2. Telegram botu (§19)
 
-İlkeler modülü ön koşuluydu, artık hazır. `schedule.json` üretimi (`principle_verse` üzerinden
-yıllık takvim) + `infra/db/bot_schema.sql`. Site statik kalır, bot ayrı küçük servis.
+**BİTTİ** — bkz. "Telegram botu (2026-09-07)".
+
+### 3. Sıradaki (2026-09-07 planları)
+
+Üç plan yazıldı, uygulanmadı; sırası numaralarında:
+`docs/superpowers/plans/2026-09-07-01-ana-menu.md` → `-02-kavram-haritasi.md` →
+`-03-ilke-katmani.md` (tasarım: `docs/superpowers/specs/2026-09-07-menu-kavram-ilke-design.md`).
 
 ## Medya katmanı (2026-09-06'da kuruldu) — 34 gerçek kayıt, 10 prompt
 
@@ -1124,7 +1136,7 @@ sayısını ve hata metnini yazar. Dört ardışık çalıştırma temiz geçti,
 çıkıyor. Ziyaretçiye yansıdığına dair bir belirti yok; yansırsa artık çıkış kodu
 kayda geçecek.
 
-## Telegram botu (2026-09-07) — KOD HAZIR, TOKEN BEKLİYOR
+## Telegram botu (2026-09-07) — YAYINDA (`@kurankesfi_bot`, yayın `20260907T085213Z`)
 
 Plan §19'un tamamı yazıldı; `pm2: kuran-bot` ayakta ve `BOT_TOKEN` bekliyor.
 İlkeler modülü ön koşuldu, o zaten bitmişti.
@@ -1189,11 +1201,9 @@ duman testi de hem doğru mealde notun **çıkmadığını** hem yanlış mealde
 
 ### Açık kalan
 
-- **`BOT_TOKEN` ve `BOT_USERNAME` boş.** BotFather'dan alınacak. Token gelince
-  `pm2 restart kuran-bot` yeter, kod değişmez.
-- **Sitedeki "Günlük ayet al" sayfası yapılmadı** — bot kullanıcı adı olmadan
-  `t.me/<ad>` bağlantısı kurulamıyor ve olmayan bir adrese bağlantı vermek
-  menüdeki "dürüstlük kuralı"na aykırı olurdu.
+- ~~`BOT_TOKEN` boş~~ — **kapandı:** token `.env`'de, kullanıcı adı `getMe` ile doğrulandı.
+- ~~"Günlük ayet al" sayfası~~ — **kapandı:** `/telegram` sayfası, ana sayfa kartı ve
+  footer bağlantısı yayında (menüye eklenmedi).
 - **WhatsApp** plan §19.3'e göre Faz 5; Meta doğrulaması, şablon onayı ve
   telefon numarası saklama yükü ayrıca değerlendirilecek.
 
