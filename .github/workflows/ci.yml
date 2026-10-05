@@ -2,8 +2,10 @@
 #
 # Kapsam disi (bilerek):
 #   - lint:refs ve build: PostgreSQL ister (scripts/build -> @kuran/pipeline pool).
-#   - bot smoke: takvim testleri apps/web/public/data ister; o dizin build
-#     ciktisidir ve git'e girmez. Sunucuda `pnpm test` ile calismaya devam eder.
+#   - bot test:data (content.smoke.ts): takvim ve mesaj testleri
+#     apps/web/public/data ister; o dizin build ciktisidir ve git'e girmez.
+#     Sunucuda `pnpm test` ile calismaya devam eder. Gonderim zamani testleri
+#     (dispatch.smoke.ts) veri istemez ve asagida calisir.
 #   - fonts:verify ve deploy: sunucu/yerel makine isi.
 name: ci
 
@@ -35,3 +37,4 @@ jobs:
       - run: pnpm -r typecheck
       - run: pnpm --filter @kuran/schema test:smoke
       - run: pnpm --filter @kuran/web test:smoke
+      - run: pnpm --filter @kuran/bot test:smoke
