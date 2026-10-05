@@ -43,7 +43,7 @@
     "deploy:rollback": "./scripts/deploy/deploy.sh --rollback",
     "build": "pnpm build:data && pnpm lint:refs && pnpm build:web",
     "typecheck": "pnpm -r typecheck",
-    "test": "pnpm --filter @kuran/schema test:smoke && pnpm --filter @kuran/web test:smoke && pnpm --filter @kuran/bot test:smoke",
+    "test": "pnpm --filter @kuran/schema test:smoke && pnpm --filter @kuran/web test:smoke && pnpm --filter @kuran/bot test:smoke && pnpm --filter @kuran/bot test:data",
     "//import": "DIKKAT: 'import' adi kullanilamaz — pnpm'in yerlesik 'pnpm import' komutuyla catisir ve pnpm-lock.yaml'i siler.",
     "data:import": "pnpm build:packages && pnpm --filter @kuran/import tanzil && pnpm --filter @kuran/import acikkuran && pnpm --filter @kuran/import transcription",
     "content:import": "pnpm build:packages && pnpm --filter @kuran/import content",
