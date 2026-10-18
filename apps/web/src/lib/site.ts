@@ -52,12 +52,17 @@ export const routePath = (pathname: string): string => {
  * yalnızca form servisi (`apps/iletisim`) okur — tarayıcıya hiçbir zaman inmez.
  */
 export const CONTACT = {
-  org: "Esfasoft",
-  email: "admin@esfasoft.com.tr",
+  org: "Esfasoft Yazılım ve Teknoloji A.Ş.",
+  /** Ticaret sicilindeki tam unvan */
+  orgFull: "ESFASOFT YAZILIM VE TEKNOLOJİ ANONİM ŞİRKETİ",
+  mersis: "0379092126700001",
+  address:
+    "Küçükbakkalköy Mah. Kayışdağı Cad. Metal İş Merkezi No:37 İç Kapı No:35, 34750 Ataşehir/İstanbul",
+  email: "bilgi@kurankesfi.tr",
   /** Görünen biçim */
-  phone: "+90 552 683 35 80",
+  phone: "0216 909 34 15",
   /** tel: bağlantısı için — boşluksuz */
-  phoneHref: "+905526833580",
+  phoneHref: "+902169093415",
 } as const;
 
 /**
