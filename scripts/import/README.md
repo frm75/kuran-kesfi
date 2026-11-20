@@ -107,3 +107,17 @@ pnpm --filter @kuran/import tanzil-translations
 | Script | Durum |
 |---|---|
 | `corpus.ts` | `root_diff` ve ek morfoloji (Quranic Arabic Corpus) — Faz 3 |
+
+## content.ts — dosya düzeni
+
+`content.ts` yalnızca sırayı ve transaction'ı tutar; iş `content/` altında:
+
+| Dosya | Ne |
+|---|---|
+| `content/load.ts` | `data/**` okuma ve şema doğrulaması |
+| `content/cross_check.ts` | dosyalar arası tutarlılık (veritabanısız) |
+| `content/db.ts` | referans çözümleme, toplu INSERT, boşaltılan tablo listesi |
+| `content/context.ts` | adımların ortak bağlamı |
+| `content/steps/*.ts` | tablo ailesi başına bir adım: konum, kavram, kıssa, ilke, zaman, medya, Nöldeke, bölümleme |
+
+Adımlar arası id eşlemeleri `content.ts` içinde açıkça elden ele verilir; sıra FK bağımlılığıdır.
