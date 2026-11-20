@@ -300,6 +300,26 @@ smoke_test() {
   # demektir ve bu sessizce olur.
   csp_must_not_have "/bakara-suresi/153" "form-action 'self'"
 
+  # Kanonik adres (2026-11-20): duz HTTP, www ve sondaki egik cizgi 301 ile
+  # https://kurankesfi.tr/... adresine gitmeli. Yonlendirme duserse site
+  # calismaya devam eder ve kimse fark etmez.
+  redirects_to() {
+    local url="$1" expect="$2" port="$3" host="$4"
+    local out
+    out="$(curl -sS -o /dev/null -w '%{http_code} %{redirect_url}' --max-time 20 \
+      --retry 3 --retry-delay 1 --retry-all-errors \
+      --resolve "$host:$port:127.0.0.1" "$url" 2>/dev/null)" || out="baglanti-hatasi"
+    if [ "$out" = "301 $expect" ]; then
+      printf '    %-34s %s\n' "$url" "301 -> $expect"
+    else
+      printf '    %-34s %s  (beklenen 301 %s) BASARISIZ\n' "$url" "$out" "$expect"
+      fail=1
+    fi
+  }
+  redirects_to "http://kurankesfi.tr/sureler"       "https://kurankesfi.tr/sureler" 80  kurankesfi.tr
+  redirects_to "https://www.kurankesfi.tr/sureler"  "https://kurankesfi.tr/sureler" 443 www.kurankesfi.tr
+  redirects_to "https://kurankesfi.tr/sureler/"     "https://kurankesfi.tr/sureler" 443 kurankesfi.tr
+
   # die DEGIL return: cagiran taraf basarisizlikta onceki yayina donebilsin.
   if [ "$fail" -ne 0 ]; then
     log "duman testi BASARISIZ"
