@@ -39,6 +39,7 @@
     "media:ai:collect": "pnpm build:packages && pnpm --filter @kuran/media ai:collect",
     "notes:import": "pnpm build:packages && pnpm --filter @kuran/sync notes",
     "notes:check": "pnpm build:packages && pnpm --filter @kuran/sync notes:check",
+    "mobile:release": "./apps/mobile/scripts/release.sh",
     "deploy": "./scripts/deploy/deploy.sh",
     "deploy:list": "./scripts/deploy/deploy.sh --list",
     "deploy:smoke": "./scripts/deploy/deploy.sh --smoke",

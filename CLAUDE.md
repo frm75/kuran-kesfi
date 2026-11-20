@@ -53,6 +53,7 @@ bilgisayarda çalışır (`kuran-extract`) ve buraya JSON dosyalarıyla veri akt
 ## Dizin Yapısı
 ```
 apps/web/            Astro site
+apps/mobile/         Android uygulaması (Capacitor kabuğu; AAB: `pnpm mobile:release`)
 packages/schema/     Zod şemaları + PostgreSQL/SQLite migration üreticileri (yerel proje ile ORTAK)
 scripts/import/      Kaynak import (tanzil, acikkuran, quran_com, corpus)
 scripts/build/       PostgreSQL → public/data/*.json + referans linter

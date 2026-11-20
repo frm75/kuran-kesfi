@@ -12,7 +12,7 @@ async function baslat(): Promise<void> {
   el("ib-hicri-bugun").textContent = `Bugün: ${hicriTarih(simdi, tz).metin}`;
   const { yil, ay, gun } = yerelGun(simdi, tz);
   el("ib-takvim-baslik").textContent = `${AYLAR[ay - 1] ?? ""} ${String(yil)}`;
-  const tablo = el("ib-takvim-tablo");
+  const tablo = el<HTMLTableElement>("ib-takvim-tablo");
   const bas = tablo.createTHead().insertRow();
   for (const b of ["Miladi", "Gün", "Hicri"]) {
     const th = document.createElement("th");

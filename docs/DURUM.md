@@ -11,6 +11,13 @@
 41 556 ayet-ayet bağı + **9004 kayıtlık arama indeksi**.
 Plan §12.1, §12.2 ve §12.5 tamamlandı.
 
+## Android uygulaması (2026-11-20, dal `feat/android-uygulama`, henüz birleşmedi)
+
+Capacitor kabuğu `apps/mobile/` (`server.url` = kurankesfi.tr). Imzalı AAB: `pnpm mobile:release`
+(`.env`: `ANDROID_KEYSTORE_PATH`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`; anahtar repo dışında).
+Betik `versionCode`'u kendisi artırır. **Bekleyen, kullanıcının işleri:** D-U-N-S ve kurumsal Play hesabı,
+upload keystore üretimi, `/gizlilik` metni onayı, AAB'yi Play'e yükleme. Adım adım: `docs/mobil/PLAY_KAYDI.md`.
+
 ## Arama (2026-09-08'de yayına girdi)
 
 `/ara` — bağımlılıksız ters indeks, build'de üretiliyor

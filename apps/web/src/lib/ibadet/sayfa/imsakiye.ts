@@ -28,7 +28,7 @@ function ciz(): void {
   el("ib-imsakiye-baslik").textContent = ramazanMi(tz)
     ? `Ramazan imsakiyesi — ${ad}`
     : `${ad} imsakiyesi`;
-  const tablo = el("ib-imsakiye-tablo");
+  const tablo = el<HTMLTableElement>("ib-imsakiye-tablo");
   tablo.replaceChildren();
   const bas = tablo.createTHead().insertRow();
   for (const b of ["Gün", ...VAKITLER.map((v) => VAKIT_ADLARI[v])]) {

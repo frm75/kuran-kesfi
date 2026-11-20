@@ -673,6 +673,8 @@ Faz planına yansıması: Öncelik 1 maddeleri Faz 1-2'ye, Öncelik 2 Faz 3'e, �
 
 **Kapsam dondurma:** Bölüm 12-19 ile özellik kapsamı tamamlanmıştır. Yeni özellik önerileri ilk yayın sonrasına ertelenir; geliştirme mevcut kapsamın derinleştirilmesine odaklanır.
 
+**Kapsam girişi (2026-11-20):** Android uygulaması (Google Play) kullanıcının açık talebiyle kapsama girdi: Capacitor kabuğu `apps/mobile/`, ibadet araçları `/ibadet`, gizlilik `/gizlilik`. Tasarım: `docs/superpowers/specs/2026-11-20-android-uygulama-design.md`; mağaza kaydı: `docs/mobil/PLAY_KAYDI.md`.
+
 Yeni özellikler temel ilkeleri değiştirmez: ücretsiz, reklamsız, üyeliksiz, takipsiz, kaynaklı, belirsizlikleri açıkça
 belirten, açık lisans kurallarına uyan, mobil öncelikli, hafif, mümkün olduğunca statik, kullanıcı verisini sunucuda tutmayan.
 
