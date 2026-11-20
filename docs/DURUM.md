@@ -1614,3 +1614,7 @@ olacağına insan karar verir (CLAUDE.md kural 4). Girdisi
 `apps/web/public/data/*` (sure, yazar, kök, kelime JSON'ları), yani
 **`pnpm build:data` ön koşuldur** — o çalışmadan `candidates` boş/eski
 klasörle patlar ya da eski veriyle rapor üretir.
+
+## Bilinen sınırlama: şehir listesi ilçe kapsamı (2026-11-20)
+
+`apps/web/public/ibadet/sehirler.json` GeoNames'ten üretilir. GeoNames `PPLA2` yalnızca 834 ilçe merkezi veriyor (Türkiye'de yaklaşık 973 ilçe var); örn. Kadıköy listede yok. Eksikler uydurulmadı. Başkent ve ülke adları `alternateNamesV2` içindeki Türkçe adlardan gelir; Türkçe adı olmayan kayıt GeoNames adıyla kalır.
