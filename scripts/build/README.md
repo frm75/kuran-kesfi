@@ -59,6 +59,19 @@ Dosya adları alt çizgilidir (plan §20.2); `translation/` altındaki dizin ad�
 
 ## linter.ts — üç küme denetim
 
+`linter.ts` yalnızca sırayı ve çıkış kodunu tutar; denetimler `lint/` altında:
+
+| Dosya | Ne |
+|---|---|
+| `lint/report.ts` | ortak hata/uyarı defteri ve denetim sayacı |
+| `lint/database.ts` | A — veritabanı bütünlüğü, bayat veritabanı kapısı |
+| `lint/static_output.ts` | B — dosya döngüsü, yol → denetim tablosu, dosyalar arası kurallar |
+| `lint/static/{quran,content,sources}.ts` | B — dosya türü başına denetim |
+| `lint/manual.ts` | C — `data/**` elle veri |
+| `lint/pages.ts` | D — sayfa metnindeki durum iddiaları |
+
+Yeni bir statik dosya türü: `lint/static/` altına bir fonksiyon, `static_output.ts`'teki tabloya bir satır.
+
 **A. Veritabanı bütünlüğü** — DDL'in ifade edemediği kurallar:
 sure/ayet/sayfa/cüz sayıları · `verse_count` tutarlılığı · ayet numarası sürekliliği ·
 `verse.id` formülü · nüzul sıralamasının 1..114'ü tam kaplaması · slug biçimi ·
