@@ -354,6 +354,12 @@ cmd_deploy() {
   pages="$(find "$DIST" -name '*.html' | wc -l)"
   [ "$pages" -ge 6000 ] || die "yalnizca $pages HTML dosyasi var; 6000+ bekleniyordu. Build eksik."
 
+  # Site ici baglanti denetimi (~1 dk). Kirik baglantili build YAYINLANMAZ:
+  # 2026-10-18 yayini 6 350 kirik /dinle bagiyla cikmisti, duman testi
+  # yalnizca sayfalarin kendisine baktigi icin yakalamamisti.
+  log "site ici baglantilar denetleniyor"
+  node "$REPO_ROOT/scripts/build/check_links.mjs" "$DIST" || die "kirik site ici baglanti var; yayin YAPILMADI"
+
   # Yer kontrolu: yeni yayin + mevcut yayin ayni anda diskte duracak.
   local need_mb free_mb
   need_mb="$(du -sm "$DIST" | cut -f1)"

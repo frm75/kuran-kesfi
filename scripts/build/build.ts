@@ -330,7 +330,7 @@ async function main(): Promise<void> {
   ).rows;
 
   if (surahs.length === 0) {
-    fail("surah tablosu bos — once 'pnpm import' calistirin");
+    fail("surah tablosu bos — once 'pnpm data:import' calistirin ('pnpm import' DEGIL: o pnpm'in yerlesik komutu, kilit dosyasini siler)");
   }
 
   // text_simple ve text_no_vowel bilerek okunmuyor: yalnizca arama indeksi
