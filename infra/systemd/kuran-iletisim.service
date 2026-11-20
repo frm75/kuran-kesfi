@@ -1,0 +1,35 @@
+# Iletisim formu arka ucu (apps/iletisim). Kurulum: infra/systemd/README.md
+[Unit]
+Description=kurankesfi.tr iletisim formu
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=kuran
+Group=kuran
+WorkingDirectory=/opt/kuran
+# Yalnizca bu servisin ihtiyaci olan anahtarlar (FORM_*, SMTP_*, CONTACT_*).
+# Depo kokundeki .env 600 root'tur; servis onu OKUYAMAZ ve okumamali —
+# icinde R2 ve veritabani sirlari da var.
+EnvironmentFile=/etc/kuran/iletisim.env
+ExecStart=/usr/bin/node apps/iletisim/dist/server.js
+Restart=on-failure
+RestartSec=3
+UMask=0077
+
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/opt/kuran/var
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictSUIDSGID=yes
+LockPersonality=yes
+CapabilityBoundingSet=
+
+[Install]
+WantedBy=multi-user.target

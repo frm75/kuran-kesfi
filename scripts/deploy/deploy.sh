@@ -285,7 +285,7 @@ smoke_test() {
   if curl -sf --max-time 10 http://127.0.0.1:4380/api/iletisim/durum >/dev/null 2>&1; then
     printf '    %-34s %s\n' "/api/iletisim" "arka uc ayakta"
   else
-    printf '    %-34s %s\n' "/api/iletisim" "ARKA UC CEVAP VERMIYOR (pm2: kuran-iletisim)"
+    printf '    %-34s %s\n' "/api/iletisim" "ARKA UC CEVAP VERMIYOR (systemctl status kuran-iletisim)"
     fail=1
   fi
   # Geri kalan her sey: 0 bayt JS garantisini sunucu tarafinda zorlayan sey bu.

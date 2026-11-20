@@ -49,6 +49,9 @@ for db in "$REPO_ROOT"/var/*.sqlite; do
   [ "$(sqlite3 "$work/$name" 'PRAGMA integrity_check;')" = "ok" ] ||
     die "$name yedegi butunluk denetimini gecemedi"
   gzip "$work/$name"
+  # Bu betik root calisir; sqlite -wal/-shm dosyasini yeniden yaratmissa
+  # sahibi root olur ve servis (kuran kullanicisi) veritabanina yazamaz.
+  chown --reference="$db" "$db"-wal "$db"-shm 2>/dev/null || true
   log "sqlite  $name"
 done
 

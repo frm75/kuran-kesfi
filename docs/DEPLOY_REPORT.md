@@ -910,3 +910,39 @@ saklamaz, karmasını bellekte geçici tutar.
 
 **Yedekler:** `/www/server/panel/vhost/nginx/kurankesfi.tr.conf.bak.20260907`
 (gunluk CSP uygulanmadan önce) ve `.bak.20260907-2` (iletisim kuralı uygulanmadan önce).
+
+---
+
+# Sertleştirme turu (2026-11-20)
+
+Proje denetiminin 0–2. aşamaları. Yayın `20261120T130258Z`.
+
+| Ne | Önce | Şimdi |
+|---|---|---|
+| Servisler | pm2 altında `root` | systemd, `kuran` kullanıcısı, kum havuzu — `infra/systemd/` |
+| Servis sırları | bütün `.env` | `/etc/kuran/iletisim.env`, `/etc/kuran/bot.env` (`600 root`) |
+| `var/` | `755`, dosyalar `644` | `700 kuran`, dosyalar `600` |
+| Yayın ağacı | `www:www` | `root:root`, nginx yalnız okur |
+| HTTP, `www`, sondaki `/` | 200 / 200 / 404 | 301 → `https://kurankesfi.tr/...` |
+| TLS | 1.1+, 3DES, RSA anahtar değişimi | 1.2+, yalnız ECDHE + AEAD |
+| 0-RTT | açık | kapalı |
+| `/api/iletisim` | sınır yalnız serviste | ek olarak nginx `limit_req` 6/dk (429) |
+| Yedek | yok | gecelik yerel, `/opt/kuran-yedek` — `docs/YEDEK.md` |
+| Erişim günlüğü | döndürülmüyor (Eylül'den beri) | `/etc/logrotate.d/kuran-nginx`, 14 gün |
+| Deploy | duman testi düşerse bozuk sürüm kalır | önceki yayına döner; `flock` |
+| `nodemailer` | 6.10.1 | 10.6.1 |
+
+**Depo dışı dosyalar:** `/etc/systemd/system/kuran-{iletisim,bot}.service`, `/etc/kuran/*.env`,
+`/etc/cron.d/kuran-backup`, `/etc/logrotate.d/kuran-nginx`, kullanıcı `kuran` (uid 996).
+
+**Yedek:** `/www/server/panel/vhost/nginx/kurankesfi.tr.conf.bak.202611201310`.
+
+**pm2:** `kuran-iletisim` ve `kuran-bot` kayıtları silindi; pm2'de yalnız `pm2-logrotate` kaldı.
+Yukarıdaki 2026-09-07 bölümündeki "pm2, fork" satırı artık geçerli değil.
+
+**Doğrulandı:** duman testi temiz · üç yönlendirme 301 · `AES128-SHA` el sıkışması reddediliyor ·
+8 ardışık POST'un 7.'si 429 · formdan deneme mesajı kaydedildi ve e-postası gönderildi (#5) ·
+`.well-known/acme-challenge` port 80'den ve `www` adından 200.
+
+**Açık kalan:** sunucu dışı yedek (özel kova gerekiyor); izleme/uyarı; gönderilemeyen e-postanın
+yeniden denenmesi.
