@@ -16,12 +16,14 @@ async function kesinKontrol(): Promise<boolean> {
   return (await LocalNotifications.checkExactNotificationSetting()).exact_alarm === "granted";
 }
 
+class IzinHatasi extends Error {}
+
 async function izinIste(): Promise<void> {
   const { LocalNotifications } = await import("@capacitor/local-notifications");
   const durum = await LocalNotifications.checkPermissions();
   if (durum.display === "granted") return;
   const s = await LocalNotifications.requestPermissions();
-  if (s.display !== "granted") mesaj("Bildirim izni verilmedi; telefon ayarlarından açabilirsiniz.");
+  if (s.display !== "granted") throw new IzinHatasi();
 }
 
 function dolduFormu(a: IbadetAyarlari): void {
@@ -73,22 +75,35 @@ async function baslat(): Promise<void> {
   let ayar = await depo.oku();
   dolduFormu(ayar);
   form.hidden = false;
-  if (herhangiAcik(ayar)) kesinUyari.hidden = await kesinKontrol();
+  if (herhangiAcik(ayar)) {
+    try {
+      kesinUyari.hidden = await kesinKontrol();
+    } catch {
+      mesaj("Alarm izni durumu okunamadı.");
+    }
+  }
 
   // İzin, bildirim ilk kez açıldığında istenir.
   form.addEventListener("change", (e) => {
     const t = e.target;
     if (t instanceof HTMLInputElement && t.type === "checkbox" && t.checked && !herhangiAcik(ayar)) {
-      void izinIste();
+      izinIste().catch((h: unknown) => {
+        mesaj(
+          h instanceof IzinHatasi
+            ? "Bildirim izni verilmedi; telefon ayarlarından açabilirsiniz."
+            : "Bildirim izni istenemedi.",
+        );
+      });
     }
   });
 
   el("ib-kesin-dugme").addEventListener("click", () => {
-    void import("@capacitor/local-notifications").then(({ LocalNotifications }) =>
-      LocalNotifications.changeExactNotificationSetting().then(async (r) => {
+    void import("@capacitor/local-notifications")
+      .then(({ LocalNotifications }) => LocalNotifications.changeExactNotificationSetting())
+      .then((r) => {
         kesinUyari.hidden = r.exact_alarm === "granted";
-      }),
-    );
+      })
+      .catch(() => mesaj("Alarm izni ayarı açılamadı; telefon ayarlarından Alarmlar ve hatırlatıcılar iznini verin."));
   });
 
   form.addEventListener("submit", (e) => {
@@ -108,8 +123,13 @@ async function baslat(): Promise<void> {
             ? "Kaydedildi. Vakit bildirimleri için önce Vakitler sayfasında konum seçin."
             : `Kaydedildi. ${String(s.kurulan)} bildirim kuruldu.`,
         );
-      } catch {
-        mesaj("Kaydedilemedi. Bildirim izni kapalı olabilir.");
+      } catch (hata) {
+        console.error("ibadet ayarlar", hata);
+        mesaj(
+          hata instanceof IzinHatasi
+            ? "Bildirim izni verilmedi; telefon ayarlarından açabilirsiniz."
+            : `Kaydedilemedi: ${hata instanceof Error ? hata.message : "bilinmeyen hata"}`,
+        );
       }
     })();
   });

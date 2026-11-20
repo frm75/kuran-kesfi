@@ -12,6 +12,11 @@ export const VAKIT_ADLARI: Record<VakitAdi, string> = {
   yatsi: "Yatsı",
 };
 
+export const AYLAR = [
+  "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
+  "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık",
+];
+
 export function el<T extends HTMLElement = HTMLElement>(id: string): T {
   const e = document.getElementById(id);
   if (!e) throw new Error(`#${id} yok`);
@@ -36,13 +41,19 @@ export async function ayarlariOku(): Promise<IbadetAyarlari> {
   return ayarDeposu().oku();
 }
 
-let sehirler: Konum[] | null = null;
-async function sehirleriGetir(): Promise<Konum[]> {
-  if (sehirler) return sehirler;
-  const r = await fetch("/ibadet/sehirler.json");
-  if (!r.ok) throw new Error("sehir listesi");
-  sehirler = ((await r.json()) as { kayitlar: Konum[] }).kayitlar;
-  return sehirler;
+let sehirlerSozu: Promise<Konum[]> | null = null;
+function sehirleriGetir(): Promise<Konum[]> {
+  sehirlerSozu ??= fetch("/ibadet/sehirler.json")
+    .then((r) => {
+      if (!r.ok) throw new Error("sehir listesi");
+      return r.json() as Promise<{ kayitlar: Konum[] }>;
+    })
+    .then((j) => j.kayitlar)
+    .catch((h: unknown) => {
+      sehirlerSozu = null; // hata kalıcı olmasın, sonraki yazışta yeniden dene
+      throw h;
+    });
+  return sehirlerSozu;
 }
 
 async function gpsKonumu(): Promise<{ enlem: number; boylam: number }> {
@@ -90,6 +101,16 @@ export async function konumuBagla(degisti: (k: Konum | null) => void): Promise<v
     mesaj(null);
     el("ib-sehir-liste").hidden = true;
     degisti(k);
+    // Uygulamada bildirimler yeni şehri izlesin.
+    const { Capacitor } = await import("@capacitor/core");
+    if (Capacitor.isNativePlatform()) {
+      try {
+        const { bildirimleriYenile } = await import("../uygula.js");
+        await bildirimleriYenile(ayar);
+      } catch {
+        mesaj("Konum kaydedildi ama bildirimler yenilenemedi.");
+      }
+    }
   };
 
   adYaz(ayar.konum);
@@ -112,6 +133,7 @@ export async function konumuBagla(degisti: (k: Konum | null) => void): Promise<v
     const q = kutu.value;
     if (q.trim() === "") {
       liste.hidden = true;
+      mesaj(null);
       return;
     }
     sehirleriGetir().then(

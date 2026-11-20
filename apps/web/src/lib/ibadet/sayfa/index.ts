@@ -4,9 +4,10 @@ import { VAKIT_ADLARI, el, konumuBagla, saatYaz } from "./ortak.js";
 
 let konum: Konum | null = null;
 let zamanlayici: number | undefined;
+let ilkTik: number | undefined;
 
 function kalan(ms: number): string {
-  const dk = Math.max(0, Math.floor(ms / 60000));
+  const dk = Math.max(0, Math.ceil(ms / 60000));
   const s = Math.floor(dk / 60);
   return s > 0 ? `${String(s)} sa ${String(dk % 60)} dk` : `${String(dk)} dk`;
 }
@@ -20,12 +21,16 @@ function ciz(): void {
   const simdi = new Date();
   const v = gunVakitleri(yerelGun(simdi, konum.saatDilimi), konum);
   const sira = siradakiVakit(simdi, konum);
+  const bugun = yerelGun(simdi, konum.saatDilimi);
+  const siraGun = sira ? yerelGun(sira.an, konum.saatDilimi) : null;
+  const siraBugun =
+    siraGun !== null && siraGun.yil === bugun.yil && siraGun.ay === bugun.ay && siraGun.gun === bugun.gun;
   const liste = el("ib-vakit-liste");
   liste.replaceChildren();
   for (const ad of VAKITLER) {
     const li = document.createElement("li");
     li.className = "ib-vakit";
-    if (sira?.ad === ad) {
+    if (sira !== null && siraBugun && sira.ad === ad) {
       li.setAttribute("aria-current", "true");
       li.dataset["sira"] = "1";
     }
@@ -38,7 +43,7 @@ function ciz(): void {
     liste.append(li);
   }
   el("ib-sayac").textContent = sira
-    ? `${VAKIT_ADLARI[sira.ad]} vaktine ${kalan(sira.an.getTime() - simdi.getTime())} kaldı`
+    ? `${siraBugun ? VAKIT_ADLARI[sira.ad] : `Yarın ${VAKIT_ADLARI[sira.ad].toLocaleLowerCase("tr")}`} vaktine ${kalan(sira.an.getTime() - simdi.getTime())} kaldı`
     : "Sıradaki vakit hesaplanamadı";
   bolum.hidden = false;
 }
@@ -47,5 +52,12 @@ void konumuBagla((k) => {
   konum = k;
   ciz();
   window.clearInterval(zamanlayici);
-  if (k !== null) zamanlayici = window.setInterval(ciz, 60000);
+  window.clearTimeout(ilkTik);
+  if (k !== null) {
+    // Dakika başına hizala: ilk tik bir sonraki dakikada, sonra her 60 sn.
+    ilkTik = window.setTimeout(() => {
+      ciz();
+      zamanlayici = window.setInterval(ciz, 60000);
+    }, 60000 - (Date.now() % 60000));
+  }
 });

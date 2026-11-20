@@ -1,11 +1,7 @@
 import { hicriTarih } from "../hicri.js";
 import { yerelGun } from "../vakit.js";
-import { cihazDilimi, ayarlariOku, el } from "./ortak.js";
+import { AYLAR, cihazDilimi, ayarlariOku, el } from "./ortak.js";
 
-const AYLAR = [
-  "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
-  "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık",
-];
 const GUNLER = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
 
 async function baslat(): Promise<void> {

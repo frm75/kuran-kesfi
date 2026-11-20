@@ -1,21 +1,19 @@
 import { hicriTarih } from "../hicri.js";
 import { VAKITLER, type Konum } from "../types.js";
 import { aylikImsakiye, yerelGun } from "../vakit.js";
-import { VAKIT_ADLARI, el, konumuBagla, saatYaz } from "./ortak.js";
+import { AYLAR, VAKIT_ADLARI, el, konumuBagla, saatYaz } from "./ortak.js";
 
-const AYLAR = [
-  "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
-  "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık",
-];
 
 let konum: Konum | null = null;
 let yil = 0;
 let ay = 0;
 
 function ramazanMi(tz: string): boolean {
-  return [1, 15, 28].some(
-    (g) => hicriTarih(new Date(Date.UTC(yil, ay - 1, g, 12)), tz).ay === 9,
-  );
+  const gunSayisi = new Date(Date.UTC(yil, ay, 0)).getUTCDate();
+  for (let g = 1; g <= gunSayisi; g += 1) {
+    if (hicriTarih(new Date(Date.UTC(yil, ay - 1, g, 12)), tz).ay === 9) return true;
+  }
+  return false;
 }
 
 function ciz(): void {

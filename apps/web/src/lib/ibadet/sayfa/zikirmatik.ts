@@ -22,6 +22,7 @@ function oku(): Durum {
 }
 
 let durum = oku();
+let ozelSecili = !HAZIR.includes(durum.hedef);
 
 function kaydet(): void {
   try {
@@ -40,15 +41,22 @@ function ciz(): void {
     durum.sayac >= durum.hedef
       ? `Hedefe ulaşıldı (${String(durum.hedef)})`
       : `Hedef: ${String(durum.hedef)} · kalan ${String(durum.hedef - durum.sayac)}`;
-  const hazir = HAZIR.includes(durum.hedef);
-  sec.value = hazir ? String(durum.hedef) : "ozel";
-  el("ib-zikir-ozel-kap").hidden = hazir;
-  if (!hazir) ozel.value = String(durum.hedef);
+  if (ozelSecili) {
+    // "Özel" seçiliyken (sayı girilmemiş olsa da) seçim ve kutu korunur.
+    sec.value = "ozel";
+    el("ib-zikir-ozel-kap").hidden = false;
+    if (document.activeElement !== ozel && !HAZIR.includes(durum.hedef)) ozel.value = String(durum.hedef);
+    return;
+  }
+  sec.value = String(durum.hedef);
+  el("ib-zikir-ozel-kap").hidden = true;
 }
 
 el("ib-zikir-say").addEventListener("click", () => {
+  const once = durum.sayac;
   durum.sayac += 1;
-  if (durum.sayac === durum.hedef && "vibrate" in navigator) navigator.vibrate(200);
+  // Hedefin altından üstüne geçişte bir kez titre.
+  if (once < durum.hedef && durum.sayac >= durum.hedef && "vibrate" in navigator) navigator.vibrate(200);
   kaydet();
   ciz();
 });
@@ -59,10 +67,12 @@ el("ib-zikir-sifirla").addEventListener("click", () => {
 });
 sec.addEventListener("change", () => {
   if (sec.value === "ozel") {
-    el("ib-zikir-ozel-kap").hidden = false;
+    ozelSecili = true;
+    ciz();
     ozel.focus();
     return;
   }
+  ozelSecili = false;
   durum.hedef = Number(sec.value);
   kaydet();
   ciz();
