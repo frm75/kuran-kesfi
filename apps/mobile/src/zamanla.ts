@@ -24,7 +24,7 @@ function basla(): void {
 
   void LocalNotifications.addListener("localNotificationActionPerformed", (e) => {
     const url = (e.notification.extra as { url?: unknown } | null | undefined)?.url;
-    if (typeof url === "string" && url.startsWith("/")) location.assign(url);
+    if (typeof url === "string" && url.startsWith("/") && !url.startsWith("//") && !url.startsWith("/\\")) location.assign(url);
   });
 
   planla().catch((h: unknown) => {

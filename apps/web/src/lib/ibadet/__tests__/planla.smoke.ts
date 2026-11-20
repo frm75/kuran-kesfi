@@ -2,7 +2,7 @@
  * Bildirim planlayici duman testleri. TZ=Asia/Tokyo ile de calistirilir.
  */
 import { VARSAYILAN_AYARLAR, type IbadetAyarlari } from "../ayarlar.js";
-import { vakitPlani, ayetPlani, tekrarPlani, gununSiraNo, type AyetKaydi } from "../planla.js";
+import { vakitPlani, ayetPlani, tekrarPlani, gununSiraNo, bizimId, silinecekKimlikler, type AyetKaydi } from "../planla.js";
 import { gunVakitleri } from "../vakit.js";
 import { VAKITLER, type Konum } from "../types.js";
 
@@ -111,6 +111,26 @@ check("gun sirasi modulo", gununSiraNo(new Date("2026-12-31T12:00:00+03:00"), "E
   const p = tekrarPlani(ayar({ konum: IST, tekrarSaati: "20:00" }), new Date("2026-06-10T06:00:00+03:00"), 14);
   check("tekrar: 14 bildirim", p.length === 14);
   check("tekrar: id/url/baslik", p[0]?.id === 202606109 && p[0]?.url === "/gunluk" && p[0]?.baslik === "Tekrar zamanı" && p[0]?.govde === "Bugünkü tekrarlarınız sizi bekliyor.");
+}
+
+// Bayat kimlik hesabi (bildirimleriYenile: once kur, sonra yalniz bayatlari iptal et)
+{
+  check("bizimId: vakit/ayet/tekrar", bizimId(202606100) && bizimId(202606105) && bizimId(202606108) && bizimId(202606109));
+  check("bizimId: k=6,7 degil", !bizimId(202606106) && !bizimId(202606107));
+  check("bizimId: yabanci kimlik degil", !bizimId(1) && !bizimId(42) && !bizimId(-202606100) && !bizimId(2026061.5));
+  const bekleyen = [202606100, 202606102, 202606108, 202606118, 202606109, 42, 202606102];
+  const plan = [202606102, 202606112, 202606109];
+  const sil = silinecekKimlikler(bekleyen, plan, { ayetiKoru: false });
+  check("bayat: plan disi bizim kimlikler", JSON.stringify([...sil].sort()) === JSON.stringify([202606100, 202606108, 202606118]));
+  check("bayat: yeni plandaki silinmez", !sil.includes(202606102) && !sil.includes(202606109));
+  check("bayat: yabanci (42) silinmez", !sil.includes(42));
+  check("bayat: tekrar eden bekleyen tek kez", sil.length === new Set(sil).size);
+  const koru = silinecekKimlikler(bekleyen, plan, { ayetiKoru: true });
+  check("bayat: ayet indirilemedi -> k=8 korunur", JSON.stringify(koru) === JSON.stringify([202606100]));
+  check("bayat: bekleyen yok", silinecekKimlikler([], plan, { ayetiKoru: false }).length === 0);
+  // Ayet kapatildi: plan k=8 icermez, koruma yok -> tum k=8 iptal
+  const kapali = silinecekKimlikler([202606108, 202606118], [], { ayetiKoru: false });
+  check("bayat: ayet kapali -> k=8 iptal", kapali.length === 2);
 }
 
 console.log(`\n${passed} passed, ${failures.length} failed`);

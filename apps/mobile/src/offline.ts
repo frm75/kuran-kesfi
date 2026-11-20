@@ -43,8 +43,10 @@ async function calistir(): Promise<void> {
   el("kible").textContent = `Kıble: kuzeyden saat yönünde ${kibleAcisi(konum.enlem, konum.boylam).toFixed(1)}°`;
   el("icerik").hidden = false;
 
+  // Ayet metni siteden indirilir; burada (https://localhost) indirilemez.
+  // Bekleyen ayet bildirimleri yerinde kalir, yalnız vakit ve tekrar yenilenir.
   try {
-    await bildirimleriYenile(ayar);
+    await bildirimleriYenile(ayar, simdi, { ayetAtla: true });
   } catch (h) {
     console.warn("bildirimler yenilenemedi", h);
   }

@@ -184,3 +184,25 @@ export function gununSiraNo(an: Date, saatDilimi: string, uzunluk: number): numb
   const gunNo = Math.round((Date.UTC(g.yil, g.ay - 1, g.gun) - Date.UTC(g.yil, 0, 0)) / 86400000);
   return gunNo % uzunluk;
 }
+
+/** Bu uygulamanin kimlik semasina uyan bildirim mi (yyyymmdd*10 + k, k 0..5|8|9). */
+export function bizimId(id: number): boolean {
+  const k = id % 10;
+  return Number.isInteger(id) && (k <= 5 || k === 8 || k === 9) && id >= 20000101 * 10 && id <= 21001231 * 10 + 9;
+}
+
+/**
+ * Yeni plan kurulduktan sonra iptal edilecek bayat kimlikler:
+ * bekleyen ∩ bizim − yeni plan. ayetiKoru: ayet indirilemedi; bekleyen k=8
+ * girdileri (eski gunun ayeti) yerinde kalir.
+ */
+export function silinecekKimlikler(
+  bekleyen: readonly number[],
+  yeniPlan: readonly number[],
+  secenek: { ayetiKoru: boolean },
+): number[] {
+  const yeni = new Set(yeniPlan);
+  return [...new Set(bekleyen)].filter(
+    (id) => bizimId(id) && !yeni.has(id) && !(secenek.ayetiKoru && id % 10 === 8),
+  );
+}
