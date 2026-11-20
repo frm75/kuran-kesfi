@@ -1,0 +1,48 @@
+---
+import Base from "~/layouts/Base.astro";
+import IbadetSekmeleri from "~/components/IbadetSekmeleri.astro";
+---
+
+<Base
+  title="Zikirmatik — Kur'an-ı Kerim Keşfi"
+  description="Dokunarak sayan zikirmatik; sayı yalnızca cihazınızda saklanır."
+>
+  <main id="icerik" class="pg pg-normal">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">Zikirmatik</span>
+    </nav>
+    <header class="pg-head">
+      <p class="pg-kicker">İbadet</p>
+      <h1 class="pg-title">Zikirmatik</h1>
+    </header>
+    <IbadetSekmeleri aktif="/ibadet/zikirmatik" />
+    <noscript><p class="g-warn">Bu araç tarayıcınızda JavaScript gerektirir.</p></noscript>
+    <section aria-label="Zikirmatik">
+      <button type="button" class="ib-zikir-alan" id="ib-zikir-say" aria-label="Say">
+        <span class="ib-zikir-sayi" id="ib-zikir-sayi" aria-live="off">0</span>
+      </button>
+      <p class="sec-note" id="ib-zikir-durum" role="status"></p>
+      <div class="ib-zikir-ayar">
+        <label class="g-field">
+          <span>Hedef</span>
+          <select id="ib-zikir-hedef">
+            <option value="33">33</option>
+            <option value="99">99</option>
+            <option value="100">100</option>
+            <option value="ozel">Özel</option>
+          </select>
+        </label>
+        <label class="g-field" id="ib-zikir-ozel-kap" hidden>
+          <span>Özel hedef</span>
+          <input type="number" id="ib-zikir-ozel" min="1" max="100000" inputmode="numeric" />
+        </label>
+        <button type="button" class="g-btn g-btn-danger" id="ib-zikir-sifirla">Sıfırla</button>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<script>
+  import "~/lib/ibadet/sayfa/zikirmatik";
+</script>

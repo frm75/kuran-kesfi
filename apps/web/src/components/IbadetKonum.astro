@@ -1,0 +1,22 @@
+---
+/** Konum seçici: GPS düğmesi + şehir arama. Davranış lib/ibadet/sayfa/ortak.ts'de. */
+interface Props {
+  /** Konum yokken sayfanın asıl içeriği gizli kalır; bu blok her zaman görünür. */
+  baslik?: string;
+}
+const { baslik = "Konum" } = Astro.props;
+---
+
+<section class="ib-konum" aria-labelledby="ib-konum-baslik">
+  <h2 id="ib-konum-baslik" class="ib-h2">{baslik}</h2>
+  <p class="ib-konum-ad" id="ib-konum-ad" role="status">Konum seçilmedi.</p>
+  <div class="ib-konum-satir">
+    <button type="button" class="g-btn" id="ib-konum-gps">Konumu kullan</button>
+    <label class="g-field">
+      <span>Şehir ara</span>
+      <input type="search" id="ib-sehir-ara" autocomplete="off" placeholder="Örn. Londra" />
+    </label>
+  </div>
+  <p class="g-toast" id="ib-konum-mesaj" role="status" hidden></p>
+  <ul class="ib-sehir-liste" id="ib-sehir-liste" hidden></ul>
+</section>

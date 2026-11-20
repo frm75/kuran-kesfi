@@ -1,0 +1,34 @@
+---
+import Base from "~/layouts/Base.astro";
+import IbadetSekmeleri from "~/components/IbadetSekmeleri.astro";
+---
+
+<Base
+  title="Hicri takvim — Kur'an-ı Kerim Keşfi"
+  description="Bugünün hicri tarihi ve bu ayın miladi/hicri tablosu."
+>
+  <main id="icerik" class="pg pg-normal">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">Hicri takvim</span>
+    </nav>
+    <header class="pg-head">
+      <p class="pg-kicker">İbadet</p>
+      <h1 class="pg-title">Hicri takvim</h1>
+    </header>
+    <IbadetSekmeleri aktif="/ibadet/takvim" />
+    <noscript><p class="g-warn">Bu araç tarayıcınızda JavaScript gerektirir.</p></noscript>
+    <section aria-label="Bugün">
+      <p class="ib-sayac" id="ib-hicri-bugun" role="status"></p>
+      <h2 class="ib-h2" id="ib-takvim-baslik"></h2>
+      <div class="ib-tablo-kap">
+        <table class="ib-tablo" id="ib-takvim-tablo"></table>
+      </div>
+      <p class="sec-note">Diyanet takviminden bir gün sapabilir.</p>
+    </section>
+  </main>
+</Base>
+
+<script>
+  import "~/lib/ibadet/sayfa/takvim";
+</script>

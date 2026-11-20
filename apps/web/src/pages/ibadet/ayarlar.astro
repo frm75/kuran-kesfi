@@ -1,0 +1,69 @@
+---
+import Base from "~/layouts/Base.astro";
+import IbadetSekmeleri from "~/components/IbadetSekmeleri.astro";
+---
+
+<Base
+  title="Bildirim ayarları — Kur'an-ı Kerim Keşfi"
+  description="Namaz vakti, günün ayeti ve ezber tekrarı bildirimleri."
+>
+  <main id="icerik" class="pg pg-normal">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">Bildirim ayarları</span>
+    </nav>
+    <header class="pg-head">
+      <p class="pg-kicker">İbadet</p>
+      <h1 class="pg-title">Bildirim ayarları</h1>
+    </header>
+    <IbadetSekmeleri aktif="/ibadet/ayarlar" />
+    <noscript><p class="g-warn">Bu araç tarayıcınızda JavaScript gerektirir.</p></noscript>
+    <p class="g-warn" id="ib-web-not" hidden>Bildirimler Android uygulamasında</p>
+    <form id="ib-ayar-form" hidden>
+      <fieldset class="ib-grup">
+        <legend>Namaz vakitleri</legend>
+        <div id="ib-vakit-secenekler"></div>
+        <label class="g-field">
+          <span>Vakitten kaç dakika önce</span>
+          <select id="ib-dakika-once">
+            <option value="0">Vaktinde</option>
+            <option value="5">5 dakika</option>
+            <option value="10">10 dakika</option>
+            <option value="15">15 dakika</option>
+            <option value="30">30 dakika</option>
+            <option value="45">45 dakika</option>
+          </select>
+        </label>
+      </fieldset>
+      <fieldset class="ib-grup">
+        <legend>Günün ayeti</legend>
+        <label class="ib-onay"><input type="checkbox" id="ib-ayet-acik" /> Her gün bildir</label>
+        <label class="g-field"><span>Saat</span><input type="time" id="ib-ayet-saat" value="08:00" /></label>
+      </fieldset>
+      <fieldset class="ib-grup">
+        <legend>Ezber tekrarı</legend>
+        <label class="ib-onay"><input type="checkbox" id="ib-tekrar-acik" /> Her gün hatırlat</label>
+        <label class="g-field"><span>Saat</span><input type="time" id="ib-tekrar-saat" value="20:00" /></label>
+      </fieldset>
+      <p class="g-warn" id="ib-kesin-uyari" role="alert" hidden>
+        Bildirimler birkaç dakika gecikebilir — izni aç
+        <button type="button" class="g-btn" id="ib-kesin-dugme">İzni aç</button>
+      </p>
+      <p class="g-toast" id="ib-ayar-mesaj" role="status" hidden></p>
+      <button type="submit" class="g-btn">Kaydet</button>
+      <details class="ib-pil">
+        <summary>Bildirim gelmiyorsa</summary>
+        <p>Bazı telefonlar uygulamaları arka planda kapatır. Pil ayarını şu yoldan değiştirin.</p>
+        <ul>
+          <li><b>Xiaomi:</b> Ayarlar › Uygulamalar › Uygulamaları yönet › Kur'an-ı Kerim Keşfi › Pil tasarrufu › Kısıtlama yok. Aynı yerde “Otomatik başlat”ı açın.</li>
+          <li><b>Samsung:</b> Ayarlar › Uygulamalar › Kur'an-ı Kerim Keşfi › Pil › Sınırsız. Ayarlar › Pil › Arka plan kullanım sınırları’nda uygulamayı “Uyumayan uygulamalar”a ekleyin.</li>
+          <li><b>Huawei:</b> Ayarlar › Pil › Uygulama başlatma › Kur'an-ı Kerim Keşfi › Otomatik yönetimi kapatın; üç seçeneği (otomatik başlatma, ikincil başlatma, arka planda çalışma) açın.</li>
+        </ul>
+      </details>
+    </form>
+  </main>
+</Base>
+
+<script>
+  import "~/lib/ibadet/sayfa/ayarlar";
+</script>

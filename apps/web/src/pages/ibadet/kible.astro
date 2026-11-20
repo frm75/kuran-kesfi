@@ -1,0 +1,42 @@
+---
+import Base from "~/layouts/Base.astro";
+import IbadetSekmeleri from "~/components/IbadetSekmeleri.astro";
+import IbadetKonum from "~/components/IbadetKonum.astro";
+---
+
+<Base
+  title="Kıble — Kur'an-ı Kerim Keşfi"
+  description="Bulunduğunuz yerden Kâbe yönü; pusula sensörü varsa ok telefonla döner."
+>
+  <main id="icerik" class="pg pg-normal">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">Kıble</span>
+    </nav>
+    <header class="pg-head">
+      <p class="pg-kicker">İbadet</p>
+      <h1 class="pg-title">Kıble</h1>
+    </header>
+    <IbadetSekmeleri aktif="/ibadet/kible" />
+    <noscript><p class="g-warn">Bu araç tarayıcınızda JavaScript gerektirir.</p></noscript>
+    <IbadetKonum />
+    <section id="ib-kible" hidden aria-label="Kıble yönü">
+      <p class="ib-kible-aci" id="ib-kible-aci" role="status"></p>
+      <svg class="ib-pusula" viewBox="-100 -100 200 200" role="img" aria-label="Kıble oku">
+        <circle class="ib-pusula-halka" r="92" />
+        <g id="ib-kadran">
+          <text class="ib-pusula-k" x="0" y="-76" text-anchor="middle">K</text>
+          <g id="ib-kible-ok">
+            <path class="ib-pusula-ok" d="M0,-70 L12,-30 L3,-30 L3,40 L-3,40 L-3,-30 L-12,-30 Z" />
+          </g>
+        </g>
+      </svg>
+      <p class="sec-note" id="ib-kible-sensor" role="status"></p>
+      <p class="sec-note" id="ib-kible-kalibre" hidden>Telefonu 8 çizerek döndürün</p>
+    </section>
+  </main>
+</Base>
+
+<script>
+  import "~/lib/ibadet/sayfa/kible";
+</script>

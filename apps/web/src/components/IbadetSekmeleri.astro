@@ -1,0 +1,25 @@
+---
+const SEKMELER = [
+  { yol: "/ibadet", ad: "Vakitler" },
+  { yol: "/ibadet/imsakiye", ad: "İmsakiye" },
+  { yol: "/ibadet/kible", ad: "Kıble" },
+  { yol: "/ibadet/takvim", ad: "Takvim" },
+  { yol: "/ibadet/zikirmatik", ad: "Zikirmatik" },
+  { yol: "/ibadet/ayarlar", ad: "Ayarlar" },
+] as const;
+
+interface Props {
+  aktif: (typeof SEKMELER)[number]["yol"];
+}
+const { aktif } = Astro.props;
+---
+
+<nav class="ib-sekmeler" aria-label="İbadet bölümleri">
+  {
+    SEKMELER.map((s) => (
+      <a href={s.yol} aria-current={s.yol === aktif ? "page" : undefined}>
+        {s.ad}
+      </a>
+    ))
+  }
+</nav>
