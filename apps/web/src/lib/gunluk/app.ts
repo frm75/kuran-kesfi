@@ -1,14 +1,13 @@
 import {
   DEFAULT_SETTINGS,
   STORES,
-  clear,
   get,
   getAll,
   getSettings,
   isAvailable,
   put,
   remove,
-  saveSettings,
+  writeBatch,
 } from "./store";
 import type { Bookmark, Memorization, Note, Progress, Settings } from "./store";
 import { addDays, initialState, intervalDays, nextState } from "./fsrs";
@@ -478,6 +477,16 @@ function validateEnvelope(value: unknown): { ok: true; data: ExportEnvelope } | 
       return { ok: false, reason: "not kaydı eksik alan taşıyor" };
     }
   }
+  for (const bookmark of data.bookmarks ?? []) {
+    if (typeof bookmark.verseKey !== "string") {
+      return { ok: false, reason: "yer imi kaydı eksik alan taşıyor" };
+    }
+  }
+  for (const row of data.progress ?? []) {
+    if (typeof row.surahId !== "number" || typeof row.lastVerse !== "number") {
+      return { ok: false, reason: "okuma kaydı eksik alan taşıyor" };
+    }
+  }
   for (const memo of data.memorization ?? []) {
     if (typeof memo.verseKey !== "string" || typeof memo.stability !== "number") {
       return { ok: false, reason: "ezber kaydı eksik alan taşıyor (eski sürüm dosyası olabilir)" };
@@ -486,20 +495,27 @@ function validateEnvelope(value: unknown): { ok: true; data: ExportEnvelope } | 
   return { ok: true, data: data as ExportEnvelope };
 }
 
+/**
+ * İçe aktarma TEK işlemdir (`writeBatch`): bir kayıt bile yazılamazsa
+ * boşaltma dahil hiçbir şey uygulanmaz, cihazdaki günlük olduğu gibi kalır.
+ */
 async function importEnvelope(data: ExportEnvelope, mode: "replace" | "merge"): Promise<void> {
-  if (mode === "replace") {
-    for (const store of [STORES.notes, STORES.bookmarks, STORES.progress, STORES.memorization]) {
-      await clear(store);
-    }
-  }
-  for (const note of data.notes) await put(STORES.notes, note);
-  for (const bookmark of data.bookmarks) await put(STORES.bookmarks, bookmark);
-  for (const row of data.progress) await put(STORES.progress, row);
-  for (const memo of data.memorization) await put(STORES.memorization, memo);
-  await saveSettings({ ...DEFAULT_SETTINGS, ...data.settings });
-  await put(STORES.passthrough, { key: "recentDiscoveries", value: data.recentDiscoveries ?? [] });
-  await put(STORES.passthrough, { key: "discoveryPaths", value: data.discoveryPaths ?? [] });
-  await put(STORES.passthrough, { key: "comparisonBasket", value: data.comparisonBasket ?? null });
+  await writeBatch({
+    clear:
+      mode === "replace"
+        ? [STORES.notes, STORES.bookmarks, STORES.progress, STORES.memorization]
+        : [],
+    puts: [
+      ...data.notes.map((value) => ({ store: STORES.notes, value })),
+      ...data.bookmarks.map((value) => ({ store: STORES.bookmarks, value })),
+      ...data.progress.map((value) => ({ store: STORES.progress, value })),
+      ...data.memorization.map((value) => ({ store: STORES.memorization, value })),
+      { store: STORES.settings, value: { key: "app", value: { ...DEFAULT_SETTINGS, ...data.settings } } },
+      { store: STORES.passthrough, value: { key: "recentDiscoveries", value: data.recentDiscoveries ?? [] } },
+      { store: STORES.passthrough, value: { key: "discoveryPaths", value: data.discoveryPaths ?? [] } },
+      { store: STORES.passthrough, value: { key: "comparisonBasket", value: data.comparisonBasket ?? null } },
+    ],
+  });
   await renderAll();
 }
 
@@ -604,7 +620,15 @@ function wireDataButtons(): void {
       ) {
         return;
       }
-      void importEnvelope(check.data, mode).then(() => { toast("İçe aktarıldı."); });
+      void importEnvelope(check.data, mode).then(
+        () => { toast("İçe aktarıldı."); },
+        (error: unknown) => {
+          toast(
+            `İçe aktarılamadı, cihazdaki veri değişmedi: ${error instanceof Error ? error.message : "bilinmeyen hata"}`,
+            "err",
+          );
+        },
+      );
     });
   };
   $("#g-import-merge").addEventListener("click", applyImport("merge"));
@@ -612,7 +636,7 @@ function wireDataButtons(): void {
 
   $("#g-wipe").addEventListener("click", () => {
     if (!window.confirm("Bu cihazdaki BÜTÜN günlük verisi silinecek. Geri alınamaz. Devam edilsin mi?")) return;
-    void Promise.all(Object.values(STORES).map((store) => clear(store))).then(() =>
+    void writeBatch({ clear: Object.values(STORES), puts: [] }).then(() =>
       renderAll().then(() => { toast("Bütün veriler silindi."); }),
     );
   });
@@ -655,6 +679,20 @@ function applyQuery(): void {
   $<HTMLInputElement>("#g-add-verse").value = `${String(parsed.surahId)}:${String(parsed.verseNumber)}`;
   $<HTMLTextAreaElement>("#g-add-text").focus();
 }
+
+/*
+ * Yazma, silme ve dışa aktarma çağrıları `void söz.then(...)` biçiminde;
+ * reddedilen söz buraya düşer. Kullanıcı başarı bildirimi görmediği hâlde
+ * hata da görmüyordu — dolu kota ya da kilitli depo sessiz kalıyordu.
+ */
+window.addEventListener("unhandledrejection", (event) => {
+  event.preventDefault();
+  const reason: unknown = event.reason;
+  toast(
+    `İşlem tamamlanamadı: ${reason instanceof Error ? reason.message : "bilinmeyen hata"}`,
+    "err",
+  );
+});
 
 if (!isAvailable()) {
   $("#gunluk-app").hidden = true;

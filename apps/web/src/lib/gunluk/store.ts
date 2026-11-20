@@ -116,7 +116,17 @@ function openDb(): Promise<IDBDatabase> {
       }
     };
     request.onsuccess = () => {
-      resolve(request.result);
+      const db = request.result;
+      /*
+       * Başka bir sekme şemayı yükseltmek isterse bu bağlantı yol verir;
+       * vermezse o sekmenin `open` çağrısı süresiz bloke kalırdı. Sonraki
+       * işlem veritabanını yeniden açar.
+       */
+      db.onversionchange = () => {
+        db.close();
+        dbPromise = null;
+      };
+      resolve(db);
     };
     request.onerror = () => {
       reject(request.error ?? new Error("IndexedDB açılamadı"));
@@ -130,7 +140,37 @@ function openDb(): Promise<IDBDatabase> {
       reject(new Error("IndexedDB başka bir sekme tarafından kilitlenmiş"));
     };
   });
+  // Başarısız açılış saklanmaz: yoksa sayfa yenilenene dek her işlem aynı
+  // eski hatayla dönerdi.
+  dbPromise.catch(() => {
+    dbPromise = null;
+  });
   return dbPromise;
+}
+
+/**
+ * Bir isteğin sonucunu, İŞLEM TAMAMLANINCA verir.
+ *
+ * `request.onsuccess` yazmanın diske indiğini göstermez: kota dolarsa işlem
+ * istekten SONRA iptal olur. Sayfa o durumda "kaydedildi" dememeli; bu yüzden
+ * söz `tx.oncomplete`te çözülür, `onabort` / `onerror`da reddedilir.
+ */
+function settle<T>(
+  tx: IDBTransaction,
+  label: string,
+  result: () => T,
+  resolve: (value: T) => void,
+  reject: (reason: unknown) => void,
+): void {
+  tx.oncomplete = () => {
+    resolve(result());
+  };
+  tx.onabort = () => {
+    reject(tx.error ?? new Error(`${label}: işlem iptal edildi`));
+  };
+  tx.onerror = () => {
+    reject(tx.error ?? new Error(`${label}: işlem başarısız`));
+  };
 }
 
 function run<T>(
@@ -143,14 +183,61 @@ function run<T>(
       new Promise<T>((resolve, reject) => {
         const tx = db.transaction(storeName, mode);
         const request = action(tx.objectStore(storeName));
-        request.onsuccess = () => {
-          resolve(request.result);
-        };
-        request.onerror = () => {
-          reject(request.error ?? new Error(`${storeName}: işlem başarısız`));
-        };
+        settle(tx, storeName, () => request.result, resolve, reject);
       }),
   );
+}
+
+export interface BatchWrite {
+  /** Yazmadan önce boşaltılacak depolar */
+  clear: readonly string[];
+  puts: readonly { store: string; value: unknown }[];
+}
+
+/**
+ * Birden çok depoya TEK işlemde yazar: ya hepsi iner ya hiçbiri.
+ *
+ * İçe aktarma bunu kullanır. Depolar ayrı ayrı boşaltılıp kayıtlar tek tek
+ * yazılsaydı, yarıda çıkan bir hata (bozuk kayıt, dolu kota) kullanıcıyı
+ * silinmiş ama geri yüklenmemiş bir günlükle bırakırdı. Burada herhangi bir
+ * `put` hata verirse işlem iptal olur ve boşaltma da geri alınır.
+ */
+export function writeBatch(batch: BatchWrite): Promise<void> {
+  const names = [...new Set([...batch.clear, ...batch.puts.map((p) => p.store)])];
+  if (names.length === 0) return Promise.resolve();
+  return openDb().then(
+    (db) =>
+      new Promise<void>((resolve, reject) => {
+        const tx = db.transaction(names, "readwrite");
+        settle(tx, "toplu yazma", () => undefined, resolve, reject);
+        try {
+          for (const name of batch.clear) tx.objectStore(name).clear();
+          for (const { store, value } of batch.puts) {
+            tx.objectStore(store).put(value as object);
+          }
+        } catch (error) {
+          // Anahtarı eksik kayıt `put` içinde senkron DataError atar.
+          tx.abort();
+          reject(error);
+        }
+      }),
+  );
+}
+
+/**
+ * Tarayıcıdan bu sitenin verisini depolama baskısında silmemesini ister.
+ * Notlar yalnız bu cihazda durduğu için ilk yazmada bir kez sorulur;
+ * reddedilirse hiçbir şey bozulmaz.
+ */
+let persistAsked = false;
+export function requestPersistence(): void {
+  if (persistAsked) return;
+  persistAsked = true;
+  try {
+    void navigator.storage?.persist?.().catch(() => undefined);
+  } catch {
+    // eski tarayıcı: StorageManager yok
+  }
 }
 
 export const getAll = <T>(store: string): Promise<T[]> =>
@@ -159,8 +246,10 @@ export const getAll = <T>(store: string): Promise<T[]> =>
 export const get = <T>(store: string, key: IDBValidKey): Promise<T | undefined> =>
   run<T | undefined>(store, "readonly", (s) => s.get(key) as IDBRequest<T | undefined>);
 
-export const put = <T>(store: string, value: T): Promise<IDBValidKey> =>
-  run<IDBValidKey>(store, "readwrite", (s) => s.put(value as unknown as object));
+export const put = <T>(store: string, value: T): Promise<IDBValidKey> => {
+  requestPersistence();
+  return run<IDBValidKey>(store, "readwrite", (s) => s.put(value as unknown as object));
+};
 
 export const remove = (store: string, key: IDBValidKey): Promise<undefined> =>
   run<undefined>(store, "readwrite", (s) => s.delete(key) as IDBRequest<undefined>);
