@@ -30,8 +30,11 @@ import type {
   TimelineEventInput,
 } from "@kuran/schema";
 import {
+  CONTENT_FINGERPRINT_KEY,
+  IMPORT_STATE_DDL,
   Report,
   closePool,
+  contentFingerprint,
   fail,
   info,
   pool,
@@ -500,6 +503,7 @@ const CONTENT_TABLES = [
 // -----------------------------------------------------------------------------
 
 async function main(): Promise<void> {
+  const fingerprint = contentFingerprint();
   const report = new Report("content");
   const data = loadAll();
   if (parseErrors.length > 0) {
@@ -1190,6 +1194,20 @@ async function main(): Promise<void> {
     const relationCount = await deriveVerseRelations(client);
     report.note(`Ayet iliskisi: ${relationCount.toLocaleString("tr-TR")} satir (turetilmis)`);
   });
+
+  /*
+   * Parmak izi: bu kosunun hangi data/ icerigini yazdigi. Islem BASARIYLA
+   * bittikten sonra yazilir; yarim kalan kosu eski izi birakir ve linter
+   * "bayat" der — dogru olan da bu. Iz, kosunun BASINDA hesaplanir: ice
+   * aktarma surerken data/ degisirse yazilan iz diske uymaz, linter yakalar.
+   */
+  await pool.query(IMPORT_STATE_DDL);
+  await pool.query(
+    `INSERT INTO import_state (key, value) VALUES ($1, $2)
+     ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = now()`,
+    [CONTENT_FINGERPRINT_KEY, fingerprint],
+  );
+  info(`parmak izi yazildi: ${fingerprint.slice(0, 12)}`);
 
   // --- ozet ------------------------------------------------------------------
   const counts = (await pool.query<{ t: string; n: string }>(

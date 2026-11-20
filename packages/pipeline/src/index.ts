@@ -13,3 +13,4 @@ export * from "./db.js";
 export * from "./slug.js";
 export * from "./text.js";
 export * from "./segments.js";
+export * from "./fingerprint.js";

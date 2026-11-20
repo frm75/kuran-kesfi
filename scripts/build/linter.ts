@@ -65,7 +65,15 @@ import {
   staticVerseDetail,
   verseRef as verseRefSchema,
 } from "@kuran/schema";
-import { closePool, info, pool, repoRoot } from "@kuran/pipeline";
+import {
+  CONTENT_FINGERPRINT_KEY,
+  IMPORT_STATE_DDL,
+  closePool,
+  contentFingerprint,
+  info,
+  pool,
+  repoRoot,
+} from "@kuran/pipeline";
 import { dataRoot } from "./lib/emit.js";
 import { checkPrincipleAreaCounts, checkPrincipleOppositeReciprocity } from "./lib/principle_checks.js";
 import { checkScheduleAdjacentRepeats } from "./lib/schedule.js";
@@ -101,8 +109,35 @@ async function rows<T extends Record<string, unknown>>(sql: string): Promise<T[]
   return (await pool.query<T>(sql)).rows;
 }
 
+/**
+ * Veritabani data/ ile ayni icerikten mi uretildi?
+ *
+ * data/ degisip `pnpm content:import` unutulursa asagidaki butun denetimler
+ * yine temiz gecer — cunku ESKI veritabani kendi icinde tutarlidir. Degisiklik
+ * yayina cikmaz ve bunu hicbir sey soylemez. Bu denetim soyler.
+ */
+async function checkFreshness(): Promise<void> {
+  await pool.query(IMPORT_STATE_DDL);
+  const stored = (
+    await pool.query<{ value: string }>("SELECT value FROM import_state WHERE key = $1", [
+      CONTENT_FINGERPRINT_KEY,
+    ])
+  ).rows[0]?.value;
+  const current = contentFingerprint();
+  check(
+    "veritabani guncelligi",
+    stored === current,
+    stored === undefined
+      ? "ice aktarma kaydi yok — 'pnpm content:import' calistirin"
+      : `data/ son ice aktarmadan sonra degismis (kayitli ${stored.slice(0, 12)}, ` +
+          `diskte ${current.slice(0, 12)}) — 'pnpm content:import' calistirin`,
+  );
+}
+
 async function checkDatabase(): Promise<void> {
   info("A. veritabani butunlugu");
+
+  await checkFreshness();
 
   check("sure sayisi", (await scalar("SELECT count(*)::text AS value FROM surah")) === "114", "114 olmali");
   check(
