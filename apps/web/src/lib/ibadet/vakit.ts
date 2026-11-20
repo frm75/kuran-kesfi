@@ -23,24 +23,19 @@ export function gunVakitleri(gun: Gun, konum: Konum): GunVakitleri {
   // adhan takvim gününü yerel bileşenlerden okur; sunucu saat diliminden
   // bağımsız olması için günü konumun saat diliminde verdiğimiz bileşenlerle kurarız.
   const tarih = new Date(gun.yil, gun.ay - 1, gun.gun, 12, 0, 0);
-  const bos: GunVakitleri = { imsak: null, gunes: null, ogle: null, ikindi: null, aksam: null, yatsi: null };
-  try {
-    const pt = new PrayerTimes(
-      new Coordinates(konum.enlem, konum.boylam),
-      tarih,
-      CalculationMethod.Turkey(),
-    );
-    return {
-      imsak: gecerli(pt.fajr),
-      gunes: gecerli(pt.sunrise),
-      ogle: gecerli(pt.dhuhr),
-      ikindi: gecerli(pt.asr),
-      aksam: gecerli(pt.maghrib),
-      yatsi: gecerli(pt.isha),
-    };
-  } catch {
-    return bos;
-  }
+  const pt = new PrayerTimes(
+    new Coordinates(konum.enlem, konum.boylam),
+    tarih,
+    CalculationMethod.Turkey(),
+  );
+  return {
+    imsak: gecerli(pt.fajr),
+    gunes: gecerli(pt.sunrise),
+    ogle: gecerli(pt.dhuhr),
+    ikindi: gecerli(pt.asr),
+    aksam: gecerli(pt.maghrib),
+    yatsi: gecerli(pt.isha),
+  };
 }
 
 function sonrakiGun(g: Gun): Gun {

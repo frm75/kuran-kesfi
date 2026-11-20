@@ -103,6 +103,24 @@ console.log("6. Yuksek enlem");
   check("Invalid Date yok", ok);
 }
 
+{
+  // Tromso: adhan Turkey() yontemi burada bazi vakitleri hesaplayamaz (gece guneşi);
+  // null yolu gercekten calisir.
+  const tromso: Konum = { ad: "Tromso", enlem: 69.65, boylam: 18.96, saatDilimi: "Europe/Oslo" };
+  let hata = false;
+  let v = null as ReturnType<typeof gunVakitleri> | null;
+  try {
+    v = gunVakitleri({ yil: 2026, ay: 6, gun: 21 }, tromso);
+  } catch {
+    hata = true;
+  }
+  check("Tromso hata firlatmaz", !hata && v !== null);
+  const vals = v ? VAKITLER.map((a) => v[a]) : [];
+  check("Tromso Invalid Date yok", vals.every((d) => d === null || !Number.isNaN(d.getTime())));
+  check("Tromso en az bir vakit null", vals.some((d) => d === null));
+  check("Tromso ogle ve ikindi hesaplanir", v?.ogle instanceof Date && v.ikindi instanceof Date);
+}
+
 console.log("");
 console.log("7. Aylik imsakiye");
 {
