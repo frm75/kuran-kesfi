@@ -33,10 +33,15 @@ public class MainActivity extends BridgeActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // HTTP hata yanitinda (404, 5xx) offline.html'e gecilmesin; yalniz ag hatasi.
+        getBridge().setWebViewClient(new HttpHatasiGecirenIstemci(getBridge()));
         final WebView webView = getBridge().getWebView();
 
         zamanlaJs = assetOku("public/zamanla.js");
-        if (WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)) {
+        if (zamanlaJs.isEmpty()) {
+            // Bos betik kaydedilmez; onPageFinished yedegi de bos betigi atlar.
+            Log.e(TAG, "zamanla.js bos; enjeksiyon yapilmayacak");
+        } else if (WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)) {
             WebViewCompat.addDocumentStartJavaScript(webView, zamanlaJs, Collections.singleton(ORIGIN));
             documentStartKayitli = true;
         } else {
@@ -78,10 +83,13 @@ public class MainActivity extends BridgeActivity {
             @Override
             public void handleOnBackPressed() {
                 WebView w = getBridge().getWebView();
-                if (w.canGoBack()) {
-                    w.goBack();
-                } else {
+                String url = w.getUrl();
+                // Ana sayfada ya da site disinda (offline.html, hata sayfasi)
+                // geri tusu uygulamadan cikar; aksi hâlde gecmise doner.
+                if (!siteMi(url) || anaSayfaMi(url) || !w.canGoBack()) {
                     finish();
+                } else {
+                    w.goBack();
                 }
             }
         });
@@ -96,7 +104,13 @@ public class MainActivity extends BridgeActivity {
 
     private static boolean siteMi(String url) {
         if (url == null) return false;
-        return HOST.equals(Uri.parse(url).getHost());
+        Uri u = Uri.parse(url);
+        return "https".equals(u.getScheme()) && HOST.equals(u.getHost());
+    }
+
+    private static boolean anaSayfaMi(String url) {
+        String yol = Uri.parse(url).getPath();
+        return yol == null || yol.isEmpty() || yol.equals("/");
     }
 
     private static boolean yolAltinda(String yol, String kok) {
