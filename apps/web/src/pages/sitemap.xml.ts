@@ -40,6 +40,7 @@ export const GET: APIRoute = () => {
     // /kaynaklar hem hub hem cocuk oldugu icin bir kez girsin diye Set.
     ...[...new Set(NAV.map((hub) => hub.href))].map((loc) => ({ loc, priority: "0.9" })),
     { loc: "/ara", priority: "0.9" },
+    { loc: "/gizlilik", priority: "0.3" },
     { loc: "/sureler", priority: "0.9" },
     { loc: "/sureler/inis-sirasi", priority: "0.8" },
     { loc: "/kissalar", priority: "0.9" },

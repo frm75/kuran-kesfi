@@ -44,8 +44,8 @@ import { CONTACT } from "~/lib/site";
       <h2>Toplanmayan veriler</h2>
       <p>
         Hesap açılmaz, giriş yapılmaz. Analitik aracı, reklam ağı ya da izleme
-        betiği yoktur; üçüncü taraftan betik, yazı tipi ya da başka bir kaynak
-        yüklenmez. Çerez ile sizi tanıyan bir sistem kurulmaz.
+        betiği yoktur; üçüncü taraftan betik ya da yazı tipi yüklenmez. Tek
+        istisna aşağıda "Uydu harita katmanı" başlığında anlatılıyor. Çerez ile sizi tanıyan bir sistem kurulmaz.
         {/* DOĞRULA: "çerez kullanılmaz" iddiası: nginx ve sayfalar çerez yazmıyor görünüyor ama canlı yanıtlarda Set-Cookie başlığı denetlenmedi. */}
       </p>
     </section>
@@ -93,6 +93,20 @@ import { CONTACT } from "~/lib/site";
         bulut depolama hizmetinden sunulduğu için o isteklerin sunucu günlüğü
         ayrıca tutulabilir.
         {/* DOĞRULA: medya.kurankesfi.tr'nin arkasındaki hizmet (nginx.conf ve kodda R2 anılıyor) ve onun günlük/saklama politikası; sağlayıcı adı ve ülke bilgisi yazılacaksa buradan eklenmeli. */}
+      </p>
+    </section>
+
+    <section>
+      <h2>Uydu harita katmanı</h2>
+      <p>
+        <a href="/harita">Harita</a> ve kıssa sayfalarındaki haritada varsayılan
+        katman kendi sunucularımızdan gelir. "Uydu" katmanını siz seçerseniz
+        tarayıcınız uydu görüntü karelerini Esri'nin (ArcGIS) sunucusundan,
+        <code>ibasemaps-api.arcgis.com</code> adresinden ister. Bu istekle Esri'ye
+        IP adresiniz ve görüntülenen karelerin koordinatları gider; Esri'nin kendi
+        gizlilik politikası geçerlidir. Katmanı seçmezseniz Esri'ye hiçbir istek
+        gitmez.
+        {/* DOĞRULA: Uydu düğmesi yalnız build'de PUBLIC_ARCGIS_API_KEY varsa basılıyor; canlı sürümde anahtar tanımlı mı? Değilse bu bölüm kaldırılmalı. */}
       </p>
     </section>
 

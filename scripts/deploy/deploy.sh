@@ -263,6 +263,7 @@ smoke_test() {
   csp_must_have "/"                "worker-src 'self'"
   pp_must_have  "/ibadet"          "geolocation=(self)"
   pp_must_have  "/"                "geolocation=()"
+  pp_must_have  "/bakara-suresi/153" "geolocation=()"
   # Harita sayfalari: MapLibre ve PMTiles altligi icin acik olmali.
   csp_must_have "/harita"          "script-src 'self'"
   csp_must_have "/harita"          "worker-src 'self' blob:"

@@ -1,6 +1,12 @@
 import type { APIRoute } from "astro";
 
 /**
+ * Kapsam kararı: SW "/" kapsamında kaydedilir (sw-kaydet.ts), yani tüm siteyi
+ * denetler. Bilinçli: önceden okunmuş ayet/sure sayfalarının çevrimdışı
+ * açılması bunu gerektirir. SW sayfa JS'i değildir; "içerik sayfalarında 0 bayt
+ * JS" kuralı sayfa betiklerini kapsar, ve SW yalnızca /ibadet sayfalarında
+ * kaydedilir.
+ *
  * Service worker — yalnızca /ibadet için çevrimdışı önbellek.
  *
  * Build anında dist/sw.js olarak üretilir (build.format "file"). SURUM build
@@ -25,6 +31,8 @@ const ONBELLEK_LISTESI = [
 const SW = `const SURUM = ${JSON.stringify(SURUM)};
 const AD = "kk-ibadet-" + SURUM;
 const ONBELLEK_LISTESI = ${JSON.stringify(ONBELLEK_LISTESI)};
+const SINIR = 300;
+const AG_ZAMAN_ASIMI = 4000;
 
 self.addEventListener("install", (e) => {
   e.waitUntil(
@@ -43,12 +51,32 @@ self.addEventListener("activate", (e) => {
   );
 });
 
+// Çalışma anı girdilerini SINIR ile sınırla: ön önbellek girdileri korunur,
+// en eski çalışma anı girdileri (ekleme sırası) silinir.
+async function kirp(c) {
+  const korunan = new Set(ONBELLEK_LISTESI.map((y) => new URL(y, self.location.origin).href));
+  const anahtarlar = (await c.keys()).filter((r) => !korunan.has(r.url));
+  for (const r of anahtarlar.slice(0, Math.max(0, anahtarlar.length - SINIR))) await c.delete(r);
+}
+
 function yaz(istek, yanit) {
-  if (yanit && yanit.ok) {
+  if (yanit && yanit.status === 200) {
     const kopya = yanit.clone();
-    caches.open(AD).then((c) => c.put(istek, kopya));
+    caches
+      .open(AD)
+      .then((c) => c.put(istek, kopya).then(() => kirp(c)))
+      .catch(() => {});
   }
   return yanit;
+}
+
+function agOnce(istek, zamanAsimi) {
+  const ag = fetch(istek).then((y) => yaz(istek, y));
+  if (!zamanAsimi) return ag;
+  return Promise.race([
+    ag,
+    new Promise((_, red) => setTimeout(() => red(new Error("zaman asimi")), zamanAsimi)),
+  ]);
 }
 
 self.addEventListener("fetch", (e) => {
@@ -60,30 +88,24 @@ self.addEventListener("fetch", (e) => {
   if (yol.startsWith("/api/")) return;
 
   if (istek.mode === "navigate") {
-    // Yalnızca /ibadet gezintileri; diğer sayfalar tarayıcıya kalır.
-    if (yol !== "/ibadet" && !yol.startsWith("/ibadet/")) return;
+    // Ağ öncelikli (4 sn), sonra önbellek, sonra /ibadet.
     e.respondWith(
-      fetch(istek)
-        .then((y) => yaz(istek, y))
-        .catch(() =>
-          caches.match(istek).then((c) => c || caches.match("/ibadet").then((a) => a || Response.error())),
-        ),
+      agOnce(istek, AG_ZAMAN_ASIMI).catch(() =>
+        caches.match(istek).then((c) => c || caches.match("/ibadet").then((a) => a || Response.error())),
+      ),
     );
     return;
   }
 
-  if (yol.startsWith("/_astro/") || yol.startsWith("/data/") || yol.startsWith("/ibadet/")) {
-    // Önce önbellek, arkada güncelle.
-    e.respondWith(
-      caches.match(istek).then((c) => {
-        const ag = fetch(istek).then((y) => yaz(istek, y));
-        if (c) {
-          ag.catch(() => {});
-          return c;
-        }
-        return ag;
-      }),
-    );
+  if (yol.startsWith("/_astro/") || yol.startsWith("/fonts/") || yol.startsWith("/brand/")) {
+    // Adı içeriğe bağlı ya da sabit: önce önbellek.
+    e.respondWith(caches.match(istek).then((c) => c || agOnce(istek)));
+    return;
+  }
+
+  if (yol.startsWith("/data/") || yol.startsWith("/ibadet/")) {
+    // Ağ öncelikli: çevrimiçi kullanıcı hep taze ve tutarlı veri alır.
+    e.respondWith(agOnce(istek).catch(() => caches.match(istek).then((c) => c || Response.error())));
   }
 });
 `;

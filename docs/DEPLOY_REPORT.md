@@ -927,3 +927,16 @@ saklamaz, karmasını bellekte geçici tutar.
 | Derleme | `cd apps/mobile/android && ./gradlew assembleDebug` (~4,5 dk ilk seferde) → `app/build/outputs/apk/debug/app-debug.apk` |
 
 Lisanslar `sdkmanager --licenses` ile kabul edildi. Hiçbir servis başlatılmadı.
+
+---
+
+# Bekleyen canlı uygulama — nginx (Android Task 6, 2026-11-20)
+
+Depodaki `infra/nginx/kurankesfi.tr.conf` değişti, **canlıya henüz uygulanmadı** (kontrolcü onayla uygular):
+
+- `$kesif_csp` map'indeki her satıra `worker-src 'self'` eklendi; yeni `~^/ibadet(/|\.html$|$)` satırı (script-src 'self', worker-src 'self', connect-src 'self', harici kaynak yok).
+- Yeni `$kesif_pp` map'i; `Permissions-Policy` başlığı bu değişkeni kullanır (`/ibadet` için `geolocation=(self)`, diğer her yerde `geolocation=()`).
+- `location = /sw.js { expires -1; }`.
+
+Uygulama sırası: yedek `/www/server/panel/vhost/nginx/kurankesfi.tr.conf.bak.20261120` → depo dosyasını kopyala → `nginx -t` → reload → `pnpm build` → `pnpm run deploy` (duman testi yeni CSP/PP satırlarını denetler).
+`/gizlilik` metni kullanıcı onayı bekliyor; sayfa depoda ama onaydan önce yayınlanmamalı (DOĞRULA yorumları kaynakta).
