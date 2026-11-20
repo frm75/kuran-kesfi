@@ -100,17 +100,17 @@ Play Console > Uygulama içeriği > Veri güvenliği. Yanıtlar kodla ve gizlili
 
 | Soru | Yanıt |
 |---|---|
-| Uygulama kullanıcı verisi topluyor veya paylaşıyor mu? | **Evet** (yalnızca iletişim formu) |
+| Uygulama kullanıcı verisi topluyor veya paylaşıyor mu? | **Evet** (iletişim formu, sunucu erişim günlüğündeki IP adresi ve Uydu katmanında Esri'ye giden IP adresi) |
 | Toplanan veri | **Kişisel bilgiler: Ad** ve **E-posta adresi**; kullanıcının yazdığı **mesaj** (Mesajlar > Diğer uygulama içi mesajlar); **Cihaz veya diğer kimlikler: IP adresi** (sunucu erişim günlüğü, aşağıya bakın) |
 | Toplama amacı | Ad, e-posta, mesaj: **Uygulama işlevselliği / Geliştirici iletişimi** (yalnızca yanıt vermek ve düzeltmeyi işlemek). IP adresi: **Güvenlik, sahtecilik önleme ve uyumluluk / Uygulama işlevselliği** |
-| Veri üçüncü taraflarla paylaşılıyor mu? | **Hayır** |
+| Veri üçüncü taraflarla paylaşılıyor mu? | **Evet, yalnızca IP adresi, Esri ile** (kullanıcı "Uydu" katmanını seçtiğinde; amaç: **Uygulama işlevselliği**). Ad, e-posta ve mesaj paylaşılmaz |
 | Veri aktarım sırasında şifreleniyor mu? | **Evet** (HTTPS) |
 | Kullanıcı verinin silinmesini isteyebilir mi? | **Evet** (e-posta ile; gizlilik sayfasında yazılı) |
 | Veri toplama zorunlu mu? | **İsteğe bağlı** (yalnızca kullanıcı formu doldurursa) |
 
 **IP adresi (Cihaz veya diğer kimlikler) beyan edilir.** Web sunucusu her istek için olağan erişim günlüğü
 tutar (istek zamanı, istenen adres, yanıt kodu, **IP adresi**, tarayıcı bilgisi). Play bunu sunucu tarafında
-toplama sayar. Yanıtlar: paylaşılmıyor, aktarımda şifreli, amaç güvenlik/işletim. **"Geçici işleme"
+toplama sayar. Kendi sunucunuzdaki günlük için yanıtlar: aktarımda şifreli, amaç güvenlik/işletim; paylaşım yalnızca aşağıdaki Esri durumu için geçerlidir. **"Geçici işleme"
 (ephemeral) olarak işaretlemeyin**: gizlilik metni (`gizlilik.astro`, "Sunucu erişim günlükleri") günlüklerin
 saklanma süresini vermiyor (`DOĞRULA` notu açık), yani süre belirsiz. Gerçek süre (ör. 7 gün) öğrenilip
 metne yazılırsa ve istek işlenir işlenmez atılıyorsa bu karar yeniden değerlendirilebilir.
@@ -126,14 +126,13 @@ karması, bellekte, geçici tutulur); IP adresi ise yalnızca web sunucusunun er
   web gezinme geçmişi, diğer cihaz kimlikleri (IP dışında).
 - Reklam, analitik ve üçüncü taraf SDK yoktur; "reklam kimliği" kullanılmaz.
 
-**Dikkat edilecek nokta** (gizlilik metnindeki `DOĞRULA` notuyla aynıdır; kararı siz verin):
-
-*Uydu harita katmanı.* Haritada "Uydu" katmanını seçerseniz görüntü kareleri Esri'nin
-(ArcGIS) sunucusundan yüklenir; Esri'ye IP adresi ve görüntülenen karelerin koordinatları gider.
-Katman seçilmezse hiçbir istek gitmez. Bu katman yalnızca sitenin derlemesinde
-`PUBLIC_ARCGIS_API_KEY` tanımlıysa görünür. **Canlı sürümde bu anahtar tanımlıysa** IP adresi satırının
-yanında "üçüncü taraflarla paylaşılıyor" yanıtını (Esri) ve gizlilik metnindeki bölümü tutun; tanımlı değilse
-paylaşım "Hayır" kalır ve gizlilik metnindeki "Uydu harita katmanı" bölümü kaldırılmalıdır.
+**Uydu harita katmanı (Esri) paylaşım olarak beyan edilir.** Canlı ortamda `PUBLIC_ARCGIS_API_KEY` tanımlı
+(doğrulandı 2026-11-20), yani Uydu katmanı yayında. Kullanıcı haritada "Uydu" katmanını seçerse görüntü
+kareleri Esri'nin (ArcGIS) sunucusundan (`ibasemaps-api.arcgis.com`) yüklenir; Esri'ye **IP adresi** ve
+istenen karelerin koordinatları gider. Katman seçilmezse Esri'ye hiçbir istek gitmez.
+Karelerin koordinatları kullanıcının konumu değil, **haritada baktığı bölgedir** (kıssa yerleri). Cihaz
+konumuyla bağı yoktur, bu yüzden "Konum" kategorisi olarak beyan edilmez; yalnızca "IP adresi" paylaşımı
+beyan edilir. Gizlilik metnindeki "Uydu harita katmanı" bölümü bununla aynı şeyi söyler.
 
 ---
 

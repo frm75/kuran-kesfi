@@ -10,7 +10,7 @@ AAB="$MOBILE_DIR/android/app/build/outputs/bundle/release/app-release.aab"
 
 # .env'den yalnizca ANDROID_* anahtarlari alinir; ortamda zaten varsa ortam kazanir.
 if [ -f "$ROOT_DIR/.env" ]; then
-  for key in ANDROID_KEYSTORE_PATH ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_ALIAS; do
+  for key in ANDROID_KEYSTORE_PATH ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_ALIAS ANDROID_KEY_PASSWORD; do
     if [ -z "${!key:-}" ]; then
       line="$(grep -E "^${key}=" "$ROOT_DIR/.env" | tail -n1 || true)"
       if [ -n "$line" ]; then
@@ -43,7 +43,8 @@ if [ -z "${ANDROID_KEYSTORE_PASSWORD:-}" ] || [ -z "${ANDROID_KEY_ALIAS:-}" ]; t
   exit 1
 fi
 export ANDROID_KEYSTORE_PATH ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_ALIAS
-# ANDROID_KEY_PASSWORD istege bagli; yoksa gradle keystore sifresini kullanir (ortamda varsa otomatik gecer).
+# ANDROID_KEY_PASSWORD istege bagli; tanimliysa disa aktarilir, yoksa gradle keystore sifresini kullanir.
+if [ -n "${ANDROID_KEY_PASSWORD:-}" ]; then export ANDROID_KEY_PASSWORD; fi
 
 echo "==> 1/4 Web paketi ve cap sync"
 (cd "$ROOT_DIR" && pnpm --filter @kuran/mobile build)
@@ -55,11 +56,17 @@ sed -i -E "s/^([[:space:]]*versionCode[[:space:]]+)[0-9]+/\1${next}/" "$GRADLE_F
 echo "    versionCode: $current -> $next (apps/mobile/android/app/build.gradle; commit'e almayi unutmayin)"
 
 echo "==> 3/4 bundleRelease"
-if ! (cd "$MOBILE_DIR/android" && ./gradlew bundleRelease); then
+restore_version() {
   sed -i -E "s/^([[:space:]]*versionCode[[:space:]]+)[0-9]+/\1${current}/" "$GRADLE_FILE"
-  echo "HATA: bundleRelease basarisiz. versionCode eski degerine ($current) geri alindi." >&2
+  echo "versionCode eski degerine ($current) geri alindi." >&2
+}
+trap 'restore_version; echo "HATA: surec yarida kesildi." >&2; exit 130' INT TERM
+if ! (cd "$MOBILE_DIR/android" && ./gradlew bundleRelease); then
+  restore_version
+  echo "HATA: bundleRelease basarisiz." >&2
   exit 1
 fi
+trap - INT TERM
 
 echo "==> 4/4 Cikti"
 if [ ! -f "$AAB" ]; then
