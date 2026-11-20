@@ -30,13 +30,31 @@ CURRENT="$SITE_ROOT/current"
 WELL_KNOWN="$SITE_ROOT/.well-known"
 NGINX="/www/server/nginx/sbin/nginx"
 KEEP=2          # tutulacak eski yayin sayisi (yayindaki + 2 = ~1 GB)
-OWNER="www:www" # nginx bu kullaniciyla calisiyor
+# Yayin agaci root'undur; nginx (www) yalnizca OKUR (755/644). Sahip www
+# olsaydi bu sunucudaki baska bir sitenin PHP'si ele gecirildiginde ayet
+# metni degistirilebilir ya da 'current' baska yere cevrilebilirdi.
+OWNER="root:root"
+LOCK="/run/lock/kuran-deploy.lock"
 
 log() { printf '%s  %s\n' "$(date -u +%H:%M:%S)" "$*"; }
 die() { printf '%s  HATA  %s\n' "$(date -u +%H:%M:%S)" "$*" >&2; exit 1; }
 
+# Yalnizca tamamlanmis yayinlar: yarida kalmis '<zaman>.part' dizini
+# siralamada sona duser ve geri alma hedefi secilebilirdi.
 list_releases() {
-  ls -1 "$RELEASES" 2>/dev/null | sort || true
+  ls -1 "$RELEASES" 2>/dev/null | grep -E '^[0-9]{8}T[0-9]{6}Z$' | sort || true
+}
+
+# Ayni anda tek yayin/geri alma: iki kosu 'current' bagi icin yarisirdi.
+take_lock() {
+  exec 9>"$LOCK"
+  flock -n 9 || die "baska bir yayin islemi suruyor ($LOCK)"
+}
+
+# 'current' bagini verilen yayina atomik cevirir.
+point_current() {
+  ln -sfn "$RELEASES/$1" "$CURRENT.tmp"
+  mv -Tf "$CURRENT.tmp" "$CURRENT"
 }
 
 cmd_list() {
@@ -282,7 +300,11 @@ smoke_test() {
   # demektir ve bu sessizce olur.
   csp_must_not_have "/bakara-suresi/153" "form-action 'self'"
 
-  [ "$fail" -eq 0 ] || die "duman testi basarisiz"
+  # die DEGIL return: cagiran taraf basarisizlikta onceki yayina donebilsin.
+  if [ "$fail" -ne 0 ]; then
+    log "duman testi BASARISIZ"
+    return 1
+  fi
   log "duman testi temiz"
 }
 
@@ -293,11 +315,11 @@ cmd_rollback() {
   previous="$(list_releases | grep -v "^${active}$" | tail -1)"
   [ -n "$previous" ] || die "geri alinacak onceki yayin yok"
 
+  take_lock
   log "geri aliniyor: $active -> $previous"
-  ln -sfn "$RELEASES/$previous" "$CURRENT.tmp"
-  mv -Tf "$CURRENT.tmp" "$CURRENT"
+  point_current "$previous"
   reload_nginx
-  smoke_test
+  smoke_test || die "geri alinan yayin ($previous) duman testini gecemedi"
   log "geri alindi: $previous"
 }
 
@@ -323,8 +345,12 @@ cmd_deploy() {
   stamp="$(date -u +%Y%m%dT%H%M%SZ)"
   target="$RELEASES/$stamp"
 
+  take_lock
   log "yayin $stamp — $pages sayfa, ${need_mb} MB (bos: ${free_mb} MB)"
   mkdir -p "$RELEASES"
+
+  # Onceki kosudan yarim kalmis kopyalar (kilit bizde, baska yazan yok).
+  find "$RELEASES" -maxdepth 1 -name '*.part' -exec rm -rf {} +
 
   # .part son ana kadar: kopyalama yarida kesilirse yarim dizin 'current'
   # olamaz, adindan da belli olur.
@@ -349,12 +375,20 @@ cmd_deploy() {
 
   # Atomik gecis: ln -sfn yeni bir bag yazar, mv -T onu tek islemde
   # 'current' uzerine tasir. Ziyaretci hicbir an iki surum arasinda kalmaz.
-  ln -sfn "$target" "$CURRENT.tmp"
-  mv -Tf "$CURRENT.tmp" "$CURRENT"
+  point_current "$stamp"
   log "current -> $stamp${before:+  (onceki: $before)}"
 
   reload_nginx
-  smoke_test
+  # Duman testi gecmezse bozuk surum canlida BIRAKILMAZ: onceki yayina
+  # donulur. Basarisiz yayin dizini incelenebilsin diye silinmez.
+  if ! smoke_test; then
+    if [ -n "$before" ] && [ -d "$RELEASES/$before" ]; then
+      point_current "$before"
+      reload_nginx
+      die "duman testi basarisiz; onceki yayina donuldu: $before (basarisiz yayin: $target)"
+    fi
+    die "duman testi basarisiz ve donulecek onceki yayin yok; $stamp canlida"
+  fi
 
   # Eski yayinlari buda; yayindaki asla silinmez.
   local active
@@ -372,7 +406,7 @@ cmd_deploy() {
 case "${1:-}" in
   --rollback) cmd_rollback ;;
   --list)     cmd_list ;;
-  --smoke)    smoke_test ;;
+  --smoke)    smoke_test || die "duman testi basarisiz" ;;
   "")         cmd_deploy ;;
   *)          die "bilinmeyen secenek: $1 (--rollback | --list | --smoke veya bos)" ;;
 esac
