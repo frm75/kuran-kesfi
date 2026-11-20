@@ -109,7 +109,10 @@ başarısız yayınla **denenmedi**).
 
 1. `pnpm deploy` pnpm'in yerleşiği — sessizce hiçbir şey yapmaz. **`pnpm run deploy`** kullan.
 2. Build komutları **repo kökünden** çalışır; `cd apps/web/src` yapıp unutmak `build:web not found` verir.
-3. `astro check` OOM oluyor (exit 137). Gerçek denetim `pnpm build:web`.
+3. **İki Node var.** Astro 7 komutları (`build`, `dev`, `typecheck`) `scripts/ops/node22.sh` ile
+   `/opt/kuran-node` (Node 22) üzerinde çalışır; geri kalan her şey sistem Node 20'de. `pnpm install`'ı
+   Node 22 ile çalıştırma — `better-sqlite3` yanlış ABI'ye derlenir, servisler açılmaz.
+   Bkz. `docs/DEPLOY_REPORT.md` "Astro 7 / Node 22".
 4. `pkill -f "http.server"` kendi bash'ini öldürür (exit 144); `pgrep -f "[h]ttp.server"` kullan.
 5. Medya/görsel geldiğinde **kaynağı VE çıktıyı** kare kare tara — figür yasağı (plan §20.3).
    İlk hero kesimi üç yerde figür geçirmişti ve yayına çıkmıştı.
@@ -127,19 +130,19 @@ başarısız yayınla **denenmedi**).
 9. **İki oturum aynı repoda build alamaz.** Astro başlarken `dist`'i temizliyor; ikinci
    build birincinin ara dosyalarını siliyor ("Cannot find module dist/pages/....mjs",
    "renderers.mjs"). Bu oturumda üç build böyle kırıldı. Build almadan önce
-   `pgrep -f "[a]stro\\.js build"` ile bak.
-10. `pgrep -f "astro.js build"` **kendini yakalar** — beklerken sonsuz döngü olur.
-   Köşeli parantezle yaz: `pgrep -f "[a]stro\\.js build"`.
+   `pgrep -f "[a]stro\\.mjs build"` ile bak.
+10. `pgrep -f "astro.mjs build"` **kendini yakalar** — beklerken sonsuz döngü olur.
+   Köşeli parantezle yaz: `pgrep -f "[a]stro\\.mjs build"`.
 11. Türetilmiş ilişkilerde **puan tek başına yetmez, çeşitlilik sınırı şart**. İlk sürümde
    Bakara 153'ün sekiz bağının sekizi de tek bir nadir kökten (عون) geliyordu; sabır bağı
    listeye hiç giremiyordu. `MAX_PER_REF = 3` bunu çözdü — bkz. `scripts/import/lib/relations.ts`.
 12. **Ana sayfada elle yazılmış sayı bırakma.** 2026-09-07'de aynı sayfa hem `54` hem `26`
    meal yazıyordu; biri veriden geliyordu, öteki koda gömülüydü ve yazar eklenince bayatladı.
    Sayı daima `authors_index.json`'dan hesaplanır.
-13. **`pgrep -f "<desen>"` kendi bash sarmalayıcısını yakalar.** `pgrep -af "node.*astro.js build"`
+13. **`pgrep -f "<desen>"` kendi bash sarmalayıcısını yakalar.** `pgrep -af "node.*astro.mjs build"`
    çalışan build olmadığı hâlde 2 döndürdü: desen, komutu çalıştıran `bash -c`'nin kendi
    komut satırında geçiyor. Köşeli parantez de yetmiyor. Doğrusu süreç adına bakmak:
-   `ps -eo comm,args --no-headers | awk '$1=="node" && /astro\.js build/'`.
+   `ps -eo comm,args --no-headers | awk '$1=="node" && /astro\.mjs build/'`.
 14. **Duman testi yayından hemen sonra yanlış alarm veriyor.** `contains()` gövdeyi
    `|| body=""` ile yutuyor; 13509 dosya kopyalandıktan sonra disk doluyken 20 sn zaman
    aşımı yetmiyor ve `og:image BULUNAMADI` diyor. Sembolik bağlantı çevrilmiş, sayfa 200,

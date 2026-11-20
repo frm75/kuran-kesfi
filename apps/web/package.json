@@ -6,24 +6,24 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "pnpm prepare:harita && ASTRO_TELEMETRY_DISABLED=1 astro dev --port ${SITE_PORT:-4321}",
-    "build": "pnpm prepare:harita && ASTRO_TELEMETRY_DISABLED=1 astro build",
-    "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview --port ${SITE_PORT:-4321}",
-    "typecheck": "ASTRO_TELEMETRY_DISABLED=1 astro check",
+    "dev": "pnpm prepare:harita && ASTRO_TELEMETRY_DISABLED=1 ../../scripts/ops/node22.sh node_modules/astro/bin/astro.mjs dev --port ${SITE_PORT:-4321}",
+    "build": "pnpm prepare:harita && ASTRO_TELEMETRY_DISABLED=1 ../../scripts/ops/node22.sh node_modules/astro/bin/astro.mjs build",
+    "preview": "ASTRO_TELEMETRY_DISABLED=1 ../../scripts/ops/node22.sh node_modules/astro/bin/astro.mjs preview --port ${SITE_PORT:-4321}",
+    "typecheck": "ASTRO_TELEMETRY_DISABLED=1 ../../scripts/ops/node22.sh node_modules/astro/bin/astro.mjs check",
     "prepare:harita": "node scripts/prepare-harita.mjs",
     "test:smoke": "tsx src/lib/gunluk/__tests__/fsrs.smoke.ts && tsx src/lib/__tests__/nav.smoke.ts && tsx src/lib/__tests__/graf.smoke.ts && tsx src/lib/dinle/__tests__/timeline.smoke.ts && tsx src/lib/search/__tests__/normalize.smoke.ts && tsx src/lib/search/__tests__/reference.smoke.ts && tsx src/lib/search/__tests__/query.smoke.ts && tsx src/lib/search/__tests__/index.smoke.ts"
   },
   "dependencies": {
     "@kuran/schema": "workspace:*",
-    "astro": "^5.18.2",
+    "astro": "^7.4.13",
     "maplibre-gl": "^6.7.0",
     "pmtiles": "^4.5.0"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.10",
-    "@tailwindcss/vite": "^4.3.3",
+    "@astrojs/check": "^0.9.12",
+    "@tailwindcss/vite": "^4.3.5",
     "@types/node": "^20.19.0",
-    "tailwindcss": "^4.3.3",
+    "tailwindcss": "^4.3.5",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   }

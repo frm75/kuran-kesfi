@@ -87,16 +87,14 @@ HAProxy `:5010` primary'ye, `:5011` replica'lara yönlendiriyor. Bu cluster esen
 
 **Karar:** Build veritabanı bu cluster'a açılmaz. Yerine izole bir Docker PostgreSQL kullanılır (`kuran-pg`, `127.0.0.1:4322`), yalnızca build makinesinde çalışır. Plan §6 ile uyumludur: "PostgreSQL yalnızca build aşamasında; üretimde veritabanı yok."
 
-### 2.2 Node sürümü Astro'yu 5.x'te sınırlıyor
+### 2.2 Node sürümü: sistem 20, Astro için proje-yerel 22
 
-Sistem Node v20.20.2'dir ve pm2'deki üç üretim uygulaması ona bağlıdır; yükseltilmedi.
+Sistem Node v20.20.2'dir ve sunucudaki başka üretim uygulamaları ona bağlıdır; yükseltilmedi.
 
 | Paket | Seçilen | Neden |
 |---|---|---|
 | pnpm | 10.34.5 | `engines.node >=18.12` — Node 20 uyumlu. Corepack'in çektiği pnpm 11 Node ≥22.13 istiyordu ve `ERR_UNKNOWN_BUILTIN_MODULE: node:sqlite` ile çöküyordu. |
-| Astro | 5.18.2 | Astro 6 ve 7 `engines.node >=22.12.0` istiyor. 5.18.2, `18.20.8 \|\| ^20.3.0 \|\| >=22.0.0` destekliyor. |
-
-Astro 7'ye geçmek istenirse proje-yerel Node 22 (fnm/nvm) kurulması gerekir; sistem Node'una dokunmadan yapılabilir. Astro 5 bu proje için (statik çıktı, island mimarisi, content collections) yeterlidir.
+| Astro | 7.4.13 | Node ≥22.23 ister; yalnız Astro komutları proje-yerel Node 22 ile çalışır (aşağıda "Astro 7 / Node 22"). 2026-11-20'ye kadar 5.18.2 idi. |
 
 ### 2.3 `api.acikkuran.com` erişilemiyor
 
@@ -946,3 +944,43 @@ Yukarıdaki 2026-09-07 bölümündeki "pm2, fork" satırı artık geçerli deği
 
 **Açık kalan:** sunucu dışı yedek (özel kova gerekiyor); izleme/uyarı; gönderilemeyen e-postanın
 yeniden denenmesi.
+
+---
+
+## Astro 7 / Node 22 (2026-11-20)
+
+Astro 5.18.2 → 7.4.13. Astro 7 Node ≥22.23 ister; sistem Node'u (20.20.2) başka uygulamalara
+bağlı olduğu için **dokunulmadı**. Yerine proje-yerel bir Node kuruldu ve yalnız Astro ona bağlandı.
+
+| Ne | Nerede |
+|---|---|
+| Node 22.23.5 (resmî `linux-x64` tarball, SHA256 doğrulandı) | `/opt/kuran-node/` |
+| Sarmalayıcı | `scripts/ops/node22.sh` (`KURAN_NODE22` ile başka yol verilebilir) |
+| Onu kullananlar | `apps/web/package.json` → `dev`, `build`, `preview`, `typecheck` |
+| Sistem Node 20'de kalanlar | `pnpm install`, bütün `tsx` betikleri, `kuran-iletisim`, `kuran-bot` |
+
+**Neden iki Node:** `better-sqlite3` yerel modüldür ve tek bir Node ABI'sine karşı derlenir.
+`pnpm install` her zaman sistem Node'unda çalışmalı; Node 22 ile kurulursa servisler açılmaz.
+
+**Yeniden kurulum / sürüm yükseltme:**
+
+```bash
+V=22.23.5
+curl -fsSLO https://nodejs.org/dist/v$V/node-v$V-linux-x64.tar.xz
+curl -fsSL https://nodejs.org/dist/v$V/SHASUMS256.txt | grep linux-x64.tar.xz | sha256sum -c -
+mkdir -p /opt/kuran-node && tar -xJf node-v$V-linux-x64.tar.xz -C /opt/kuran-node --strip-components=1
+```
+
+**Kod değişikliği:** tek satır — `astro.config.mjs` içinde `compressHTML: true`. Astro 7'nin
+varsayılanı (`"jsx"`) satır içi öğeler arasındaki boşlukları da siliyor; `true` Astro 5 davranışını korur.
+
+**Doğrulandı:** `astro check` 0 hata · 14 394 sayfa (~8 dk, öncekiyle aynı) · dosya kümesi yayındakiyle
+aynı (yalnız bir CSS dosyasının adı değişti) · 14 394 HTML, boşluk ve varlık kodlaması
+(`&#34;` → `&quot;`) normalleştirildiğinde bire bir aynı · satır içi betik yok (CSP değişmedi) ·
+tarayıcıda ana sayfa, ayet, `/ara`, `/gunluk`, `/dinle`, `/harita`, `/kissa/hz-yusuf` hatasız.
+
+**Tuzak:** `dist`'i `127.0.0.1` üzerinden sunup haritayı denemek yanıltır — `medya.kurankesfi.tr`
+CORS'u yalnız gerçek origin'e izin verir, karolar gelmeyince canlı harita gizlenir. Playwright'ta
+`https://kurankesfi.tr/**` isteklerini `route` ile yerel `dist`'ten doldur.
+
+**Geri dönüş:** `git revert` + sistem Node'unda `pnpm install`. `/opt/kuran-node` kalabilir, zararsız.

@@ -207,9 +207,8 @@ Doğrulandı: yeniden import sonrası kalan bozuk karakter **yok**.
   yazılmadı. Fontlar `preload` + `swap` ile geliyor, Inter 61,4 KB — geçiş
   sıçraması küçük ama sıfır değil.
 
-- **Astro 5 → 7 yükseltmesi.** Astro 6+ Node ≥22.12 istiyor; sunucudaki Node 20.20.2'ye pm2'deki
-  üretim uygulamaları bağlı. Proje-yerel Node 22 (fnm) ile ayrıştırılabilir.
-  Bkz. `docs/DEPLOY_REPORT.md` §2.2.
+- ~~**Astro 5 → 7 yükseltmesi.**~~ Yapıldı (2026-11-20): Astro 7.4.13, proje-yerel Node 22
+  (`/opt/kuran-node`). Bkz. `docs/DEPLOY_REPORT.md` "Astro 7 / Node 22".
 - **`root_diff` (kök türevleri ve geçiş sayıları) için kaynak.** Açık Kuran'ın ayet ucu kök
   bilgisini veriyor (`latin`, `arabic`, Türkçe anlam) ama kökün türevlerini listelemiyor.
   Eski `/root/{id}` ucu kapalı. Türev listesi Faz 3 kök ağacı görünümü için gerekiyor;

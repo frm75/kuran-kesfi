@@ -8,6 +8,12 @@ export default defineConfig({
   site: "https://kurankesfi.tr",
   output: "static",
   trailingSlash: "never",
+  /*
+   * Astro 7'de ontanimli 'jsx' oldu: satir ici ogeler arasindaki bosluk
+   * JSX gibi SILINIR (<span>a</span> <em>b</em> -> "ab"). 14 000 sayfanin
+   * metni Astro 5 davranisina gore yazildi; eski davranis acikca korunuyor.
+   */
+  compressHTML: true,
   build: {
     // Statik dosya sunucusunda temiz URL'ler icin: /sure/2 -> sure/2.html
     format: "file",
