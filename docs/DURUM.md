@@ -17,6 +17,18 @@ Capacitor kabuğu `apps/mobile/` (`server.url` = kurankesfi.tr). Imzalı AAB: `p
 (`.env`: `ANDROID_KEYSTORE_PATH`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`; anahtar repo dışında).
 Betik `versionCode`'u kendisi artırır. **Bekleyen, kullanıcının işleri:** D-U-N-S ve kurumsal Play hesabı,
 upload keystore üretimi, `/gizlilik` metni onayı, AAB'yi Play'e yükleme. Adım adım: `docs/mobil/PLAY_KAYDI.md`.
+Telefonda denetim listesi (geri tuşu, çevrimdışı İbadet, 404, bildirimler, yedekleme):
+`docs/mobil/PLAY_KAYDI.md` §8.
+
+**Karar — bildirim yenileme sıklığı (spec'ten sapma).** Spec "uygulama her açıldığında bildirimler
+yeniden kurulur" diyor. Uygulanan: enjekte `zamanla.js` her sayfada çalışır ama yeniden kurulumu
+**12 saatte bir** yapar (`sonPlanlama` damgası); her seferinde **30 günlük** vakit, 14 günlük ayet ve
+14 günlük tekrar bildirimi kurulur. Ayarlar kaydedilince ve konum değişince süre beklenmeden yeniden
+kurulur. Gerekçe: her gezintide 15 dosya indirip ~200 alarmı yeniden kurmak gereksiz yük; 30 günlük
+pencere 12 saatlik aralığı rahatça örter. Ayet programı indirilemezse (çevrimdışı, `/dinle` sayfasında
+ağ kapalı) damga atılmaz, mevcut ayet bildirimleri korunur ve bir sonraki sayfada yeniden denenir.
+Sıra: önce yeni plan kurulur (aynı kimlik eskisinin yerine geçer), sonra yalnız bayat kimlikler
+iptal edilir; arada sayfa değişse bile bekleyen alarmlar kaybolmaz.
 
 ## Arama (2026-09-08'de yayına girdi)
 

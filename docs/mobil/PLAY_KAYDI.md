@@ -73,7 +73,7 @@ KUR'AN'I KEŞFEDİN
 • Zikirmatik
 
 BİLDİRİMLER
-Her gün bir ayet, seçtiğiniz saatte tekrar hatırlatması ve seçtiğiniz namaz vakitleri için bildirim kurabilirsiniz. Hepsi cihazınızda planlanır; sunucuya bağlanmaz.
+Her gün bir ayet, seçtiğiniz saatte tekrar hatırlatması ve seçtiğiniz namaz vakitleri için bildirim kurabilirsiniz. Hepsi cihazınızda planlanır; bildirim sunucusu yoktur. Namaz vakitleri cihazda hesaplanır; günün ayetinin metni kurankesfi.tr sitesinden indirilir.
 
 GİZLİLİK
 • Reklam yok, üyelik yok, takip yok
@@ -114,6 +114,20 @@ toplama sayar. Kendi sunucunuzdaki günlük için yanıtlar: aktarımda şifreli
 (ephemeral) olarak işaretlemeyin**: gizlilik metni (`gizlilik.astro`, "Sunucu erişim günlükleri") günlüklerin
 saklanma süresini vermiyor (`DOĞRULA` notu açık), yani süre belirsiz. Gerçek süre (ör. 7 gün) öğrenilip
 metne yazılırsa ve istek işlenir işlenmez atılıyorsa bu karar yeniden değerlendirilebilir.
+
+**Erişim günlüğü istenen adresi de yazar; "Uygulama etkinliği" kararı sizindir.** Günlükteki her satırda
+IP adresinin yanında **istenen adres** (ör. `/bakara-suresi/153`, `/ibadet/kible`) durur. Bu, hangi IP'nin
+hangi sayfayı açtığını sunucu tarafında kaydetmek demektir. Play'in "Uygulama etkinliği" kategorisinde
+"Uygulama etkileşimleri" ve "Web'de gezinme geçmişi" gibi alt başlıklar var; bu günlüğün bunlara girip
+girmediği yoruma açıktır. Bu rehberdeki varsayılan yanıt **değiştirilmedi** (aşağıda "Toplanmıyor"),
+gerekçesi şu: günlük olağan web sunucusu işletimidir, kullanıcı profili ya da gezinme geçmişi olarak
+işlenmez, kimseyle paylaşılmaz, analitik yapılmaz. Arama sorgusu adres çubuğunda `?q=` olarak dursa da
+sorgu tarayıcıda çalışır ve sunucuya gitmez; yalnızca böyle bir bağlantı doğrudan açılırsa (yenileme,
+paylaşılan bağlantı) günlüğe düşer. Daha temkinli bir beyan isterseniz "Uygulama etkinliği > Uygulama
+etkileşimleri" ve "Web'de gezinme geçmişi"ni **Toplanıyor, paylaşılmıyor, amaç: Güvenlik / Uygulama
+işlevselliği** olarak işaretleyin; bu yanlış beyandan daha güvenlidir, yalnızca mağaza sayfasında biraz daha
+uzun bir veri listesi görünür. Hangisini seçerseniz gizlilik metni zaten tutarlıdır: `gizlilik.astro` "Sunucu erişim günlükleri"
+bölümü istenen adresin ve IP adresinin yazıldığını açıkça söylüyor.
 
 *İletişim formu ile erişim günlüğü ayrı şeylerdir:* form akışı IP adresini saklamaz (hız sınırı için yalnızca
 karması, bellekte, geçici tutulur); IP adresi ise yalnızca web sunucusunun erişim günlüğünde durur.
@@ -241,3 +255,36 @@ olmadığına bakın.
 - **"Sürüm kodu zaten kullanıldı":** `versionCode` artmamıştır; `pnpm mobile:release`'i yeniden çalıştırın.
 - **Bildirim gelmiyor (Xiaomi, Samsung vb.):** üreticinin pil ayarları uygulamayı kısıtlayabilir;
   uygulamadaki "bildirim gelmiyorsa" yardım metnine bakın. Uygulama pil optimizasyonu muafiyeti istemez.
+
+## 8. Telefonda denetim listesi (sizin yapacağınız)
+
+Hata ayıklama APK'sı (`app-debug.apk`) ya da iç test sürümüyle gerçek telefonda deneyin. Sunucuda
+otomatik doğrulanamayanlar bunlar; her birini işaretleyin.
+
+1. 4 sekme (Oku, Ara, Günlük, İbadet) çalışır, seçili sekme açılan sayfayla uyuşur.
+2. **Geri tuşu:** iç sayfada geçmişte geri gider; ana sayfada (`/`) uygulamayı kapatır.
+3. **Geri tuşu, çevrimdışı sayfada:** uçak modunda soğuk açılışta gelen çevrimdışı sayfada (vakitler +
+   kıble) geri tuşu uygulamayı **tek basışta** kapatır; sayfa döngüye girmez.
+4. `/kaynaklar` sayfasındaki dış bağlantı Chrome'da açılır.
+5. Ayarlardan öğle "1 dk sonrası" için test bildirimi kurulur ve bildirim gelir; bildirime dokununca
+   `/ibadet` açılır.
+6. Telefon yeniden başlatılınca bekleyen bildirimler hâlâ kuruludur.
+7. Kesin alarm izni kapatılınca ayarlar sayfasında uyarı görünür.
+8. **Yeni yayından sonra çevrimdışı İbadet:** site yeniden yayımlandıktan sonra uygulamayı bir kez
+   **internet varken** açın (İbadet sekmesine girmeniz gerekmez), sonra uçak moduna geçin, uygulamayı
+   kapatıp açın ve İbadet ile Kıble sayfalarını açın. Beklenen: sayfalar **stilli ve çalışır** gelir
+   (vakit listesi dolu, kıble oku görünür), düz/çıplak HTML değil.
+9. **404 sayfası çevrimdışı görünmez:** internet varken uygulamada olmayan bir adrese gidin: telefonu
+   bilgisayara bağlayın, Chrome'da `chrome://inspect` > uygulamanın WebView'i > Console'a
+   `location.href = "/olmayan-sayfa"` yazın. Beklenen: sitenin kendi
+   "sayfa bulunamadı" sayfası gelir, "internet yok" sayfası **gelmez**. Uçak modunda ise çevrimdışı
+   sayfa gelir.
+10. **Bildirimler çevrimdışı açılışta kaybolmaz:** günün ayeti bildirimi açıkken uçak modunda uygulamayı
+    açın, sonra ayarlardan bekleyen bildirimlere bakın (ya da ertesi gün ayet bildiriminin geldiğini
+    görün). Beklenen: vakit bildirimleri ve **günün ayeti bildirimleri yerinde** durur.
+11. **Dinleme sayfasında bildirimler kaybolmaz:** internet varken bir `/dinle/...` sayfası açın; ayet
+    bildirimleri yine yerinde kalır (bu sayfada ağ isteği kapalı olduğu için ayet metni indirilemez,
+    mevcut bildirimler korunur).
+12. **Yedekleme kapalı:** `adb shell bmgr backupnow tr.kurankesfi.app` komutu uygulamanın yedeğe uygun
+    olmadığını söyler (ya da Ayarlar > Google > Yedekleme'de uygulama listelenmez). Konum ve ayarlar
+    Google Drive'a gitmez.
