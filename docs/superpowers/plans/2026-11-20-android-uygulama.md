@@ -46,7 +46,7 @@
 
 ---
 
-### Görev 1: Araç zinciri ve risk denemesi (spike)
+### Task 1: Araç zinciri ve risk denemesi (spike)
 
 Amaç: tasarımdaki riskli varsayımı ilk adımda denemek. Varsayım şu: document-start'ta enjekte edilen kod sayfanın CSP'sine takılmaz ve `window.Capacitor` köprüsü 0-JS sayfalarda da çalışır.
 
@@ -71,7 +71,7 @@ Amaç: tasarımdaki riskli varsayımı ilk adımda denemek. Varsayım şu: docum
   - **Kod CSP'ye takılırsa:** tasarımdaki yedek plana geç. Service worker kaydı ve bildirim dinleyicisi yalnızca `/ibadet` sayfalarından yapılır, uygulama ilk açılışta `/ibadet`'i bir kez görünmez biçimde yükler. Bu durumu kullanıcıya bildir ve Görev 7'yi ona göre uyarla.
 - [ ] **Adım 6:** Commit: `chore(mobil): Capacitor iskeleti ve enjeksiyon denemesi`
 
-### Görev 2: İbadet hesap kütüphanesi
+### Task 2: İbadet hesap kütüphanesi
 
 **Dosyalar:**
 - Oluştur:
@@ -116,7 +116,7 @@ export function hicriTarih(an: Date, saatDilimi: string): { gun: number; ay: num
 - [ ] **Adım 4:** Testi tekrar çalıştır, ayrıca `TZ=Asia/Tokyo` ile bir kez daha çalıştır. Beklenen: ikisi de PASS.
 - [ ] **Adım 5:** Commit: `feat(ibadet): vakit, kıble ve hicri tarih hesabı`
 
-### Görev 3: Ayarlar ve bildirim planlayıcı
+### Task 3: Ayarlar ve bildirim planlayıcı
 
 Planlayıcı saf bir fonksiyondur ve hangi bildirimin hangi anda kurulacağını üretir. Capacitor'a dokunan katman incedir ve ayrı durur.
 
@@ -181,7 +181,7 @@ Sabit metinler:
 - [ ] **Adım 4:** Testleri çalıştır. Beklenen: PASS. Ardından `pnpm --filter @kuran/web typecheck` temiz geçmeli.
 - [ ] **Adım 5:** Commit: `feat(ibadet): ayarlar ve bildirim planlayıcı`
 
-### Görev 4: Şehir listesi
+### Task 4: Şehir listesi
 
 **Dosyalar:**
 - Oluştur:
@@ -203,7 +203,7 @@ export function sehirAra(liste: Konum[], sorgu: string, sinir?: number /* 20 */)
 - [ ] **Adım 3:** Betiği çalıştır, ardından testleri çalıştır. Beklenen: PASS. Çıktı 150 KB'ı aşarsa yalnızca il merkezi ve başkentler bırakılır, bu karar DURUM.md'ye yazılır.
 - [ ] **Adım 4:** Commit: `feat(ibadet): şehir listesi (GeoNames)`
 
-### Görev 5: /ibadet sayfaları
+### Task 5: /ibadet sayfaları
 
 **Dosyalar:**
 - Oluştur:
@@ -256,7 +256,7 @@ Sayfa içerikleri:
   - Zikirmatik sayfa yenilendikten sonra sayıyı korur.
 - [ ] **Adım 4:** Commit: `feat(ibadet): /ibadet sayfaları`
 
-### Görev 6: Gizlilik sayfası, nginx ve service worker
+### Task 6: Gizlilik sayfası, nginx ve service worker
 
 **Dosyalar:**
 - Oluştur:
@@ -305,7 +305,7 @@ Sayfa içerikleri:
 - [ ] **Adım 6:** Telefonda Chrome ile kontrol: `/ibadet` açılır, ardından uçak modunda tekrar açılır ve sayfa gelir.
 - [ ] **Adım 7:** Commit: `feat(ibadet): gizlilik sayfası, service worker, nginx başlıkları`
 
-### Görev 7: Uygulama kabuğu, zamanlayıcı paketi ve yerel gezinme
+### Task 7: Uygulama kabuğu, zamanlayıcı paketi ve yerel gezinme
 
 **Dosyalar:**
 - Oluştur:
@@ -354,7 +354,7 @@ Zamanlayıcı ve çevrimdışı paket:
   7. Kesin alarm izni kapatılınca ayarlar sayfasında uyarı görünür.
 - [ ] **Adım 4:** Commit: `feat(mobil): yerel şerit, geri tuşu, zamanlayıcı enjeksiyonu, çevrimdışı sayfa`
 
-### Görev 8: Yayın paketi ve mağaza hazırlığı
+### Task 8: Yayın paketi ve mağaza hazırlığı
 
 **Dosyalar:**
 - Oluştur:
