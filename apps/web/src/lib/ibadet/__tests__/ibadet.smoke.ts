@@ -9,6 +9,9 @@ import { gunVakitleri, siradakiVakit, aylikImsakiye, yerelGun } from "../vakit.j
 import { kibleAcisi } from "../kible.js";
 import { hicriTarih } from "../hicri.js";
 import { VAKITLER, type Konum } from "../types.js";
+import { sehirAra } from "../sehir.js";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 
 let passed = 0;
 const failures: string[] = [];
@@ -126,6 +129,26 @@ console.log("7. Aylik imsakiye");
 {
   const a = aylikImsakiye(2026, 2, istanbul);
   check("subat 2026 = 28 gun", a.length === 28 && a[0]?.gun === 1);
+}
+
+console.log("");
+console.log("8. Sehir listesi");
+{
+  const yol = fileURLToPath(new URL("../../../../public/ibadet/sehirler.json", import.meta.url));
+  const dosya = JSON.parse(readFileSync(yol, "utf8")) as { kaynak: string; kayitlar: Konum[] };
+  const liste = dosya.kayitlar;
+  check("kaynak alani GeoNames", dosya.kaynak === "GeoNames, CC BY 4.0");
+  check("ist -> ilk eleman Istanbul", sehirAra(liste, "ist")[0]?.ad === "İstanbul");
+  check("IĞDIR Igdir'i bulur", sehirAra(liste, "IĞDIR").some((k) => k.ad === "Iğdır"));
+  const ilAdlari = liste.slice(0, 81).map((k) => k.ad);
+  check("ilk 81 kayit il merkezi (virgulsuz, benzersiz)", ilAdlari.every((a) => !a.includes(",")) && new Set(ilAdlari).size === 81);
+  check("82. kayit il merkezi degil", liste[81] !== undefined && liste[81].saatDilimi !== "Europe/Istanbul");
+  check("Ankara tek kez", liste.filter((k) => k.ad === "Ankara").length === 1);
+  check("Sanliurfa ve Adalar, Istanbul var", sehirAra(liste, "sanliurfa")[0]?.ad === "Şanlıurfa" && liste.some((k) => k.ad === "Adalar, İstanbul"));
+  check("dunya baskenti (Londra) bulunur", sehirAra(liste, "london").length > 0);
+  check("sinir uygulanir", sehirAra(liste, "a", 5).length === 5);
+  check("bos sorgu bos", sehirAra(liste, "  ").length === 0);
+  check("her kayitta saat dilimi", liste.every((k) => k.saatDilimi.includes("/") || k.saatDilimi === "UTC"));
 }
 
 console.log("");
