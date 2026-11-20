@@ -11,9 +11,13 @@
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview --port ${SITE_PORT:-4321}",
     "typecheck": "ASTRO_TELEMETRY_DISABLED=1 astro check",
     "prepare:harita": "node scripts/prepare-harita.mjs",
-    "test:smoke": "tsx src/lib/gunluk/__tests__/fsrs.smoke.ts && tsx src/lib/__tests__/nav.smoke.ts && tsx src/lib/__tests__/graf.smoke.ts && tsx src/lib/dinle/__tests__/timeline.smoke.ts && tsx src/lib/search/__tests__/normalize.smoke.ts && tsx src/lib/search/__tests__/reference.smoke.ts && tsx src/lib/search/__tests__/query.smoke.ts && tsx src/lib/search/__tests__/index.smoke.ts && tsx src/lib/ibadet/__tests__/ibadet.smoke.ts"
+    "test:smoke": "tsx src/lib/gunluk/__tests__/fsrs.smoke.ts && tsx src/lib/__tests__/nav.smoke.ts && tsx src/lib/__tests__/graf.smoke.ts && tsx src/lib/dinle/__tests__/timeline.smoke.ts && tsx src/lib/search/__tests__/normalize.smoke.ts && tsx src/lib/search/__tests__/reference.smoke.ts && tsx src/lib/search/__tests__/query.smoke.ts && tsx src/lib/search/__tests__/index.smoke.ts && tsx src/lib/ibadet/__tests__/ibadet.smoke.ts && tsx src/lib/ibadet/__tests__/planla.smoke.ts"
   },
   "dependencies": {
+    "@capacitor/core": "^8.6.2",
+    "@capacitor/geolocation": "^8.2.5",
+    "@capacitor/local-notifications": "^8.3.1",
+    "@capacitor/preferences": "^8.0.1",
     "@kuran/schema": "workspace:*",
     "adhan": "^4.4.6",
     "astro": "^5.18.2",
