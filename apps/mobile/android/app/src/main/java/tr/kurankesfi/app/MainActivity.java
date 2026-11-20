@@ -6,7 +6,7 @@ import android.webkit.WebView;
 import androidx.webkit.WebViewCompat;
 import androidx.webkit.WebViewFeature;
 import com.getcapacitor.BridgeActivity;
-import java.util.Set;
+import java.util.Collections;
 
 public class MainActivity extends BridgeActivity {
     private static final String TAG = "KuranSpike";
@@ -29,7 +29,7 @@ public class MainActivity extends BridgeActivity {
             WebViewCompat.addDocumentStartJavaScript(
                 webView,
                 SPIKE_SCRIPT,
-                Set.of("https://kurankesfi.tr")
+                Collections.singleton("https://kurankesfi.tr")
             );
             Log.i(TAG, "document-start script registered");
         } else {
