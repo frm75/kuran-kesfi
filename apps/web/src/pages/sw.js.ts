@@ -21,8 +21,8 @@ import type { APIRoute } from "astro";
  * Çalışma anı girdileri 300 ile sınırlıdır.
  *
  * Ağ kuralı: önbellekte kopya VARSA ağ 4 sn ile yarıştırılır (yavaş ağda eski
- * kopya verilir); kopya YOKSA ağ beklenir, yalnızca ağ reddedilirse (çevrimdışı)
- * /ibadet verilir.
+ * kopya verilir); kopya YOKSA ağ beklenir; ağ reddedilirse (çevrimdışı) gezintilerde /ibadet
+ * verilir, /data/ ve /ibadet/ alt kaynaklarında Response.error() döner.
  */
 const SURUM = String(Date.now());
 
@@ -67,23 +67,30 @@ async function kirp(c) {
   for (const r of anahtarlar.slice(0, Math.max(0, anahtarlar.length - SINIR))) await c.delete(r);
 }
 
-function yaz(e, istek, yanit) {
-  if (yanit && yanit.status === 200) {
-    const kopya = yanit.clone();
-    e.waitUntil(
-      caches
+// Ağdan getirir ve 200 yanıtı önbelleğe yazar. e.waitUntil, olay hâlâ AKTİFKEN
+// (respondWith henüz sonuçlanmadan, eşzamanlı) çağrılır; 4 sn zaman aşımı
+// kazanıp yanıt verilse bile yazma tamamlanır. Sonradan çağrılsaydı
+// InvalidStateError verirdi.
+function getir(e, istek) {
+  let yazma = Promise.resolve();
+  const ag = fetch(istek).then((y) => {
+    if (y.status === 200) {
+      const kopya = y.clone();
+      yazma = caches
         .open(AD)
         .then((c) => c.put(istek, kopya).then(() => kirp(c)))
-        .catch(() => {}),
-    );
-  }
-  return yanit;
+        .catch(() => {});
+    }
+    return y;
+  });
+  e.waitUntil(ag.then(() => yazma, () => {}));
+  return ag;
 }
 
 // Önbellekte kopya varsa ağı 4 sn yarıştır, yoksa ağı bekle.
 async function agOnbellek(e, istek, yedek) {
+  const ag = getir(e, istek);
   const kopya = await caches.match(istek);
-  const ag = fetch(istek).then((y) => yaz(e, istek, y));
   if (!kopya) return ag.catch(() => yedek());
   ag.catch(() => {});
   return Promise.race([
@@ -110,7 +117,7 @@ self.addEventListener("fetch", (e) => {
   if (yol.startsWith("/_astro/") || yol.startsWith("/fonts/") || yol.startsWith("/brand/")) {
     // Adı içeriğe bağlı ya da sabit: önce önbellek.
     e.respondWith(
-      caches.match(istek).then((c) => c || fetch(istek).then((y) => yaz(e, istek, y))),
+      caches.match(istek).then((c) => c || getir(e, istek)),
     );
     return;
   }
