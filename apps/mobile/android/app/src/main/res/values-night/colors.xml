@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- docs/DESIGN.md, koyu mod -->
+    <color name="colorPrimary">#C9A253</color>
+    <color name="colorPrimaryDark">#071023</color>
+    <color name="colorAccent">#C9A253</color>
+    <color name="serit_zemin">#0C1B33</color>
+    <color name="serit_secili">#C9A253</color>
+    <color name="serit_pasif">#CFC7B6</color>
+    <color name="serit_vurgu_zemin">#132743</color>
+</resources>

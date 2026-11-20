@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- docs/DESIGN.md, acik mod -->
+    <color name="colorPrimary">#C9A253</color>
+    <color name="colorPrimaryDark">#EFE6D3</color>
+    <color name="colorAccent">#7C601F</color>
+    <color name="serit_zemin">#FBF7EA</color>
+    <color name="serit_secili">#7C601F</color>
+    <color name="serit_pasif">#3C4657</color>
+    <color name="serit_vurgu_zemin">#E4D5AE</color>
+</resources>

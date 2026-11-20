@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Çevrimdışı — Kur'an-ı Kerim Keşfi</title>
+<style>
+:root{--bg:#EFE6D3;--card:#FBF7EA;--text:#071023;--muted:#3C4657;--accent:#7C601F;--border:#DCD2BA;--cta:#C9A253}
+@media (prefers-color-scheme:dark){:root{--bg:#071023;--card:#0C1B33;--text:#EFE6D3;--muted:#CFC7B6;--accent:#C9A253;--border:#1E3355}}
+body{margin:0;padding:24px 16px;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,sans-serif}
+main{max-width:480px;margin:0 auto}
+h1{font-size:1.25rem;color:var(--accent)}
+ul{list-style:none;padding:0;margin:16px 0;background:var(--card);border:1px solid var(--border);border-radius:8px}
+li{display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border)}
+li:last-child{border-bottom:0}
+li[aria-current]{font-weight:700;color:var(--accent)}
+p{color:var(--muted)}
+button{min-height:48px;padding:0 24px;border:0;border-radius:8px;background:var(--cta);color:#071023;font:inherit;font-weight:600}
+</style>
+</head>
+<body>
+<main>
+<h1>Çevrimdışısınız</h1>
+<p id="mesaj" hidden>İlk kullanım için internet gerekir.</p>
+<section id="icerik" hidden>
+<p id="konum-ad"></p>
+<ul id="vakitler"></ul>
+<p id="kible"></p>
+<p>Hesaplama: Diyanet yöntemi (adhan kütüphanesi). Diyanet'in yayımladığı vakitlerle 1-2 dakika fark olabilir.</p>
+</section>
+<button id="tekrar" type="button">Tekrar dene</button>
+</main>
+<script src="offline.js"></script>
+</body>
+</html>

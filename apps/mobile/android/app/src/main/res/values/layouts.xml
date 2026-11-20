@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- BridgeActivity bu adla setContentView yapar; kendi duzenimize yonlendiriyoruz. -->
+    <item name="capacitor_bridge_layout_main" type="layout">@layout/activity_main</item>
+</resources>
