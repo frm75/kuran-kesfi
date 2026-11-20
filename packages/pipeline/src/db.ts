@@ -62,6 +62,12 @@ export async function upsertMany(
   rows: readonly (readonly unknown[])[],
   conflictKeys: readonly string[],
   chunkSize = 500,
+  /**
+   * Yeni deger NULL ise mevcut degeri koruyan kolonlar. Baska bir import'un
+   * sonradan doldurdugu alan (ornegin QUL'un `verse_part.root_id` dolgusu)
+   * bu import yeniden calistiginda NULL'a donmesin diye.
+   */
+  keepWhenNull: readonly string[] = [],
 ): Promise<number> {
   if (rows.length === 0) return 0;
 
@@ -71,7 +77,13 @@ export async function upsertMany(
   const conflictList = conflictKeys.map(quote).join(", ");
   const updateList =
     updatable.length > 0
-      ? updatable.map((c) => `${quote(c)} = EXCLUDED.${quote(c)}`).join(", ")
+      ? updatable
+          .map((c) =>
+            keepWhenNull.includes(c)
+              ? `${quote(c)} = COALESCE(EXCLUDED.${quote(c)}, ${quote(table)}.${quote(c)})`
+              : `${quote(c)} = EXCLUDED.${quote(c)}`,
+          )
+          .join(", ")
       : null;
 
   let written = 0;

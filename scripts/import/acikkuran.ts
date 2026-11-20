@@ -464,6 +464,10 @@ async function main(): Promise<void> {
       ],
       partRows,
       ["verse_id", "sort_number"],
+      500,
+      // Acik Kuran'in kok vermedigi kelimeleri `data:qul-roots` sonradan
+      // dolduruyor; bu import yeniden calisinca o dolgu silinmesin.
+      ["root_id"],
     );
     if (unmatchedRoots > 0) {
       report.issue(`${unmatchedRoots} kelimede kok kaydi veritabaninda bulunamadi`);

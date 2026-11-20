@@ -212,6 +212,9 @@ export async function deriveVerseRelations(client: Client): Promise<number> {
            (CASE WHEN rel = 'same_topic' THEN 'muhtemel' ELSE 'kesin' END)::confidence_level
       FROM ranked
      WHERE rn <= ${String(TOP_PER_VERSE)}
+     -- Build satirlari id sirasinda okur (guclu -> zayif); sirayi acikca ver,
+     -- yoksa INSERT ... SELECT'in yazim sirasi tanimsizdir.
+     ORDER BY src, rn
   `);
 
   const count = inserted.rowCount ?? 0;

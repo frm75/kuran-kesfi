@@ -491,8 +491,10 @@ const CONTENT_TABLES = [
   "principle", "principle_source", "principle_verse", "principle_story", "principle_concept",
   "surah_section", "section_verse",
   "ai_prompt", "media_item", "media_story", "media_verse", "media_timeline_event", "media_source",
-  // Turetilmis: elle yazilmaz, her import'ta yeniden hesaplanir (lib/relations.ts)
-  "verse_relation",
+  // `verse_relation` BILEREK burada degil: tabloyu iki yazar paylasiyor.
+  // Turetilmis baglar (source_id NULL) asagida silinip yeniden hesaplanir;
+  // QUL lafzi benzerlik baglari (`data:qul-matching`, source_id dolu) kalir.
+  // TRUNCATE ikisini birden siliyordu — 3 552 parallel_passage boyle kayboldu.
 ] as const;
 
 // -----------------------------------------------------------------------------
@@ -1181,6 +1183,10 @@ async function main(): Promise<void> {
      * alinsaydi, data/** degisip bu calistirilmadiginda iliskiler eski
      * icerige isaret ederdi.
      */
+    const staleRelations = await client.query(
+      "DELETE FROM verse_relation WHERE source_id IS NULL",
+    );
+    info(`verse_relation: ${String(staleRelations.rowCount ?? 0)} turetilmis bag silindi (kaynakli baglar korundu)`);
     const relationCount = await deriveVerseRelations(client);
     report.note(`Ayet iliskisi: ${relationCount.toLocaleString("tr-TR")} satir (turetilmis)`);
   });
