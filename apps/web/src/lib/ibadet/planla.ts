@@ -36,7 +36,7 @@ const VAKIT_ADI: Record<VakitAdi, string> = {
 const MEAL_AZAMI = 180;
 const VAKIT_AZAMI = 180;
 
-function varsayilanDilim(): string {
+export function varsayilanDilim(): string {
   return Intl.DateTimeFormat().resolvedOptions().timeZone;
 }
 

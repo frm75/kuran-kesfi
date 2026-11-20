@@ -3,6 +3,7 @@
  */
 import { VARSAYILAN_AYARLAR, type IbadetAyarlari } from "../ayarlar.js";
 import { vakitPlani, ayetPlani, tekrarPlani, gununSiraNo, type AyetKaydi } from "../planla.js";
+import { gunVakitleri } from "../vakit.js";
 import { VAKITLER, type Konum } from "../types.js";
 
 let passed = 0;
@@ -18,7 +19,7 @@ function check(label: string, ok: boolean): void {
 }
 
 const IST: Konum = { ad: "İstanbul", enlem: 41.0082, boylam: 28.9784, saatDilimi: "Europe/Istanbul" };
-const OSLO: Konum = { ad: "Oslo", enlem: 59.9139, boylam: 10.7522, saatDilimi: "Europe/Oslo" };
+const OSLO: Konum = { ad: "Tromsø", enlem: 69.65, boylam: 18.96, saatDilimi: "Europe/Oslo" };
 const tum = { imsak: true, gunes: true, ogle: true, ikindi: true, aksam: true, yatsi: true };
 const ayar = (o: Partial<IbadetAyarlari>): IbadetAyarlari => ({ ...VARSAYILAN_AYARLAR, ...o });
 const sadeceOgle = { ...VARSAYILAN_AYARLAR.vakitBildirimi, ogle: true };
@@ -42,17 +43,35 @@ const sadeceOgle = { ...VARSAYILAN_AYARLAR.vakitBildirimi, ogle: true };
   check("dakika once: id", a15[0]?.id === 202606102);
   check("dakika once: govde", a15[0]?.govde === "15 dakika sonra · İstanbul");
 }
+// Dakika once gecmise iter
+{
+  const ogle = gunVakitleri({ yil: 2026, ay: 6, gun: 10 }, IST).ogle as Date;
+  const simdi = new Date(ogle.getTime() - 10 * 60000);
+  const p = vakitPlani(ayar({ konum: IST, vakitBildirimi: sadeceOgle, dakikaOnce: 15 }), simdi, 2);
+  check("dakika once gecmise: bugun yok, yarin var", p.length === 1 && p[0]?.id === 202606112);
+}
 // Yuksek enlem
 {
+  const bas = new Date("2026-05-05T12:00:00Z");
+  const yatsiAyar = ayar({ konum: OSLO, vakitBildirimi: { ...VARSAYILAN_AYARLAR.vakitBildirimi, yatsi: true } });
   let hata = false;
   let p: ReturnType<typeof vakitPlani> = [];
   try {
-    p = vakitPlani(ayar({ konum: OSLO, vakitBildirimi: { ...VARSAYILAN_AYARLAR.vakitBildirimi, yatsi: true } }), new Date("2026-06-15T00:00:00Z"), 5);
+    p = vakitPlani(yatsiAyar, bas, 30);
   } catch {
     hata = true;
   }
+  let dolu = 0;
+  let bos = 0;
+  for (let i = 0; i < 30; i += 1) {
+    const d = new Date(Date.UTC(2026, 4, 5 + i));
+    const y = gunVakitleri({ yil: d.getUTCFullYear(), ay: d.getUTCMonth() + 1, gun: d.getUTCDate() }, OSLO).yatsi;
+    if (y === null) bos += 1;
+    else dolu += 1;
+  }
   check("yuksek enlem: hata yok", !hata);
-  check("yuksek enlem: yatsi basligi", p.every((x) => x.baslik === "Yatsı vakti"));
+  check("yuksek enlem: hem dolu hem null gun var", dolu > 0 && bos > 0);
+  check("yuksek enlem: yatsi sayisi = null olmayan gun", p.length === dolu);
 }
 // Sinir
 {

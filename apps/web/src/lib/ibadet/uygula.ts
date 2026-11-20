@@ -1,7 +1,7 @@
 /** Planlayici ciktisini Capacitor LocalNotifications'a uygulayan ince katman. */
 import { LocalNotifications } from "@capacitor/local-notifications";
 import { ayarDeposu, type IbadetAyarlari } from "./ayarlar.js";
-import { ayetPlani, gununSiraNo, tekrarPlani, vakitPlani, type AyetKaydi } from "./planla.js";
+import { ayetPlani, gununSiraNo, tekrarPlani, vakitPlani, varsayilanDilim, type AyetKaydi } from "./planla.js";
 
 const AYET_GUN = 14;
 
@@ -29,13 +29,11 @@ async function ayetleriGetir(ayar: IbadetAyarlari, simdi: Date): Promise<Array<A
   if (ayar.ayetSaati === null) return [];
   const program = await getir<{ entries: ProgramGirdisi[] }>("/data/schedule.json");
   if (!program || program.entries.length === 0) return [];
-  const tz = ayar.konum?.saatDilimi ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const tz = ayar.konum?.saatDilimi ?? varsayilanDilim();
   const bugun = gununSiraNo(simdi, tz, program.entries.length);
   const sonuc: Array<AyetKaydi | null> = [];
   for (let i = 0; i < AYET_GUN; i += 1) {
-    const e =
-      program.entries.find((x) => x.dayIndex === (bugun + i) % program.entries.length) ??
-      program.entries[(bugun + i) % program.entries.length];
+    const e = program.entries[(bugun + i) % program.entries.length];
     if (!e) {
       sonuc.push(null);
       continue;
