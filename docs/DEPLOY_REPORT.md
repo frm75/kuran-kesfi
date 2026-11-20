@@ -910,3 +910,20 @@ saklamaz, karmasını bellekte geçici tutar.
 
 **Yedekler:** `/www/server/panel/vhost/nginx/kurankesfi.tr.conf.bak.20260907`
 (gunluk CSP uygulanmadan önce) ve `.bak.20260907-2` (iletisim kuralı uygulanmadan önce).
+
+---
+
+# Android uygulama araç zinciri — `apps/mobile` (2026-11-20)
+
+| Ne | Değer |
+|---|---|
+| Android SDK | `/opt/android-sdk` (`ANDROID_HOME`) |
+| JDK | OpenJDK 21.0.13 (`openjdk-21-jdk-headless`, apt) — `JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64` |
+| Platform / build-tools | `platforms;android-36` (rev 2), `build-tools;36.0.0`, `platform-tools` 37.0.3 |
+| cmdline-tools | `commandlinetools-linux-11076708` → `/opt/android-sdk/cmdline-tools/latest` |
+| Capacitor | 8.6.2 (`@capacitor/core`, `/cli`, `/android`) |
+| Node (yalnız Capacitor CLI için) | 22.23.5 → `/opt/node22` (Capacitor 8 CLI Node >=22 ister; sistem Node'u 20 kaldı, `PATH=/opt/node22/bin:$PATH` ile kullanılır) |
+| compile/targetSdk, minSdk | 36 / 36 / 24 (Capacitor 8 varsayılanı; Play'in güncel targetSdk şartı sunucudan doğrulanamadı, yayın öncesi Play Console'dan teyit edilmeli) |
+| Derleme | `cd apps/mobile/android && ./gradlew assembleDebug` (~4,5 dk ilk seferde) → `app/build/outputs/apk/debug/app-debug.apk` |
+
+Lisanslar `sdkmanager --licenses` ile kabul edildi. Hiçbir servis başlatılmadı.

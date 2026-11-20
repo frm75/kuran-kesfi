@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Kur\'an-ı Kerim Keşfi</string>
+    <string name="title_activity_main">Kur\'an-ı Kerim Keşfi</string>
+    <string name="package_name">tr.kurankesfi.app</string>
+    <string name="custom_url_scheme">tr.kurankesfi.app</string>
+</resources>
