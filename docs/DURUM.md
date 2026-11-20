@@ -4,7 +4,8 @@
 > Kalıcı kurallar `CLAUDE.md`'de, plan `PROJE_PLANI.md`'de, tasarım `DESIGN.md`'de,
 > kurulum ayrıntısı `DEPLOY_REPORT.md`'de, yedek `YEDEK.md`'de.
 > Modüllerin kuruluş hikâyesi ve gerekçeleri: `DURUM-ARSIV-2026-09.md`.
-> Son güncelleme: 2026-11-20. Depo `/opt/kuran`, dal `main`.
+> Son tur ve sıradaki iş: `DEVIR-2026-11-21.md`.
+> Son güncelleme: 2026-11-21. Depo `/opt/kuran`, dal `main`.
 
 ## Tek cümle
 
