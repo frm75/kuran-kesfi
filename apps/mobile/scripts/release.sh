@@ -43,6 +43,7 @@ if [ -z "${ANDROID_KEYSTORE_PASSWORD:-}" ] || [ -z "${ANDROID_KEY_ALIAS:-}" ]; t
   exit 1
 fi
 export ANDROID_KEYSTORE_PATH ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_ALIAS
+# ANDROID_KEY_PASSWORD istege bagli; yoksa gradle keystore sifresini kullanir (ortamda varsa otomatik gecer).
 
 echo "==> 1/4 Web paketi ve cap sync"
 (cd "$ROOT_DIR" && pnpm --filter @kuran/mobile build)
@@ -54,7 +55,11 @@ sed -i -E "s/^([[:space:]]*versionCode[[:space:]]+)[0-9]+/\1${next}/" "$GRADLE_F
 echo "    versionCode: $current -> $next (apps/mobile/android/app/build.gradle; commit'e almayi unutmayin)"
 
 echo "==> 3/4 bundleRelease"
-(cd "$MOBILE_DIR/android" && ./gradlew bundleRelease)
+if ! (cd "$MOBILE_DIR/android" && ./gradlew bundleRelease); then
+  sed -i -E "s/^([[:space:]]*versionCode[[:space:]]+)[0-9]+/\1${current}/" "$GRADLE_FILE"
+  echo "HATA: bundleRelease basarisiz. versionCode eski degerine ($current) geri alindi." >&2
+  exit 1
+fi
 
 echo "==> 4/4 Cikti"
 if [ ! -f "$AAB" ]; then

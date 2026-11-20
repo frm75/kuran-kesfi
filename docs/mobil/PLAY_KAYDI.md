@@ -31,7 +31,8 @@ elinizle yapılacak işler var.
    ANDROID_KEY_ALIAS=upload
    ```
 
-   Keystore şifresi ile anahtar şifresi aynı olmalı (keytool'a ikisini de aynı girin).
+   Anahtar şifresi keystore şifresinden farklıysa ek olarak `ANDROID_KEY_PASSWORD=<anahtar şifresi>`
+   yazın; yazmazsanız keystore şifresi kullanılır (keytool'a ikisini de aynı girmek en kolayıdır).
 3. **AAB üretimi.** Repo kökünde `pnpm mobile:release` çalıştırın. Betik web paketini derler, `versionCode`'u
    bir artırır, imzalı `app-release.aab` dosyasını üretir ve yolunu yazar. Artan `versionCode`'u
    `git commit` ile kaydedin (her yüklemede Play daha büyük bir sayı ister).
@@ -100,33 +101,39 @@ Play Console > Uygulama içeriği > Veri güvenliği. Yanıtlar kodla ve gizlili
 | Soru | Yanıt |
 |---|---|
 | Uygulama kullanıcı verisi topluyor veya paylaşıyor mu? | **Evet** (yalnızca iletişim formu) |
-| Toplanan veri | **Kişisel bilgiler: Ad** ve **E-posta adresi**. Ayrıca kullanıcının yazdığı **mesaj** (Mesajlar > Diğer uygulama içi mesajlar) |
-| Toplama amacı | **Uygulama işlevselliği / Geliştirici iletişimi** (yalnızca kullanıcıya yanıt vermek ve bildirilen düzeltmeyi işlemek) |
+| Toplanan veri | **Kişisel bilgiler: Ad** ve **E-posta adresi**; kullanıcının yazdığı **mesaj** (Mesajlar > Diğer uygulama içi mesajlar); **Cihaz veya diğer kimlikler: IP adresi** (sunucu erişim günlüğü, aşağıya bakın) |
+| Toplama amacı | Ad, e-posta, mesaj: **Uygulama işlevselliği / Geliştirici iletişimi** (yalnızca yanıt vermek ve düzeltmeyi işlemek). IP adresi: **Güvenlik, sahtecilik önleme ve uyumluluk / Uygulama işlevselliği** |
 | Veri üçüncü taraflarla paylaşılıyor mu? | **Hayır** |
 | Veri aktarım sırasında şifreleniyor mu? | **Evet** (HTTPS) |
 | Kullanıcı verinin silinmesini isteyebilir mi? | **Evet** (e-posta ile; gizlilik sayfasında yazılı) |
 | Veri toplama zorunlu mu? | **İsteğe bağlı** (yalnızca kullanıcı formu doldurursa) |
+
+**IP adresi (Cihaz veya diğer kimlikler) beyan edilir.** Web sunucusu her istek için olağan erişim günlüğü
+tutar (istek zamanı, istenen adres, yanıt kodu, **IP adresi**, tarayıcı bilgisi). Play bunu sunucu tarafında
+toplama sayar. Yanıtlar: paylaşılmıyor, aktarımda şifreli, amaç güvenlik/işletim. **"Geçici işleme"
+(ephemeral) olarak işaretlemeyin**: gizlilik metni (`gizlilik.astro`, "Sunucu erişim günlükleri") günlüklerin
+saklanma süresini vermiyor (`DOĞRULA` notu açık), yani süre belirsiz. Gerçek süre (ör. 7 gün) öğrenilip
+metne yazılırsa ve istek işlenir işlenmez atılıyorsa bu karar yeniden değerlendirilebilir.
+
+*İletişim formu ile erişim günlüğü ayrı şeylerdir:* form akışı IP adresini saklamaz (hız sınırı için yalnızca
+karması, bellekte, geçici tutulur); IP adresi ise yalnızca web sunucusunun erişim günlüğünde durur.
 
 Şu kategoriler için **"Toplanmıyor"** işaretleyin:
 
 - **Konum** (yaklaşık ve kesin): konum izni yalnızca namaz vakti ve kıble hesabı içindir. Konum
   cihazda işlenir, sunucuya gönderilmez, bu yüzden Play'in tanımıyla "toplanmış" sayılmaz.
 - Finansal bilgiler, sağlık, fotoğraf/video, ses, dosyalar, takvim, kişiler, uygulama etkinliği,
-  web gezinme geçmişi, cihaz veya diğer kimlikler.
+  web gezinme geçmişi, diğer cihaz kimlikleri (IP dışında).
 - Reklam, analitik ve üçüncü taraf SDK yoktur; "reklam kimliği" kullanılmaz.
 
-**Dikkat edilecek iki nokta** (gizlilik metnindeki `DOĞRULA` notlarıyla aynıdır; kararı siz verin):
+**Dikkat edilecek nokta** (gizlilik metnindeki `DOĞRULA` notuyla aynıdır; kararı siz verin):
 
-1. *Uydu harita katmanı.* Haritada "Uydu" katmanını seçerseniz görüntü kareleri Esri'nin
-   (ArcGIS) sunucusundan yüklenir; Esri'ye IP adresi ve görüntülenen karelerin koordinatları gider.
-   Katman seçilmezse hiçbir istek gitmez. Bu katman yalnızca sitenin derlemesinde
-   `PUBLIC_ARCGIS_API_KEY` tanımlıysa görünür. **Canlı sürümde bu anahtar tanımlıysa** Veri Güvenliği
-   formuna bir açıklama düşünün (IP adresi, üçüncü taraf Esri'ye gider); tanımlı değilse gizlilik
-   metnindeki "Uydu harita katmanı" bölümü de kaldırılmalıdır.
-2. *Sunucu erişim günlükleri.* Web sunucusu olağan erişim günlüğü (IP, istenen adres) tutar ve
-   yalnızca işletim güvenliği içindir. Play'in sunucu günlüklerine bakışı konusunda emin değilseniz
-   Play Console'daki yardım metnini okuyun ve gerekirse "IP adresi"ni, amacı "Güvenlik, sahtecilik
-   önleme" ve geçici işleme olarak ekleyin.
+*Uydu harita katmanı.* Haritada "Uydu" katmanını seçerseniz görüntü kareleri Esri'nin
+(ArcGIS) sunucusundan yüklenir; Esri'ye IP adresi ve görüntülenen karelerin koordinatları gider.
+Katman seçilmezse hiçbir istek gitmez. Bu katman yalnızca sitenin derlemesinde
+`PUBLIC_ARCGIS_API_KEY` tanımlıysa görünür. **Canlı sürümde bu anahtar tanımlıysa** IP adresi satırının
+yanında "üçüncü taraflarla paylaşılıyor" yanıtını (Esri) ve gizlilik metnindeki bölümü tutun; tanımlı değilse
+paylaşım "Hayır" kalır ve gizlilik metnindeki "Uydu harita katmanı" bölümü kaldırılmalıdır.
 
 ---
 
