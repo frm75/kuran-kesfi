@@ -241,6 +241,28 @@ smoke_test() {
       printf '    %-34s %s\n' "$path" "CSP $needle kapali"
     fi
   }
+  # Permissions-Policy de sayfaya gore degisir ($kesif_pp). Konum yalniz
+  # /ibadet'te acik olmali; yanlis map regex'i iki yonde de sessiz bozar.
+  pp_of() {
+    curl -sS -D - -o /dev/null --max-time 20 --retry 3 --retry-delay 1 \
+      --retry-all-errors --resolve "kurankesfi.tr:443:127.0.0.1" \
+      "https://kurankesfi.tr$1" 2>/dev/null | grep -i '^permissions-policy:' || true
+  }
+  pp_must_have() {
+    local path="$1" needle="$2"
+    if printf '%s' "$(pp_of "$path")" | grep -qiF -- "$needle"; then
+      printf '    %-34s %s\n' "$path" "Permissions-Policy $needle var"
+    else
+      printf '    %-34s %s\n' "$path" "Permissions-Policy $needle YOK"
+      fail=1
+    fi
+  }
+  # Ibadet: betik olmadan sayfa bos; worker-src olmadan service worker kaydi
+  # SESSIZCE basarisiz olur ve cevrimdisi acilis calismaz.
+  csp_must_have "/ibadet"          "script-src 'self'"
+  csp_must_have "/"                "worker-src 'self'"
+  pp_must_have  "/ibadet"          "geolocation=(self)"
+  pp_must_have  "/"                "geolocation=()"
   # Harita sayfalari: MapLibre ve PMTiles altligi icin acik olmali.
   csp_must_have "/harita"          "script-src 'self'"
   csp_must_have "/harita"          "worker-src 'self' blob:"

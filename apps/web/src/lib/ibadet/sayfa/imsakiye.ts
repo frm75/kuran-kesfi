@@ -1,3 +1,4 @@
+import { swKaydet } from "../sw-kaydet.js";
 import { hicriTarih } from "../hicri.js";
 import { VAKITLER, type Konum } from "../types.js";
 import { aylikImsakiye, yerelGun } from "../vakit.js";
@@ -68,3 +69,5 @@ void konumuBagla((k) => {
   konum = k;
   ciz();
 });
+
+void swKaydet();

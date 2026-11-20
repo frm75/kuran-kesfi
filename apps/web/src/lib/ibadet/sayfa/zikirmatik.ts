@@ -1,3 +1,4 @@
+import { swKaydet } from "../sw-kaydet.js";
 import { el } from "./ortak.js";
 
 const ANAHTAR = "ibadet.zikir";
@@ -87,3 +88,5 @@ ozel.addEventListener("input", () => {
 });
 
 ciz();
+
+void swKaydet();

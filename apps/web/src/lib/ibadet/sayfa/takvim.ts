@@ -1,3 +1,4 @@
+import { swKaydet } from "../sw-kaydet.js";
 import { hicriTarih } from "../hicri.js";
 import { yerelGun } from "../vakit.js";
 import { AYLAR, cihazDilimi, ayarlariOku, el } from "./ortak.js";
@@ -33,3 +34,5 @@ async function baslat(): Promise<void> {
 }
 
 void baslat();
+
+void swKaydet();

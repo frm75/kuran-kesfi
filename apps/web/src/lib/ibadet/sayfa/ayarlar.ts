@@ -1,3 +1,4 @@
+import { swKaydet } from "../sw-kaydet.js";
 import { ayarDeposu, type IbadetAyarlari } from "../ayarlar.js";
 import { VAKITLER } from "../types.js";
 import { VAKIT_ADLARI, el } from "./ortak.js";
@@ -136,3 +137,5 @@ async function baslat(): Promise<void> {
 }
 
 void baslat();
+
+void swKaydet();

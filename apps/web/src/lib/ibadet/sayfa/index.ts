@@ -1,3 +1,4 @@
+import { swKaydet } from "../sw-kaydet.js";
 import { gunVakitleri, siradakiVakit, yerelGun } from "../vakit.js";
 import { VAKITLER, type Konum } from "../types.js";
 import { VAKIT_ADLARI, el, konumuBagla, saatYaz } from "./ortak.js";
@@ -61,3 +62,5 @@ void konumuBagla((k) => {
     }, 60000 - (Date.now() % 60000));
   }
 });
+
+void swKaydet();

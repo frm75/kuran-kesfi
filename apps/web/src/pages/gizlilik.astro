@@ -1,0 +1,127 @@
+---
+import Base from "~/layouts/Base.astro";
+import { CONTACT } from "~/lib/site";
+
+/**
+ * Gizlilik — TASLAK (Task 6, Android uygulaması).
+ *
+ * Metin kullanıcı onayı almadan yayınlanmaz. `DOĞRULA` yorumları, kodda ya da
+ * depoda doğrulanamayan cümleleri işaretler; onaydan önce giderilmeli.
+ */
+---
+
+<Base
+  title="Gizlilik — Kur'an-ı Kerim Keşfi"
+  description="Hangi verinin toplandığı, hangisinin toplanmadığı ve cihazınızda neyin kaldığı."
+>
+  <main id="icerik" class="pg pg-normal">
+    <nav aria-label="Konum" class="pg-crumb">
+      <a href="/">Ana sayfa</a> <span aria-hidden="true">›</span>
+      <span aria-current="page">Gizlilik</span>
+    </nav>
+
+    <header class="pg-head">
+      <p class="pg-kicker">Gizlilik</p>
+      <h1 class="pg-title">Gizlilik</h1>
+      <p class="pg-lede">
+        Bu site ve Android uygulaması sizi tanımaya, izlemeye ya da profil çıkarmaya
+        çalışmaz. Aşağıda neyin toplandığı, neyin toplanmadığı ve neyin yalnızca
+        cihazınızda kaldığı yazılıdır.
+      </p>
+    </header>
+
+    <section>
+      <h2>Veri sorumlusu</h2>
+      <p>
+        {CONTACT.orgFull} ({CONTACT.org}), MERSİS {CONTACT.mersis}.
+        Adres: {CONTACT.address}. E-posta:
+        <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>, telefon:
+        <a href={`tel:${CONTACT.phoneHref}`}>{CONTACT.phone}</a>.
+      </p>
+    </section>
+
+    <section>
+      <h2>Toplanmayan veriler</h2>
+      <p>
+        Hesap açılmaz, giriş yapılmaz. Analitik aracı, reklam ağı ya da izleme
+        betiği yoktur; üçüncü taraftan betik, yazı tipi ya da başka bir kaynak
+        yüklenmez. Çerez ile sizi tanıyan bir sistem kurulmaz.
+        {/* DOĞRULA: "çerez kullanılmaz" iddiası: nginx ve sayfalar çerez yazmıyor görünüyor ama canlı yanıtlarda Set-Cookie başlığı denetlenmedi. */}
+      </p>
+    </section>
+
+    <section>
+      <h2>İletişim formu</h2>
+      <p>
+        <a href="/iletisim">İletişim formunu</a> kullanırsanız yazdığınız mesaj,
+        konu türü, (yazdıysanız) ayet numarası, adınız ve e-posta adresiniz bize
+        ulaşır ve sunucuda saklanır. Bu veriler yalnızca size yanıt vermek ve
+        bildirdiğiniz düzeltmeyi işlemek için kullanılır. Mesaj ayrıca e-posta
+        yoluyla ekibimize iletilir. IP adresiniz, tarayıcı bilginiz ve geldiğiniz
+        adres kaydedilmez; kötüye kullanımı önleyen hız sınırı için IP adresinin
+        karması yalnızca bellekte, geçici olarak tutulur ve diske yazılmaz.
+        {/* DOĞRULA: Mesajların ne kadar süre saklandığı. Kodda silme ya da saklama süresi yok (apps/iletisim/src/store.ts); kayıtlar silinmedikçe kalır. Gerçek süreyi yazın: "yanıtlandıktan sonra X ay" gibi. */}
+        {/* DOĞRULA: E-posta iletimi esfasoft SMTP altyapısı üzerinden yapılıyor (apps/iletisim/src/mailer.ts); bu aracının adının metinde anılıp anılmayacağına karar verin. */}
+      </p>
+      <p>
+        Verilerinizin silinmesini ya da düzeltilmesini yukarıdaki e-posta
+        adresinden isteyebilirsiniz.
+        {/* DOĞRULA: KVKK kapsamındaki başvuru hakları ve yanıt süresi için hukuki metin gerekiyorsa buraya eklenmeli. */}
+      </p>
+    </section>
+
+    <section>
+      <h2>Sunucu erişim günlükleri</h2>
+      <p>
+        Siteyi sunan web sunucusu, her istek için olağan erişim günlüğü tutar
+        (istek zamanı, istenen adres, yanıt kodu, IP adresi ve tarayıcı bilgisi).
+        Bu günlükler yalnızca işletim güvenliği ve hata ayıklama içindir;
+        profil çıkarmak ya da reklam için kullanılmaz ve üçüncü kişilerle
+        paylaşılmaz. Statik dosyalar (<code>/_astro/</code>, yazı tipleri,
+        görseller) için günlük tutulmaz.
+        {/* DOĞRULA: Günlük biçimi nginx varsayılanıdır (access_log /www/wwwlogs/kurankesfi.tr.log, log_format belirtilmemiş); alanlar buna göre yazıldı. */}
+        {/* DOĞRULA: Günlüklerin saklanma süresi. DEPLOY_REPORT.md yalnızca günlük yolunu veriyor; döndürme/silme ayarı (logrotate, panel ayarı) depoda yok. Gerçek süreyi yazın. */}
+        {/* DOĞRULA: "üçüncü kişilerle paylaşılmaz" ve "yalnızca güvenlik içindir" ifadeleri kurumsal politika beyanıdır; kodla doğrulanamaz. */}
+      </p>
+    </section>
+
+    <section>
+      <h2>Medya alan adı</h2>
+      <p>
+        Sayfalardaki görseller ve kıraat ses dosyaları <code>medya.kurankesfi.tr</code>
+        alan adından yüklenir. Bu bizim kendi alan adımızdır; ancak dosyalar bir
+        bulut depolama hizmetinden sunulduğu için o isteklerin sunucu günlüğü
+        ayrıca tutulabilir.
+        {/* DOĞRULA: medya.kurankesfi.tr'nin arkasındaki hizmet (nginx.conf ve kodda R2 anılıyor) ve onun günlük/saklama politikası; sağlayıcı adı ve ülke bilgisi yazılacaksa buradan eklenmeli. */}
+      </p>
+    </section>
+
+    <section>
+      <h2>Konum ve ayarlar yalnızca cihazınızda</h2>
+      <p>
+        Namaz vakitleri ve kıble cihazınızda hesaplanır. Konum izni verirseniz
+        konumunuz yalnızca bu hesap için kullanılır; sunucumuza gönderilmez.
+        Seçtiğiniz şehir, hesaplama yöntemi, bildirim tercihleriniz ve zikirmatik
+        sayacınız cihazınızın yerel depolamasında durur. Vakit ve ayet
+        bildirimleri de cihazınızda kurulur; bir bildirim sunucusu ya da hesap
+        yoktur. Uygulamayı kaldırdığınızda ya da tarayıcı verisini sildiğinizde
+        bu bilgiler silinir.
+      </p>
+    </section>
+
+    <section>
+      <h2>Okuma günlüğü</h2>
+      <p>
+        <a href="/gunluk">Okuma günlüğünüz</a> (notlar, yer imleri, tekrar
+        zamanları) tarayıcınızın IndexedDB deposunda, yalnızca cihazınızda
+        durur; bize ulaşmaz. Başka bir cihaza taşımak istiyorsanız sayfadaki
+        dışa aktarma özelliğini kullanabilirsiniz.
+      </p>
+    </section>
+
+    <section>
+      <h2>Değişiklikler</h2>
+      <p>Bu metin değiştiğinde bu sayfada güncellenir.</p>
+    </section>
+  </main>
+</Base>

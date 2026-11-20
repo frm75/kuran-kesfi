@@ -1,3 +1,4 @@
+import { swKaydet } from "../sw-kaydet.js";
 import { kibleAcisi } from "../kible.js";
 import type { Konum } from "../types.js";
 import { el, konumuBagla } from "./ortak.js";
@@ -40,3 +41,5 @@ function ciz(k: Konum | null): void {
 }
 
 void konumuBagla(ciz);
+
+void swKaydet();
