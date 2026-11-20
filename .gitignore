@@ -75,3 +75,7 @@ apps/web/public/geo/
 # calisma zamani verisi — iletisim formu mesajlari (SQLite).
 # Ziyaretci mesajlari surum gecmisine girmez.
 var/
+
+# Android imzalama anahtarlari repoya girmez (yol .env ANDROID_KEYSTORE_PATH)
+*.jks
+*.keystore

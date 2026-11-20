@@ -8,6 +8,14 @@ ROOT_DIR="$(cd "$MOBILE_DIR/../.." && pwd)"
 GRADLE_FILE="$MOBILE_DIR/android/app/build.gradle"
 AAB="$MOBILE_DIR/android/app/build/outputs/bundle/release/app-release.aab"
 
+# cap (Capacitor 8) Node 22 ister; sunucuda /opt/node22 varsa onu one al.
+if [ -x /opt/node22/bin/node ]; then export PATH="/opt/node22/bin:$PATH"; fi
+node_major="$(node -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0)"
+if [ "$node_major" -lt 22 ]; then
+  echo "HATA: Node 22 veya ustu gerekli (bulunan: $(node -v 2>/dev/null || echo yok)). Node 22'yi kurun ya da PATH'e ekleyin (or. export PATH=/opt/node22/bin:\$PATH)." >&2
+  exit 1
+fi
+
 # .env'den yalnizca ANDROID_* anahtarlari alinir; ortamda zaten varsa ortam kazanir.
 if [ -f "$ROOT_DIR/.env" ]; then
   for key in ANDROID_KEYSTORE_PATH ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_ALIAS ANDROID_KEY_PASSWORD; do
@@ -15,6 +23,7 @@ if [ -f "$ROOT_DIR/.env" ]; then
       line="$(grep -E "^${key}=" "$ROOT_DIR/.env" | tail -n1 || true)"
       if [ -n "$line" ]; then
         val="${line#*=}"
+        val="${val%$'\r'}"
         val="${val%\"}"; val="${val#\"}"
         export "$key=$val"
       fi
