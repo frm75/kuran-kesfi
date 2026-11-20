@@ -81,7 +81,7 @@ chmod 600 .env
 | `pnpm build` | Tam zincir: `build:data` → `lint:refs` → `build:web` |
 | `pnpm build:web` | Yalnızca Astro derlemesi (veritabanı gerekmez) |
 | `pnpm typecheck` | Tüm paketlerde tip denetimi |
-| `pnpm test` | Şema testleri |
+| `pnpm test` | Bütün birim testleri (`node:test`, 14 dosya, 385 denetim) |
 | `pnpm fonts` | Yazı tiplerini indir ve alt kümele |
 | `pnpm fonts:check` | Üretilen font çıktısı diskteki ile aynı mı |
 | `pnpm fonts:verify` | HarfBuzz ile dizgi doğrulaması (eksik glif var mı) |

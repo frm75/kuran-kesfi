@@ -18,20 +18,23 @@ import {
   STOPWORDS,
 } from "../normalize.js";
 
-let passed = 0;
-const failures: string[] = [];
+import assert from "node:assert/strict";
+import { test } from "node:test";
 
-function check(label: string, ok: boolean): void {
-  if (ok) {
-    passed += 1;
-    console.log(`  ok   ${label}`);
-  } else {
-    failures.push(label);
-    console.error(`  HATA ${label}`);
-  }
+let group = "";
+
+/** Sonraki denetimlerin adına ön ek olur; raporda hangi bölümün düştüğü görünür. */
+function section(title: string): void {
+  group = title;
 }
 
-console.log("1. Turkce kucultme");
+function check(label: string, ok: boolean): void {
+  test(group === "" ? label : `${group} › ${label}`, () => {
+    assert.ok(ok, label);
+  });
+}
+
+section("1. Turkce kucultme");
 
 // Turkce'ye ozel: I -> i DEGIL, I -> ı olmali. Duz toLowerCase() burada yanilir
 // ve "ırmak" arayan "IRMAK" basligini bulamazdi.
@@ -39,8 +42,7 @@ check("ISTANBUL -> istanbul", normalizeTr("İSTANBUL") === "istanbul");
 check("IRMAK -> irmak", normalizeTr("IRMAK") === "irmak");
 check("Sabır -> sabir", normalizeTr("Sabır") === "sabir");
 
-console.log("");
-console.log("2. ASCII katlama");
+section("2. ASCII katlama");
 
 check("salât -> salat", normalizeTr("salât") === "salat");
 check("Yûsuf -> yusuf", normalizeTr("Yûsuf") === "yusuf");
@@ -50,8 +52,7 @@ check("Tegâbün -> tegabun", normalizeTr("Tegâbün") === "tegabun");
 check("Yâsîn -> yasin", normalizeTr("Yâsîn") === "yasin");
 check("Fîl -> fil", normalizeTr("Fîl") === "fil");
 
-console.log("");
-console.log("3. Noktalama");
+section("3. Noktalama");
 
 // "yus." yazan kullanici Yusuf'u gormeli; sondaki nokta token'i bozmamali.
 check("yus. -> yus", normalizeTr("yus.") === "yus");
@@ -61,8 +62,7 @@ check("Sebe' -> sebe", normalizeTr("Sebe'") === "sebe");
 check("Mü'minûn -> muminun", normalizeTr("Mü'minûn") === "muminun");
 check("bosluk dizisi tek bosluga iner", normalizeTr("  a   b  ") === "a b");
 
-console.log("");
-console.log("4. Arapca");
+section("4. Arapca");
 
 // text_no_vowel harekesiz gelir ama hamzeli/medli elif'i KORUR; katlama sart.
 check("elif varyantlari birlesir", normalizeAr("أيها") === "ايها");
@@ -73,16 +73,14 @@ check("te marbuta -> he", normalizeAr("الصلاة") === "الصلاه");
 // Arapca HARFLER stripleniyorsa regex araligi bozulmustur; bu denetim onu yakalar.
 check("arapca harfler korunur", normalizeAr("صبر") === "صبر");
 
-console.log("");
-console.log("5. Betik ayirimi");
+section("5. Betik ayirimi");
 
 check("arapca metin taninir", hasArabic("صبر") === true);
 check("latin metin taninmaz", hasArabic("sabir") === false);
 check("karisik metin arapca sayilir", hasArabic("sabir صبر") === true);
 check("bos metin arapca degil", hasArabic("") === false);
 
-console.log("");
-console.log("6. Tokenize");
+section("6. Tokenize");
 
 check(
   "durak kelimeler elenir",
@@ -100,8 +98,7 @@ check("ve durak kelimedir", STOPWORDS.has("ve"));
 check("sabir durak kelime DEGIL", !STOPWORDS.has("sabir"));
 check("bos girdi bos dizi", tokenize("", "tr").length === 0);
 
-console.log("");
-console.log("7. Unsuz yumusamasi");
+section("7. Unsuz yumusamasi");
 
 // "kitap" yazan "kitabı" bulmali; indekse ek kayit yazmadan, sorgu tarafinda.
 check("kitap -> kitab", softenFinal("kitap") === "kitab");
@@ -111,11 +108,3 @@ check("agac degismez (c zaten yumusak)", softenFinal("agac") === "agac");
 check("sabir yumusamaz (r ile biter)", softenFinal("sabir") === null);
 check("tek harf yumusamaz", softenFinal("a") === null);
 
-console.log("");
-if (failures.length > 0) {
-  console.error(`\n${String(failures.length)} basarisiz, ${String(passed)} gecti`);
-  for (const f of failures) console.error(`  - ${f}`);
-  process.exitCode = 1;
-} else {
-  console.log(`${String(passed)} denetim gecti`);
-}

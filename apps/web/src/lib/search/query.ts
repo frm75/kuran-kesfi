@@ -5,7 +5,7 @@
  *
  * `expandPrefixes`, `scoreHits`, `applyFilters` ve `countByType` saf
  * fonksiyondur; `SearchEngine` ağ erişiminin tamamını tutar. Bu ayrım
- * zorunluydu: projenin test koşucusu düz `tsx`, mock kütüphanesi yok. Motor
+ * zorunluydu: testler `node:test` ile koşuyor, mock kütüphanesi yok. Motor
  * `fetch`e gömülü olsaydı hiç test edilemezdi.
  *
  * ## Bağımlılık yok

@@ -15,19 +15,23 @@
 
 import { checkPrincipleAreaCounts, checkPrincipleOppositeReciprocity } from "../principle_checks.js";
 
-let passed = 0;
-const failures: string[] = [];
-function check(label: string, ok: boolean): void {
-  if (ok) {
-    passed += 1;
-    console.log(`  ok   ${label}`);
-  } else {
-    failures.push(label);
-    console.error(`  HATA ${label}`);
-  }
+import assert from "node:assert/strict";
+import { test } from "node:test";
+
+let group = "";
+
+/** Sonraki denetimlerin adına ön ek olur; raporda hangi bölümün düştüğü görünür. */
+function section(title: string): void {
+  group = title;
 }
 
-console.log("1. Karsilikli oppositeSlug — gecerli veri");
+function check(label: string, ok: boolean): void {
+  test(group === "" ? label : `${group} › ${label}`, () => {
+    assert.ok(ok, label);
+  });
+}
+
+section("1. Karsilikli oppositeSlug — gecerli veri");
 {
   // a<->b karsilikli, c karsitsiz. Gecerli: hic hata beklenmez.
   const opposite = new Map<string, string | null>([
@@ -39,8 +43,7 @@ console.log("1. Karsilikli oppositeSlug — gecerli veri");
   check("karsilikli cift hata uretmez", errors.length === 0);
 }
 
-console.log("");
-console.log("2. Karsilikli oppositeSlug — tek yonlu cift (kirilmis girdi)");
+section("2. Karsilikli oppositeSlug — tek yonlu cift (kirilmis girdi)");
 {
   // a -> b ama b -> c: tek yonlu. Denetim gercekten bunu YAKALAMALI.
   const opposite = new Map<string, string | null>([
@@ -56,8 +59,7 @@ console.log("2. Karsilikli oppositeSlug — tek yonlu cift (kirilmis girdi)");
   );
 }
 
-console.log("");
-console.log("3. Kendine referans (kirilmis girdi)");
+section("3. Kendine referans (kirilmis girdi)");
 {
   const opposite = new Map<string, string | null>([["a", "a"]]);
   const errors = checkPrincipleOppositeReciprocity(opposite);
@@ -68,8 +70,7 @@ console.log("3. Kendine referans (kirilmis girdi)");
   );
 }
 
-console.log("");
-console.log("4. Var olmayan karsit (dangling, kirilmis girdi)");
+section("4. Var olmayan karsit (dangling, kirilmis girdi)");
 {
   const opposite = new Map<string, string | null>([["a", "z"]]);
   const errors = checkPrincipleOppositeReciprocity(opposite);
@@ -80,8 +81,7 @@ console.log("4. Var olmayan karsit (dangling, kirilmis girdi)");
   );
 }
 
-console.log("");
-console.log("5. Alan sayimi — gecerli veri");
+section("5. Alan sayimi — gecerli veri");
 {
   const areaOf = new Map<string, string>([
     ["namaz", "ibadet"],
@@ -96,8 +96,7 @@ console.log("5. Alan sayimi — gecerli veri");
   check("dogru sayim hata uretmez", errors.length === 0);
 }
 
-console.log("");
-console.log("6. Alan sayimi — yanlis principleCount (kirilmis girdi)");
+section("6. Alan sayimi — yanlis principleCount (kirilmis girdi)");
 {
   // ibadet alaninda gercekte 2 ilke var ama principle_areas.json 4 diyor.
   const areaOf = new Map<string, string>([
@@ -113,8 +112,7 @@ console.log("6. Alan sayimi — yanlis principleCount (kirilmis girdi)");
   );
 }
 
-console.log("");
-console.log("7. Alan sayimi — kullanilan ama dizinde olmayan alan (kirilmis girdi)");
+section("7. Alan sayimi — kullanilan ama dizinde olmayan alan (kirilmis girdi)");
 {
   const areaOf = new Map<string, string>([["namaz", "hayali-alan"]]);
   const declared = new Map<string, number>();
@@ -126,10 +124,3 @@ console.log("7. Alan sayimi — kullanilan ama dizinde olmayan alan (kirilmis gi
   );
 }
 
-console.log("");
-if (failures.length > 0) {
-  console.error(`${String(passed)} test gecti, ${String(failures.length)} basarisiz:`);
-  for (const failure of failures) console.error(`  - ${failure}`);
-  process.exit(1);
-}
-console.log(`${String(passed)} test gecti, 0 basarisiz`);

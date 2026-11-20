@@ -19,17 +19,20 @@ import {
 } from "../content_input.js";
 import { isHostableLicense, requiresAttribution } from "../media.js";
 
-let passed = 0;
-const failures: string[] = [];
+import assert from "node:assert/strict";
+import { test } from "node:test";
+
+let group = "";
+
+/** Sonraki denetimlerin adına ön ek olur; raporda hangi bölümün düştüğü görünür. */
+function section(title: string): void {
+  group = title;
+}
 
 function check(label: string, ok: boolean): void {
-  if (ok) {
-    passed += 1;
-    console.log(`  ok   ${label}`);
-  } else {
-    failures.push(label);
-    console.error(`  HATA ${label}`);
-  }
+  test(group === "" ? label : `${group} › ${label}`, () => {
+    assert.ok(ok, label);
+  });
 }
 
 const accepts = (schema: { safeParse: (v: unknown) => { success: boolean } }, value: unknown) =>
@@ -110,7 +113,7 @@ const validAiMedia = {
 // -----------------------------------------------------------------------------
 // 1. Lisans kapisi (spec 34)
 // -----------------------------------------------------------------------------
-console.log("1. Lisans kapisi");
+section("1. Lisans kapisi");
 check("gecerli CC BY-SA kaydi kabul edilir", accepts(mediaItemInput, validMedia));
 check(
   "CC BY-SA dosyasi indirilebilir (localPath dolu)",
@@ -139,7 +142,7 @@ check(
 check("isHostableLicense COPYRIGHT icin false", !isHostableLicense("COPYRIGHT"));
 check("isHostableLicense CC0 icin true", isHostableLicense("CC0"));
 
-console.log("2. Atif zorunlulugu");
+section("2. Atif zorunlulugu");
 check(
   "CC BY-SA + copyright bos REDDEDILIR",
   rejects(mediaItemInput, { ...validMedia, copyright: "   " }),
@@ -159,7 +162,7 @@ check(
   accepts(mediaItemInput, { ...validMedia, license: "UNKNOWN", copyright: null }),
 );
 
-console.log("3. Kunye ve konum butunlugu");
+section("3. Kunye ve konum butunlugu");
 check("sourceSlugs bos REDDEDILIR", rejects(mediaItemInput, { ...validMedia, sourceSlugs: [] }));
 check(
   "sourceUrl gecersizse REDDEDILIR",
@@ -179,7 +182,7 @@ check(
 // -----------------------------------------------------------------------------
 // 4. Prompt kapilari (plan 20.3, spec 65)
 // -----------------------------------------------------------------------------
-console.log("4. AI prompt");
+section("4. AI prompt");
 check("gecerli prompt kabul edilir", accepts(aiPromptInput, validPrompt));
 check(
   "peygamber tasviri + yuz kisiti YOK REDDEDILIR",
@@ -247,7 +250,7 @@ check(
 // -----------------------------------------------------------------------------
 // 5. Uretilmis AI medyasi
 // -----------------------------------------------------------------------------
-console.log("5. AI medyasi");
+section("5. AI medyasi");
 check("gecerli AI kaydi kabul edilir", accepts(aiMediaInput, validAiMedia));
 check(
   "AI kaydina yazilan lisans/kaynak alani cikTIya GECMEZ (spec 32)",
@@ -282,12 +285,3 @@ check(
   "gercek medya turu AI semasina giremez",
   rejects(aiMediaInput, { ...validAiMedia, kind: "REAL_PHOTO" }),
 );
-
-// -----------------------------------------------------------------------------
-
-console.log(`\n${passed} test gecti, ${failures.length} basarisiz`);
-if (failures.length > 0) {
-  console.error("\nBasarisiz testler:");
-  for (const f of failures) console.error(`  - ${f}`);
-  process.exit(1);
-}

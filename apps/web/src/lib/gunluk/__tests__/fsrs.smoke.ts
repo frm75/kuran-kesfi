@@ -18,20 +18,23 @@
 import { addDays, initialState, intervalDays, nextState } from "../fsrs.js";
 import type { Rating } from "../fsrs.js";
 
-let passed = 0;
-const failures: string[] = [];
+import assert from "node:assert/strict";
+import { test } from "node:test";
 
-function check(label: string, ok: boolean): void {
-  if (ok) {
-    passed += 1;
-    console.log(`  ok   ${label}`);
-  } else {
-    failures.push(label);
-    console.error(`  HATA ${label}`);
-  }
+let group = "";
+
+/** Sonraki denetimlerin adına ön ek olur; raporda hangi bölümün düştüğü görünür. */
+function section(title: string): void {
+  group = title;
 }
 
-console.log("1. Ilk tekrar");
+function check(label: string, ok: boolean): void {
+  test(group === "" ? label : `${group} › ${label}`, () => {
+    assert.ok(ok, label);
+  });
+}
+
+section("1. Ilk tekrar");
 
 const ratings: Rating[] = [1, 2, 3, 4];
 const initial = ratings.map((r) => initialState(r));
@@ -53,7 +56,7 @@ check(
   initial.every((s) => s.difficulty >= 1 && s.difficulty <= 10),
 );
 
-console.log("2. FSRS'in SM-2'den farki: zorluk kalici");
+section("2. FSRS'in SM-2'den farki: zorluk kalici");
 
 const base = initialState(3);
 const afterHard = nextState(base, 2, 10);
@@ -74,7 +77,7 @@ check(
   afterEasy.stability > afterGood.stability,
 );
 
-console.log("3. Unutma");
+section("3. Unutma");
 
 const grown = nextState(nextState(base, 3, 5), 3, 20);
 const forgotten = nextState(grown, 1, 30);
@@ -86,7 +89,7 @@ check(
 );
 check("unutmak zorlugu yukseltir", forgotten.difficulty > grown.difficulty);
 
-console.log("4. Gecikme");
+section("4. Gecikme");
 
 const onTime = nextState(base, 3, 1);
 const late = nextState(base, 3, 30);
@@ -96,7 +99,7 @@ check(
   late.stability > onTime.stability,
 );
 
-console.log("5. Aralik");
+section("5. Aralik");
 
 check("aralik en az 1 gun", intervalDays(0.01) >= 1);
 check("aralik 3 yili asmaz", intervalDays(100_000) <= 365 * 3);
@@ -107,7 +110,7 @@ const from = new Date("2026-09-07T10:00:00.000Z");
 check("addDays gun ekler", addDays(from, 3).startsWith("2026-09-10"));
 check("addDays ay sinirini gecer", addDays(new Date("2026-09-29T10:00:00.000Z"), 3).startsWith("2026-10-02"));
 
-console.log("6. Kararlilik uzun vadede buyur");
+section("6. Kararlilik uzun vadede buyur");
 
 let state = initialState(3);
 let days = intervalDays(state.stability);
@@ -115,7 +118,7 @@ for (let i = 0; i < 8; i += 1) {
   const next = nextState(state, 3, days);
   const nextDays = intervalDays(next.stability);
   if (nextDays < days) {
-    failures.push(`surekli 'iyi' cevapta aralik kuculdu (adim ${String(i)}: ${String(days)} -> ${String(nextDays)})`);
+    check(`surekli 'iyi' cevapta aralik kuculdu (adim ${String(i)}: ${String(days)} -> ${String(nextDays)})`, false);
     break;
   }
   state = next;
@@ -124,10 +127,3 @@ for (let i = 0; i < 8; i += 1) {
 check("surekli 'iyi' cevapta aralik hep buyur", days > 1);
 check("sekiz dogru tekrardan sonra aralik aylara ciker", days >= 30);
 
-console.log("");
-if (failures.length > 0) {
-  console.error(`${String(passed)} test gecti, ${String(failures.length)} basarisiz:`);
-  for (const failure of failures) console.error(`  - ${failure}`);
-  process.exit(1);
-}
-console.log(`${String(passed)} test gecti, 0 basarisiz`);

@@ -11,17 +11,20 @@
 import { parseReference, isPureReference } from "../reference.js";
 import type { ReferenceTables } from "../reference.js";
 
-let passed = 0;
-const failures: string[] = [];
+import assert from "node:assert/strict";
+import { test } from "node:test";
+
+let group = "";
+
+/** Sonraki denetimlerin adına ön ek olur; raporda hangi bölümün düştüğü görünür. */
+function section(title: string): void {
+  group = title;
+}
 
 function check(label: string, ok: boolean): void {
-  if (ok) {
-    passed += 1;
-    console.log(`  ok   ${label}`);
-  } else {
-    failures.push(label);
-    console.error(`  HATA ${label}`);
-  }
+  test(group === "" ? label : `${group} › ${label}`, () => {
+    assert.ok(ok, label);
+  });
 }
 
 const tables: ReferenceTables = {
@@ -47,7 +50,7 @@ const tables: ReferenceTables = {
   ],
 };
 
-console.log("1. Sayisal referans");
+section("1. Sayisal referans");
 
 for (const q of ["5/58", "5:58", "5.58", "5-58", "5 58"]) {
   const hit = parseReference(q, tables);
@@ -60,16 +63,14 @@ for (const q of ["5/58", "5:58", "5.58", "5-58", "5 58"]) {
   );
 }
 
-console.log("");
-console.log("2. Sozel referans");
+section("2. Sozel referans");
 
 for (const q of ["5. sure 58. ayet", "5.sure 58.ayet", "sure 5 ayet 58", "5 sure 58 ayet"]) {
   const hit = parseReference(q, tables);
   check(`${q} -> Maide 58`, hit?.kind === "verse" && hit.surah.id === 5 && hit.verse === 58);
 }
 
-console.log("");
-console.log("3. Sure adiyla");
+section("3. Sure adiyla");
 
 for (const q of ["bakara 153", "bakara/153", "bakara suresi 153", "Bakara 153"]) {
   const hit = parseReference(q, tables);
@@ -94,8 +95,7 @@ check("nur 1 -> Nur 1 (tam ad on eki yener)", nur?.kind === "verse" && nur.surah
 const berae = parseReference("berae 5", tables);
 check("berae 5 -> Tevbe 5 (es ad)", berae?.kind === "verse" && berae.surah.id === 9);
 
-console.log("");
-console.log("4. Aralik");
+section("4. Aralik");
 
 const range = parseReference("2/153-160", tables);
 check(
@@ -118,8 +118,7 @@ check(
 const dash = parseReference("5-58", tables);
 check("5-58 sure/ayet okunur", dash?.kind === "verse" && dash.surah.id === 5 && dash.verse === 58);
 
-console.log("");
-console.log("5. Tek sayi");
+section("5. Tek sayi");
 
 const solo = parseReference("5", tables);
 check(
@@ -128,8 +127,7 @@ check(
 );
 check("200 sure degil (>114)", parseReference("200", tables) === null);
 
-console.log("");
-console.log("6. Sinir asimi");
+section("6. Sinir asimi");
 
 const over = parseReference("2/300", tables);
 check("2/300 hata karti dondurur", over?.kind === "outOfRange");
@@ -138,8 +136,7 @@ check("2/300 sure sayfasina baglar", over?.kind === "outOfRange" && over.url ===
 check("115/1 bilinmeyen sure, referans degil", parseReference("115/1", tables) === null);
 check("2/0 gecersiz ayet", parseReference("2/0", tables)?.kind === "outOfRange");
 
-console.log("");
-console.log("7. Cuz ve sayfa");
+section("7. Cuz ve sayfa");
 
 const juz = parseReference("cüz 2", tables);
 check("cüz 2 -> Bakara 142", juz?.kind === "juz" && juz.juz === 2 && juz.url === "/bakara-suresi/142");
@@ -152,8 +149,7 @@ check("sayfa 3 -> Bakara 6", page?.kind === "page" && page.page === 3 && page.ur
 check("3. sayfa ayni", parseReference("3. sayfa", tables)?.kind === "page");
 check("sayfa 605 sinir asimi", parseReference("sayfa 605", tables)?.kind === "outOfRange");
 
-console.log("");
-console.log("8. Saf referans ayirimi");
+section("8. Saf referans ayirimi");
 
 check("5/58 saf referans", isPureReference("5/58"));
 check("bakara 153 saf referans", isPureReference("bakara 153"));
@@ -162,18 +158,9 @@ check("5. sure 58. ayet saf referans", isPureReference("5. sure 58. ayet"));
 check("sabir saf referans DEGIL", !isPureReference("sabir"));
 check("bakara sabir saf referans DEGIL", !isPureReference("bakara sabir"));
 
-console.log("");
-console.log("9. Referans olmayan");
+section("9. Referans olmayan");
 
 check("bos sorgu", parseReference("", tables) === null);
 check("sadece kelime", parseReference("sabir", tables) === null);
 check("arapca", parseReference("صبر", tables) === null);
 
-console.log("");
-if (failures.length > 0) {
-  console.error(`\n${String(failures.length)} basarisiz, ${String(passed)} gecti`);
-  for (const f of failures) console.error(`  - ${f}`);
-  process.exitCode = 1;
-} else {
-  console.log(`${String(passed)} denetim gecti`);
-}

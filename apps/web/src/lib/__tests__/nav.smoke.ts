@@ -11,20 +11,23 @@
 
 import { NAV, allNavPaths, findHub } from "../nav.js";
 
-let passed = 0;
-const failures: string[] = [];
+import assert from "node:assert/strict";
+import { test } from "node:test";
 
-function check(label: string, ok: boolean): void {
-  if (ok) {
-    passed += 1;
-    console.log(`  ok   ${label}`);
-  } else {
-    failures.push(label);
-    console.error(`  HATA ${label}`);
-  }
+let group = "";
+
+/** Sonraki denetimlerin adına ön ek olur; raporda hangi bölümün düştüğü görünür. */
+function section(title: string): void {
+  group = title;
 }
 
-console.log("1. Yapi");
+function check(label: string, ok: boolean): void {
+  test(group === "" ? label : `${group} › ${label}`, () => {
+    assert.ok(ok, label);
+  });
+}
+
+section("1. Yapi");
 
 check("dort ust baslik var", NAV.length === 4);
 check(
@@ -36,8 +39,7 @@ check(
   NAV.every((h) => h.children.length >= 2),
 );
 
-console.log("");
-console.log("2. Adresler");
+section("2. Adresler");
 
 const paths = allNavPaths();
 check("her adres tekil", new Set(paths).size === paths.length);
@@ -54,8 +56,7 @@ check(
   paths.every((p) => !p.includes(".html")),
 );
 
-console.log("");
-console.log("3. Metin");
+section("3. Metin");
 
 check(
   "her ogenin bos olmayan etiketi var",
@@ -66,8 +67,7 @@ check(
   NAV.every((h) => h.blurb.trim() !== "" && h.children.every((c) => c.blurb.trim() !== "")),
 );
 
-console.log("");
-console.log("4. findHub");
+section("4. findHub");
 
 check("hub adresi kendi hub'ini bulur", findHub("/anla")?.label === "Anla");
 check("cocuk adresi ust hub'ini bulur", findHub("/kavramlar")?.label === "Anla");
@@ -75,8 +75,7 @@ check("yazmalar Kesfet altinda", findHub("/yazmalar")?.label === "Keşfet");
 check("bilinmeyen adres null doner", findHub("/bakara-suresi") === null);
 check("ayet adresi null doner", findHub("/bakara-suresi/255") === null);
 
-console.log("");
-console.log("5. Sure slug catismasi");
+section("5. Sure slug catismasi");
 
 /*
  * Kok seviyede `[surah].astro` dinamik route'u var. Astro'da statik route
@@ -89,10 +88,3 @@ check(
   paths.every((p) => !p.endsWith("-suresi")),
 );
 
-console.log("");
-if (failures.length > 0) {
-  console.error(`${String(passed)} test gecti, ${String(failures.length)} basarisiz:`);
-  for (const failure of failures) console.error(`  - ${failure}`);
-  process.exit(1);
-}
-console.log(`${String(passed)} test gecti, 0 basarisiz`);

@@ -13,17 +13,20 @@ import { expandPrefixes, scoreHits, applyFilters, countByType } from "../query.j
 import { RecordResolver } from "../records.js";
 import type { SearchIndex } from "../types.js";
 
-let passed = 0;
-const failures: string[] = [];
+import assert from "node:assert/strict";
+import { test } from "node:test";
+
+let group = "";
+
+/** Sonraki denetimlerin adına ön ek olur; raporda hangi bölümün düştüğü görünür. */
+function section(title: string): void {
+  group = title;
+}
 
 function check(label: string, ok: boolean): void {
-  if (ok) {
-    passed += 1;
-    console.log(`  ok   ${label}`);
-  } else {
-    failures.push(label);
-    console.error(`  HATA ${label}`);
-  }
+  test(group === "" ? label : `${group} › ${label}`, () => {
+    assert.ok(ok, label);
+  });
 }
 
 /*
@@ -84,7 +87,7 @@ const postings: Record<string, number[]> = {
 };
 const keys = Object.keys(postings);
 
-console.log("1. Kayit cozumu (turetme)");
+section("1. Kayit cozumu (turetme)");
 
 check("docId 0 -> Bakara 1", resolver.resolve(0).title === "Bakara 1");
 check("docId 0 adresi", resolver.resolve(0).url === "/bakara-suresi/1");
@@ -97,8 +100,7 @@ check("Yûsuf mekki", resolver.resolve(3).extra?.[4] === 0);
 check("docId 7 kavram", resolver.resolve(7).type === "kavram" && resolver.resolve(7).title === "Sabır");
 check("docId 5 sure", resolver.resolve(5).url === "/bakara-suresi");
 
-console.log("");
-console.log("2. On ek genisletme");
+section("2. On ek genisletme");
 
 check(
   "sabr -> sabrederek, sabrederse",
@@ -109,8 +111,7 @@ check("sabir tam eslesmeyi bulur", expandPrefixes("sabir", keys).join(",") === "
 check("kitap -> kitabi (yumusama)", expandPrefixes("kitap", keys).includes("kitabi"));
 check("eslesmeyen token bos dizi", expandPrefixes("zzz", keys).length === 0);
 
-console.log("");
-console.log("3. Skorlama");
+section("3. Skorlama");
 
 const exact = scoreHits(["sabir"], postings, resolver);
 check("sabir tek sonuc", exact.length === 1 && exact[0]?.docId === 7);
@@ -132,16 +133,14 @@ check("tek token gecen sonra gelir", multi.length === 1);
 const both = scoreHits(["sabr", "kitabi"], postings, resolver);
 check("kismi eslesme de listelenir", both.length === 2 && both[0]?.docId === 0);
 
-console.log("");
-console.log("4. Sekme sayilari");
+section("4. Sekme sayilari");
 
 const counts = countByType(mixed);
 check("ayet 2", counts.ayet === 2);
 check("kavram 1", counts.kavram === 1);
 check("kok 0", counts.kok === 0);
 
-console.log("");
-console.log("5. Suzgecler");
+section("5. Suzgecler");
 
 check(
   "tur suzgeci",
@@ -165,8 +164,7 @@ check("cuz araligi ici dolu", applyFilters(mixed, { type: "ayet", juzFrom: 1, ju
 check("sayfa araligi", applyFilters(mixed, { type: "ayet", pageFrom: 1, pageTo: 1 }).length === 1);
 check("ayet disi tur sayfa suzgecinden etkilenmez", applyFilters(mixed, { pageFrom: 1, pageTo: 1 }).length === 2);
 
-console.log("");
-console.log("6. Siralama");
+section("6. Siralama");
 
 const mushaf = applyFilters(mixed, { sort: "mushaf" });
 check(
@@ -176,17 +174,8 @@ check(
 const relevance = applyFilters(mixed, { sort: "alaka" });
 check("alaka sirasinda kavram once", relevance[0]?.type === "kavram");
 
-console.log("");
-console.log("7. Bos sonuc");
+section("7. Bos sonuc");
 
 check("eslesmeyen sorgu bos dizi", scoreHits(["zzzz"], postings, resolver).length === 0);
 check("bos token listesi bos dizi", scoreHits([], postings, resolver).length === 0);
 
-console.log("");
-if (failures.length > 0) {
-  console.error(`\n${String(failures.length)} basarisiz, ${String(passed)} gecti`);
-  for (const f of failures) console.error(`  - ${f}`);
-  process.exitCode = 1;
-} else {
-  console.log(`${String(passed)} denetim gecti`);
-}

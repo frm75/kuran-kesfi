@@ -11,17 +11,20 @@
 import { checkPackageIntegrity, exportPackage, exportScholarNote, exportVideoSource } from "../export.js";
 import { verseKeyRef } from "../references.js";
 
-let passed = 0;
-const failures: string[] = [];
+import assert from "node:assert/strict";
+import { test } from "node:test";
+
+let group = "";
+
+/** Sonraki denetimlerin adına ön ek olur; raporda hangi bölümün düştüğü görünür. */
+function section(title: string): void {
+  group = title;
+}
 
 function check(label: string, ok: boolean): void {
-  if (ok) {
-    passed += 1;
-    console.log(`  ok   ${label}`);
-  } else {
-    failures.push(label);
-    console.error(`  HATA ${label}`);
-  }
+  test(group === "" ? label : `${group} › ${label}`, () => {
+    assert.ok(ok, label);
+  });
 }
 
 const accepts = (schema: { safeParse: (v: unknown) => { success: boolean } }, value: unknown) =>
@@ -32,7 +35,7 @@ const rejects = (schema: { safeParse: (v: unknown) => { success: boolean } }, va
 // -----------------------------------------------------------------------------
 // 1. VerseKey regex
 // -----------------------------------------------------------------------------
-console.log("1. VerseKey");
+section("1. VerseKey");
 check("'2:153' kabul edilir", accepts(verseKeyRef, "2:153"));
 check("'1:1' kabul edilir", accepts(verseKeyRef, "1:1"));
 check("'114:6' kabul edilir", accepts(verseKeyRef, "114:6"));
@@ -86,7 +89,7 @@ const validPackage = {
 // -----------------------------------------------------------------------------
 // 2. Gecerli paket + capraz referans
 // -----------------------------------------------------------------------------
-console.log("\n2. Gecerli ExportPackage");
+section("2. Gecerli ExportPackage");
 const parsed = exportPackage.safeParse(validPackage);
 check("paket parse edilir", parsed.success);
 if (!parsed.success) {
@@ -101,7 +104,7 @@ if (!parsed.success) {
 // -----------------------------------------------------------------------------
 // 3. segment_end_sec < segment_start_sec
 // -----------------------------------------------------------------------------
-console.log("\n3. Segment araligi");
+section("3. Segment araligi");
 check(
   "end < start reddedilir",
   rejects(exportScholarNote, { ...validNote, segment_start_sec: 200, segment_end_sec: 100 }),
@@ -114,7 +117,7 @@ check(
 // -----------------------------------------------------------------------------
 // 4. draft export'a girmez
 // -----------------------------------------------------------------------------
-console.log("\n4. status");
+section("4. status");
 check("'draft' reddedilir", rejects(exportScholarNote, { ...validNote, status: "draft" }));
 check("'reviewed' kabul edilir", accepts(exportScholarNote, { ...validNote, status: "reviewed" }));
 check("'published' kabul edilir", accepts(exportScholarNote, { ...validNote, status: "published" }));
@@ -122,14 +125,14 @@ check("'published' kabul edilir", accepts(exportScholarNote, { ...validNote, sta
 // -----------------------------------------------------------------------------
 // 5. quote <= 200
 // -----------------------------------------------------------------------------
-console.log("\n5. quote ust siniri (telif)");
+section("5. quote ust siniri (telif)");
 check("200 karakter kabul edilir", accepts(exportScholarNote, { ...validNote, quote: "a".repeat(200) }));
 check("201 karakter reddedilir", rejects(exportScholarNote, { ...validNote, quote: "a".repeat(201) }));
 
 // -----------------------------------------------------------------------------
 // 6. K4 — video_id platform'a gore kosullu
 // -----------------------------------------------------------------------------
-console.log("\n6. K4 kosullu video_id");
+section("6. K4 kosullu video_id");
 const baseVideo = {
   scholar_slug: "mehmet-okuyan",
   title: "Ders",
@@ -159,7 +162,7 @@ check(
 // -----------------------------------------------------------------------------
 // 7. Yetim referanslar
 // -----------------------------------------------------------------------------
-console.log("\n7. Capraz referans denetimi");
+section("7. Capraz referans denetimi");
 
 function integrityOf(pkg: unknown): string[] {
   const result = exportPackage.safeParse(pkg);
@@ -203,12 +206,3 @@ check(
     scholar_notes: [{ ...validNote, linked_verse_roles: { "12:90": "primary" } }],
   }).length > 0,
 );
-
-// -----------------------------------------------------------------------------
-
-console.log(`\n${passed} test gecti, ${failures.length} basarisiz`);
-if (failures.length > 0) {
-  console.error("\nBasarisiz testler:");
-  for (const f of failures) console.error(`  - ${f}`);
-  process.exit(1);
-}

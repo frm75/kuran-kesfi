@@ -12,19 +12,23 @@
 
 import { buildScheduleDays, checkScheduleAdjacentRepeats } from "../schedule.js";
 
-let passed = 0;
-const failures: string[] = [];
-function check(label: string, ok: boolean): void {
-  if (ok) {
-    passed += 1;
-    console.log(`  ok   ${label}`);
-  } else {
-    failures.push(label);
-    console.error(`  HATA ${label}`);
-  }
+import assert from "node:assert/strict";
+import { test } from "node:test";
+
+let group = "";
+
+/** Sonraki denetimlerin adına ön ek olur; raporda hangi bölümün düştüğü görünür. */
+function section(title: string): void {
+  group = title;
 }
 
-console.log("1. Yan yana iki ilke ayni ayeti paylasiyor (gercek hata girdisi)");
+function check(label: string, ok: boolean): void {
+  test(group === "" ? label : `${group} › ${label}`, () => {
+    assert.ok(ok, label);
+  });
+}
+
+section("1. Yan yana iki ilke ayni ayeti paylasiyor (gercek hata girdisi)");
 {
   // 3134 hem "ofkeyi-yutma" hem "affetme" listesinin BASINDA.
   const usable = [
@@ -45,8 +49,7 @@ console.log("1. Yan yana iki ilke ayni ayeti paylasiyor (gercek hata girdisi)");
   check("ust uste tekrar yok", checkScheduleAdjacentRepeats(entries).length === 0);
 }
 
-console.log("");
-console.log("2. Tek ayetli ilke — geri dusulur, gun ATLANMAZ");
+section("2. Tek ayetli ilke — geri dusulur, gun ATLANMAZ");
 {
   // Iki ilkenin de TEK ayeti var ve ayni: soguma cozulemez.
   const usable = [
@@ -62,16 +65,14 @@ console.log("2. Tek ayetli ilke — geri dusulur, gun ATLANMAZ");
   check("her gunun ayeti var", entries.every((e) => e.verseId === 49012));
 }
 
-console.log("");
-console.log("3. surahId / verseNumber ayristirmasi");
+section("3. surahId / verseNumber ayristirmasi");
 {
   const entries = buildScheduleDays([{ id: 1, slug: "adalet" }], new Map([[1, [4058]]]), 1);
   check("surahId = 4", entries[0]?.surahId === 4);
   check("verseNumber = 58", entries[0]?.verseNumber === 58);
 }
 
-console.log("");
-console.log("4. Determinizm — ayni girdi ayni takvimi uretir");
+section("4. Determinizm — ayni girdi ayni takvimi uretir");
 {
   const usable = [
     { id: 1, slug: "a" },
@@ -86,8 +87,7 @@ console.log("4. Determinizm — ayni girdi ayni takvimi uretir");
   check("iki calistirma birebir ayni", first === second);
 }
 
-console.log("");
-console.log("5. Denetim bozuk takvimi GERCEKTEN yakaliyor");
+section("5. Denetim bozuk takvimi GERCEKTEN yakaliyor");
 {
   const broken = [
     { dayIndex: 7, verseId: 3134 },
@@ -103,10 +103,3 @@ console.log("5. Denetim bozuk takvimi GERCEKTEN yakaliyor");
   ]).length === 0);
 }
 
-console.log("");
-if (failures.length > 0) {
-  console.error(`${String(failures.length)} test BASARISIZ:`);
-  for (const f of failures) console.error(`  - ${f}`);
-  process.exit(1);
-}
-console.log(`${String(passed)} test gecti.`);

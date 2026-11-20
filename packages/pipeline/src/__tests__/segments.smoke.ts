@@ -6,20 +6,23 @@
 
 import { LEAD_TOLERANCE_MS, repairVerseSegments } from "../segments.js";
 
-let passed = 0;
-const failures: string[] = [];
+import assert from "node:assert/strict";
+import { test } from "node:test";
 
-function check(label: string, ok: boolean): void {
-  if (ok) {
-    passed += 1;
-    console.log(`  ok   ${label}`);
-  } else {
-    failures.push(label);
-    console.error(`  HATA ${label}`);
-  }
+let group = "";
+
+/** Sonraki denetimlerin adına ön ek olur; raporda hangi bölümün düştüğü görünür. */
+function section(title: string): void {
+  group = title;
 }
 
-console.log("1. Temiz veri");
+function check(label: string, ok: boolean): void {
+  test(group === "" ? label : `${group} › ${label}`, () => {
+    assert.ok(ok, label);
+  });
+}
+
+section("1. Temiz veri");
 {
   const r = repairVerseSegments({
     wordCount: 4,
@@ -40,7 +43,7 @@ console.log("1. Temiz veri");
   check("kirpma yok", !r.capped);
 }
 
-console.log("2. Kucuk negatif on-yukleme kirpilir");
+section("2. Kucuk negatif on-yukleme kirpilir");
 {
   // Gercek veride medyan 55 ms: ilk kelime ayet basindan biraz once baslar.
   const r = repairVerseSegments({
@@ -57,7 +60,7 @@ console.log("2. Kucuk negatif on-yukleme kirpilir");
   check("ikinci kelime dogru", r.starts[1] === 935);
 }
 
-console.log("3. Buyuk on-yukleme bozuktur, atilir");
+section("3. Buyuk on-yukleme bozuktur, atilir");
 {
   // 60:13 gercek ornegi: ilk damga ayet basindan 50 saniye once.
   const r = repairVerseSegments({
@@ -77,7 +80,7 @@ console.log("3. Buyuk on-yukleme bozuktur, atilir");
   check("tolerans 500 ms", LEAD_TOLERANCE_MS === 500);
 }
 
-console.log("4. Eksik kelime aradegerlenir");
+section("4. Eksik kelime aradegerlenir");
 {
   const r = repairVerseSegments({
     wordCount: 4,
@@ -96,7 +99,7 @@ console.log("4. Eksik kelime aradegerlenir");
   check("artan sirali", r.starts.every((v, i, a) => i === 0 || (a[i - 1] ?? 0) <= v));
 }
 
-console.log("5. Bastaki ve sondaki eksikler");
+section("5. Bastaki ve sondaki eksikler");
 {
   const r = repairVerseSegments({
     wordCount: 3,
@@ -110,7 +113,7 @@ console.log("5. Bastaki ve sondaki eksikler");
   check("aradegerlenen 2", r.interpolated === 2);
 }
 
-console.log("6. Fazla indis son kelimeye katilir (37:130)");
+section("6. Fazla indis son kelimeye katilir (37:130)");
 {
   const r = repairVerseSegments({
     wordCount: 3,
@@ -128,7 +131,7 @@ console.log("6. Fazla indis son kelimeye katilir (37:130)");
   check("fazlanin bitisi son elemana yazildi", r.starts[3] === 4000);
 }
 
-console.log("7. Bozuk girdiler");
+section("7. Bozuk girdiler");
 {
   const r = repairVerseSegments({
     wordCount: 2,
@@ -149,10 +152,4 @@ console.log("7. Bozuk girdiler");
   });
   check("hic damga yoksa esit bolunur", r.starts.length === 3 && r.starts[1] === 1000);
   check("hepsi aradegerlenmis sayilir", r.interpolated === 2);
-}
-
-console.log(`\n${String(passed)} gecti, ${String(failures.length)} kaldi`);
-if (failures.length > 0) {
-  for (const f of failures) console.error(`  - ${f}`);
-  process.exit(1);
 }

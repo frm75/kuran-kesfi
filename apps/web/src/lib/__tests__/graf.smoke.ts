@@ -28,11 +28,20 @@ import { existsSync, readFileSync } from "node:fs";
 import { radyalYerlesim, kirisYolu } from "../graf.js";
 import type { RadyalGirdi, RadyalGrup, RadyalCocuk, RadyalKenar } from "../graf.js";
 
-let passed = 0;
-const failures: string[] = [];
+import assert from "node:assert/strict";
+import { test } from "node:test";
+
+let group = "";
+
+/** Sonraki denetimlerin adına ön ek olur; raporda hangi bölümün düştüğü görünür. */
+function section(title: string): void {
+  group = title;
+}
+
 function check(label: string, ok: boolean): void {
-  if (ok) { passed += 1; console.log(`  ok   ${label}`); }
-  else { failures.push(label); console.error(`  HATA ${label}`); }
+  test(group === "" ? label : `${group} › ${label}`, () => {
+    assert.ok(ok, label);
+  });
 }
 
 const girdi: RadyalGirdi = {
@@ -52,13 +61,12 @@ const girdi: RadyalGirdi = {
   kenarlar: [{ a: "a", b: "c", type: "contrast", weight: 3, origin: "curated" }],
 };
 
-console.log("1. Determinizm");
+section("1. Determinizm");
 const bir = radyalYerlesim(girdi);
 const iki = radyalYerlesim(girdi);
 check("ayni girdi ayni ciktiyi verir", JSON.stringify(bir) === JSON.stringify(iki));
 
-console.log("");
-console.log("2. Yerlesim");
+section("2. Yerlesim");
 check("her dugum uretildi", bir.dugumler.length === 7); // 2 grup + 3 cocuk + 2 alt
 check(
   "hicbir dugum gorus alani disinda degil",
@@ -84,8 +92,7 @@ check(
   ),
 );
 
-console.log("");
-console.log("3. Ucuncu seviye (alt kavram)");
+section("3. Ucuncu seviye (alt kavram)");
 const altDugumler = bir.dugumler.filter((d) => d.derinlik === 2);
 const bDugum = bir.dugumler.find((d) => d.slug === "b");
 check("alt dugumler uretildi", altDugumler.length === 2);
@@ -104,8 +111,7 @@ check(
   ),
 );
 
-console.log("");
-console.log("4. Kenarlar");
+section("4. Kenarlar");
 check("kenar korundu", bir.kenarlar.length === 1);
 const a = bir.dugumler.find((d) => d.slug === "a");
 const c = bir.dugumler.find((d) => d.slug === "c");
@@ -114,13 +120,11 @@ check(
   a !== undefined && c !== undefined && /^M [\d.-]+ [\d.-]+ Q [\d.-]+ [\d.-]+ [\d.-]+ [\d.-]+$/.test(kirisYolu(a, c, girdi.boyut / 2)),
 );
 
-console.log("");
-console.log("5. Bos girdi");
+section("5. Bos girdi");
 const bos = radyalYerlesim({ boyut: 900, gruplar: [], kenarlar: [] });
 check("bos girdi patlamiyor", bos.dugumler.length === 0 && bos.kenarlar.length === 0);
 
-console.log("");
-console.log("6. Gercek veri denetimi (concepts_index.json)");
+section("6. Gercek veri denetimi (concepts_index.json)");
 interface GercekKavram {
   slug: string;
   nameTr: string;
@@ -129,7 +133,7 @@ interface GercekKavram {
 }
 const idxYolu = "public/data/concepts_index.json";
 if (!existsSync(idxYolu)) {
-  console.log("  atlandi  gercek veri denetimi (concepts_index.json yok — once pnpm build:data)");
+  test("gercek kavram verisi", { skip: "concepts_index.json yok — once pnpm build:data" }, () => {});
 } else {
   const raw = JSON.parse(readFileSync(idxYolu, "utf8")) as { concepts: GercekKavram[] };
   const kavramlar = raw.concepts;
@@ -178,8 +182,7 @@ if (!existsSync(idxYolu)) {
   check("gercek veride ayni girdi ayni ciktiyi verir", JSON.stringify(gercekBir) === JSON.stringify(gercekIki));
 }
 
-console.log("");
-console.log("7. Tek grup (ego-graf / hub sayfasi)");
+section("7. Tek grup (ego-graf / hub sayfasi)");
 /*
  * Duzeltme turu 1 bulgusu: tek grup varken dilim payi tam 2π cikiyor, bu da
  * grup merkez acisini hep π/2'de sabitleyip dugumu merkeze degil 0.26
@@ -232,8 +235,7 @@ check(
     .every((g) => Math.hypot(g.x - girdi.boyut / 2, g.y - girdi.boyut / 2) > 0.01),
 );
 
-console.log("");
-console.log("8. Gercek ilke verisi (principles_index.json + principle_areas.json)");
+section("8. Gercek ilke verisi (principles_index.json + principle_areas.json)");
 /*
  * Ilke atlasi (gorev 4, 2026-09-07) ayni radyalYerlesim'i FARKLI veriyle
  * cagirir: 7 alan halkada, 64 ilke diginda, agirlik primaryCount. Kenarlar
@@ -258,9 +260,9 @@ interface GercekAlan {
 const ilkeIdxYolu = "public/data/principles_index.json";
 const alanYolu = "public/data/principle_areas.json";
 if (!existsSync(ilkeIdxYolu) || !existsSync(alanYolu)) {
-  console.log(
-    "  atlandi  gercek ilke verisi denetimi (principles_index.json/principle_areas.json yok — once pnpm build:data)",
-  );
+  test("gercek ilke verisi", {
+    skip: "principles_index.json/principle_areas.json yok — once pnpm build:data",
+  }, () => {});
 } else {
   const ilkeler = (JSON.parse(readFileSync(ilkeIdxYolu, "utf8")) as { principles: GercekIlke[] }).principles;
   const alanlar = (JSON.parse(readFileSync(alanYolu, "utf8")) as { areas: GercekAlan[] }).areas
@@ -335,10 +337,3 @@ if (!existsSync(ilkeIdxYolu) || !existsSync(alanYolu)) {
   );
 }
 
-console.log("");
-if (failures.length > 0) {
-  console.error(`${String(passed)} test gecti, ${String(failures.length)} basarisiz:`);
-  for (const f of failures) console.error(`  - ${f}`);
-  process.exit(1);
-}
-console.log(`${String(passed)} test gecti, 0 basarisiz`);

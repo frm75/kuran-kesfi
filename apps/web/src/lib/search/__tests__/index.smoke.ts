@@ -25,21 +25,24 @@ import type { SearchIndex, Shard } from "../types.js";
 
 const DATA = resolve(dirname(fileURLToPath(import.meta.url)), "../../../../public/data/search");
 
-let passed = 0;
-const failures: string[] = [];
+import assert from "node:assert/strict";
+import { test } from "node:test";
+
+let group = "";
+
+/** Sonraki denetimlerin adına ön ek olur; raporda hangi bölümün düştüğü görünür. */
+function section(title: string): void {
+  group = title;
+}
 
 function check(label: string, ok: boolean): void {
-  if (ok) {
-    passed += 1;
-    console.log(`  ok   ${label}`);
-  } else {
-    failures.push(label);
-    console.error(`  HATA ${label}`);
-  }
+  test(group === "" ? label : `${group} › ${label}`, () => {
+    assert.ok(ok, label);
+  });
 }
 
 if (!existsSync(resolve(DATA, "index.json"))) {
-  console.log("  ATLANDI  arama indeksi yok — once `pnpm build:data` calistirin");
+  test("gercek arama indeksi", { skip: "indeks yok — once `pnpm build:data` calistirin" }, () => {});
 } else {
   run();
 }
@@ -76,7 +79,7 @@ function run(): void {
     pageStarts: index.pageStarts,
   };
 
-  console.log("1. Indeks butunlugu");
+  section("1. Indeks butunlugu");
 
   check("9004 kayit", index.docCount === 9004);
   check("6236 ayet", index.typeCounts.ayet === 6236);
@@ -94,8 +97,7 @@ function run(): void {
     index.entries.every((e) => !e[2].includes(".html")),
   );
 
-  console.log("");
-  console.log("2. Ayet turetmesi (ornekleme)");
+  section("2. Ayet turetmesi (ornekleme)");
 
   check("ilk kayit Fatiha 1", resolver.resolve(0).url === "/fatiha-suresi/1");
   check("son ayet Nas 6", resolver.resolve(6235).url === "/nas-suresi/6");
@@ -105,8 +107,7 @@ function run(): void {
   check("Bakara 153 cuz 2", bakara153.extra?.[2] === 2);
   check("Bakara medeni", bakara153.extra?.[4] === 1);
 
-  console.log("");
-  console.log("3. Referans (spec §14)");
+  section("3. Referans (spec §14)");
 
   const maide58 = parseReference("5/58", tables);
   check("5/58 -> /maide-suresi/58", maide58?.kind === "verse" && maide58.url === "/maide-suresi/58");
@@ -122,8 +123,7 @@ function run(): void {
   check("5/58 saf referans", isPureReference("5/58"));
   check("berae 5 es adla bulunur", parseReference("berae 5", tables)?.kind === "verse");
 
-  console.log("");
-  console.log("4. Anlik oneri (index.json icinden, ag yok)");
+  section("4. Anlik oneri (index.json icinden, ag yok)");
 
   // "yus." -> Yusuf suresi. Bu spec §14'un 2. kriteri.
   const yus = index.entries.filter((e) => e[1].toLocaleLowerCase("tr").startsWith("yûs"));
@@ -133,8 +133,7 @@ function run(): void {
     ["/nuh-suresi", "/nur-suresi"].every((u) => index.entries.some((e) => e[2] === u)),
   );
 
-  console.log("");
-  console.log("5. Metin aramasi (spec §14)");
+  section("5. Metin aramasi (spec §14)");
 
   const sabir = search("sabır");
   check("sabır sonuc dondurur", sabir.length > 0);
@@ -161,8 +160,7 @@ function run(): void {
   const kitap = search("kitap");
   check("kitap yumusama ile sonuc bulur", kitap.length > 0);
 
-  console.log("");
-  console.log("6. Suzgecler gercek veride");
+  section("6. Suzgecler gercek veride");
 
   const onlyVerses = applyFilters(sabir, { type: "ayet" });
   check("tur suzgeci ayet birakir", onlyVerses.every((h) => h.type === "ayet"));
@@ -178,13 +176,4 @@ function run(): void {
     "mushaf sirasi artan",
     mushaf.every((h, i) => i === 0 || (mushaf[i - 1]?.docId ?? 0) < h.docId),
   );
-
-  console.log("");
-  if (failures.length > 0) {
-    console.error(`\n${String(failures.length)} basarisiz, ${String(passed)} gecti`);
-    for (const f of failures) console.error(`  - ${f}`);
-    process.exitCode = 1;
-  } else {
-    console.log(`${String(passed)} denetim gecti`);
-  }
 }

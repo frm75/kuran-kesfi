@@ -20,17 +20,20 @@ import { isDue, localTime } from "../dispatch.js";
 import { buildDailyMessage, loadSchedule, turkishAuthors } from "../content.js";
 import type { Subscription } from "../store.js";
 
-let passed = 0;
-const failures: string[] = [];
+import assert from "node:assert/strict";
+import { test } from "node:test";
+
+let group = "";
+
+/** Sonraki denetimlerin adına ön ek olur; raporda hangi bölümün düştüğü görünür. */
+function section(title: string): void {
+  group = title;
+}
 
 function check(label: string, ok: boolean): void {
-  if (ok) {
-    passed += 1;
-    console.log(`  ok   ${label}`);
-  } else {
-    failures.push(label);
-    console.error(`  HATA ${label}`);
-  }
+  test(group === "" ? label : `${group} › ${label}`, () => {
+    assert.ok(ok, label);
+  });
 }
 
 const base: Subscription = {
@@ -44,7 +47,7 @@ const base: Subscription = {
   scheduleCursor: 0,
 };
 
-console.log("1. Saat dilimi");
+section("1. Saat dilimi");
 
 // 2026-09-07 05:00 UTC = Istanbul'da 08:00, Londra'da 06:00
 const at05utc = new Date("2026-09-07T05:00:00.000Z");
@@ -61,7 +64,7 @@ const midnight = localTime("Europe/Istanbul", new Date("2026-09-07T21:00:00.000Z
 check("gece yarisi saat 24 degil 0 olur", midnight.hour === 0);
 check("gece yarisi tarihi ertesi gune gecer", midnight.date === "2026-09-08");
 
-console.log("2. Gonderim zamani");
+section("2. Gonderim zamani");
 
 check("saati gelen abone gonderilir", isDue(base, at05utc));
 check(
@@ -89,7 +92,7 @@ check(
   isDue({ ...base, timezone: "Europe/London" }, new Date("2026-09-07T07:00:00.000Z")),
 );
 
-console.log("3. Takvim");
+section("3. Takvim");
 
 const schedule = loadSchedule();
 check("takvim okunuyor", schedule.length > 0);
@@ -116,11 +119,11 @@ check(
   check(`ilk ${principleCount} gunde ilke tekrari yok`, firstCycle.size === principleCount);
 }
 
-console.log("4. Mesaj");
+section("4. Mesaj");
 
 const first = schedule[0];
 if (first === undefined) {
-  failures.push("takvim bos, mesaj testi calistirilamadi");
+  check("takvim bos, mesaj testi calistirilamadi", false);
 } else {
   const message = buildDailyMessage(first, "diyanet-isleri");
   check("mesaj kuruluyor", message !== null);
@@ -151,10 +154,3 @@ if (first === undefined) {
   check("olmayan ilke null doner, uydurulmaz", missing === null);
 }
 
-console.log("");
-if (failures.length > 0) {
-  console.error(`${String(passed)} test gecti, ${String(failures.length)} basarisiz:`);
-  for (const failure of failures) console.error(`  - ${failure}`);
-  process.exit(1);
-}
-console.log(`${String(passed)} test gecti, 0 basarisiz`);
