@@ -74,6 +74,9 @@ importers:
       '@kuran/schema':
         specifier: workspace:*
         version: link:../../packages/schema
+      adhan:
+        specifier: ^4.4.6
+        version: 4.4.6
       astro:
         specifier: ^5.18.2
         version: 5.18.2(@types/node@20.19.43)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.63.1)(tsx@4.23.13)(typescript@5.9.3)(yaml@2.9.0)
@@ -1693,6 +1696,9 @@ packages:
     resolution: {integrity: sha512-lGq+9yr1/GuAWaVYIHRjvvySG5/4VfKIvC8EWxStPdcDh/Ka7FG3twP6v4d5BkravUilhIAsG4Qj83t02LWUPQ==}
     engines: {node: '>=0.4.0'}
     hasBin: true
+
+  adhan@4.4.6:
+    resolution: {integrity: sha512-cpLLcr6qxx+mLc6jgSXJwAAHxDFrhXhVLuzRbZPrpQKIEpJw+0LcfG6u9WEjq66kcTX/2sCkI3VztgRoUXBnFg==}
 
   ajv-draft-04@1.0.0:
     resolution: {integrity: sha512-mv00Te6nmYbRp5DCwclxtt7yV/joXJPGS7nM+97GdxvuttCOfgI3K4U25zboyeX0O+myI8ERluxQe5wljMmVIw==}
@@ -4748,6 +4754,8 @@ snapshots:
   '@xmldom/xmldom@0.9.12': {}
 
   acorn@8.18.0: {}
+
+  adhan@4.4.6: {}
 
   ajv-draft-04@1.0.0(ajv@8.20.0):
     optionalDependencies:
