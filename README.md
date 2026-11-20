@@ -87,7 +87,10 @@ chmod 600 .env
 | `pnpm fonts:verify` | HarfBuzz ile dizgi doğrulaması (eksik glif var mı) |
 | `pnpm brand` | Marka görsellerini tek kaynak logodan üret |
 | `pnpm brand:check` | Üretilen marka çıktısı diskteki ile aynı mı |
-| `pnpm run deploy` | Atomik yayın + duman testi |
+| `pnpm content:import` | `data/**` → PostgreSQL (kıssa, kavram, ilke, konum, zaman); `data/` parmak izini yazar |
+| `pnpm verify` | Paketleri derle + tip denetimi + testler |
+| `pnpm check:links` | Build çıktısındaki site içi bağlantıları denetle |
+| `pnpm run deploy` | `verify` → bağlantı denetimi → atomik yayın → duman testi |
 | `pnpm deploy:rollback` | Bir önceki yayına dön |
 | `pnpm deploy:smoke` | Yalnızca duman testi (yayın yapmadan) |
 | `pnpm db:up` / `pnpm db:down` | Build veritabanı container'ını başlat / durdur |

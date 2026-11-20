@@ -116,11 +116,14 @@ Sunucuda başka uygulamalar çalışıyor. Herhangi bir kurulum/servis işlemind
 5. Servis ve cron adları `kuran-` ön ekiyle
 6. Kurulum sonunda `docs/DEPLOY_REPORT.md`'ye port, servis, yol ve yedek listesini yaz
 
-Dağıtım kökü: `/opt/kuran/`, build çıktısı `/opt/kuran/dist/`, güncelleme atomik (`dist_new` → `mv`).
+Depo: `/opt/kuran/`, build çıktısı `apps/web/dist/`. Yayın: `/www/wwwroot/kurankesfi.tr/releases/<UTC>` +
+atomik `current` sembolik bağı (`pnpm run deploy`). Servisler systemd altında, `kuran` kullanıcısıyla
+(`infra/systemd/`); yedek `docs/YEDEK.md`.
 
 ## Oturum devri
 **`docs/DURUM.md` bağlam sıfırlandığında ilk okunacak dosyadır**: yayındaki modüller, komut sırası,
-yapılmayanlar ve NEDENİ, bir kez yaşanmış tuzaklar, sıradaki adımlar. Büyük bir iş bitince güncellenir.
+yayın kapıları, işletim, açık kararlar, yapılmayanlar ve NEDENİ, bir kez yaşanmış tuzaklar. Büyük bir iş
+bitince güncellenir; kısa kalır. Modüllerin kuruluş gerekçeleri `docs/DURUM-ARSIV-2026-09.md`'de.
 
 ## Arayüz
 - **`docs/DESIGN.md` tasarım sisteminin tek kaynağıdır.** Renk token'ları, tip ölçeği, boşluk/yuvarlaklık/gölge
