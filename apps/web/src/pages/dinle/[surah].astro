@@ -50,6 +50,7 @@ const verses = surah.verses.map((verse) => {
   const meal = mealByVerse.get(verse.verseNumber);
   return {
     verseKey: `${String(surahId)}:${String(verse.verseNumber)}`,
+    surahSlug: surah.slug,
     verseNumber: verse.verseNumber,
     words: getVerseWords(surahId, verse.verseNumber)?.words ?? [],
     translation: meal?.text ?? null,
@@ -96,7 +97,7 @@ const islandData = {
         {reciter !== null && <li class="chip">{STYLE_LABEL[reciter.style]}</li>}
       </ul>
       <p class="dinle-geri-bag">
-        <a href={`/${String(surahId)}`}>{surah.nameTr} suresi sayfasına dön</a>
+        <a href={`/${surah.slug}`}>{surah.nameTr} suresi sayfasına dön</a>
       </p>
     </header>
 

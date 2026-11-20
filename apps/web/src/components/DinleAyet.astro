@@ -16,6 +16,8 @@ import { stripFootnoteMarkers } from "~/lib/data";
 
 interface Props {
   verseKey: string;
+  /** Sure sayfasinin slug'i (`kamer-suresi`); ayet sayfasi bagi bundan kurulur */
+  surahSlug: string;
   verseNumber: number;
   words: readonly StaticWord[];
   translation: string | null;
@@ -25,7 +27,7 @@ interface Props {
   label: string;
 }
 
-const { verseKey, verseNumber, words, translation, footnoteNumbers, audioUrl, label } =
+const { verseKey, surahSlug, verseNumber, words, translation, footnoteNumbers, audioUrl, label } =
   Astro.props;
 
 /**
@@ -34,14 +36,12 @@ const { verseKey, verseNumber, words, translation, footnoteNumbers, audioUrl, la
  */
 const mealText =
   translation === null ? null : stripFootnoteMarkers(translation, footnoteNumbers);
-
-const [surahPart] = verseKey.split(":");
 ---
 
 <article class="dinle-ayet" id={`ayet-${verseKey.replace(":", "-")}`} data-verse={verseKey}>
   <header class="dinle-ayet-bas">
     <span class="dinle-ayet-no" dir="ltr">{verseNumber}</span>
-    <a href={`/${surahPart}/${String(verseNumber)}`} class="dinle-ayet-bag">ayet sayfası</a>
+    <a href={`/${surahSlug}/${String(verseNumber)}`} class="dinle-ayet-bag">ayet sayfası</a>
   </header>
 
   <p lang="ar" dir="rtl" class="dinle-arapca">
