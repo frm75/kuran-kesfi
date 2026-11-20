@@ -24,6 +24,17 @@ export const getStaticPaths = (() => {
 const { arabic } = Astro.props;
 const root = getRoot(arabic);
 
+/**
+ * Sayfa açıklaması: anlam varsa önce o gelir. Yalnız "N kez geçiyor" yazan
+ * 1653 açıklama arama sonucunda birbirinin aynısı görünüyordu.
+ */
+const meaning = root.meaningTr?.trim() ?? "";
+const count = `Kur'an'da ${String(root.occurrenceCount)} kez geçiyor`;
+const description =
+  meaning === ""
+    ? `${root.arabic} (${root.latin}) kökü ${count}.`
+    : `${root.arabic} (${root.latin}) kökü: ${meaning.length > 100 ? `${meaning.slice(0, 99).trimEnd()}…` : meaning}. ${count}; geçtiği ayetler sure sure listelenir.`;
+
 /** Geçişleri sureye göre grupla — 1722 satırlık düz liste okunmaz. */
 interface SurahGroup {
   surahId: number;
@@ -49,7 +60,7 @@ for (const occurrence of root.occurrences) {
 
 <Base
   title={`${root.arabic} (${root.latin}) kökü — Kur'an-ı Kerim Keşfi`}
-  description={`${root.arabic} kökü Kur'an'da ${root.occurrenceCount} kez geçiyor.`}
+  description={description}
   arabic
 >
   <main id="icerik" class="pg pg-normal">

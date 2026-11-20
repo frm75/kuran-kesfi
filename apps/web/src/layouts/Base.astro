@@ -43,6 +43,31 @@ const path = routePath(Astro.url.pathname);
  * bunları iki ayrı sayfa sayar.
  */
 const canonical = absoluteUrl(path);
+
+/**
+ * Yapılandırılmış veri — yalnız ana sayfada, sitenin adını ve aramasını
+ * tanıtır (arama motoru sonuçta site adını ve arama kutusunu buradan alır).
+ *
+ * `application/ld+json` çalıştırılan bir betik değil, veri bloğudur: CSP'nin
+ * `script-src` kuralı buna uygulanmaz, JS'siz sayfa kuralı da bozulmaz.
+ * `<` kaçışlanır ki metin içindeki bir `</script>` bloğu kapatamasın.
+ */
+const jsonLd =
+  path === "/"
+    ? JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: "Kur'an-ı Kerim Keşfi",
+        url: absoluteUrl("/"),
+        inLanguage: "tr",
+        description,
+        potentialAction: {
+          "@type": "SearchAction",
+          target: { "@type": "EntryPoint", urlTemplate: `${absoluteUrl("/ara")}?q={search_term_string}` },
+          "query-input": "required name=search_term_string",
+        },
+      }).replace(/</g, "\\u003c")
+    : null;
 ---
 
 <!doctype html>
@@ -98,6 +123,7 @@ const canonical = absoluteUrl(path);
     <meta name="theme-color" content="#efe6d3" media="(prefers-color-scheme: light)" />
 
     <link rel="canonical" href={canonical} />
+    {jsonLd !== null && <script type="application/ld+json" is:inline set:html={jsonLd} />}
 
     {/* Paylaşım botları göreli adres çözmez; og:image MUTLAK olmak zorunda. */}
     <meta property="og:title" content={title} />

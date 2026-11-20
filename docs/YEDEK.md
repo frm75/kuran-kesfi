@@ -25,10 +25,10 @@ kaybına karşı korumaz. Sunucu dışı kopya henüz kurulmadı. R2 medya kovas
 Y=/opt/kuran-yedek/<zaman>
 
 # SQLite — önce servisi durdur, WAL dosyalarını kaldır
-pm2 stop kuran-iletisim
+systemctl stop kuran-iletisim
 rm -f var/iletisim.sqlite-wal var/iletisim.sqlite-shm
 zcat $Y/iletisim.sqlite.gz > var/iletisim.sqlite && chmod 600 var/iletisim.sqlite
-pm2 start kuran-iletisim          # bot için aynısı: kuran-bot, bot.sqlite
+systemctl start kuran-iletisim       # bot için aynısı: kuran-bot, bot.sqlite
 
 # PostgreSQL — boş veritabanına
 pnpm db:up

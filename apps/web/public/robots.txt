@@ -6,10 +6,12 @@
 User-agent: *
 Allow: /
 
-# Uretilen ham JSON verisi ve font dosyalari arama sonuclarinda anlamsiz;
-# sayfalarin kendisi zaten ayni icerigi tasiyor.
+# Uretilen ham JSON verisi arama sonuclarinda anlamsiz; sayfalarin kendisi
+# zaten ayni icerigi tasiyor.
+#
+# /_astro/ (CSS, JS) ve /fonts/ ENGELLENMEZ: arama motoru sayfayi
+# goruntuleyerek degerlendirir, stil dosyasina erisemezse sayfayi bicimsiz
+# gorur ve mobil uyumlulugu olcemez.
 Disallow: /data/
-Disallow: /fonts/
-Disallow: /_astro/
 
 Sitemap: https://kurankesfi.tr/sitemap.xml

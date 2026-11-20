@@ -248,8 +248,12 @@ export class SearchEngine {
       return {};
     }
 
+    // Buraya gelen shard indekste KAYITLI: yanıt gelmezse bu "sonuç yok"
+    // değil arızadır. Boş sonuca çevrilip önbelleğe alınsaydı, geçici bir
+    // ağ hatası sayfa yenilenene kadar "bulunamadı" diye görünürdü.
     const response = await fetch(`${this.base}/${path}.json`);
-    const shard = response.ok ? ((await response.json()) as Shard) : {};
+    if (!response.ok) throw new Error(`arama parcasi yuklenemedi: ${path} (${String(response.status)})`);
+    const shard = (await response.json()) as Shard;
     this.shardCache.set(path, shard);
     return shard;
   }

@@ -75,6 +75,15 @@ interface Props {
    * başlık `sr-only` olarak yerinde kalır.
    */
   hideAuthor?: boolean;
+  /**
+   * Yazar adının başlık düzeyi.
+   *
+   * Öntanımlı h3: meal listeleri bir h2 bölümünün içinde durur. Ayet
+   * sayfasının tepesindeki tek meal ise doğrudan h1'in altında; orada h3
+   * başlık sırasını atlatıyordu (h1 → h3), ekran okuyucuda bölüm gezinmesini
+   * bozar. O çağrı "h2" verir.
+   */
+  heading?: "h2" | "h3";
 }
 
 const {
@@ -86,6 +95,7 @@ const {
   anchorPrefix,
   lang = "tr",
   hideAuthor = false,
+  heading: Heading = "h3",
 } = Astro.props;
 
 if (sourceDeclaredBy.trim() === "") {
@@ -111,7 +121,7 @@ const markerId = (number: number): string => `dnr-${anchorPrefix}-${number}`;
 
 <article class="translation" data-author={authorSlug}>
   <header>
-    <h3 class:list={[hideAuthor && "sr-only"]}>{authorName}</h3>
+    <Heading class:list={[hideAuthor && "sr-only"]}>{authorName}</Heading>
   </header>
 
   <p lang={lang} class="translation-text">

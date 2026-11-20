@@ -131,7 +131,8 @@ function excerpt(text: string | null, limit = 150): string | null {
   if (clean.length <= limit) return clean;
   const cut = clean.slice(0, limit);
   const lastSpace = cut.lastIndexOf(" ");
-  return `${(lastSpace > limit * 0.6 ? cut.slice(0, lastSpace) : cut).trimEnd()}…`;
+  // Kesim noktalama işaretine denk gelirse ".…" gibi çift işaret kalmasın.
+  return `${(lastSpace > limit * 0.6 ? cut.slice(0, lastSpace) : cut).trimEnd().replace(/[.,;:]+$/, "")}…`;
 }
 
 const relatedRows = related.map((row) => ({
@@ -295,6 +296,23 @@ const title = `${verse.surahNameTr} ${verse.verseNumber} — ${turkish.length} m
 const primaryRow = turkish.find((row) => row.slug === defaultAuthor.slug) ?? turkish[0] ?? null;
 const otherTurkish = turkish.filter((row) => row !== primaryRow);
 
+/**
+ * Sayfa açıklaması: ayetin kendi meali.
+ *
+ * Eski hâli "… suresi, N. ayet. Arapça metin ve 54 farklı meal yan yana."
+ * idi; 6236 sayfada yalnız sure adı ve sayı değişiyordu, arama sonucunda
+ * hepsi aynı görünüyordu. Şimdi sonuç satırı ayetin ne dediğini gösterir.
+ * Dipnot işaretleri ("[1]") açıklamaya taşınmaz.
+ */
+const primaryExcerpt =
+  primaryRow === null
+    ? null
+    : excerpt(primaryRow.text.replace(/\s*\[\d+\]/g, "").replace(/\s+/g, " "), 120);
+const description =
+  primaryExcerpt === null || primaryRow === null
+    ? `${label}. Arapça metin ve ${String(rows.length)} farklı meal yan yana.`
+    : `${label}: “${primaryExcerpt}” (${primaryRow.name}). Arapça metin ve ${String(rows.length)} meal.`;
+
 const notes = new NoteList();
 
 const kiraatNotes = verseAudio.map(({ reciter }) =>
@@ -379,7 +397,7 @@ const mealNote = notes.add({
 
 <Base
   title={title}
-  description={`${label}. Arapça metin ve ${rows.length} farklı meal yan yana.`}
+  description={description}
   arabic
   reading
 >
@@ -470,6 +488,7 @@ const mealNote = notes.add({
             sourceDeclaredBy="sayfa altındaki kaynak listesi"
             anchorPrefix={`${String(surahId)}-${String(verseNumber)}-${primaryRow.slug}`}
             lang="tr"
+            heading="h2"
           />
           <p class="verse-primary-alt">
             <a href="#mealler">{otherTurkish.length} meali daha karşılaştır →</a>

@@ -243,7 +243,19 @@ async function start(
     drawReference(query);
     drawSuggestions(query);
 
-    const found = await engine.search(query, readNamespaces());
+    let found: Awaited<ReturnType<SearchEngine["search"]>>;
+    try {
+      found = await engine.search(query, readNamespaces());
+    } catch {
+      // Ağ koptuysa "Aranıyor…" sonsuza dek kalmasın; eski sonuçlar da yeni
+      // sorgunun sonucu gibi durmasın.
+      if (mine !== generation) return;
+      hits = [];
+      panel.hidden = true;
+      durum.textContent =
+        "Arama şu an yapılamadı. Bağlantınızı denetleyip yeniden deneyin.";
+      return;
+    }
     if (mine !== generation) return;
 
     hits = found;

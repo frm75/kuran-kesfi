@@ -11,7 +11,7 @@ import {
   getTurkishAuthors,
 } from "~/lib/data";
 import { getCenturyBuckets, getManuscripts } from "~/lib/manuscripts";
-import { NAV } from "~/lib/nav";
+import { allNavPaths } from "~/lib/nav";
 import { SITE } from "~/lib/site";
 
 /**
@@ -36,9 +36,11 @@ export const GET: APIRoute = () => {
 
   const urls: { loc: string; priority: string }[] = [
     { loc: "/", priority: "1.0" },
-    // Hub sayfalari nav.ts'ten geliyor: menu degisince sitemap de degisir.
-    // /kaynaklar hem hub hem cocuk oldugu icin bir kez girsin diye Set.
-    ...[...new Set(NAV.map((hub) => hub.href))].map((loc) => ({ loc, priority: "0.9" })),
+    // Menudeki her adres (hub + cocuk) nav.ts'ten geliyor: menu degisince
+    // sitemap de degisir. Yalniz hub'lar alinirken /gunluk, /telegram ve
+    // /iletisim disarida kaliyordu. Asagida elle yazilanlarla cakisanlar
+    // en sonda tekillestirilir.
+    ...allNavPaths().map((loc) => ({ loc, priority: "0.9" })),
     { loc: "/ara", priority: "0.9" },
     { loc: "/sureler", priority: "0.9" },
     { loc: "/sureler/inis-sirasi", priority: "0.8" },
@@ -90,6 +92,9 @@ export const GET: APIRoute = () => {
 
   for (const surah of surahs) {
     urls.push({ loc: `/${surah.slug}`, priority: "0.8" });
+    // Dinleme sayfasi: sure basina bir adres (114). Menude yok, sure
+    // sayfasindan baglaniyor; sitemap'te de yoktu.
+    urls.push({ loc: `/dinle/${String(surah.id)}`, priority: "0.4" });
     for (let verse = 1; verse <= surah.verseCount; verse += 1) {
       urls.push({ loc: `/${surah.slug}/${verse}`, priority: "0.6" });
     }
@@ -104,10 +109,18 @@ export const GET: APIRoute = () => {
     }
   }
 
+  // Ayni adres iki kez yazilmasin; ilk gorulen (yuksek oncelikli) kalir.
+  const seen = new Set<string>();
+  const unique = urls.filter((url) => {
+    if (seen.has(url.loc)) return false;
+    seen.add(url.loc);
+    return true;
+  });
+
   const body = [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-    ...urls.map(
+    ...unique.map(
       (url) => `  <url><loc>${SITE}${url.loc}</loc><priority>${url.priority}</priority></url>`,
     ),
     "</urlset>",
